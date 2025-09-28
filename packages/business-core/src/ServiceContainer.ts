@@ -29,6 +29,7 @@ import { PerformanceOptimizer } from './services/PerformanceOptimizer';
 import { AnalyticsEngine } from './services/AnalyticsEngine';
 import { SecurityManager } from './services/SecurityManager';
 import { ProductionManager } from './services/ProductionManager';
+import { BuildingInfrastructureCatalog } from './services/BuildingInfrastructureCatalog';
 
 // Types
 import { 
@@ -71,6 +72,7 @@ export class ServiceContainer {
   private _analyticsEngine: AnalyticsEngine | null = null;
   private _securityManager: SecurityManager | null = null;
   private _productionManager: ProductionManager | null = null;
+  private _buildingInfrastructureCatalog: BuildingInfrastructureCatalog | null = null;
   private _metrics: any | null = null; // TODO: Implement BuildingMetricsService
   private _compliance: any | null = null; // TODO: Implement ComplianceService
   private _webSocket: WebSocketManager | null = null;
@@ -258,6 +260,13 @@ export class ServiceContainer {
       this._productionManager = ProductionManager.getInstance(this.database);
     }
     return this._productionManager;
+  }
+
+  public get buildingInfrastructureCatalog(): BuildingInfrastructureCatalog {
+    if (!this._buildingInfrastructureCatalog) {
+      this._buildingInfrastructureCatalog = BuildingInfrastructureCatalog.getInstance(this.database);
+    }
+    return this._buildingInfrastructureCatalog;
   }
   
   // DashboardSyncService compatibility - delegate to RealTimeOrchestrator

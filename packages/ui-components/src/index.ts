@@ -98,6 +98,7 @@ export { default as ClockInGlassModal } from './glass/ClockInGlassModal';
 
 // Building Components
 export { default as BuildingMapDetailView } from './buildings/BuildingMapDetailView';
+export { default as BuildingDetailOverview } from './buildings/BuildingDetailOverview';
 
 // Card Components
 export { default as HeroStatusCard } from './cards/HeroStatusCard';

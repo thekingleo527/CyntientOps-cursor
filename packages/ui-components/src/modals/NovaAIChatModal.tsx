@@ -23,6 +23,8 @@ export interface NovaAIChatModalProps {
   visible: boolean;
   onClose: () => void;
   workerName?: string;
+  workerId?: string;
+  currentLocation?: { latitude: number; longitude: number };
   onSendMessage?: (message: string) => void;
 }
 
@@ -37,6 +39,8 @@ export const NovaAIChatModal: React.FC<NovaAIChatModalProps> = ({
   visible,
   onClose,
   workerName = 'Worker',
+  workerId,
+  currentLocation,
   onSendMessage,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -82,11 +86,11 @@ export const NovaAIChatModal: React.FC<NovaAIChatModalProps> = ({
     setInputText('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    // Generate AI response
+    setTimeout(async () => {
       const aiResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: generateAIResponse(inputText.trim()),
+        text: await generateAIResponse(inputText.trim()),
         isUser: false,
         timestamp: new Date(),
       };
@@ -98,26 +102,76 @@ export const NovaAIChatModal: React.FC<NovaAIChatModalProps> = ({
     onSendMessage?.(inputText.trim());
   };
 
-  const generateAIResponse = (userMessage: string): string => {
+  const generateAIResponse = async (userMessage: string): Promise<string> => {
     const lowerMessage = userMessage.toLowerCase();
     
-    if (lowerMessage.includes('task') || lowerMessage.includes('work')) {
-      return "I can help you with your tasks! Based on your current schedule, I recommend prioritizing urgent tasks first. Would you like me to suggest an optimized route for today?";
+    try {
+      // Import building infrastructure catalog
+      const { BuildingInfrastructureCatalog } = await import('@cyntientops/business-core');
+      
+      if (lowerMessage.includes('task') || lowerMessage.includes('work')) {
+        return "I can help you with your tasks! Based on your current schedule, I recommend prioritizing urgent tasks first. Would you like me to suggest an optimized route for today?";
+      }
+      
+      if (lowerMessage.includes('weather')) {
+        return "I'm monitoring the weather conditions for your buildings. Today's forecast shows optimal conditions for outdoor tasks. Consider completing any weather-dependent tasks early.";
+      }
+      
+      if (lowerMessage.includes('building') || lowerMessage.includes('location')) {
+        if (currentLocation) {
+          // Find nearby building
+          const catalog = BuildingInfrastructureCatalog.getInstance({} as any); // This would be properly injected
+          const nearbyBuilding = catalog.getBuildingByLocation(currentLocation.latitude, currentLocation.longitude);
+          
+          if (nearbyBuilding) {
+            return `I found building information for ${nearbyBuilding.name} at ${nearbyBuilding.address}. It's a ${nearbyBuilding.buildingType} building with ${nearbyBuilding.numberOfUnits} units. The last routine was completed ${Math.floor((Date.now() - nearbyBuilding.lastRoutineCompletion[0]?.date.getTime()) / (1000 * 60 * 60 * 24))} days ago.`;
+          }
+        }
+        return "I can provide insights about your assigned buildings. All buildings are currently in good standing with no critical compliance issues. Need specific building details?";
+      }
+      
+      if (lowerMessage.includes('garbage') || lowerMessage.includes('dsny') || lowerMessage.includes('collection')) {
+        if (currentLocation) {
+          const catalog = BuildingInfrastructureCatalog.getInstance({} as any);
+          const nearbyBuilding = catalog.getBuildingByLocation(currentLocation.latitude, currentLocation.longitude);
+          
+          if (nearbyBuilding) {
+            const dsnyInfo = catalog.getDSNYCollectionInfo(nearbyBuilding.id);
+            if (dsnyInfo) {
+              const daysUntilNext = Math.ceil((dsnyInfo.nextCollection.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+              return `For ${nearbyBuilding.name}: Garbage collection is on ${dsnyInfo.collectionDay} at ${dsnyInfo.collectionTime}. Last collection was ${Math.floor((Date.now() - dsnyInfo.lastCollection.getTime()) / (1000 * 60 * 60 * 24))} days ago. Next collection is in ${daysUntilNext} days. Bins should be set out by ${dsnyInfo.setOutTime}.`;
+            }
+          }
+        }
+        return "I can help you with DSNY collection schedules. Garbage collection typically happens weekly. Would you like to know the schedule for a specific building?";
+      }
+      
+      if (lowerMessage.includes('routine') || lowerMessage.includes('completed')) {
+        if (currentLocation) {
+          const catalog = BuildingInfrastructureCatalog.getInstance({} as any);
+          const nearbyBuilding = catalog.getBuildingByLocation(currentLocation.latitude, currentLocation.longitude);
+          
+          if (nearbyBuilding) {
+            const routineInfo = catalog.getRoutineCompletionInfo(nearbyBuilding.id);
+            if (routineInfo.length > 0) {
+              const lastRoutine = routineInfo[0];
+              const daysSince = Math.floor((Date.now() - lastRoutine.lastCompleted.getTime()) / (1000 * 60 * 60 * 24));
+              return `The last routine at ${nearbyBuilding.name} was "${lastRoutine.routineType}" completed ${daysSince} days ago by ${lastRoutine.workerName}. Status: ${lastRoutine.status}.`;
+            }
+          }
+        }
+        return "I can track routine completion status for your buildings. The system shows when each routine was last completed and by which worker.";
+      }
+      
+      if (lowerMessage.includes('help') || lowerMessage.includes('assistance')) {
+        return "I'm here to help! I can assist with:\n• Task optimization and route planning\n• Building information and infrastructure details\n• DSNY collection schedules and garbage pickup\n• Routine completion tracking\n• Weather insights and recommendations\n• Compliance status and maintenance schedules\n\nWhat would you like to know?";
+      }
+      
+      return "That's interesting! I'm constantly learning and improving. I can help with building information, task management, DSNY schedules, and routine tracking. What specific information do you need?";
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      return "I'm having trouble accessing building data right now. Please try again in a moment.";
     }
-    
-    if (lowerMessage.includes('weather')) {
-      return "I'm monitoring the weather conditions for your buildings. Today's forecast shows optimal conditions for outdoor tasks. Consider completing any weather-dependent tasks early.";
-    }
-    
-    if (lowerMessage.includes('building') || lowerMessage.includes('location')) {
-      return "I can provide insights about your assigned buildings. All buildings are currently in good standing with no critical compliance issues. Need specific building details?";
-    }
-    
-    if (lowerMessage.includes('help') || lowerMessage.includes('assistance')) {
-      return "I'm here to help! I can assist with task optimization, weather insights, building information, compliance updates, and route planning. What would you like to know?";
-    }
-    
-    return "That's interesting! I'm constantly learning and improving. Is there anything specific about your work today that I can help you with?";
   };
 
   const scrollToBottom = () => {

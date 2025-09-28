@@ -18,6 +18,7 @@ export { PerformanceOptimizer } from './services/PerformanceOptimizer';
 export { AnalyticsEngine } from './services/AnalyticsEngine';
 export { SecurityManager } from './services/SecurityManager';
 export { ProductionManager } from './services/ProductionManager';
+export { BuildingInfrastructureCatalog } from './services/BuildingInfrastructureCatalog';
 export { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 
 // Managers

@@ -620,6 +620,11 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         visible={showNovaAIModal}
         onClose={() => setShowNovaAIModal(false)}
         workerName={workerName}
+        workerId={workerId}
+        currentLocation={dashboardData?.currentBuilding ? {
+          latitude: dashboardData.currentBuilding.latitude,
+          longitude: dashboardData.currentBuilding.longitude
+        } : undefined}
         onSendMessage={(message) => {
           console.log('Nova AI message:', message);
           // Handle Nova AI message if needed

@@ -63,5 +63,10 @@ export { WorkerNavigationFlow } from './navigation/WorkerNavigationFlow';
 // Weather Components
 export { default as WeatherRibbonView } from './weather/WeatherRibbonView';
 
+// Timeline Components
+export { default as TaskTimelineView } from './timeline/TaskTimelineView';
+export { default as TaskTimelineRow } from './timeline/TaskTimelineRow';
+export { default as UnifiedTaskDetailView } from './timeline/UnifiedTaskDetailView';
+
 // Re-export design tokens for convenience
 export * from '@cyntientops/design-tokens';

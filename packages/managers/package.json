@@ -1,0 +1,28 @@
+{
+  "name": "@cyntientops/managers",
+  "version": "1.0.0",
+  "description": "Core managers for CyntientOps - ClockIn, Location, Notification managers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@cyntientops/domain-schema": "workspace:*",
+    "@cyntientops/database": "workspace:*",
+    "react-native": "^0.72.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.9.2",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}

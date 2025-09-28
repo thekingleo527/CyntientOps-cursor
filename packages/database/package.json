@@ -1,0 +1,32 @@
+{
+  "name": "@cyntientops/database",
+  "version": "1.0.0",
+  "description": "Database layer for CyntientOps - mirrors GRDBManager.swift functionality",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "migrate": "node dist/scripts/migrate.js",
+    "seed": "node dist/scripts/seed.js"
+  },
+  "dependencies": {
+    "@cyntientops/domain-schema": "workspace:*",
+    "@cyntientops/data-seed": "workspace:*",
+    "sqlite3": "^5.1.6",
+    "better-sqlite3": "^9.2.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.9.2",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}

@@ -37,6 +37,18 @@
         "linter": "eslint",
         "bundler": "metro"
       }
+    },
+    "@nx/next": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "unitTestRunner": "jest",
+        "e2eTestRunner": "none"
+      },
+      "library": {
+        "linter": "eslint",
+        "unitTestRunner": "jest"
+      }
     }
   },
   "defaultProject": "mobile-rn"

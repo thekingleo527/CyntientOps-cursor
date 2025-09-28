@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["es2020", "dom"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@cyntientops/design-tokens": ["packages/design-tokens/src"],
+      "@cyntientops/domain-schema": ["packages/domain-schema/src"],
+      "@cyntientops/business-core": ["packages/business-core/src"],
+      "@cyntientops/api-clients": ["packages/api-clients/src"],
+      "@cyntientops/ui-components": ["packages/ui-components/src"],
+      "@cyntientops/data-seed": ["packages/data-seed/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build", ".next"]
+}

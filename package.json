@@ -12,6 +12,8 @@
     "dev:web": "nx run web-dashboard:dev",
     "validate:data": "nx run data-seed:validate",
     "build:all": "nx run-many --target=build",
+    "build:design-tokens": "nx run design-tokens:build",
+    "build:ui-components": "nx run ui-components:build",
     "test:all": "nx run-many --target=test",
     "lint:all": "nx run-many --target=lint",
     "clean": "nx reset && rm -rf node_modules apps/*/node_modules packages/*/node_modules",

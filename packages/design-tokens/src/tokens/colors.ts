@@ -89,16 +89,53 @@ export const PriorityColors = {
   critical: '#991b1b',          // Very dark red
 } as const;
 
-// Complete Color Palette
+// Complete Color Palette - Flattened for easy access
 export const Colors = {
-  base: BaseColors,
-  glass: GlassColors,
+  // Base colors
+  ...BaseColors,
+  
+  // Glass colors
+  ...GlassColors,
+  
+  // Status colors (flattened)
+  success: StatusColors.success,
+  warning: StatusColors.warning,
+  error: StatusColors.error,
+  critical: StatusColors.error,
+  info: StatusColors.info,
+  pending: StatusColors.pending,
+  inactive: StatusColors.pending,
+  
+  // Text colors (flattened)
+  primaryText: TextColors.primary,
+  secondaryText: TextColors.secondary,
+  tertiaryText: TextColors.tertiary,
+  disabledText: TextColors.disabled,
+  inverseText: TextColors.inverse,
+  
+  // Border colors (flattened)
+  borderSubtle: BorderColors.light,
+  borderMedium: BorderColors.medium,
+  borderStrong: BorderColors.strong,
+  borderAccent: BorderColors.accent,
+  
+  // Primary action color (default to worker primary)
+  primaryAction: RoleColors.worker.primary,
+  
+  // Glass overlay
+  glassOverlay: GlassColors.regular,
+  
+  // Base background
+  baseBackground: BaseColors.background,
+  
+  // Task category colors (flattened)
+  ...TaskCategoryColors,
+  
+  // Priority colors (flattened)
+  ...PriorityColors,
+  
+  // Role colors (nested for specific access)
   role: RoleColors,
-  status: StatusColors,
-  text: TextColors,
-  border: BorderColors,
-  taskCategory: TaskCategoryColors,
-  priority: PriorityColors,
 } as const;
 
 export type ColorRole = keyof typeof RoleColors;

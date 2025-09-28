@@ -17,24 +17,24 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "scripts/setup-tsconfigs.js",
-        "hash": "14530017827863588642"
+        "file": "scripts/setup-jest-configs.js",
+        "hash": "16206366320795113098"
       },
       {
-        "file": "scripts/setup-nx-projects.js",
-        "hash": "8665214159614902254"
+        "file": "CONTINUITY_REPORT_PHASE_4B.md",
+        "hash": "5086867959219332568"
       },
       {
-        "file": "PHASE_4B_COMPLETE.md",
-        "hash": "15012949593794021123"
+        "file": ".eslintrc.js",
+        "hash": "13772985611367207345"
       },
       {
-        "file": "tsconfig.json",
-        "hash": "12496562632034889801"
+        "file": "verify-folders.sh",
+        "hash": "10935650700356555517"
       },
       {
-        "file": ".gitignore",
-        "hash": "15535908159169107954"
+        "file": "tsconfig.base.json",
+        "hash": "2675220573733747715"
       },
       {
         "file": "COMPLETE_SWIFTUI_ANALYSIS.md",
@@ -45,40 +45,8 @@
         "hash": "8636703867579112770"
       },
       {
-        "file": "CONTINUITY_REPORT_PHASE_4B.md",
-        "hash": "5086867959219332568"
-      },
-      {
-        "file": "verify-folders.sh",
-        "hash": "10935650700356555517"
-      },
-      {
-        "file": "nx.json",
-        "hash": "1817247490336913443"
-      },
-      {
-        "file": "scripts/setup-jest-configs.js",
-        "hash": "16206366320795113098"
-      },
-      {
-        "file": ".eslintrc.js",
-        "hash": "13772985611367207345"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "2675220573733747715"
-      },
-      {
-        "file": "README.md",
-        "hash": "12576029393461459033"
-      },
-      {
         "file": "REMAINING_IMPLEMENTATION_ANALYSIS.md",
         "hash": "13939275850397437566"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "15005792177748425952"
       },
       {
         "file": "package.json",
@@ -89,8 +57,40 @@
         "hash": "11765879550370700119"
       },
       {
+        "file": "tsconfig.json",
+        "hash": "12496562632034889801"
+      },
+      {
+        "file": "scripts/setup-nx-projects.js",
+        "hash": "8665214159614902254"
+      },
+      {
+        "file": "README.md",
+        "hash": "12576029393461459033"
+      },
+      {
+        "file": "scripts/setup-tsconfigs.js",
+        "hash": "14530017827863588642"
+      },
+      {
         "file": "jest.preset.js",
         "hash": "2599607768644681757"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "15005792177748425952"
+      },
+      {
+        "file": "PHASE_4B_COMPLETE.md",
+        "hash": "15012949593794021123"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "15535908159169107954"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1817247490336913443"
       }
     ],
     "projectFileMap": {
@@ -191,10 +191,10 @@
         },
         {
           "file": "packages/context-engines/src/WorkerDashboardViewModel.ts",
-          "hash": "11584169317750662121",
+          "hash": "18039544134440774777",
           "deps": [
             "npm:react",
-            "npm:@cyntientops/domain-schema",
+            "domain-schema",
             "business-core"
           ]
         },
@@ -210,7 +210,7 @@
         },
         {
           "file": "packages/context-engines/src/index.ts",
-          "hash": "7604975358915515123"
+          "hash": "76668162255766601"
         },
         {
           "file": "packages/context-engines/tsconfig.json",
@@ -223,6 +223,14 @@
         {
           "file": "packages/context-engines/jest.config.ts",
           "hash": "16660693488006701022"
+        },
+        {
+          "file": "packages/context-engines/src/useBuildingDetailViewModel.ts",
+          "hash": "9700444974458735894",
+          "deps": [
+            "npm:react",
+            "business-core"
+          ]
         }
       ],
       "design-tokens": [
@@ -243,7 +251,7 @@
         },
         {
           "file": "packages/design-tokens/src/components/GlassButton.tsx",
-          "hash": "17758385344701256606",
+          "hash": "8751475538163491480",
           "deps": [
             "npm:react",
             "npm:react-native"
@@ -251,7 +259,7 @@
         },
         {
           "file": "packages/design-tokens/src/components/GlassCard.tsx",
-          "hash": "11871501554574417033",
+          "hash": "9795424253061541823",
           "deps": [
             "npm:react",
             "npm:react-native"
@@ -259,7 +267,7 @@
         },
         {
           "file": "packages/design-tokens/src/index.ts",
-          "hash": "5811786785892098828"
+          "hash": "14055475168110353722"
         },
         {
           "file": "packages/design-tokens/src/tokens/animations.ts",
@@ -267,7 +275,7 @@
         },
         {
           "file": "packages/design-tokens/src/tokens/colors.ts",
-          "hash": "17178013498794154333"
+          "hash": "18436373176812879596"
         },
         {
           "file": "packages/design-tokens/src/tokens/shadows.ts",
@@ -296,6 +304,10 @@
         {
           "file": "packages/design-tokens/jest.config.ts",
           "hash": "14068715896424409074"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/gradients.ts",
+          "hash": "894281856679980773"
         }
       ],
       "business-core": [
@@ -312,15 +324,15 @@
         },
         {
           "file": "packages/business-core/src/ServiceContainer.ts",
-          "hash": "710416922534316874",
+          "hash": "14906252361619318019",
           "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/api-clients",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/realtime-sync",
-            "npm:@cyntientops/offline-support",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/domain-schema"
+            "database",
+            "api-clients",
+            "managers",
+            "realtime-sync",
+            "offline-support",
+            "intelligence-services",
+            "domain-schema"
           ]
         },
         {
@@ -1533,12 +1545,14 @@
         },
         {
           "file": "packages/ui-components/src/buildings/BuildingDetailOverview.tsx",
-          "hash": "13602646988384365380",
+          "hash": "17702359800526179805",
           "deps": [
             "npm:react",
             "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "business-core"
+            "npm:expo-linear-gradient",
+            "design-tokens",
+            "business-core",
+            "context-engines"
           ]
         },
         {

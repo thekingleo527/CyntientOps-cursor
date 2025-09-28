@@ -9,6 +9,9 @@ export { WorkerViewModel } from './WorkerViewModel';
 export { ClientViewModel } from './ClientViewModel';
 export { AdminViewModel } from './AdminViewModel';
 
+// ViewModel Hooks
+export { useBuildingDetailViewModel } from './useBuildingDetailViewModel';
+
 // Context Engines
 export { WorkerContextEngine } from './WorkerContextEngine';
 export { AdminContextEngine } from './AdminContextEngine';

@@ -164,11 +164,144 @@ export enum VendorType {
 }
 
 export enum VendorAccessType {
-  ENTRY = 'entry',
-  EXIT = 'exit',
-  INSPECTION = 'inspection',
-  MAINTENANCE = 'maintenance',
-  EMERGENCY = 'emergency'
+  SCHEDULED = 'Scheduled',
+  EMERGENCY = 'Emergency',
+  ROUTINE = 'Routine',
+  INSPECTION = 'Inspection',
+  REPAIR = 'Repair',
+  INSTALLATION = 'Installation'
+}
+
+export enum VendorCategory {
+  BUILDING = 'Building Systems',
+  UTILITY = 'Utilities',
+  MAINTENANCE = 'Maintenance & Repair',
+  INSPECTION = 'Inspections',
+  SERVICE = 'Services',
+  PROFESSIONAL = 'Professional Services',
+  OTHER = 'Other'
+}
+
+// MARK: - Daily Notes Types
+
+export interface DailyNote {
+  id: string;
+  buildingId: string;
+  buildingName: string;
+  workerId: string;
+  workerName: string;
+  noteText: string;
+  category: NoteCategory;
+  timestamp: Date;
+  photoEvidence?: string;
+  location?: string;
+}
+
+export enum NoteCategory {
+  GENERAL = 'General',
+  MAINTENANCE = 'Maintenance Issue',
+  SAFETY = 'Safety Concern',
+  SUPPLY = 'Supply Need',
+  TENANT = 'Tenant Issue',
+  OBSERVATION = 'Observation',
+  REPAIR = 'Repair Required',
+  CLEANING = 'Cleaning Note'
+}
+
+// MARK: - Inventory Integration Types
+
+export interface SupplyRequest {
+  id: string;
+  requestNumber: string;
+  buildingId: string;
+  buildingName: string;
+  requestedBy: string;
+  requesterName: string;
+  items: RequestedItem[];
+  priority: SupplyPriority;
+  status: SupplyStatus;
+  notes: string;
+  totalCost: number;
+  createdAt: Date;
+  approvedAt?: Date;
+  approvedBy?: string;
+}
+
+export interface RequestedItem {
+  itemId: string;
+  itemName: string;
+  quantityRequested: number;
+  quantityApproved?: number;
+  unitCost: number;
+  notes?: string;
+}
+
+export enum SupplyPriority {
+  LOW = 'Low',
+  NORMAL = 'Normal',
+  HIGH = 'High',
+  URGENT = 'Urgent'
+}
+
+export enum SupplyStatus {
+  PENDING = 'Pending',
+  APPROVED = 'Approved',
+  ORDERED = 'Ordered',
+  RECEIVED = 'Received',
+  REJECTED = 'Rejected'
+}
+
+export interface InventoryUsageRecord {
+  id: string;
+  itemId: string;
+  itemName: string;
+  quantity: number;
+  unit: string;
+  usedAt: Date;
+  workerId: string;
+  workerName: string;
+  buildingId: string;
+  buildingName: string;
+  taskId?: string;
+  notes?: string;
+}
+
+export interface LowStockAlert {
+  id: string;
+  itemId: string;
+  itemName: string;
+  buildingId: string;
+  buildingName: string;
+  currentStock: number;
+  minimumStock: number;
+  unit: string;
+  category: string;
+  alertedAt: Date;
+  isResolved: boolean;
+}
+
+// MARK: - Building-Specific Weather Guidance
+
+export enum WeatherCondition {
+  RAIN = 'rain',
+  SNOW = 'snow',
+  CLEAR = 'clear',
+  CLOUDY = 'cloudy',
+  STORM = 'storm'
+}
+
+export interface BuildingWeatherGuidance {
+  buildingId: string;
+  buildingName: string;
+  tasks: string[];
+  priority: TaskPriority;
+}
+
+export enum TaskPriority {
+  IMMEDIATE = 'immediate',
+  BEFORE_WEATHER = 'beforeWeather',
+  AFTER_WEATHER = 'afterWeather',
+  ROUTINE = 'routine'
 }
 
 // MARK: - Main ViewModel Hook
@@ -187,6 +320,7 @@ export interface WorkerDashboardViewModelState {
   
   // Building Data
   assignedBuildings: BuildingSummary[];
+  allBuildings: BuildingSummary[]; // For coverage purposes
   currentBuilding?: BuildingSummary;
   buildingPins: BuildingPin[];
   
@@ -205,9 +339,50 @@ export interface WorkerDashboardViewModelState {
   
   // Weather Data
   weatherSnapshot: WorkerWeatherSnapshot;
+  weatherData?: any;
+  outdoorWorkRisk: string;
   
   // Vendor Access
   recentVendorAccess: VendorAccessEntry[];
+  showingVendorAccessLog: boolean;
+  isLoggingVendorAccess: boolean;
+  
+  // Daily Notes
+  dailyNotes: Record<string, DailyNote[]>; // BuildingId -> Notes
+  todayNotes: DailyNote[];
+  showingAddNote: boolean;
+  isAddingNote: boolean;
+  
+  // Inventory Integration
+  pendingSupplyRequests: SupplyRequest[];
+  recentInventoryUsage: InventoryUsageRecord[];
+  showingInventoryRequest: boolean;
+  lowStockAlerts: LowStockAlert[];
+  isCreatingSupplyRequest: boolean;
+  
+  // Clock In/Out State
+  isClockedIn: boolean;
+  clockInTime?: Date;
+  clockInLocation?: any;
+  hoursWorkedToday: number;
+  
+  // Performance Metrics
+  completionRate: number;
+  todaysEfficiency: number;
+  weeklyPerformance: TrendDirection;
+  
+  // Dashboard Sync
+  dashboardSyncStatus: string;
+  
+  // Hero Tile Properties
+  heroNextTask?: any;
+  weatherHint?: string;
+  buildingsForMap: BuildingPin[];
+  mapRegion: any;
+  
+  // Intelligence Panel
+  intelligencePanelExpanded: boolean;
+  currentInsights: any[];
   
   // Real-time Updates
   dashboardUpdates: DashboardUpdate[];
@@ -222,23 +397,62 @@ export interface WorkerDashboardViewModelActions {
   // Data Loading
   loadDashboardData: () => Promise<void>;
   refreshData: () => Promise<void>;
+  loadInitialData: () => Promise<void>;
   
   // Task Management
   startTask: (taskId: string) => Promise<void>;
   completeTask: (taskId: string, evidence?: any) => Promise<void>;
   updateTaskStatus: (taskId: string, status: string) => Promise<void>;
+  toggleTaskCompletion: (taskId: string) => Promise<void>;
+  getPhotoRequirement: (taskId: string) => boolean;
+  createPhotoEvidenceForTask: (taskId: string, photoURLs: string[]) => any;
   
   // Building Management
-  clockIn: (buildingId: string) => Promise<void>;
-  clockOut: (buildingId: string) => Promise<void>;
+  clockIn: (buildingId: string, location?: any) => Promise<boolean>;
+  clockOut: () => Promise<boolean>;
+  reportIssue: (building?: BuildingSummary) => void;
+  emergencyCall: () => void;
   
   // Vendor Access
   logVendorAccess: (entry: Omit<VendorAccessEntry, 'id' | 'timestamp'>) => Promise<void>;
+  showVendorAccessLog: () => void;
+  hideVendorAccessLog: () => void;
+  
+  // Daily Notes
+  addDailyNote: (note: Omit<DailyNote, 'id' | 'timestamp'>) => Promise<void>;
+  showAddNote: () => void;
+  hideAddNote: () => void;
+  loadDailyNotes: (buildingId: string) => Promise<void>;
+  
+  // Inventory Management
+  createSupplyRequest: (request: Omit<SupplyRequest, 'id' | 'createdAt'>) => Promise<void>;
+  showInventoryRequest: () => void;
+  hideInventoryRequest: () => void;
+  loadInventoryData: (buildingId: string) => Promise<void>;
+  loadLowStockAlerts: (buildingId: string) => Promise<void>;
+  
+  // Weather Management
+  loadWeatherForBuilding: (building: BuildingSummary) => Promise<void>;
+  getBuildingWeatherGuidance: (buildingId: string) => Promise<BuildingWeatherGuidance[]>;
+  
+  // Performance & Analytics
+  calculateMetrics: () => Promise<void>;
+  calculateHoursWorkedToday: () => Promise<void>;
+  updateHeroTileProperties: () => Promise<void>;
+  
+  // Intelligence Panel
+  toggleIntelligencePanel: () => void;
+  loadIntelligenceInsights: () => Promise<void>;
+  
+  // Map Management
+  updateMapRegion: () => void;
+  setMapRegion: (region: any) => void;
   
   // UI State
   toggleCompactMode: () => void;
   toggleWeatherStrip: () => void;
   setDarkMode: (enabled: boolean) => void;
+  setHeroExpanded: (expanded: boolean) => void;
 }
 
 export function useWorkerDashboardViewModel(
@@ -258,6 +472,7 @@ export function useWorkerDashboardViewModel(
       compactMode: false
     },
     assignedBuildings: [],
+    allBuildings: [],
     buildingPins: [],
     todaysTasks: [],
     upcomingTasks: [],
@@ -284,7 +499,37 @@ export function useWorkerDashboardViewModel(
       timestamp: new Date(),
       buildingSpecificGuidance: []
     },
+    weatherData: undefined,
+    outdoorWorkRisk: 'low',
     recentVendorAccess: [],
+    showingVendorAccessLog: false,
+    isLoggingVendorAccess: false,
+    dailyNotes: {},
+    todayNotes: [],
+    showingAddNote: false,
+    isAddingNote: false,
+    pendingSupplyRequests: [],
+    recentInventoryUsage: [],
+    showingInventoryRequest: false,
+    lowStockAlerts: [],
+    isCreatingSupplyRequest: false,
+    isClockedIn: false,
+    clockInTime: undefined,
+    clockInLocation: undefined,
+    hoursWorkedToday: 0,
+    completionRate: 0,
+    todaysEfficiency: 0,
+    weeklyPerformance: TrendDirection.STABLE,
+    dashboardSyncStatus: 'synced',
+    heroNextTask: undefined,
+    weatherHint: undefined,
+    buildingsForMap: [],
+    mapRegion: {
+      center: { latitude: 40.7580, longitude: -73.9855 },
+      span: { latitudeDelta: 0.01, longitudeDelta: 0.01 }
+    },
+    intelligencePanelExpanded: false,
+    currentInsights: [],
     dashboardUpdates: [],
     lastUpdateTime: new Date()
   });
@@ -589,6 +834,274 @@ export function useWorkerDashboardViewModel(
     }));
   }, []);
 
+  const setHeroExpanded = useCallback((expanded: boolean) => {
+    setState(prev => ({ ...prev, heroExpanded: expanded }));
+  }, []);
+
+  // MARK: - Additional Methods from SwiftUI Implementation
+
+  const loadInitialData = useCallback(async () => {
+    await loadDashboardData();
+  }, [loadDashboardData]);
+
+  const toggleTaskCompletion = useCallback(async (taskId: string) => {
+    try {
+      const task = state.todaysTasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      const newStatus = !task.isCompleted;
+      await container.tasks.updateTaskStatus(taskId, newStatus ? 'completed' : 'pending');
+      
+      setState(prev => ({
+        ...prev,
+        todaysTasks: prev.todaysTasks.map(t =>
+          t.id === taskId ? { ...t, isCompleted: newStatus } : t
+        )
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        errorMessage: error instanceof Error ? error.message : 'Failed to toggle task completion'
+      }));
+    }
+  }, [container, state.todaysTasks]);
+
+  const getPhotoRequirement = useCallback((taskId: string): boolean => {
+    const task = state.todaysTasks.find(t => t.id === taskId);
+    return task?.requiresPhoto ?? false;
+  }, [state.todaysTasks]);
+
+  const createPhotoEvidenceForTask = useCallback((taskId: string, photoURLs: string[]) => {
+    const task = state.todaysTasks.find(t => t.id === taskId);
+    const description = task?.title.includes('Roof Drain') && task?.title.includes('2F')
+      ? 'Roof drain maintenance completed - 2F Terrace at Rubin Museum'
+      : `Task completed with photo verification: ${task?.title ?? 'Task'}`;
+    
+    return {
+      description,
+      photoURLs,
+      timestamp: new Date()
+    };
+  }, [state.todaysTasks]);
+
+  const reportIssue = useCallback((building?: BuildingSummary) => {
+    // Implementation for reporting issues
+    console.log('Reporting issue for building:', building?.name);
+  }, []);
+
+  const emergencyCall = useCallback(() => {
+    // Implementation for emergency calls
+    console.log('Emergency call initiated');
+  }, []);
+
+  const showVendorAccessLog = useCallback(() => {
+    setState(prev => ({ ...prev, showingVendorAccessLog: true }));
+  }, []);
+
+  const hideVendorAccessLog = useCallback(() => {
+    setState(prev => ({ ...prev, showingVendorAccessLog: false }));
+  }, []);
+
+  const addDailyNote = useCallback(async (note: Omit<DailyNote, 'id' | 'timestamp'>) => {
+    try {
+      const newNote: DailyNote = {
+        ...note,
+        id: `note_${Date.now()}`,
+        timestamp: new Date()
+      };
+      
+      await container.notes.addDailyNote(newNote);
+      
+      setState(prev => ({
+        ...prev,
+        dailyNotes: {
+          ...prev.dailyNotes,
+          [note.buildingId]: [newNote, ...(prev.dailyNotes[note.buildingId] || [])]
+        },
+        todayNotes: [newNote, ...prev.todayNotes]
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        errorMessage: error instanceof Error ? error.message : 'Failed to add daily note'
+      }));
+    }
+  }, [container]);
+
+  const showAddNote = useCallback(() => {
+    setState(prev => ({ ...prev, showingAddNote: true }));
+  }, []);
+
+  const hideAddNote = useCallback(() => {
+    setState(prev => ({ ...prev, showingAddNote: false }));
+  }, []);
+
+  const loadDailyNotes = useCallback(async (buildingId: string) => {
+    try {
+      const notes = await container.notes.getDailyNotes(buildingId);
+      setState(prev => ({
+        ...prev,
+        dailyNotes: {
+          ...prev.dailyNotes,
+          [buildingId]: notes
+        }
+      }));
+    } catch (error) {
+      console.error('Failed to load daily notes:', error);
+    }
+  }, [container]);
+
+  const createSupplyRequest = useCallback(async (request: Omit<SupplyRequest, 'id' | 'createdAt'>) => {
+    try {
+      const newRequest: SupplyRequest = {
+        ...request,
+        id: `request_${Date.now()}`,
+        createdAt: new Date()
+      };
+      
+      await container.inventory.createSupplyRequest(newRequest);
+      
+      setState(prev => ({
+        ...prev,
+        pendingSupplyRequests: [newRequest, ...prev.pendingSupplyRequests]
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        errorMessage: error instanceof Error ? error.message : 'Failed to create supply request'
+      }));
+    }
+  }, [container]);
+
+  const showInventoryRequest = useCallback(() => {
+    setState(prev => ({ ...prev, showingInventoryRequest: true }));
+  }, []);
+
+  const hideInventoryRequest = useCallback(() => {
+    setState(prev => ({ ...prev, showingInventoryRequest: false }));
+  }, []);
+
+  const loadInventoryData = useCallback(async (buildingId: string) => {
+    try {
+      const [usage, alerts] = await Promise.all([
+        container.inventory.getInventoryUsage(buildingId),
+        container.inventory.getLowStockAlerts(buildingId)
+      ]);
+      
+      setState(prev => ({
+        ...prev,
+        recentInventoryUsage: usage,
+        lowStockAlerts: alerts
+      }));
+    } catch (error) {
+      console.error('Failed to load inventory data:', error);
+    }
+  }, [container]);
+
+  const loadLowStockAlerts = useCallback(async (buildingId: string) => {
+    try {
+      const alerts = await container.inventory.getLowStockAlerts(buildingId);
+      setState(prev => ({ ...prev, lowStockAlerts: alerts }));
+    } catch (error) {
+      console.error('Failed to load low stock alerts:', error);
+    }
+  }, [container]);
+
+  const loadWeatherForBuilding = useCallback(async (building: BuildingSummary) => {
+    try {
+      const weather = await container.weather.getWeatherForBuilding(building.id);
+      setState(prev => ({
+        ...prev,
+        weatherData: weather,
+        outdoorWorkRisk: weather.outdoorWorkRisk || 'low'
+      }));
+    } catch (error) {
+      console.error('Failed to load weather for building:', error);
+    }
+  }, [container]);
+
+  const getBuildingWeatherGuidance = useCallback(async (buildingId: string): Promise<BuildingWeatherGuidance[]> => {
+    try {
+      return await container.weather.getBuildingWeatherGuidance(buildingId);
+    } catch (error) {
+      console.error('Failed to get building weather guidance:', error);
+      return [];
+    }
+  }, [container]);
+
+  const calculateMetrics = useCallback(async () => {
+    const totalTasks = state.todaysTasks.length;
+    const completedTasks = state.completedTasks.length;
+    const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    
+    setState(prev => ({
+      ...prev,
+      completionRate,
+      todaysEfficiency: completionRate // Simplified for now
+    }));
+  }, [state.todaysTasks.length, state.completedTasks.length]);
+
+  const calculateHoursWorkedToday = useCallback(async () => {
+    if (state.clockInTime) {
+      const hoursWorked = (Date.now() - state.clockInTime.getTime()) / (1000 * 60 * 60);
+      setState(prev => ({ ...prev, hoursWorkedToday: hoursWorked }));
+    }
+  }, [state.clockInTime]);
+
+  const updateHeroTileProperties = useCallback(async () => {
+    const nextTask = state.todaysTasks
+      .filter(task => !task.isCompleted)
+      .sort((a, b) => (a.dueDate?.getTime() || 0) - (b.dueDate?.getTime() || 0))[0];
+    
+    setState(prev => ({
+      ...prev,
+      heroNextTask: nextTask,
+      weatherHint: prev.weatherSnapshot.guidance
+    }));
+  }, [state.todaysTasks, state.weatherSnapshot.guidance]);
+
+  const toggleIntelligencePanel = useCallback(() => {
+    setState(prev => ({ ...prev, intelligencePanelExpanded: !prev.intelligencePanelExpanded }));
+  }, []);
+
+  const loadIntelligenceInsights = useCallback(async () => {
+    try {
+      const insights = await container.intelligence.getWorkerInsights(workerId);
+      setState(prev => ({ ...prev, currentInsights: insights }));
+    } catch (error) {
+      console.error('Failed to load intelligence insights:', error);
+    }
+  }, [container, workerId]);
+
+  const updateMapRegion = useCallback(() => {
+    if (state.assignedBuildings.length === 0) return;
+    
+    const coordinates = state.assignedBuildings.map(b => b.coordinate);
+    const minLat = Math.min(...coordinates.map(c => c.latitude));
+    const maxLat = Math.max(...coordinates.map(c => c.latitude));
+    const minLon = Math.min(...coordinates.map(c => c.longitude));
+    const maxLon = Math.max(...coordinates.map(c => c.longitude));
+    
+    const center = {
+      latitude: (minLat + maxLat) / 2,
+      longitude: (minLon + maxLon) / 2
+    };
+    
+    const span = {
+      latitudeDelta: Math.max(0.008, (maxLat - minLat) * 1.3),
+      longitudeDelta: Math.max(0.008, (maxLon - minLon) * 1.3)
+    };
+    
+    setState(prev => ({
+      ...prev,
+      mapRegion: { center, span }
+    }));
+  }, [state.assignedBuildings]);
+
+  const setMapRegion = useCallback((region: any) => {
+    setState(prev => ({ ...prev, mapRegion: region }));
+  }, []);
+
   // MARK: - Helper Methods
   
   const loadWorkerCapabilities = async (workerId: string): Promise<WorkerCapabilities> => {
@@ -801,14 +1314,41 @@ export function useWorkerDashboardViewModel(
     selectBuilding,
     loadDashboardData,
     refreshData,
+    loadInitialData,
     startTask,
     completeTask,
     updateTaskStatus,
+    toggleTaskCompletion,
+    getPhotoRequirement,
+    createPhotoEvidenceForTask,
     clockIn,
     clockOut,
+    reportIssue,
+    emergencyCall,
     logVendorAccess,
+    showVendorAccessLog,
+    hideVendorAccessLog,
+    addDailyNote,
+    showAddNote,
+    hideAddNote,
+    loadDailyNotes,
+    createSupplyRequest,
+    showInventoryRequest,
+    hideInventoryRequest,
+    loadInventoryData,
+    loadLowStockAlerts,
+    loadWeatherForBuilding,
+    getBuildingWeatherGuidance,
+    calculateMetrics,
+    calculateHoursWorkedToday,
+    updateHeroTileProperties,
+    toggleIntelligencePanel,
+    loadIntelligenceInsights,
+    updateMapRegion,
+    setMapRegion,
     toggleCompactMode,
     toggleWeatherStrip,
-    setDarkMode
+    setDarkMode,
+    setHeroExpanded
   };
 }

@@ -2,21 +2,98 @@
  * @cyntientops/design-tokens
  * 
  * GlassButton Component
- * Glass morphism button component
+ * Mirrors: CyntientOps/Components/Glass/GlassButton.swift
+ * Glass morphism button with exact SwiftUI implementation
  */
 
 import React from 'react';
 import { TouchableOpacity, Text, ViewStyle, TextStyle, StyleSheet } from 'react-native';
-import { Colors, Spacing, BorderRadius, ComponentShadows, Typography } from '../tokens';
+import { Colors, Spacing, BorderRadius, ComponentShadows, Typography, GlassIntensity, GlassIntensityConfigs } from '../tokens';
+
+// MARK: - Glass Button Style (matching SwiftUI exactly)
+export enum GlassButtonStyle {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  TERTIARY = 'tertiary',
+  DESTRUCTIVE = 'destructive',
+}
+
+export interface GlassButtonStyleConfig {
+  baseColor: string;
+  textColor: string;
+  intensity: GlassIntensity;
+}
+
+export const GlassButtonStyleConfigs: Record<GlassButtonStyle, GlassButtonStyleConfig> = {
+  [GlassButtonStyle.PRIMARY]: {
+    baseColor: Colors.primaryAction,
+    textColor: Colors.primaryText,
+    intensity: GlassIntensity.REGULAR,
+  },
+  [GlassButtonStyle.SECONDARY]: {
+    baseColor: Colors.secondaryText,
+    textColor: Colors.primaryText,
+    intensity: GlassIntensity.THIN,
+  },
+  [GlassButtonStyle.TERTIARY]: {
+    baseColor: 'transparent',
+    textColor: Colors.primaryText,
+    intensity: GlassIntensity.ULTRA_THIN,
+  },
+  [GlassButtonStyle.DESTRUCTIVE]: {
+    baseColor: Colors.critical,
+    textColor: Colors.primaryText,
+    intensity: GlassIntensity.REGULAR,
+  },
+};
+
+// MARK: - Glass Button Size (matching SwiftUI exactly)
+export enum GlassButtonSize {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  LARGE = 'large',
+}
+
+export interface GlassButtonSizeConfig {
+  paddingHorizontal: number;
+  paddingVertical: number;
+  fontSize: number;
+  fontWeight: string;
+  cornerRadius: number;
+}
+
+export const GlassButtonSizeConfigs: Record<GlassButtonSize, GlassButtonSizeConfig> = {
+  [GlassButtonSize.SMALL]: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    fontSize: 14,
+    fontWeight: '500',
+    cornerRadius: 12,
+  },
+  [GlassButtonSize.MEDIUM]: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    fontSize: 16,
+    fontWeight: '500',
+    cornerRadius: 16,
+  },
+  [GlassButtonSize.LARGE]: {
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    fontSize: 18,
+    fontWeight: '600',
+    cornerRadius: 20,
+  },
+};
 
 export interface GlassButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'danger';
-  size?: 'small' | 'medium' | 'large';
+  style?: GlassButtonStyle;
+  size?: GlassButtonSize;
   disabled?: boolean;
   loading?: boolean;
-  style?: ViewStyle;
+  customStyle?: ViewStyle;
   textStyle?: TextStyle;
   fullWidth?: boolean;
 }
@@ -24,100 +101,48 @@ export interface GlassButtonProps {
 export const GlassButton: React.FC<GlassButtonProps> = ({
   title,
   onPress,
-  variant = 'primary',
-  size = 'medium',
+  style = GlassButtonStyle.PRIMARY,
+  size = GlassButtonSize.MEDIUM,
   disabled = false,
   loading = false,
-  style,
+  customStyle,
   textStyle,
   fullWidth = false,
 }) => {
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'primary':
-        return {
-          backgroundColor: Colors.role.worker.primary,
-          borderColor: Colors.role.worker.primary,
-          textColor: Colors.text.primary,
-        };
-      case 'secondary':
-        return {
-          backgroundColor: Colors.glass.regular,
-          borderColor: Colors.border.medium,
-          textColor: Colors.text.primary,
-        };
-      case 'tertiary':
-        return {
-          backgroundColor: 'transparent',
-          borderColor: Colors.border.light,
-          textColor: Colors.text.secondary,
-        };
-      case 'danger':
-        return {
-          backgroundColor: Colors.status.error,
-          borderColor: Colors.status.error,
-          textColor: Colors.text.primary,
-        };
-      default:
-        return {
-          backgroundColor: Colors.role.worker.primary,
-          borderColor: Colors.role.worker.primary,
-          textColor: Colors.text.primary,
-        };
-    }
-  };
-
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return {
-          paddingHorizontal: Spacing.md,
-          paddingVertical: Spacing.sm,
-          fontSize: Typography.labelMedium.fontSize,
-          fontWeight: Typography.labelMedium.fontWeight,
-        };
-      case 'large':
-        return {
-          paddingHorizontal: Spacing.xl,
-          paddingVertical: Spacing.lg,
-          fontSize: Typography.titleMedium.fontSize,
-          fontWeight: Typography.titleMedium.fontWeight,
-        };
-      default: // medium
-        return {
-          paddingHorizontal: Spacing.lg,
-          paddingVertical: Spacing.md,
-          fontSize: Typography.labelLarge.fontSize,
-          fontWeight: Typography.labelLarge.fontWeight,
-        };
-    }
-  };
-
-  const variantStyles = getVariantStyles();
-  const sizeStyles = getSizeStyles();
+  const styleConfig = GlassButtonStyleConfigs[style];
+  const sizeConfig = GlassButtonSizeConfigs[size];
+  const intensityConfig = GlassIntensityConfigs[styleConfig.intensity];
 
   const buttonStyle: ViewStyle = {
-    backgroundColor: variantStyles.backgroundColor,
-    borderColor: variantStyles.borderColor,
+    backgroundColor: styleConfig.baseColor === 'transparent' 
+      ? `rgba(255, 255, 255, ${intensityConfig.opacity})`
+      : styleConfig.baseColor,
+    borderColor: styleConfig.baseColor === 'transparent'
+      ? `rgba(255, 255, 255, ${intensityConfig.strokeOpacity})`
+      : styleConfig.baseColor,
     borderWidth: 1,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: sizeStyles.paddingHorizontal,
-    paddingVertical: sizeStyles.paddingVertical,
+    borderRadius: sizeConfig.cornerRadius,
+    paddingHorizontal: sizeConfig.paddingHorizontal,
+    paddingVertical: sizeConfig.paddingVertical,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 44, // Minimum touch target
-    ...ComponentShadows.button,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: intensityConfig.shadowRadius,
+    elevation: 8,
     ...(fullWidth && { width: '100%' }),
     ...(disabled && {
       opacity: 0.5,
     }),
-    ...style,
+    ...customStyle,
   };
 
   const textStyleCombined: TextStyle = {
-    color: variantStyles.textColor,
-    fontSize: sizeStyles.fontSize,
-    fontWeight: sizeStyles.fontWeight,
+    color: styleConfig.textColor,
+    fontSize: sizeConfig.fontSize,
+    fontWeight: sizeConfig.fontWeight as any,
     textAlign: 'center',
     ...textStyle,
   };
@@ -136,19 +161,60 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
   );
 };
 
-// Button variants for easy access
+// MARK: - Glass Button Presets (matching SwiftUI GlassButton.swift)
+export const GlassButtonPresets = {
+  // Primary button with regular glass effect
+  primary: {
+    style: GlassButtonStyle.PRIMARY,
+    size: GlassButtonSize.MEDIUM,
+  },
+  
+  // Secondary button with thin glass effect
+  secondary: {
+    style: GlassButtonStyle.SECONDARY,
+    size: GlassButtonSize.MEDIUM,
+  },
+  
+  // Tertiary button with minimal glass effect
+  tertiary: {
+    style: GlassButtonStyle.TERTIARY,
+    size: GlassButtonSize.MEDIUM,
+  },
+  
+  // Destructive button for dangerous actions
+  destructive: {
+    style: GlassButtonStyle.DESTRUCTIVE,
+    size: GlassButtonSize.MEDIUM,
+  },
+  
+  // Small primary button
+  primarySmall: {
+    style: GlassButtonStyle.PRIMARY,
+    size: GlassButtonSize.SMALL,
+  },
+  
+  // Large primary button
+  primaryLarge: {
+    style: GlassButtonStyle.PRIMARY,
+    size: GlassButtonSize.LARGE,
+  },
+} as const;
+
+export type GlassButtonPreset = keyof typeof GlassButtonPresets;
+
+// Legacy variants for backward compatibility
 export const GlassButtonVariants = {
   primary: {
-    variant: 'primary' as const,
+    style: GlassButtonStyle.PRIMARY,
   },
   secondary: {
-    variant: 'secondary' as const,
+    style: GlassButtonStyle.SECONDARY,
   },
   tertiary: {
-    variant: 'tertiary' as const,
+    style: GlassButtonStyle.TERTIARY,
   },
   danger: {
-    variant: 'danger' as const,
+    style: GlassButtonStyle.DESTRUCTIVE,
   },
 } as const;
 

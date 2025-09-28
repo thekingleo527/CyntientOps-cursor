@@ -8350,6 +8350,11 @@
         "source": "context-engines",
         "target": "npm:typescript",
         "type": "static"
+      },
+      {
+        "source": "context-engines",
+        "target": "domain-schema",
+        "type": "static"
       }
     ],
     "offline-support": [
@@ -8395,6 +8400,41 @@
       {
         "source": "business-core",
         "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "database",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "api-clients",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "managers",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "realtime-sync",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "offline-support",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "intelligence-services",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "domain-schema",
         "type": "static"
       }
     ],
@@ -8454,6 +8494,16 @@
         "source": "ui-components",
         "target": "business-core",
         "type": "dynamic"
+      },
+      {
+        "source": "ui-components",
+        "target": "design-tokens",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
+        "target": "context-engines",
+        "type": "static"
       }
     ],
     "api-clients": [

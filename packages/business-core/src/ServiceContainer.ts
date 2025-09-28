@@ -76,6 +76,27 @@ export class ServiceContainer {
   private _metrics: any | null = null; // TODO: Implement BuildingMetricsService
   private _compliance: any | null = null; // TODO: Implement ComplianceService
   private _webSocket: WebSocketManager | null = null;
+  private _notes: any | null = null; // TODO: Implement NotesService
+  private _inventory: any | null = null; // TODO: Implement InventoryService
+  private _weather: any | null = null; // TODO: Implement WeatherService
+  private _vendorAccess: any | null = null; // TODO: Implement VendorAccessService
+  private _alerts: any | null = null; // TODO: Implement AlertsService
+  private _system: any | null = null; // TODO: Implement SystemService
+  
+  // Building Detail Services
+  private _buildingDetailsCatalog: any | null = null;
+  private _buildingMetricsCatalog: any | null = null;
+  private _buildingTasksCatalog: any | null = null;
+  private _buildingContactsCatalog: any | null = null;
+  private _buildingActivityCatalog: any | null = null;
+  private _buildingInventoryCatalog: any | null = null;
+  private _buildingWorkersCatalog: any | null = null;
+  private _issueReportingCatalog: any | null = null;
+  private _supplyRequestCatalog: any | null = null;
+  private _photoCatalog: any | null = null;
+  private _nyc: any | null = null; // TODO: Implement NYCService
+  private _photos: any | null = null; // TODO: Implement PhotosService
+  private _analytics: any | null = null; // TODO: Implement AnalyticsService
   
   // MARK: - Layer 3: Intelligence (ASYNC INIT)
   private _intelligence: IntelligenceService | null = null;
@@ -267,6 +288,310 @@ export class ServiceContainer {
       this._buildingInfrastructureCatalog = BuildingInfrastructureCatalog.getInstance(this.database);
     }
     return this._buildingInfrastructureCatalog;
+  }
+
+  // MARK: - Building Detail Services (for useBuildingDetailViewModel)
+
+  public get buildingDetailsCatalog(): any {
+    if (!this._buildingDetailsCatalog) {
+      // TODO: Implement BuildingDetailsCatalog
+      this._buildingDetailsCatalog = {
+        getBuildingDetails: (buildingId: string) => ({
+          id: buildingId,
+          name: 'Sample Building',
+          address: '123 Main St',
+          type: 'Residential',
+          size: 50000,
+          yearBuilt: 2020,
+          contractType: 'Standard',
+          rating: 'A',
+        }),
+        updateBuildingDetails: async (buildingId: string, updates: any) => {
+          console.log('Updating building details:', buildingId, updates);
+        },
+      };
+    }
+    return this._buildingDetailsCatalog;
+  }
+
+  public get buildingMetricsCatalog(): any {
+    if (!this._buildingMetricsCatalog) {
+      // TODO: Implement BuildingMetricsCatalog
+      this._buildingMetricsCatalog = {
+        getBuildingMetrics: (buildingId: string) => ({
+          efficiencyScore: 85,
+          complianceScore: 'A',
+          complianceStatus: 'compliant',
+          openIssues: 2,
+          violations: 0,
+        }),
+      };
+    }
+    return this._buildingMetricsCatalog;
+  }
+
+  public get buildingTasksCatalog(): any {
+    if (!this._buildingTasksCatalog) {
+      // TODO: Implement BuildingTasksCatalog
+      this._buildingTasksCatalog = {
+        getBuildingTasks: (buildingId: string) => [
+          {
+            id: '1',
+            title: 'Daily Cleaning',
+            status: 'completed',
+            priority: 'medium',
+            scheduledAt: new Date().toISOString(),
+            completedAt: new Date().toISOString(),
+            dueDate: new Date().toISOString(),
+          },
+          {
+            id: '2',
+            title: 'Maintenance Check',
+            status: 'pending',
+            priority: 'high',
+            scheduledAt: new Date().toISOString(),
+            dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          },
+        ],
+      };
+    }
+    return this._buildingTasksCatalog;
+  }
+
+  public get buildingContactsCatalog(): any {
+    if (!this._buildingContactsCatalog) {
+      // TODO: Implement BuildingContactsCatalog
+      this._buildingContactsCatalog = {
+        getBuildingContacts: (buildingId: string) => [
+          {
+            id: '1',
+            name: 'John Smith',
+            role: 'Building Manager',
+            phone: '(555) 123-4567',
+            isPrimary: true,
+          },
+          {
+            id: '2',
+            name: 'Emergency Contact',
+            role: '24/7 Emergency',
+            phone: '(212) 555-0911',
+            isPrimary: false,
+          },
+        ],
+      };
+    }
+    return this._buildingContactsCatalog;
+  }
+
+  public get buildingActivityCatalog(): any {
+    if (!this._buildingActivityCatalog) {
+      // TODO: Implement BuildingActivityCatalog
+      this._buildingActivityCatalog = {
+        getBuildingActivity: (buildingId: string) => [
+          {
+            id: '1',
+            type: 'taskCompleted',
+            description: 'Daily cleaning completed',
+            workerName: 'Jane Doe',
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          },
+          {
+            id: '2',
+            type: 'photoAdded',
+            description: 'Photo evidence added for maintenance task',
+            workerName: 'Bob Johnson',
+            timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          },
+        ],
+      };
+    }
+    return this._buildingActivityCatalog;
+  }
+
+  public get buildingInventoryCatalog(): any {
+    if (!this._buildingInventoryCatalog) {
+      // TODO: Implement BuildingInventoryCatalog
+      this._buildingInventoryCatalog = {
+        getBuildingInventory: (buildingId: string) => [
+          {
+            id: '1',
+            name: 'Cleaning Supplies',
+            category: 'cleaning',
+            quantity: 5,
+            minThreshold: 10,
+          },
+          {
+            id: '2',
+            name: 'Maintenance Tools',
+            category: 'maintenance',
+            quantity: 15,
+            minThreshold: 5,
+          },
+        ],
+      };
+    }
+    return this._buildingInventoryCatalog;
+  }
+
+  public get buildingWorkersCatalog(): any {
+    if (!this._buildingWorkersCatalog) {
+      // TODO: Implement BuildingWorkersCatalog
+      this._buildingWorkersCatalog = {
+        getBuildingWorkers: (buildingId: string) => [
+          {
+            id: '1',
+            name: 'Jane Doe',
+            isOnSite: true,
+            role: 'Cleaning Specialist',
+          },
+          {
+            id: '2',
+            name: 'Bob Johnson',
+            isOnSite: false,
+            role: 'Maintenance Technician',
+          },
+        ],
+      };
+    }
+    return this._buildingWorkersCatalog;
+  }
+
+  public get issueReportingCatalog(): any {
+    if (!this._issueReportingCatalog) {
+      // TODO: Implement IssueReportingCatalog
+      this._issueReportingCatalog = {
+        reportIssue: async (issue: any) => {
+          console.log('Reporting issue:', issue);
+        },
+      };
+    }
+    return this._issueReportingCatalog;
+  }
+
+  public get supplyRequestCatalog(): any {
+    if (!this._supplyRequestCatalog) {
+      // TODO: Implement SupplyRequestCatalog
+      this._supplyRequestCatalog = {
+        requestSupplies: async (supplies: any) => {
+          console.log('Requesting supplies:', supplies);
+        },
+      };
+    }
+    return this._supplyRequestCatalog;
+  }
+
+  public get photoCatalog(): any {
+    if (!this._photoCatalog) {
+      // TODO: Implement PhotoCatalog
+      this._photoCatalog = {
+        addPhoto: async (photo: any) => {
+          console.log('Adding photo:', photo);
+        },
+      };
+    }
+    return this._photoCatalog;
+  }
+
+  // MARK: - Additional Services for Enhanced ViewModels
+
+  public get notes(): any {
+    if (!this._notes) {
+      // TODO: Implement NotesService
+      this._notes = {
+        addDailyNote: async (note: any) => console.log('Adding daily note:', note),
+        getDailyNotes: async (buildingId: string) => []
+      };
+    }
+    return this._notes;
+  }
+
+  public get inventory(): any {
+    if (!this._inventory) {
+      // TODO: Implement InventoryService
+      this._inventory = {
+        createSupplyRequest: async (request: any) => console.log('Creating supply request:', request),
+        getInventoryUsage: async (buildingId: string) => [],
+        getLowStockAlerts: async (buildingId: string) => []
+      };
+    }
+    return this._inventory;
+  }
+
+  public get weather(): any {
+    if (!this._weather) {
+      // TODO: Implement WeatherService
+      this._weather = {
+        getWeatherForBuilding: async (buildingId: string) => ({ outdoorWorkRisk: 'low' }),
+        getBuildingWeatherGuidance: async (buildingId: string) => []
+      };
+    }
+    return this._weather;
+  }
+
+  public get vendorAccess(): any {
+    if (!this._vendorAccess) {
+      // TODO: Implement VendorAccessService
+      this._vendorAccess = {
+        logAccess: async (entry: any) => console.log('Logging vendor access:', entry),
+        getRecentAccess: async (workerId: string, limit: number) => []
+      };
+    }
+    return this._vendorAccess;
+  }
+
+  public get alerts(): any {
+    if (!this._alerts) {
+      // TODO: Implement AlertsService
+      this._alerts = {
+        getCriticalAlerts: async () => []
+      };
+    }
+    return this._alerts;
+  }
+
+  public get system(): any {
+    if (!this._system) {
+      // TODO: Implement SystemService
+      this._system = {
+        getSystemHealth: async () => ({ status: 'healthy' })
+      };
+    }
+    return this._system;
+  }
+
+  public get nyc(): any {
+    if (!this._nyc) {
+      // TODO: Implement NYCService
+      this._nyc = {
+        getHPDViolations: async (buildingId: string) => [],
+        getDOBPermits: async (buildingId: string) => [],
+        getDSNYSchedule: async (buildingId: string) => [],
+        getDSNYViolations: async (buildingId: string) => [],
+        getLL97Emissions: async (buildingId: string) => []
+      };
+    }
+    return this._nyc;
+  }
+
+  public get photos(): any {
+    if (!this._photos) {
+      // TODO: Implement PhotosService
+      this._photos = {
+        getRecentPhotos: async (buildingId: string, limit: number) => []
+      };
+    }
+    return this._photos;
+  }
+
+  public get analytics(): any {
+    if (!this._analytics) {
+      // TODO: Implement AnalyticsService
+      this._analytics = {
+        generatePortfolioReport: async (clientId: string) => ({}),
+        exportBuildingData: async (buildingId: string) => ({})
+      };
+    }
+    return this._analytics;
   }
   
   // DashboardSyncService compatibility - delegate to RealTimeOrchestrator

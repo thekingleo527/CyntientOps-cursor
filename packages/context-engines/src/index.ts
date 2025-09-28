@@ -9,6 +9,10 @@ export { WorkerViewModel } from './WorkerViewModel';
 export { ClientViewModel } from './ClientViewModel';
 export { AdminViewModel } from './AdminViewModel';
 
+// Context Engines
+export { WorkerContextEngine } from './WorkerContextEngine';
+export { AdminContextEngine } from './AdminContextEngine';
+
 export type { 
   WorkerDashboardState,
   WorkerAction

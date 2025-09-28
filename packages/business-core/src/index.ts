@@ -14,6 +14,10 @@ export { ComplianceService } from './services/ComplianceService';
 export { AuthService } from './services/AuthService';
 export { RouteManager } from './services/RouteManager';
 export { NovaAPIService } from './services/NovaAPIService';
+export { PerformanceOptimizer } from './services/PerformanceOptimizer';
+export { AnalyticsEngine } from './services/AnalyticsEngine';
+export { SecurityManager } from './services/SecurityManager';
+export { ProductionManager } from './services/ProductionManager';
 export { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 
 // Managers

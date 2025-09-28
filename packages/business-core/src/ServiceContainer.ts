@@ -25,6 +25,10 @@ import { AuthService } from './services/AuthService';
 import { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 import { RouteManager } from './services/RouteManager';
 import { NovaAPIService } from './services/NovaAPIService';
+import { PerformanceOptimizer } from './services/PerformanceOptimizer';
+import { AnalyticsEngine } from './services/AnalyticsEngine';
+import { SecurityManager } from './services/SecurityManager';
+import { ProductionManager } from './services/ProductionManager';
 
 // Types
 import { 
@@ -63,6 +67,10 @@ export class ServiceContainer {
   private _realTimeOrchestrator: RealTimeOrchestrator | null = null;
   private _routeManager: RouteManager | null = null;
   private _novaAPI: NovaAPIService | null = null;
+  private _performanceOptimizer: PerformanceOptimizer | null = null;
+  private _analyticsEngine: AnalyticsEngine | null = null;
+  private _securityManager: SecurityManager | null = null;
+  private _productionManager: ProductionManager | null = null;
   private _metrics: any | null = null; // TODO: Implement BuildingMetricsService
   private _compliance: any | null = null; // TODO: Implement ComplianceService
   private _webSocket: WebSocketManager | null = null;
@@ -222,6 +230,34 @@ export class ServiceContainer {
       this._novaAPI = NovaAPIService.getInstance(this.database);
     }
     return this._novaAPI;
+  }
+
+  public get performanceOptimizer(): PerformanceOptimizer {
+    if (!this._performanceOptimizer) {
+      this._performanceOptimizer = PerformanceOptimizer.getInstance(this.database);
+    }
+    return this._performanceOptimizer;
+  }
+
+  public get analyticsEngine(): AnalyticsEngine {
+    if (!this._analyticsEngine) {
+      this._analyticsEngine = AnalyticsEngine.getInstance(this.database);
+    }
+    return this._analyticsEngine;
+  }
+
+  public get securityManager(): SecurityManager {
+    if (!this._securityManager) {
+      this._securityManager = SecurityManager.getInstance(this.database);
+    }
+    return this._securityManager;
+  }
+
+  public get productionManager(): ProductionManager {
+    if (!this._productionManager) {
+      this._productionManager = ProductionManager.getInstance(this.database);
+    }
+    return this._productionManager;
   }
   
   // DashboardSyncService compatibility - delegate to RealTimeOrchestrator

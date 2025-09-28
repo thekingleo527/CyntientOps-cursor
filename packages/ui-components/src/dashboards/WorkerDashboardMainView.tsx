@@ -13,6 +13,9 @@ import { TaskTimelineView } from '../timeline/TaskTimelineView';
 import { WeatherBasedHybridCard } from '../weather/WeatherBasedHybridCard';
 import { BuildingMapView } from '../maps/BuildingMapView';
 import { EmergencySystem } from '../emergency/EmergencySystem';
+import { WorkerHeaderV3B, WorkerHeaderRoute } from '../headers/WorkerHeaderV3B';
+import { MapRevealContainer } from '../containers/MapRevealContainer';
+import { NovaAIChatModal } from '../modals/NovaAIChatModal';
 
 export interface WorkerDashboardMainViewProps {
   workerId: string;
@@ -73,14 +76,30 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   const [dashboardData, setDashboardData] = useState<WorkerDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [heroCardHeight] = useState(new Animated.Value(280));
-  const [intelligencePanelExpanded, setIntelligencePanelExpanded] = useState(false);
-  const [selectedNovaTab, setSelectedNovaTab] = useState<'routines' | 'insights' | 'alerts' | 'predictions'>('routines');
-  const [showFullScreenTab, setShowFullScreenTab] = useState<string | null>(null);
+  const [showNovaAIModal, setShowNovaAIModal] = useState(false);
+  const [isPortfolioMapRevealed, setIsPortfolioMapRevealed] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     loadWorkerDashboardData();
   }, [workerId]);
+
+  const handleHeaderRoute = (route: WorkerHeaderRoute) => {
+    switch (route) {
+      case WorkerHeaderRoute.mainMenu:
+        // Handle main menu
+        break;
+      case WorkerHeaderRoute.profile:
+        // Handle profile
+        break;
+      case WorkerHeaderRoute.clockAction:
+        // Handle clock action
+        break;
+      case WorkerHeaderRoute.novaChat:
+        setShowNovaAIModal(true);
+        break;
+    }
+  };
 
   const loadWorkerDashboardData = async () => {
     setIsLoading(true);
@@ -594,6 +613,17 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         onEmergencyReported={onEmergencyReport}
         onMessageSent={onMessageSent}
         onEmergencyAlert={onEmergencyAlert}
+      />
+
+      {/* Nova AI Chat Modal */}
+      <NovaAIChatModal
+        visible={showNovaAIModal}
+        onClose={() => setShowNovaAIModal(false)}
+        workerName={workerName}
+        onSendMessage={(message) => {
+          console.log('Nova AI message:', message);
+          // Handle Nova AI message if needed
+        }}
       />
     </View>
   );

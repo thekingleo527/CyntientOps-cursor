@@ -107,5 +107,16 @@ export { default as ClientHeroCard } from './cards/ClientHeroCard';
 // Admin Components
 export { default as AdminWorkerManagementView } from './admin/AdminWorkerManagementView';
 
+// Header Components
+export { default as WorkerHeaderV3B } from './headers/WorkerHeaderV3B';
+export { default as ClientHeaderV3B } from './headers/ClientHeaderV3B';
+export { default as AdminHeaderV3B } from './headers/AdminHeaderV3B';
+
+// Container Components
+export { default as MapRevealContainer } from './containers/MapRevealContainer';
+
+// Modal Components
+export { default as NovaAIChatModal } from './modals/NovaAIChatModal';
+
 // Re-export design tokens for convenience
 export * from '@cyntientops/design-tokens';

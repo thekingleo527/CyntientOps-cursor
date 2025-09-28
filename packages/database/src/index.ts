@@ -1,30 +1,27 @@
 /**
- * @cyntientops/database
- * 
- * Database layer for CyntientOps
- * Mirrors GRDBManager.swift functionality
+ * 🗄️ Database Package - Main Export
+ * Mirrors: CyntientOps/Core/Database/GRDBManager.swift
+ * Purpose: SQLite database layer with GRDB-like functionality
  */
 
 export { DatabaseManager } from './DatabaseManager';
-export type { 
-  DatabaseConfig, 
-  DatabaseStats, 
-  PhotoEvidence, 
-  WorkerBuildingAssignment, 
-  DSnyScheduleCache 
-} from './DatabaseManager';
+export { DatabaseSchema } from './DatabaseSchema';
+export { MigrationManager } from './MigrationManager';
+export { QueryBuilder } from './QueryBuilder';
 
-// Database initialization helper
-export async function initializeDatabase(config: {
-  path: string;
-  enableWAL?: boolean;
-  enableForeignKeys?: boolean;
-  enableJournalMode?: boolean;
-}): Promise<DatabaseManager> {
-  const dbManager = DatabaseManager.getInstance(config);
-  await dbManager.initialize();
-  return dbManager;
-}
+// Types
+export type {
+  DatabaseConfig,
+  DatabaseConnection,
+  QueryResult,
+  Migration,
+  TableSchema
+} from './types';
 
-// Default export
-export default DatabaseManager;
+// Utilities
+export { 
+  validateDatabaseIntegrity,
+  createBackup,
+  restoreFromBackup,
+  getDatabaseStats
+} from './utils';

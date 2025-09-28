@@ -48,14 +48,13 @@ export interface TaskWeatherAdjustment {
 }
 
 export class WeatherAPIClient {
-  private apiKey: string;
-  private baseURL: string = 'https://api.openweathermap.org/data/2.5';
+  private baseURL: string = 'https://api.open-meteo.com/v1';
   private client: AxiosInstance;
   private latitude: number = 40.7128; // NYC default
   private longitude: number = -74.0060; // NYC default
 
-  constructor(apiKey: string, latitude?: number, longitude?: number) {
-    this.apiKey = apiKey;
+  constructor(latitude?: number, longitude?: number) {
+    // OpenMeteo doesn't require an API key
     if (latitude) this.latitude = latitude;
     if (longitude) this.longitude = longitude;
     
@@ -70,12 +69,12 @@ export class WeatherAPIClient {
    */
   public async getCurrentWeather(): Promise<WeatherSnapshot> {
     try {
-      const response = await this.client.get('/weather', {
+      const response = await this.client.get('/forecast', {
         params: {
-          lat: this.latitude,
-          lon: this.longitude,
-          appid: this.apiKey,
-          units: 'imperial'
+          latitude: this.latitude,
+          longitude: this.longitude,
+          current: 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m',
+          timezone: 'America/New_York'
         }
       });
 
@@ -94,10 +93,11 @@ export class WeatherAPIClient {
     try {
       const response = await this.client.get('/forecast', {
         params: {
-          lat: this.latitude,
-          lon: this.longitude,
-          appid: this.apiKey,
-          units: 'imperial'
+          latitude: this.latitude,
+          longitude: this.longitude,
+          daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code,wind_speed_10m_max',
+          timezone: 'America/New_York',
+          forecast_days: 5
         }
       });
 
@@ -276,13 +276,14 @@ export class WeatherAPIClient {
    * Transform current weather API response
    */
   private transformCurrentWeather(data: any): WeatherSnapshot {
+    const current = data.current;
     return {
       timestamp: new Date(),
-      temperature: Math.round(data.main.temp),
-      weatherCode: data.weather[0].id,
-      windSpeed: data.wind.speed,
-      description: data.weather[0].description,
-      outdoorWorkRisk: this.calculateOutdoorWorkRisk(data)
+      temperature: Math.round(current.temperature_2m),
+      weatherCode: current.weather_code,
+      windSpeed: current.wind_speed_10m,
+      description: this.getWeatherDescription(current.weather_code),
+      outdoorWorkRisk: this.calculateOutdoorWorkRisk(current)
     };
   }
 
@@ -290,56 +291,144 @@ export class WeatherAPIClient {
    * Transform forecast API response
    */
   private transformForecast(data: any): WeatherForecast[] {
-    const dailyForecasts: { [key: string]: any[] } = {};
+    const daily = data.daily;
+    const forecasts: WeatherForecast[] = [];
     
-    // Group forecasts by day
-    data.list.forEach((item: any) => {
-      const date = new Date(item.dt * 1000);
-      const dateKey = date.toDateString();
+    // OpenMeteo returns daily data arrays
+    for (let i = 0; i < daily.time.length; i++) {
+      const date = new Date(daily.time[i]);
+      const maxTemp = daily.temperature_2m_max[i];
+      const minTemp = daily.temperature_2m_min[i];
+      const weatherCode = daily.weather_code[i];
+      const windSpeed = daily.wind_speed_10m_max[i];
+      const precipitation = daily.precipitation_sum[i] || 0;
       
-      if (!dailyForecasts[dateKey]) {
-        dailyForecasts[dateKey] = [];
-      }
-      dailyForecasts[dateKey].push(item);
-    });
-
-    // Create daily summaries
-    return Object.entries(dailyForecasts).map(([dateKey, items]) => {
-      const temperatures = items.map(item => item.main.temp);
-      const weatherCodes = items.map(item => item.weather[0].id);
-      const windSpeeds = items.map(item => item.wind.speed);
-      const humidities = items.map(item => item.main.humidity);
-      const precipitations = items.map(item => item.rain?.['3h'] || item.snow?.['3h'] || 0);
-
-      return {
-        date: new Date(dateKey),
+      forecasts.push({
+        date,
         temperature: {
-          min: Math.round(Math.min(...temperatures)),
-          max: Math.round(Math.max(...temperatures)),
-          average: Math.round(temperatures.reduce((a, b) => a + b, 0) / temperatures.length)
+          min: Math.round(minTemp),
+          max: Math.round(maxTemp),
+          average: Math.round((maxTemp + minTemp) / 2)
         },
-        weatherCode: weatherCodes[0], // Use first weather code of the day
-        description: items[0].weather[0].description,
-        windSpeed: Math.round(windSpeeds.reduce((a, b) => a + b, 0) / windSpeeds.length),
-        humidity: Math.round(humidities.reduce((a, b) => a + b, 0) / humidities.length),
+        weatherCode,
+        description: this.getWeatherDescription(weatherCode),
+        windSpeed,
+        humidity: 70, // OpenMeteo doesn't provide daily humidity in free tier
         precipitation: {
-          probability: Math.round(items.reduce((sum, item) => sum + (item.pop || 0), 0) / items.length * 100),
-          amount: Math.round(precipitations.reduce((a, b) => a + b, 0) * 10) / 10
+          probability: precipitation > 0 ? 60 : 20, // Estimate based on precipitation amount
+          amount: precipitation
         },
-        outdoorWorkRisk: this.calculateOutdoorWorkRisk(items[0]),
-        recommendations: this.getWeatherRecommendations(items[0])
-      };
-    });
+        outdoorWorkRisk: this.calculateOutdoorWorkRisk({
+          weather_code: weatherCode,
+          wind_speed_10m: windSpeed,
+          precipitation_sum: precipitation
+        }),
+        recommendations: this.generateWeatherRecommendations(weatherCode, windSpeed, precipitation)
+      });
+    }
+    
+    return forecasts;
+  }
+
+  /**
+   * Get weather description from OpenMeteo weather code
+   */
+  private getWeatherDescription(weatherCode: number): string {
+    const descriptions: { [key: number]: string } = {
+      0: 'Clear sky',
+      1: 'Mainly clear',
+      2: 'Partly cloudy',
+      3: 'Overcast',
+      45: 'Fog',
+      48: 'Depositing rime fog',
+      51: 'Light drizzle',
+      53: 'Moderate drizzle',
+      55: 'Dense drizzle',
+      56: 'Light freezing drizzle',
+      57: 'Dense freezing drizzle',
+      61: 'Slight rain',
+      63: 'Moderate rain',
+      65: 'Heavy rain',
+      66: 'Light freezing rain',
+      67: 'Heavy freezing rain',
+      71: 'Slight snow fall',
+      73: 'Moderate snow fall',
+      75: 'Heavy snow fall',
+      77: 'Snow grains',
+      80: 'Slight rain showers',
+      81: 'Moderate rain showers',
+      82: 'Violent rain showers',
+      85: 'Slight snow showers',
+      86: 'Heavy snow showers',
+      95: 'Thunderstorm',
+      96: 'Thunderstorm with slight hail',
+      99: 'Thunderstorm with heavy hail'
+    };
+    
+    return descriptions[weatherCode] || 'Unknown';
+  }
+
+  /**
+   * Generate weather recommendations based on conditions
+   */
+  private generateWeatherRecommendations(weatherCode: number, windSpeed: number, precipitation: number): string[] {
+    const recommendations: string[] = [];
+    
+    // Weather code recommendations
+    if (weatherCode >= 61 && weatherCode <= 67) {
+      recommendations.push('Avoid outdoor work during rain');
+      recommendations.push('Use waterproof equipment if work is necessary');
+    }
+    
+    if (weatherCode >= 71 && weatherCode <= 77) {
+      recommendations.push('Avoid outdoor work during snow');
+      recommendations.push('Clear snow from work areas first');
+    }
+    
+    if (weatherCode >= 80 && weatherCode <= 82) {
+      recommendations.push('Monitor for sudden weather changes');
+      recommendations.push('Have shelter available');
+    }
+    
+    if (weatherCode >= 95 && weatherCode <= 99) {
+      recommendations.push('Postpone outdoor work during thunderstorms');
+      recommendations.push('Seek immediate shelter if caught outside');
+    }
+    
+    // Wind speed recommendations
+    if (windSpeed > 15) {
+      recommendations.push('Secure loose materials and equipment');
+      recommendations.push('Be cautious with ladders and elevated work');
+    }
+    
+    if (windSpeed > 25) {
+      recommendations.push('Consider postponing outdoor work');
+      recommendations.push('Avoid working at heights');
+    }
+    
+    // Precipitation recommendations
+    if (precipitation > 0.1) {
+      recommendations.push('Use non-slip footwear');
+      recommendations.push('Ensure proper drainage in work areas');
+    }
+    
+    if (precipitation > 0.5) {
+      recommendations.push('Consider rescheduling outdoor tasks');
+      recommendations.push('Use appropriate rain gear');
+    }
+    
+    return recommendations.length > 0 ? recommendations : ['Weather conditions are suitable for outdoor work'];
   }
 
   /**
    * Calculate outdoor work risk from weather data
    */
   private calculateOutdoorWorkRisk(weatherData: any): OutdoorWorkRisk {
-    const temperature = weatherData.main.temp;
-    const windSpeed = weatherData.wind.speed;
-    const weatherCode = weatherData.weather[0].id;
-    const precipitation = weatherData.rain?.['3h'] || weatherData.snow?.['3h'] || 0;
+    // Handle both OpenMeteo and legacy formats
+    const temperature = weatherData.temperature_2m || weatherData.main?.temp || 20;
+    const windSpeed = weatherData.wind_speed_10m || weatherData.wind?.speed || 0;
+    const weatherCode = weatherData.weather_code || weatherData.weather?.[0]?.id || 0;
+    const precipitation = weatherData.precipitation_sum || weatherData.rain?.['3h'] || weatherData.snow?.['3h'] || 0;
 
     // Extreme conditions
     if (temperature < 20 || temperature > 95 || windSpeed > 25 || precipitation > 0.5) {

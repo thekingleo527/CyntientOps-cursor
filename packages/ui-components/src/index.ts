@@ -25,5 +25,22 @@ export * from './dashboards/components/TaskDistribution';
 export * from './dashboards/components/BuildingManagement';
 export * from './dashboards/components/PerformanceReports';
 
+// Maps
+export { MapContainer } from './maps/MapContainer';
+export { IntelligencePopover } from './maps/IntelligencePopover';
+export { BuildingMarker } from './maps/BuildingMarker';
+
+// Timeline
+export { TaskTimelineRow } from './timeline/TaskTimelineRow';
+
+// Routines
+export { RoutinePriorityComponent, RoutinePriority, ScheduleType, BuildingRoutine } from './routines/RoutinePriority';
+
+// Weather
+export { WeatherTasksSection } from './weather/WeatherTasksSection';
+
+// Progress
+export { TodaysProgressDetailView } from './progress/TodaysProgressDetailView';
+
 // Re-export design tokens for convenience
 export * from '@cyntientops/design-tokens';

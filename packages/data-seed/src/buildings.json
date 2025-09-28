@@ -210,7 +210,7 @@
   },
   {
     "id": "14",
-    "name": "Rubin Museum (142–148 W 17th)",
+    "name": "Rubin Museum (142–148 W 17th) - CyntientOps HQ",
     "address": "150 West 17th Street, New York, NY 10011",
     "latitude": 40.738012,
     "longitude": -73.995123,
@@ -222,12 +222,12 @@
     "primaryContact": "Museum Operations",
     "contactPhone": "+1-212-555-0014",
     "isActive": true,
-    "normalized_name": "rubin_museum",
-    "aliases": "Rubin Museum,Rubin Museum (142-148 W 17th),Rubin Museum (142–148 W 17th)",
+    "normalized_name": "rubin_museum_hq",
+    "aliases": "Rubin Museum,Rubin Museum (142-148 W 17th),Rubin Museum (142–148 W 17th),CyntientOps HQ,CyntientOps Headquarters",
     "borough": "Manhattan",
     "compliance_score": 0.98,
     "client_id": "RUB",
-    "specialNotes": "Kevin Dutan's primary location - Museum facility requiring specialized care"
+    "specialNotes": "Kevin Dutan's primary location - Museum facility requiring specialized care - Also serves as CyntientOps corporate headquarters"
   },
   {
     "id": "15",
@@ -323,25 +323,6 @@
     "borough": "Manhattan",
     "compliance_score": 0.91,
     "client_id": "SEV"
-  },
-  {
-    "id": "20",
-    "name": "CyntientOps HQ",
-    "address": "Corporate Office, New York, NY 10001",
-    "latitude": 40.748817,
-    "longitude": -73.985428,
-    "imageAssetName": null,
-    "numberOfUnits": 1,
-    "yearBuilt": 2020,
-    "squareFootage": 2500,
-    "managementCompany": "J&M Realty",
-    "primaryContact": "Operations",
-    "contactPhone": "+1-212-555-0020",
-    "isActive": true,
-    "normalized_name": "cyntientops_hq",
-    "borough": "Manhattan",
-    "compliance_score": 1.0,
-    "client_id": "HQ"
   },
   {
     "id": "21",

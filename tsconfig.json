@@ -1,0 +1,66 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": false,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/domain-schema"
+    },
+    {
+      "path": "./packages/design-tokens"
+    },
+    {
+      "path": "./packages/data-seed"
+    },
+    {
+      "path": "./packages/database"
+    },
+    {
+      "path": "./packages/ui-components"
+    },
+    {
+      "path": "./packages/business-core"
+    },
+    {
+      "path": "./packages/api-clients"
+    },
+    {
+      "path": "./packages/managers"
+    },
+    {
+      "path": "./packages/intelligence-services"
+    },
+    {
+      "path": "./packages/context-engines"
+    },
+    {
+      "path": "./packages/command-chains"
+    },
+    {
+      "path": "./packages/offline-support"
+    },
+    {
+      "path": "./packages/realtime-sync"
+    },
+    {
+      "path": "./packages/testing"
+    },
+    {
+      "path": "./apps/mobile-rn"
+    }
+  ]
+}

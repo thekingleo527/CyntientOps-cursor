@@ -5,19 +5,30 @@
  * Mirrors Swift API service architecture
  */
 
-// NYC API Clients
-export { DSNYAPIClient } from './nyc/DSNYAPIClient';
-export { HPDAPIClient } from './nyc/HPDAPIClient';
-export { DOBAPIClient } from './nyc/DOBAPIClient';
+// NYC API Services
+export { NYCAPIService, nycAPIService } from './nyc/NYCAPIService';
+export { NYCComplianceService, nycComplianceService } from './nyc/NYCComplianceService';
+export { NYCDataCoordinator, nycDataCoordinator } from './nyc/NYCDataCoordinator';
 
 // Weather API Client
 export { WeatherAPIClient } from './weather/WeatherAPIClient';
 
-// API Client Types
-export type { DSNYCollectionSchedule, DSNYRouteInfo } from './nyc/DSNYAPIClient';
-export type { HPDViolationDetails, HPDComplianceSummary, HPDInspectionResult } from './nyc/HPDAPIClient';
-export type { DOBPermitDetails, DOBInspectionDetails, DOBComplianceSummary, DOBWorkType } from './nyc/DOBAPIClient';
+// QuickBooks API Client
+export { QuickBooksAPIClient, DEFAULT_QUICKBOOKS_CREDENTIALS } from './quickbooks/QuickBooksAPIClient';
+
+// NYC API Types
+export type { 
+  HPDViolation, 
+  DOBPermit, 
+  DSNYRoute, 
+  LL97Emission,
+  NYCComplianceData,
+  ComplianceSummary,
+  CollectionScheduleSummary,
+  BuildingNYCData
+} from './nyc/NYCDataModels';
 export type { WeatherForecast, WeatherAlert, TaskWeatherAdjustment } from './weather/WeatherAPIClient';
+export type { QuickBooksCredentials, QuickBooksEmployee, QuickBooksTimeEntry, QuickBooksPayrollData } from './quickbooks/QuickBooksAPIClient';
 
 // API Configuration
 export interface APIConfiguration {
@@ -27,26 +38,32 @@ export interface APIConfiguration {
   weatherApiKey: string;
   weatherLatitude?: number;
   weatherLongitude?: number;
+  quickBooksCredentials?: QuickBooksCredentials;
 }
 
 // API Client Manager
 export class APIClientManager {
   private static instance: APIClientManager;
   
-  public readonly dsny: DSNYAPIClient;
-  public readonly hpd: HPDAPIClient;
-  public readonly dob: DOBAPIClient;
+  public readonly nyc: NYCAPIService;
+  public readonly nycCompliance: NYCComplianceService;
+  public readonly nycCoordinator: NYCDataCoordinator;
   public readonly weather: WeatherAPIClient;
+  public readonly quickBooks?: QuickBooksAPIClient;
 
   private constructor(config: APIConfiguration) {
-    this.dsny = new DSNYAPIClient(config.dsnyApiKey);
-    this.hpd = new HPDAPIClient(config.hpdApiKey);
-    this.dob = new DOBAPIClient(config.dobApiKey);
+    this.nyc = nycAPIService;
+    this.nycCompliance = nycComplianceService;
+    this.nycCoordinator = nycDataCoordinator;
     this.weather = new WeatherAPIClient(
       config.weatherApiKey,
       config.weatherLatitude,
       config.weatherLongitude
     );
+    
+    if (config.quickBooksCredentials) {
+      this.quickBooks = new QuickBooksAPIClient(config.quickBooksCredentials);
+    }
   }
 
   public static getInstance(config?: APIConfiguration): APIClientManager {
@@ -67,25 +84,40 @@ export class APIClientManager {
     
     // Test all API connections
     const healthChecks = await Promise.allSettled([
-      this.dsny.getHealthStatus(),
-      this.hpd.getHealthStatus(),
-      this.dob.getHealthStatus(),
+      this.testNYCAPIs(),
       this.weather.getHealthStatus()
     ]);
 
     const results = healthChecks.map((result, index) => {
-      const apiNames = ['DSNY', 'HPD', 'DOB', 'Weather'];
+      const apiNames = ['NYC APIs', 'Weather'];
       if (result.status === 'fulfilled') {
-        console.log(`✅ ${apiNames[index]} API: ${result.value.isHealthy ? 'Healthy' : 'Unhealthy'}`);
+        console.log(`✅ ${apiNames[index]}: ${result.value.isHealthy ? 'Healthy' : 'Unhealthy'}`);
         return { api: apiNames[index], healthy: result.value.isHealthy };
       } else {
-        console.log(`❌ ${apiNames[index]} API: Error`);
+        console.log(`❌ ${apiNames[index]}: Error`);
         return { api: apiNames[index], healthy: false };
       }
     });
 
     const healthyAPIs = results.filter(r => r.healthy).length;
-    console.log(`📊 API Health: ${healthyAPIs}/${results.length} APIs healthy`);
+    console.log(`📊 API Health: ${healthyAPIs}/${results.length} API groups healthy`);
+  }
+
+  /**
+   * Test NYC APIs health
+   */
+  private async testNYCAPIs(): Promise<{ isHealthy: boolean; responseTime: number }> {
+    const startTime = Date.now();
+    try {
+      // Test with a sample building ID
+      const testBbl = '1001234001';
+      await this.nyc.getHPDViolations(testBbl);
+      const responseTime = Date.now() - startTime;
+      return { isHealthy: true, responseTime };
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      return { isHealthy: false, responseTime };
+    }
   }
 
   /**
@@ -100,13 +132,11 @@ export class APIClientManager {
     }>;
   }> {
     const healthChecks = await Promise.allSettled([
-      this.dsny.getHealthStatus(),
-      this.hpd.getHealthStatus(),
-      this.dob.getHealthStatus(),
+      this.testNYCAPIs(),
       this.weather.getHealthStatus()
     ]);
 
-    const apiNames = ['DSNY', 'HPD', 'DOB', 'Weather'];
+    const apiNames = ['NYC APIs', 'Weather'];
     const apis = healthChecks.map((result, index) => {
       if (result.status === 'fulfilled') {
         return {
@@ -135,28 +165,35 @@ export class APIClientManager {
    * Get compliance alerts from all NYC APIs
    */
   public async getComplianceAlerts(buildings: Array<{ id: string; address: string }>): Promise<{
-    hpd: any[];
-    dob: any[];
+    critical: any[];
+    warning: any[];
+    info: any[];
     total: number;
-    critical: number;
+    criticalCount: number;
   }> {
-    const [hpdAlerts, dobAlerts] = await Promise.allSettled([
-      this.hpd.getComplianceAlerts(buildings),
-      this.dob.getPermitAlerts(buildings)
-    ]);
-
-    const hpd = hpdAlerts.status === 'fulfilled' ? hpdAlerts.value : [];
-    const dob = dobAlerts.status === 'fulfilled' ? dobAlerts.value : [];
-
-    const allAlerts = [...hpd, ...dob];
-    const critical = allAlerts.filter(alert => alert.alertType === 'critical').length;
-
-    return {
-      hpd,
-      dob,
-      total: allAlerts.length,
-      critical
-    };
+    try {
+      const buildingIds = buildings.map(b => b.id);
+      const alerts = await this.nycCoordinator.getComplianceAlerts(buildingIds);
+      
+      const allAlerts = [...alerts.critical, ...alerts.warning, ...alerts.info];
+      
+      return {
+        critical: alerts.critical,
+        warning: alerts.warning,
+        info: alerts.info,
+        total: allAlerts.length,
+        criticalCount: alerts.critical.length
+      };
+    } catch (error) {
+      console.error('Error getting compliance alerts:', error);
+      return {
+        critical: [],
+        warning: [],
+        info: [],
+        total: 0,
+        criticalCount: 0
+      };
+    }
   }
 
   /**
@@ -164,7 +201,9 @@ export class APIClientManager {
    */
   public async getCollectionReminders(buildings: Array<{ id: string; address: string }>): Promise<any[]> {
     try {
-      return await this.dsny.getCollectionReminders(buildings);
+      const buildingIds = buildings.map(b => b.id);
+      const schedules = await this.nycCoordinator.getCollectionSchedules(buildingIds);
+      return schedules;
     } catch (error) {
       console.error('Error getting collection reminders:', error);
       return [];

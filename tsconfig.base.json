@@ -1,33 +1,33 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "lib": ["es2020", "dom"],
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "allowJs": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
+    "noFallthroughCasesInSwitch": true,
+    "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "noEmit": true,
     "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@cyntientops/design-tokens": ["packages/design-tokens/src"],
-      "@cyntientops/domain-schema": ["packages/domain-schema/src"],
-      "@cyntientops/business-core": ["packages/business-core/src"],
-      "@cyntientops/api-clients": ["packages/api-clients/src"],
-      "@cyntientops/ui-components": ["packages/ui-components/src"],
-      "@cyntientops/data-seed": ["packages/data-seed/src"]
+      "@cyntientops/*": ["packages/*/src"]
     }
   },
-  "exclude": ["node_modules", "dist", "build", ".next"]
+  "include": [],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage"
+  ]
 }

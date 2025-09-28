@@ -1,0 +1,29 @@
+{
+  "name": "@cyntientops/intelligence-services",
+  "version": "1.0.0",
+  "description": "Intelligence services for CyntientOps - analytics, insights, and AI-powered features",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@cyntientops/domain-schema": "workspace:*",
+    "@cyntientops/database": "workspace:*",
+    "@cyntientops/business-core": "workspace:*",
+    "@cyntientops/api-clients": "workspace:*",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.9.2",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}

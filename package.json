@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "description": "CyntientOps TypeScript/React Native implementation with complete data parity",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": [],
   "scripts": {
     "dev:mobile": "nx run mobile-rn:start",
     "dev:web": "nx run web-dashboard:dev",
@@ -14,7 +11,16 @@
     "build:all": "nx run-many --target=build",
     "build:design-tokens": "nx run design-tokens:build",
     "build:ui-components": "nx run ui-components:build",
+    "build:database": "nx run database:build",
+    "build:managers": "nx run managers:build",
+    "build:intelligence": "nx run intelligence-services:build",
+    "build:context": "nx run context-engines:build",
+    "build:commands": "nx run command-chains:build",
+    "build:offline": "nx run offline-support:build",
+    "build:realtime": "nx run realtime-sync:build",
+    "build:testing": "nx run testing:build",
     "test:all": "nx run-many --target=test",
+    "test:e2e": "nx run testing:test:e2e",
     "lint:all": "nx run-many --target=lint",
     "clean": "nx reset && rm -rf node_modules apps/*/node_modules packages/*/node_modules",
     "install:all": "npm install && npm run --workspaces install"

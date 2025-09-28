@@ -72,5 +72,14 @@ export { default as UnifiedTaskDetailView } from './timeline/UnifiedTaskDetailVi
 // Map Components
 export { default as BuildingMapView } from './maps/BuildingMapView';
 
+// Evidence Components
+export { default as PhotoEvidenceCapture } from './evidence/PhotoEvidenceCapture';
+
+// Reports Components
+export { default as ReportingDashboard } from './reports/ReportingDashboard';
+
+// Emergency Components
+export { default as EmergencySystem } from './emergency/EmergencySystem';
+
 // Re-export design tokens for convenience
 export * from '@cyntientops/design-tokens';

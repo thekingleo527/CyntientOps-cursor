@@ -43,6 +43,12 @@ export class DatabaseManager {
       // Create tables if they don't exist
       await this.createTables();
       
+      // Create indexes for performance
+      await this.createIndexes();
+      
+      // Seed initial data if database is empty
+      await this.seedInitialData();
+      
       console.log('Database initialized successfully');
     } catch (error) {
       console.error('Failed to initialize database:', error);
@@ -73,6 +79,54 @@ export class DatabaseManager {
     }
   }
 
+  private async createIndexes(): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+
+    const indexes = this.schema.getIndexes();
+    
+    for (const index of indexes) {
+      await this.db.execAsync(index);
+    }
+  }
+
+  private async seedInitialData(): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+
+    // Check if data already exists
+    const buildingCount = await this.db.getFirstAsync('SELECT COUNT(*) as count FROM buildings');
+    if (buildingCount && (buildingCount as any).count > 0) {
+      console.log('Database already has data, skipping seed');
+      return;
+    }
+
+    console.log('Seeding initial data...');
+    
+    // Import and seed data
+    const { buildings, workers, clients, routines } = await import('@cyntientops/data-seed');
+    
+    // Seed buildings
+    for (const building of buildings) {
+      await this.insertBuilding(building);
+    }
+    
+    // Seed workers
+    for (const worker of workers) {
+      await this.insertWorker(worker);
+    }
+    
+    // Seed clients
+    for (const client of clients) {
+      await this.insertClient(client);
+    }
+    
+    // Seed routines
+    for (const routine of routines) {
+      await this.insertRoutine(routine);
+    }
+    
+    console.log('Initial data seeded successfully');
+  }
+
   async getBuildings(): Promise<any[]> {
     if (!this.db) throw new Error('Database not initialized');
     
@@ -97,6 +151,80 @@ export class DatabaseManager {
       LEFT JOIN workers w ON t.assigned_worker_id = w.id
       ORDER BY t.created_at DESC
     `);
+    return result;
+  }
+
+  async getTasksForWorker(workerId: string): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const result = await this.db.getAllAsync(`
+      SELECT t.*, b.name as building_name, b.address as building_address,
+             b.latitude as building_latitude, b.longitude as building_longitude
+      FROM tasks t
+      LEFT JOIN buildings b ON t.assigned_building_id = b.id
+      WHERE t.assigned_worker_id = ? AND t.status != 'Completed'
+      ORDER BY 
+        CASE t.priority 
+          WHEN 'emergency' THEN 1
+          WHEN 'critical' THEN 2
+          WHEN 'urgent' THEN 3
+          WHEN 'high' THEN 4
+          WHEN 'medium' THEN 5
+          WHEN 'low' THEN 6
+          ELSE 7
+        END,
+        t.due_date ASC
+    `, [workerId]);
+    return result;
+  }
+
+  async getTodaysTasksForWorker(workerId: string): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const today = new Date().toISOString().split('T')[0];
+    const result = await this.db.getAllAsync(`
+      SELECT t.*, b.name as building_name, b.address as building_address
+      FROM tasks t
+      LEFT JOIN buildings b ON t.assigned_building_id = b.id
+      WHERE t.assigned_worker_id = ? 
+        AND t.status != 'Completed'
+        AND (t.due_date IS NULL OR DATE(t.due_date) <= ?)
+      ORDER BY t.priority, t.due_date ASC
+    `, [workerId, today]);
+    return result;
+  }
+
+  async getRoutinesForWorker(workerId: string): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const result = await this.db.getAllAsync(`
+      SELECT r.*, b.name as building_name, b.address as building_address
+      FROM routines r
+      LEFT JOIN buildings b ON r.building_id = b.id
+      WHERE r.assigned_worker_id = ? AND r.is_active = 1
+      ORDER BY r.next_due ASC
+    `, [workerId]);
+    return result;
+  }
+
+  async getBuildingsForWorker(workerId: string): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const result = await this.db.getAllAsync(`
+      SELECT DISTINCT b.*, 
+             COUNT(t.id) as active_task_count,
+             COUNT(r.id) as routine_count
+      FROM buildings b
+      LEFT JOIN tasks t ON b.id = t.assigned_building_id 
+        AND t.assigned_worker_id = ? 
+        AND t.status != 'Completed'
+      LEFT JOIN routines r ON b.id = r.building_id 
+        AND r.assigned_worker_id = ? 
+        AND r.is_active = 1
+      WHERE b.is_active = 1
+      GROUP BY b.id
+      ORDER BY b.name
+    `, [workerId, workerId]);
     return result;
   }
 
@@ -168,14 +296,106 @@ export class DatabaseManager {
     ]);
   }
 
+  async insertClient(client: any): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    await this.db.runAsync(`
+      INSERT INTO clients (id, name, contact_person, email, phone, address, is_active, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      client.id,
+      client.name,
+      client.contact_person,
+      client.email,
+      client.phone,
+      client.address,
+      client.isActive || 1,
+      new Date().toISOString()
+    ]);
+  }
+
+  async insertRoutine(routine: any): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    await this.db.runAsync(`
+      INSERT INTO routines (id, name, description, building_id, assigned_worker_id, schedule_type, 
+                           schedule_days, start_time, estimated_duration, priority, is_active, 
+                           last_completed, next_due, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      routine.id,
+      routine.name,
+      routine.description,
+      routine.building_id,
+      routine.assigned_worker_id,
+      routine.schedule_type,
+      JSON.stringify(routine.schedule_days || []),
+      routine.start_time,
+      routine.estimated_duration,
+      routine.priority,
+      routine.is_active || 1,
+      routine.last_completed,
+      routine.next_due,
+      new Date().toISOString()
+    ]);
+  }
+
   async updateTaskStatus(taskId: string, status: string): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const updateFields = ['status = ?', 'updated_at = ?'];
+    const updateValues = [status, new Date().toISOString()];
+    
+    if (status === 'Completed') {
+      updateFields.push('completed_at = ?');
+      updateValues.push(new Date().toISOString());
+    }
+    
+    updateValues.push(taskId);
+    
+    await this.db.runAsync(`
+      UPDATE tasks 
+      SET ${updateFields.join(', ')}
+      WHERE id = ?
+    `, updateValues);
+  }
+
+  async startTask(taskId: string): Promise<void> {
     if (!this.db) throw new Error('Database not initialized');
     
     await this.db.runAsync(`
       UPDATE tasks 
-      SET status = ?, updated_at = ?
+      SET status = 'In Progress', started_at = ?, updated_at = ?
       WHERE id = ?
-    `, [status, new Date().toISOString(), taskId]);
+    `, [new Date().toISOString(), new Date().toISOString(), taskId]);
+  }
+
+  async completeTask(taskId: string, actualDuration?: number): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const updateFields = [
+      'status = ?',
+      'completed_at = ?',
+      'updated_at = ?'
+    ];
+    const updateValues = [
+      'Completed',
+      new Date().toISOString(),
+      new Date().toISOString()
+    ];
+    
+    if (actualDuration) {
+      updateFields.push('actual_duration = ?');
+      updateValues.push(actualDuration);
+    }
+    
+    updateValues.push(taskId);
+    
+    await this.db.runAsync(`
+      UPDATE tasks 
+      SET ${updateFields.join(', ')}
+      WHERE id = ?
+    `, updateValues);
   }
 
   async close(): Promise<void> {

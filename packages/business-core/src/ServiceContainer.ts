@@ -21,6 +21,7 @@ import { WorkerService } from './services/WorkerService';
 import { BuildingService } from './services/BuildingService';
 import { ClientService } from './services/ClientService';
 import { OperationalDataService } from './services/OperationalDataService';
+import { AuthService } from './services/AuthService';
 import { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 
 // Types
@@ -48,7 +49,7 @@ export class ServiceContainer {
   public readonly operationalData: OperationalDataService;
   
   // MARK: - Layer 1: Core Services (LAZY INITIALIZATION)
-  public readonly auth: any; // TODO: Implement AuthManager
+  public readonly auth: AuthService;
   
   // Lazy services - initialized when first accessed
   private _workers: WorkerService | null = null;
@@ -86,9 +87,7 @@ export class ServiceContainer {
     // Initialize essential services synchronously
     this.database = DatabaseManager.getInstance({ path: config.databasePath });
     this.operationalData = new OperationalDataService(this.database);
-    
-    // TODO: Initialize auth service
-    this.auth = null;
+    this.auth = AuthService.getInstance(this.database);
   }
   
   public static getInstance(config?: ServiceContainerConfig): ServiceContainer {

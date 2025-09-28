@@ -84,5 +84,25 @@ export { default as EmergencySystem } from './emergency/EmergencySystem';
 // Messaging Components
 export { default as EmergencyMessagingSystem } from './messaging/EmergencyMessagingSystem';
 
+// Dashboard Main Views
+export { default as WorkerDashboardMainView } from './dashboards/WorkerDashboardMainView';
+export { default as AdminDashboardMainView } from './dashboards/AdminDashboardMainView';
+export { default as ClientDashboardMainView } from './dashboards/ClientDashboardMainView';
+
+// Glass Components
+export { default as GlassNavigationBar } from './glass/GlassNavigationBar';
+export { default as GlassTabBar } from './glass/GlassTabBar';
+export { default as GlassStatusBadge } from './glass/GlassStatusBadge';
+export { default as GlassLoadingView } from './glass/GlassLoadingView';
+export { default as ClockInGlassModal } from './glass/ClockInGlassModal';
+
+// Building Components
+export { default as BuildingMapDetailView } from './buildings/BuildingMapDetailView';
+
+// Card Components
+export { default as HeroStatusCard } from './cards/HeroStatusCard';
+export { default as StatCard } from './cards/StatCard';
+export { default as ClientHeroCard } from './cards/ClientHeroCard';
+
 // Re-export design tokens for convenience
 export * from '@cyntientops/design-tokens';

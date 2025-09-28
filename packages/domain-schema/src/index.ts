@@ -15,6 +15,9 @@ export * from './core-types';
 export * from './worker-profile';
 export * from './client-profile';
 
+// Nova AI Types
+export * from './nova-types';
+
 // Version information
 export const DOMAIN_SCHEMA_VERSION = '1.0.0';
 export const SWIFT_COMPATIBILITY_VERSION = '6.0';

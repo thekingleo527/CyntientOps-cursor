@@ -23,6 +23,8 @@ import { ClientService } from './services/ClientService';
 import { OperationalDataService } from './services/OperationalDataService';
 import { AuthService } from './services/AuthService';
 import { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
+import { RouteManager } from './services/RouteManager';
+import { NovaAPIService } from './services/NovaAPIService';
 
 // Types
 import { 
@@ -59,6 +61,8 @@ export class ServiceContainer {
   
   // MARK: - Layer 2: Business Logic (LAZY)
   private _realTimeOrchestrator: RealTimeOrchestrator | null = null;
+  private _routeManager: RouteManager | null = null;
+  private _novaAPI: NovaAPIService | null = null;
   private _metrics: any | null = null; // TODO: Implement BuildingMetricsService
   private _compliance: any | null = null; // TODO: Implement ComplianceService
   private _webSocket: WebSocketManager | null = null;
@@ -204,6 +208,20 @@ export class ServiceContainer {
       this._realTimeOrchestrator = RealTimeOrchestrator.getInstance(this.database, this.webSocket, this);
     }
     return this._realTimeOrchestrator;
+  }
+
+  public get routeManager(): RouteManager {
+    if (!this._routeManager) {
+      this._routeManager = RouteManager.getInstance(this.database);
+    }
+    return this._routeManager;
+  }
+
+  public get novaAPI(): NovaAPIService {
+    if (!this._novaAPI) {
+      this._novaAPI = NovaAPIService.getInstance(this.database);
+    }
+    return this._novaAPI;
   }
   
   // DashboardSyncService compatibility - delegate to RealTimeOrchestrator

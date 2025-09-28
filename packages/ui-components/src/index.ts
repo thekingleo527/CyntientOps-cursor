@@ -104,5 +104,8 @@ export { default as HeroStatusCard } from './cards/HeroStatusCard';
 export { default as StatCard } from './cards/StatCard';
 export { default as ClientHeroCard } from './cards/ClientHeroCard';
 
+// Admin Components
+export { default as AdminWorkerManagementView } from './admin/AdminWorkerManagementView';
+
 // Re-export design tokens for convenience
 export * from '@cyntientops/design-tokens';

@@ -12,6 +12,8 @@ export { ClientService } from './services/ClientService';
 export { OperationalDataService } from './services/OperationalDataService';
 export { ComplianceService } from './services/ComplianceService';
 export { AuthService } from './services/AuthService';
+export { RouteManager } from './services/RouteManager';
+export { NovaAPIService } from './services/NovaAPIService';
 export { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 
 // Managers

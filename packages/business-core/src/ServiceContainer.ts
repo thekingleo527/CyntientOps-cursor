@@ -30,6 +30,7 @@ import { AnalyticsEngine } from './services/AnalyticsEngine';
 import { SecurityManager } from './services/SecurityManager';
 import { ProductionManager } from './services/ProductionManager';
 import { BuildingInfrastructureCatalog } from './services/BuildingInfrastructureCatalog';
+import { RealTimeSyncService } from './services/RealTimeSyncService';
 import { CommandChainManager } from '@cyntientops/command-chains';
 import { OperationalDataManager, operationalDataManager } from './OperationalDataManager';
 
@@ -68,6 +69,7 @@ export class ServiceContainer {
   
   // MARK: - Layer 2: Business Logic (LAZY)
   private _realTimeOrchestrator: RealTimeOrchestrator | null = null;
+  private _realTimeSync: RealTimeSyncService | null = null;
   private _routeManager: RouteManager | null = null;
   private _novaAPI: NovaAPIService | null = null;
   private _performanceOptimizer: PerformanceOptimizer | null = null;
@@ -244,6 +246,22 @@ export class ServiceContainer {
     return this._realTimeOrchestrator;
   }
 
+  public get realTimeSync(): RealTimeSyncService {
+    if (!this._realTimeSync) {
+      this._realTimeSync = RealTimeSyncService.getInstance(
+        operationalDataManager,
+        this.webSocketManager,
+        {
+          enableRealTimeSync: this.config.enableRealTimeSync,
+          syncInterval: 30000,
+          maxRetries: 3,
+          retryDelay: 5000
+        }
+      );
+    }
+    return this._realTimeSync;
+  }
+
   public get routeManager(): RouteManager {
     if (!this._routeManager) {
       this._routeManager = RouteManager.getInstance(this.database);
@@ -357,6 +375,97 @@ export class ServiceContainer {
     };
     return buildingRatings[buildingId] || "B+";
   }
+  
+  // MARK: - Task Processing Helper Methods
+  
+  private getTaskStatus(task: any): string {
+    const now = new Date();
+    const hour = now.getHours();
+    
+    // Check if task should be active based on schedule
+    if (task.startHour && task.endHour) {
+      if (hour >= task.startHour && hour <= task.endHour) {
+        return 'in_progress';
+      } else if (hour < task.startHour) {
+        return 'pending';
+      } else {
+        return 'completed';
+      }
+    }
+    
+    return 'pending';
+  }
+  
+  private getTaskPriority(task: any): string {
+    if (task.category === 'Maintenance' && task.skillLevel === 'Advanced') return 'high';
+    if (task.category === 'Sanitation') return 'high';
+    if (task.category === 'Operations') return 'medium';
+    return 'low';
+  }
+  
+  private getScheduledTime(task: any): string {
+    const now = new Date();
+    if (task.startHour) {
+      const scheduledDate = new Date(now);
+      scheduledDate.setHours(task.startHour, 0, 0, 0);
+      return scheduledDate.toISOString();
+    }
+    return now.toISOString();
+  }
+  
+  private getDueDate(task: any): string {
+    const now = new Date();
+    if (task.endHour) {
+      const dueDate = new Date(now);
+      dueDate.setHours(task.endHour, 0, 0, 0);
+      return dueDate.toISOString();
+    }
+    // Default to end of day
+    const dueDate = new Date(now);
+    dueDate.setHours(23, 59, 59, 999);
+    return dueDate.toISOString();
+  }
+  
+  // MARK: - Worker Helper Methods
+  
+  private getWorkerRole(workerName: string): string {
+    const roles: Record<string, string> = {
+      'Greg Hutson': 'Building Specialist',
+      'Edwin Lema': 'Maintenance Specialist',
+      'Kevin Dutan': 'Cleaning Specialist',
+      'Mercedes Inamagua': 'Glass Cleaning Specialist',
+      'Luis Lopez': 'Building Specialist',
+      'Angel Guirachocha': 'Evening Operations',
+      'Shawn Magloire': 'Maintenance Manager',
+    };
+    return roles[workerName] || 'Worker';
+  }
+  
+  private getWorkerPhone(workerName: string): string {
+    const phones: Record<string, string> = {
+      'Greg Hutson': '(555) 100-0001',
+      'Edwin Lema': '(555) 100-0002',
+      'Kevin Dutan': '(555) 100-0004',
+      'Mercedes Inamagua': '(555) 100-0005',
+      'Luis Lopez': '(555) 100-0006',
+      'Angel Guirachocha': '(555) 100-0007',
+      'Shawn Magloire': '(555) 100-0008',
+    };
+    return phones[workerName] || '(555) 000-0000';
+  }
+  
+  private getWorkerEmail(workerName: string): string {
+    const emails: Record<string, string> = {
+      'Greg Hutson': 'greg.hutson@francomanagement.com',
+      'Edwin Lema': 'edwin.lema@francomanagement.com',
+      'Kevin Dutan': 'kevin.dutan@francomanagement.com',
+      'Mercedes Inamagua': 'mercedes.inamagua@francomanagement.com',
+      'Luis Lopez': 'luis.lopez@francomanagement.com',
+      'Angel Guirachocha': 'angel.guirachocha@francomanagement.com',
+      'Shawn Magloire': 'shawn.magloire@francomanagement.com',
+    };
+    return emails[workerName] || 'worker@francomanagement.com';
+  }
 
   // MARK: - Building Detail Services (for useBuildingDetailViewModel)
 
@@ -412,27 +521,30 @@ export class ServiceContainer {
 
   public get buildingTasksCatalog(): any {
     if (!this._buildingTasksCatalog) {
-      // TODO: Implement BuildingTasksCatalog
       this._buildingTasksCatalog = {
-        getBuildingTasks: (buildingId: string) => [
-          {
-            id: '1',
-            title: 'Daily Cleaning',
-            status: 'completed',
-            priority: 'medium',
-            scheduledAt: new Date().toISOString(),
-            completedAt: new Date().toISOString(),
-            dueDate: new Date().toISOString(),
-          },
-          {
-            id: '2',
-            title: 'Maintenance Check',
-            status: 'pending',
-            priority: 'high',
-            scheduledAt: new Date().toISOString(),
-            dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          },
-        ],
+        getBuildingTasks: (buildingId: string) => {
+          const buildingName = operationalDataManager.getBuildingName(buildingId);
+          const tasks = operationalDataManager.getTasksForBuilding(buildingName);
+          
+          return tasks.map((task, index) => ({
+            id: `${buildingId}-${index}`,
+            title: task.taskName,
+            description: `${task.category} - ${task.skillLevel} level`,
+            status: this.getTaskStatus(task),
+            priority: this.getTaskPriority(task),
+            scheduledAt: this.getScheduledTime(task),
+            dueDate: this.getDueDate(task),
+            assignedWorker: task.assignedWorker,
+            category: task.category,
+            skillLevel: task.skillLevel,
+            recurrence: task.recurrence,
+            requiresPhoto: task.requiresPhoto,
+            estimatedDuration: task.estimatedDuration,
+            daysOfWeek: task.daysOfWeek,
+            startHour: task.startHour,
+            endHour: task.endHour,
+          }));
+        },
       };
     }
     return this._buildingTasksCatalog;
@@ -440,24 +552,37 @@ export class ServiceContainer {
 
   public get buildingContactsCatalog(): any {
     if (!this._buildingContactsCatalog) {
-      // TODO: Implement BuildingContactsCatalog
       this._buildingContactsCatalog = {
-        getBuildingContacts: (buildingId: string) => [
-          {
-            id: '1',
-            name: 'John Smith',
-            role: 'Building Manager',
-            phone: '(555) 123-4567',
-            isPrimary: true,
-          },
-          {
-            id: '2',
-            name: 'Emergency Contact',
-            role: '24/7 Emergency',
-            phone: '(212) 555-0911',
-            isPrimary: false,
-          },
-        ],
+        getBuildingContacts: (buildingId: string) => {
+          const buildingName = operationalDataManager.getBuildingName(buildingId);
+          const tasks = operationalDataManager.getTasksForBuilding(buildingName || '');
+          const assignedWorkers = [...new Set(tasks.map(task => task.assignedWorker))];
+          
+          const contacts = assignedWorkers.map((workerName, index) => ({
+            id: `${buildingId}-worker-${index}`,
+            name: workerName,
+            role: this.getWorkerRole(workerName),
+            phone: this.getWorkerPhone(workerName),
+            email: this.getWorkerEmail(workerName),
+            isPrimary: index === 0,
+            isEmergency: workerName.includes('Angel') || workerName.includes('Shawn'),
+          }));
+          
+          // Add building-specific contacts
+          if (buildingName?.includes('Museum')) {
+            contacts.push({
+              id: `${buildingId}-museum-contact`,
+              name: 'Museum Operations',
+              role: 'Museum Manager',
+              phone: '(212) 620-5000',
+              email: 'operations@rubinmuseum.org',
+              isPrimary: false,
+              isEmergency: true,
+            });
+          }
+          
+          return contacts;
+        },
       };
     }
     return this._buildingContactsCatalog;

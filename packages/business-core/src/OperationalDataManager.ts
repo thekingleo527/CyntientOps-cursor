@@ -1259,6 +1259,20 @@ export class OperationalDataManager {
   }
   
   /**
+   * Get building name by ID
+   */
+  public getBuildingName(buildingId: string): string | undefined {
+    return CanonicalIDs.Buildings.getName(buildingId);
+  }
+  
+  /**
+   * Get worker name by ID
+   */
+  public getWorkerName(workerId: string): string | undefined {
+    return CanonicalIDs.Workers.getName(workerId);
+  }
+  
+  /**
    * Get all task assignments
    */
   public getAllTasks(): OperationalDataTaskAssignment[] {

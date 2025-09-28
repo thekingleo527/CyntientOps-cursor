@@ -1143,27 +1143,55 @@ export function useWorkerDashboardViewModel(
 
   const loadTodaysTasks = async (workerId: string): Promise<TaskItem[]> => {
     try {
-      const tasks = await container.tasks.getTasksForWorker(workerId);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      // Get real worker data from OperationalDataManager
+      const workerName = container.operationalData.getWorkerName(workerId);
+      if (!workerName) {
+        console.warn(`Worker not found for ID: ${workerId}`);
+        return [];
+      }
       
-      return tasks
+      // Get all tasks for this worker from real operational data
+      const realTasks = container.operationalData.getRealWorldTasks(workerName);
+      const today = new Date();
+      const currentHour = today.getHours();
+      const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+      
+      // Map day numbers to day names
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const todayName = dayNames[currentDay];
+      
+      return realTasks
         .filter(task => {
-          if (!task.dueDate) return true;
-          const taskDate = new Date(task.dueDate);
-          taskDate.setHours(0, 0, 0, 0);
-          return taskDate.getTime() === today.getTime();
+          // Check if task should be active today based on daysOfWeek
+          if (task.daysOfWeek) {
+            const taskDays = task.daysOfWeek.split(',');
+            if (!taskDays.includes(todayName)) return false;
+          }
+          
+          // Check if task should be active now based on start/end hours
+          if (task.startHour !== null && task.endHour !== null) {
+            return currentHour >= task.startHour && currentHour <= task.endHour;
+          }
+          
+          // Include tasks without specific time constraints
+          return true;
         })
-        .map(task => ({
-          id: task.id,
-          title: task.title,
-          description: task.description,
+        .map((task, index) => ({
+          id: `${workerId}-${task.buildingId}-${index}`,
+          title: task.taskName,
+          description: `${task.category} - ${task.skillLevel} level`,
           buildingId: task.buildingId,
-          dueDate: task.dueDate,
-          urgency: mapTaskUrgency(task.urgency),
-          isCompleted: task.status === 'completed',
-          category: task.category || 'general',
-          requiresPhoto: task.category === 'sanitation' || task.category === 'cleaning'
+          dueDate: task.endHour ? new Date(today.getFullYear(), today.getMonth(), today.getDate(), task.endHour, 0, 0).toISOString() : undefined,
+          urgency: mapTaskUrgencyFromCategory(task.category, task.skillLevel),
+          isCompleted: false, // Will be updated based on real completion status
+          category: task.category.toLowerCase(),
+          requiresPhoto: task.requiresPhoto,
+          assignedWorker: task.assignedWorker,
+          recurrence: task.recurrence,
+          estimatedDuration: task.estimatedDuration,
+          startHour: task.startHour,
+          endHour: task.endHour,
+          daysOfWeek: task.daysOfWeek
         }));
     } catch (error) {
       console.error('Failed to load today\'s tasks:', error);
@@ -1271,6 +1299,23 @@ export function useWorkerDashboardViewModel(
       case 'emergency': return TaskUrgency.EMERGENCY;
       default: return TaskUrgency.NORMAL;
     }
+  };
+  
+  const mapTaskUrgencyFromCategory = (category: string, skillLevel: string): TaskUrgency => {
+    // Map task urgency based on category and skill level from real operational data
+    if (category === 'Maintenance' && skillLevel === 'Advanced') {
+      return TaskUrgency.HIGH;
+    }
+    if (category === 'Sanitation') {
+      return TaskUrgency.HIGH;
+    }
+    if (category === 'Operations') {
+      return TaskUrgency.MEDIUM;
+    }
+    if (category === 'Inspection') {
+      return TaskUrgency.MEDIUM;
+    }
+    return TaskUrgency.LOW;
   };
 
   const mapTrendDirection = (trend: string): TrendDirection => {

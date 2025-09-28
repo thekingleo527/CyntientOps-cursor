@@ -1,0 +1,23 @@
+{
+  "name": "@cyntientops/data-seed",
+  "version": "1.0.0",
+  "description": "Canonical operational data for CyntientOps - mirrors Swift app exactly",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "validate": "node scripts/validate-seeds.js",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.2"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}

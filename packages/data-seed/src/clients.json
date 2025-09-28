@@ -1,0 +1,110 @@
+[
+  {
+    "id": "JMR",
+    "name": "JMR Properties",
+    "short_name": "JMR",
+    "contact_email": "management@jmrproperties.com",
+    "contact_phone": "+1-212-555-1000",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "WFR",
+    "name": "West Franklin Realty",
+    "short_name": "WFR",
+    "contact_email": "info@westfranklin.com",
+    "contact_phone": "+1-212-555-1001",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "PER",
+    "name": "Perry Street Partners",
+    "short_name": "PER",
+    "contact_email": "contact@perrystreet.com",
+    "contact_phone": "+1-212-555-1002",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "RUB",
+    "name": "Rubin Museum of Art",
+    "short_name": "RUB",
+    "contact_email": "operations@rubinmuseum.org",
+    "contact_phone": "+1-212-620-5000",
+    "address": "150 West 17th Street, New York, NY 10011",
+    "is_active": true
+  },
+  {
+    "id": "STU",
+    "name": "NYC Parks Department",
+    "short_name": "STU",
+    "contact_email": "parks@nycparks.org",
+    "contact_phone": "+1-212-639-9675",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "ELI",
+    "name": "Elizabeth Street Management",
+    "short_name": "ELI",
+    "contact_email": "info@elizabethstreet.com",
+    "contact_phone": "+1-212-555-1003",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "AVE",
+    "name": "First Avenue Properties",
+    "short_name": "AVE",
+    "contact_email": "info@firstavenue.com",
+    "contact_phone": "+1-212-555-1004",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "EAS",
+    "name": "East Side Properties",
+    "short_name": "EAS",
+    "contact_email": "info@eastside.com",
+    "contact_phone": "+1-212-555-1005",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "SPR",
+    "name": "Spring Street Properties",
+    "short_name": "SPR",
+    "contact_email": "info@springstreet.com",
+    "contact_phone": "+1-212-555-1006",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "WAL",
+    "name": "Walker Street Management",
+    "short_name": "WAL",
+    "contact_email": "info@walkerstreet.com",
+    "contact_phone": "+1-212-555-1007",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "SEV",
+    "name": "Seventh Avenue Properties",
+    "short_name": "SEV",
+    "contact_email": "info@seventhavenue.com",
+    "contact_phone": "+1-212-555-1008",
+    "address": "New York, NY",
+    "is_active": true
+  },
+  {
+    "id": "HQ",
+    "name": "Franco Management Enterprises",
+    "short_name": "HQ",
+    "contact_email": "info@francomanagement.com",
+    "contact_phone": "+1-212-555-2000",
+    "address": "New York, NY",
+    "is_active": true
+  }
+]

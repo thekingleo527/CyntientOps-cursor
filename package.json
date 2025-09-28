@@ -1,0 +1,45 @@
+{
+  "name": "@cyntientops/cursor",
+  "version": "1.0.0",
+  "description": "CyntientOps TypeScript/React Native implementation with complete data parity",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:mobile": "nx run mobile-rn:start",
+    "dev:web": "nx run web-dashboard:dev",
+    "validate:data": "nx run data-seed:validate",
+    "build:all": "nx run-many --target=build",
+    "test:all": "nx run-many --target=test",
+    "lint:all": "nx run-many --target=lint",
+    "clean": "nx reset && rm -rf node_modules apps/*/node_modules packages/*/node_modules",
+    "install:all": "npm install && npm run --workspaces install"
+  },
+  "devDependencies": {
+    "@nx/js": "^18.0.0",
+    "@nx/react-native": "^18.0.0",
+    "@nx/workspace": "^18.0.0",
+    "nx": "^18.0.0",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cyntientops/cursor.git"
+  },
+  "keywords": [
+    "cyntientops",
+    "field-operations",
+    "building-maintenance",
+    "react-native",
+    "typescript",
+    "nyc-apis"
+  ],
+  "author": "CyntientOps Team",
+  "license": "MIT"
+}

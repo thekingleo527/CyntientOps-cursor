@@ -1,0 +1,19 @@
+Starting JS server...
+
+ NX   Cannot find module 'react-native/cli.js'
+
+Require stack:
+Failed to start the packager server. Error details: Cannot find module 'react-native/cli.js'
+Require stack:
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@nx/react-native/src/executors/start/start.impl.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/nx/src/config/schema-utils.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/nx/src/command-line/run/executor-utils.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/nx/src/command-line/run/run.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/nx/bin/run-executor.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@nx/react-native/src/executors/start/start.impl.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/nx/src/config/schema-utils.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/nx/src/command-line/run/executor-utils.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/nx/src/command-line/run/run.js
+- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/nx/bin/run-executor.js
+Pass --verbose to see the stacktrace.
+

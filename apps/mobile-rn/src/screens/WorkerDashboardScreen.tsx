@@ -7,8 +7,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { WorkerDashboard } from '@cyntientops/ui-components';
-import { WorkerViewModel } from '@cyntientops/context-engines';
+import { WorkerDashboardMainView } from '@cyntientops/ui-components';
+import { WorkerDashboardViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { ClockInManager, LocationManager, NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
@@ -26,7 +26,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   onNavigateToTask,
   onNavigateToBuilding
 }) => {
-  const [viewModel, setViewModel] = useState<WorkerViewModel | null>(null);
+  const [viewModel, setViewModel] = useState<WorkerDashboardViewModel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,7 +58,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
       const notificationManager = NotificationManager.getInstance(databaseManager);
 
       // Initialize ViewModel
-      const workerViewModel = WorkerViewModel.getInstance(
+      const workerViewModel = WorkerDashboardViewModel.getInstance(
         databaseManager,
         clockInManager,
         locationManager,
@@ -157,7 +157,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <WorkerDashboard
+        <WorkerDashboardMainView
           state={viewModel.getState()}
           onClockIn={handleClockIn}
           onClockOut={handleClockOut}

@@ -1,0 +1,62 @@
+Compiling TypeScript files for project "data-seed"...
+[96mpackages/data-seed/src/index.ts[0m:[93m9[0m:[93m25[0m - [91merror[0m[90m TS2732: [0mCannot find module './workers.json'. Consider using '--resolveJsonModule' to import module with '.json' extension.
+
+[7m9[0m import workersData from './workers.json';
+[7m [0m [91m                        ~~~~~~~~~~~~~~~~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m10[0m:[93m27[0m - [91merror[0m[90m TS2732: [0mCannot find module './buildings.json'. Consider using '--resolveJsonModule' to import module with '.json' extension.
+
+[7m10[0m import buildingsData from './buildings.json';
+[7m  [0m [91m                          ~~~~~~~~~~~~~~~~~~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m11[0m:[93m25[0m - [91merror[0m[90m TS2732: [0mCannot find module './clients.json'. Consider using '--resolveJsonModule' to import module with '.json' extension.
+
+[7m11[0m import clientsData from './clients.json';
+[7m  [0m [91m                        ~~~~~~~~~~~~~~~~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m12[0m:[93m26[0m - [91merror[0m[90m TS2732: [0mCannot find module './routines.json'. Consider using '--resolveJsonModule' to import module with '.json' extension.
+
+[7m12[0m import routinesData from './routines.json';
+[7m  [0m [91m                         ~~~~~~~~~~~~~~~~~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m75[0m:[93m33[0m - [91merror[0m[90m TS7006: [0mParameter 'w' implicitly has an 'any' type.
+
+[7m75[0m   const workerIds = workers.map(w => w.id);
+[7m  [0m [91m                                ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m76[0m:[93m37[0m - [91merror[0m[90m TS7006: [0mParameter 'b' implicitly has an 'any' type.
+
+[7m76[0m   const buildingIds = buildings.map(b => b.id);
+[7m  [0m [91m                                    ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m89[0m:[93m38[0m - [91merror[0m[90m TS7006: [0mParameter 'r' implicitly has an 'any' type.
+
+[7m89[0m   const kevinTasks = routines.filter(r => r.workerId === DATA_VALIDATION.KEVIN_DUTAN_ID);
+[7m  [0m [91m                                     ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m94[0m:[93m38[0m - [91merror[0m[90m TS7006: [0mParameter 'r' implicitly has an 'any' type.
+
+[7m94[0m   const rubinTasks = routines.filter(r => r.buildingId === DATA_VALIDATION.RUBIN_MUSEUM_ID);
+[7m  [0m [91m                                     ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m118[0m:[93m37[0m - [91merror[0m[90m TS7006: [0mParameter 'w' implicitly has an 'any' type.
+
+[7m118[0m       activeWorkers: workers.filter(w => w.isActive).length,
+[7m   [0m [91m                                    ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m119[0m:[93m41[0m - [91merror[0m[90m TS7006: [0mParameter 'b' implicitly has an 'any' type.
+
+[7m119[0m       activeBuildings: buildings.filter(b => b.isActive).length,
+[7m   [0m [91m                                        ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m120[0m:[93m37[0m - [91merror[0m[90m TS7006: [0mParameter 'c' implicitly has an 'any' type.
+
+[7m120[0m       activeClients: clients.filter(c => c.is_active).length,
+[7m   [0m [91m                                    ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m122[0m:[93m21[0m - [91merror[0m[90m TS7006: [0mParameter 'w' implicitly has an 'any' type.
+
+[7m122[0m         workers.map(w => [
+[7m   [0m [91m                    ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m124[0m:[93m27[0m - [91merror[0m[90m TS7006: [0mParameter 'r' implicitly has an 'any' type.
+
+[7m124[0m           routines.filter(r => r.workerId === w.id).length
+[7m   [0m [91m                          ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m128[0m:[93m23[0m - [91merror[0m[90m TS7006: [0mParameter 'b' implicitly has an 'any' type.
+
+[7m128[0m         buildings.map(b => [
+[7m   [0m [91m                      ~[0m
+[96mpackages/data-seed/src/index.ts[0m:[93m130[0m:[93m27[0m - [91merror[0m[90m TS7006: [0mParameter 'r' implicitly has an 'any' type.
+
+[7m130[0m           routines.filter(r => r.buildingId === b.id).length
+[7m   [0m [91m                          ~[0m
+

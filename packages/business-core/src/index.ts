@@ -11,7 +11,6 @@ export { BuildingService } from './services/BuildingService';
 export { ClientService } from './services/ClientService';
 export { OperationalDataService } from './services/OperationalDataService';
 export { ComplianceService } from './services/ComplianceService';
-export { DashboardSyncService } from './services/DashboardSyncService';
 export { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 
 // Managers

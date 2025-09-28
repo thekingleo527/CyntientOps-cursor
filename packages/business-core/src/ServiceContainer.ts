@@ -200,18 +200,6 @@ export class ServiceContainer {
     return this._client;
   }
   
-  public get dashboardSync(): any {
-    if (!this._dashboardSync) {
-      // TODO: Implement DashboardSyncService
-      this._dashboardSync = {
-        broadcastWorkerUpdate: () => {},
-        broadcastAdminUpdate: () => {},
-        broadcastClientUpdate: () => {}
-      };
-    }
-    return this._dashboardSync;
-  }
-  
   public get realTimeOrchestrator(): RealTimeOrchestrator {
     if (!this._realTimeOrchestrator) {
       this._realTimeOrchestrator = RealTimeOrchestrator.getInstance(this.database, this.webSocket, this);

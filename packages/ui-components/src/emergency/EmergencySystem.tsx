@@ -7,13 +7,18 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Alert, Linking, ScrollView, ActivityIndicator } from 'react-native';
 import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { UserRole, NamedCoordinate } from '@cyntientops/domain-schema';
+import { EmergencyMessagingSystem, EmergencyMessage, EmergencyAlert } from '../messaging/EmergencyMessagingSystem';
 
 export interface EmergencySystemProps {
   userRole: UserRole;
+  currentUserId: string;
+  currentUserName: string;
   currentLocation?: { latitude: number; longitude: number };
   currentBuilding?: NamedCoordinate;
   onEmergencyReported?: (emergency: EmergencyReport) => void;
   onSafetyCheck?: () => void;
+  onMessageSent?: (message: EmergencyMessage) => void;
+  onEmergencyAlert?: (alert: EmergencyAlert) => void;
 }
 
 export interface EmergencyReport {
@@ -71,10 +76,14 @@ export enum EmergencyStatus {
 
 export const EmergencySystem: React.FC<EmergencySystemProps> = ({
   userRole,
+  currentUserId,
+  currentUserName,
   currentLocation,
   currentBuilding,
   onEmergencyReported,
   onSafetyCheck,
+  onMessageSent,
+  onEmergencyAlert,
 }) => {
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [selectedEmergencyType, setSelectedEmergencyType] = useState<EmergencyType | null>(null);
@@ -83,6 +92,7 @@ export const EmergencySystem: React.FC<EmergencySystemProps> = ({
   const [isReporting, setIsReporting] = useState(false);
   const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
   const [recentEmergencies, setRecentEmergencies] = useState<EmergencyReport[]>([]);
+  const [showMessagingSystem, setShowMessagingSystem] = useState(false);
 
   useEffect(() => {
     loadEmergencyContacts();
@@ -215,6 +225,48 @@ export const EmergencySystem: React.FC<EmergencySystemProps> = ({
       // Report emergency
       onEmergencyReported?.(emergency);
       
+      // Send emergency message to all relevant parties
+      const emergencyMessage: EmergencyMessage = {
+        id: `emergency_msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        senderId: currentUserId,
+        senderName: currentUserName,
+        senderRole: userRole,
+        messageType: 'emergency' as any,
+        priority: selectedSeverity === EmergencySeverity.CRITICAL ? 'critical' as any : 'high' as any,
+        content: `EMERGENCY REPORTED: ${selectedEmergencyType?.toUpperCase()} - ${emergencyDescription}`,
+        timestamp: new Date(),
+        isRead: false,
+        location: {
+          latitude: currentLocation?.latitude || 0,
+          longitude: currentLocation?.longitude || 0,
+          buildingId: currentBuilding?.id,
+          buildingName: currentBuilding?.name
+        },
+        emergencyId: emergency.id
+      };
+      onMessageSent?.(emergencyMessage);
+
+      // Send emergency alert
+      const emergencyAlert: EmergencyAlert = {
+        id: `emergency_alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type: 'emergency_report' as any,
+        severity: selectedSeverity === EmergencySeverity.CRITICAL ? 'critical' as any : 'warning' as any,
+        title: `${selectedEmergencyType?.toUpperCase()} Emergency`,
+        message: emergencyDescription,
+        senderId: currentUserId,
+        senderName: currentUserName,
+        recipientRoles: ['admin', 'manager', 'worker'],
+        timestamp: new Date(),
+        isAcknowledged: false,
+        location: {
+          latitude: currentLocation?.latitude || 0,
+          longitude: currentLocation?.longitude || 0,
+          buildingId: currentBuilding?.id,
+          buildingName: currentBuilding?.name
+        }
+      };
+      onEmergencyAlert?.(emergencyAlert);
+      
       // Auto-call primary emergency contact for critical emergencies
       if (selectedSeverity === EmergencySeverity.CRITICAL) {
         const primaryContact = emergencyContacts.find(c => c.isPrimary && c.department === 'Emergency');
@@ -270,7 +322,7 @@ export const EmergencySystem: React.FC<EmergencySystemProps> = ({
     switch (severity) {
       case EmergencySeverity.LOW: return Colors.status.success;
       case EmergencySeverity.MEDIUM: return Colors.status.warning;
-      case EmergencySeverity.HIGH: return Colors.primary.yellow;
+      case EmergencySeverity.HIGH: return Colors.status.warning;
       case EmergencySeverity.CRITICAL: return Colors.status.error;
       default: return Colors.text.secondary;
     }
@@ -279,8 +331,8 @@ export const EmergencySystem: React.FC<EmergencySystemProps> = ({
   const getStatusColor = (status: EmergencyStatus): string => {
     switch (status) {
       case EmergencyStatus.REPORTED: return Colors.status.warning;
-      case EmergencyStatus.ACKNOWLEDGED: return Colors.primary.blue;
-      case EmergencyStatus.RESPONDING: return Colors.primary.yellow;
+      case EmergencyStatus.ACKNOWLEDGED: return Colors.status.info;
+      case EmergencyStatus.RESPONDING: return Colors.status.warning;
       case EmergencyStatus.RESOLVED: return Colors.status.success;
       default: return Colors.text.secondary;
     }
@@ -496,11 +548,35 @@ export const EmergencySystem: React.FC<EmergencySystemProps> = ({
     </Modal>
   );
 
+  if (showMessagingSystem) {
+    return (
+      <EmergencyMessagingSystem
+        userRole={userRole}
+        currentUserId={currentUserId}
+        currentUserName={currentUserName}
+        currentLocation={currentLocation}
+        currentBuilding={currentBuilding}
+        onMessageSent={onMessageSent}
+        onEmergencyAlert={onEmergencyAlert}
+      />
+    );
+  }
+
   return (
     <View style={styles.container}>
       {renderEmergencyButton()}
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.messagingSection}>
+          <Text style={styles.sectionTitle}>Emergency Communication</Text>
+          <TouchableOpacity
+            style={styles.messagingButton}
+            onPress={() => setShowMessagingSystem(true)}
+          >
+            <Text style={styles.messagingButtonText}>💬 Open Messaging System</Text>
+          </TouchableOpacity>
+        </View>
+        
         {renderEmergencyContacts()}
         {renderRecentEmergencies()}
       </ScrollView>
@@ -545,6 +621,24 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 80, // Space for emergency button
   },
+  messagingSection: {
+    padding: Spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.glass.thin,
+  },
+  messagingButton: {
+    backgroundColor: Colors.status.info,
+    borderRadius: 12,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+  },
+  messagingButtonText: {
+    ...Typography.bodyLarge,
+    color: Colors.text.primary,
+    fontWeight: '600',
+  },
   contactsSection: {
     padding: Spacing.lg,
   },
@@ -555,7 +649,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   contactCard: {
-    backgroundColor: Colors.glass.medium,
+    backgroundColor: Colors.glass.regular,
     borderRadius: 12,
     padding: Spacing.md,
     marginBottom: Spacing.md,
@@ -577,7 +671,7 @@ const styles = StyleSheet.create({
   },
   contactDepartment: {
     ...Typography.captionSmall,
-    color: Colors.primary.blue,
+    color: Colors.status.info,
     marginTop: 2,
   },
   contactActions: {
@@ -588,7 +682,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.primary.blue,
+    backgroundColor: Colors.status.info,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -605,7 +699,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   emergencyCard: {
-    backgroundColor: Colors.glass.medium,
+    backgroundColor: Colors.glass.regular,
     borderRadius: 12,
     padding: Spacing.md,
     marginBottom: Spacing.md,
@@ -687,7 +781,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.glass.medium,
+    backgroundColor: Colors.glass.regular,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -715,7 +809,7 @@ const styles = StyleSheet.create({
   },
   emergencyTypeButton: {
     width: '48%',
-    backgroundColor: Colors.glass.medium,
+    backgroundColor: Colors.glass.regular,
     borderRadius: 8,
     padding: Spacing.md,
     alignItems: 'center',
@@ -723,8 +817,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.glass.thin,
   },
   selectedEmergencyTypeButton: {
-    backgroundColor: Colors.primary.blue + '20',
-    borderColor: Colors.primary.blue,
+        backgroundColor: Colors.status.info + '20',
+    borderColor: Colors.status.info,
   },
   emergencyTypeIcon: {
     fontSize: 24,
@@ -736,7 +830,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   selectedEmergencyTypeText: {
-    color: Colors.primary.blue,
+    color: Colors.status.info,
     fontWeight: '600',
   },
   severitySection: {
@@ -761,7 +855,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   descriptionInput: {
-    backgroundColor: Colors.glass.medium,
+    backgroundColor: Colors.glass.regular,
     borderRadius: 8,
     padding: Spacing.md,
     minHeight: 100,
@@ -792,7 +886,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.glass.medium,
+    backgroundColor: Colors.glass.regular,
     borderRadius: 12,
     alignItems: 'center',
   },

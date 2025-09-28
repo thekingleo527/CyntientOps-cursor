@@ -81,5 +81,8 @@ export { default as ReportingDashboard } from './reports/ReportingDashboard';
 // Emergency Components
 export { default as EmergencySystem } from './emergency/EmergencySystem';
 
+// Messaging Components
+export { default as EmergencyMessagingSystem } from './messaging/EmergencyMessagingSystem';
+
 // Re-export design tokens for convenience
 export * from '@cyntientops/design-tokens';

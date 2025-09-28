@@ -97,7 +97,7 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
   onEmergencyReport,
   onMessageSent,
   onEmergencyAlert,
-}) => {
+}: AdminDashboardMainViewProps) => {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFocus, setSelectedFocus] = useState<'overview' | 'buildings' | 'workers' | 'tasks' | 'alerts'>('overview');
@@ -162,7 +162,7 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
     return workerData.map(worker => ({
       id: worker.id,
       name: worker.name,
-      status: Math.random() > 0.2 ? 'online' : Math.random() > 0.5 ? 'busy' : 'offline',
+      status: (Math.random() > 0.2 ? 'online' : Math.random() > 0.5 ? 'busy' : 'offline') as 'online' | 'offline' | 'busy',
       currentBuilding: generateBuildingById(worker.building),
       tasksCompleted: worker.completed,
       tasksTotal: worker.tasks,
@@ -193,7 +193,7 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
       address: building.address,
       activeTasks: Math.floor(Math.random() * 15) + 5, // 5-20 tasks
       assignedWorkers: Math.floor(Math.random() * 3) + 1, // 1-4 workers
-      complianceStatus: Math.random() > 0.8 ? 'violation' : Math.random() > 0.6 ? 'warning' : 'compliant',
+      complianceStatus: (Math.random() > 0.8 ? 'violation' : Math.random() > 0.6 ? 'warning' : 'compliant') as 'compliant' | 'warning' | 'violation',
       lastInspection: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Within last 30 days
     }));
   };
@@ -289,7 +289,7 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
     }));
   };
 
-  const generatePerformanceMetrics = (workers: any[], buildings: any[], tasks: any) => {
+  const generatePerformanceMetrics = (workers: any[], buildings: any[], tasks: any): any => {
     const avgWorkerCompletion = workers.reduce((sum, w) => sum + w.completionRate, 0) / workers.length;
     const buildingUtilization = buildings.reduce((sum, b) => sum + b.activeTasks, 0) / buildings.length;
 

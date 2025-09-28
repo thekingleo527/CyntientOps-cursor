@@ -8491,7 +8491,7 @@
     "ui-components": [
       {
         "source": "ui-components",
-        "target": "npm:typescript",
+        "target": "design-tokens",
         "type": "static"
       },
       {
@@ -8506,12 +8506,12 @@
       },
       {
         "source": "ui-components",
-        "target": "design-tokens",
+        "target": "npm:typescript",
         "type": "static"
       },
       {
         "source": "ui-components",
-        "target": "context-engines",
+        "target": "domain-schema",
         "type": "static"
       }
     ],

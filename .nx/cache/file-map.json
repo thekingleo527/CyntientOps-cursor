@@ -17,6 +17,58 @@
   "fileMap": {
     "nonProjectFiles": [
       {
+        "file": ".gitignore",
+        "hash": "15535908159169107954"
+      },
+      {
+        "file": "FORENSIC_RECONCILIATION_REPORT.md",
+        "hash": "8636703867579112770"
+      },
+      {
+        "file": "README.md",
+        "hash": "12576029393461459033"
+      },
+      {
+        "file": "copy-images.sh",
+        "hash": "11765879550370700119"
+      },
+      {
+        "file": "scripts/setup-nx-projects.js",
+        "hash": "8665214159614902254"
+      },
+      {
+        "file": "scripts/setup-jest-configs.js",
+        "hash": "16206366320795113098"
+      },
+      {
+        "file": ".eslintrc.js",
+        "hash": "13772985611367207345"
+      },
+      {
+        "file": "PHASE_4B_COMPLETE.md",
+        "hash": "15012949593794021123"
+      },
+      {
+        "file": "package.json",
+        "hash": "10056869675672275213"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "12496562632034889801"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1817247490336913443"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "2599607768644681757"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "15005792177748425952"
+      },
+      {
         "file": "tsconfig.base.json",
         "hash": "2675220573733747715"
       },
@@ -25,72 +77,20 @@
         "hash": "13939275850397437566"
       },
       {
-        "file": "tsconfig.json",
-        "hash": "12496562632034889801"
+        "file": "verify-folders.sh",
+        "hash": "10935650700356555517"
       },
       {
         "file": "COMPLETE_SWIFTUI_ANALYSIS.md",
         "hash": "1560824042097432759"
       },
       {
-        "file": "nx.json",
-        "hash": "1817247490336913443"
-      },
-      {
-        "file": "package.json",
-        "hash": "10056869675672275213"
-      },
-      {
-        "file": "copy-images.sh",
-        "hash": "11765879550370700119"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "15005792177748425952"
-      },
-      {
-        "file": "scripts/setup-nx-projects.js",
-        "hash": "8665214159614902254"
-      },
-      {
         "file": "CONTINUITY_REPORT_PHASE_4B.md",
         "hash": "5086867959219332568"
       },
       {
-        "file": "scripts/setup-jest-configs.js",
-        "hash": "16206366320795113098"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "15535908159169107954"
-      },
-      {
-        "file": "PHASE_4B_COMPLETE.md",
-        "hash": "15012949593794021123"
-      },
-      {
-        "file": "README.md",
-        "hash": "12576029393461459033"
-      },
-      {
         "file": "scripts/setup-tsconfigs.js",
         "hash": "14530017827863588642"
-      },
-      {
-        "file": "verify-folders.sh",
-        "hash": "10935650700356555517"
-      },
-      {
-        "file": ".eslintrc.js",
-        "hash": "13772985611367207345"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "2599607768644681757"
-      },
-      {
-        "file": "FORENSIC_RECONCILIATION_REPORT.md",
-        "hash": "8636703867579112770"
       }
     ],
     "projectFileMap": {
@@ -389,8 +389,10 @@
         },
         {
           "file": "packages/ui-components/package.json",
-          "hash": "11060503204568265209",
+          "hash": "18294495282829218466",
           "deps": [
+            "design-tokens",
+            "business-core",
             "npm:typescript"
           ]
         },
@@ -415,14 +417,13 @@
         },
         {
           "file": "packages/ui-components/src/buildings/BuildingDetailOverview.tsx",
-          "hash": "17702359800526179805",
+          "hash": "7321740073465300347",
           "deps": [
             "npm:react",
             "npm:react-native",
             "npm:expo-linear-gradient",
             "design-tokens",
-            "business-core",
-            "context-engines"
+            "business-core"
           ]
         },
         {
@@ -497,12 +498,12 @@
         },
         {
           "file": "packages/ui-components/src/dashboards/AdminDashboardMainView.tsx",
-          "hash": "7777972491601227828",
+          "hash": "12020870968338812958",
           "deps": [
             "npm:react",
             "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/domain-schema"
+            "design-tokens",
+            "domain-schema"
           ]
         },
         {
@@ -1058,7 +1059,7 @@
         },
         {
           "file": "packages/ui-components/tsconfig.json",
-          "hash": "9642494690442351636"
+          "hash": "14913973316716869366"
         },
         {
           "file": "packages/ui-components/tsconfig.lib.json",

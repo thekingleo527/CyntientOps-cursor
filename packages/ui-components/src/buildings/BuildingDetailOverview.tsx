@@ -21,7 +21,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { GlassCard, Colors, Typography, Spacing, DashboardGradients } from '@cyntientops/design-tokens';
 import { ServiceContainer } from '@cyntientops/business-core';
-import { useBuildingDetailViewModel } from '@cyntientops/context-engines';
+// import { useBuildingDetailViewModel } from '@cyntientops/context-engines';
 
 // MARK: - Types (matching SwiftUI exactly)
 
@@ -63,7 +63,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   onReportIssue,
   onRequestSupplies,
   onNavigate,
-}) => {
+}: BuildingDetailOverviewProps) => {
   // MARK: - State (matching SwiftUI exactly)
   const [selectedTab, setSelectedTab] = useState<BuildingDetailTab>(BuildingDetailTab.OVERVIEW);
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);

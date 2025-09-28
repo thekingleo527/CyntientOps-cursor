@@ -158,35 +158,34 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
   };
 
   const generateClientBuildings = (clientId: string) => {
-    // Client-specific building assignments based on canonical data
+    // Client-specific building assignments based on canonical data from data-seed
     const clientBuildingAssignments = {
-      '1': ['3', '4', '5', '6', '7', '8', '9', '10', '11'], // JM Realty: 9 buildings
-      '2': ['13'], // Weber Farhat: 1 building
-      '3': ['14', '15', '16'], // Third Client: 3 buildings
-      '4': ['17', '18'], // Fourth Client: 2 buildings
-      '5': ['19', '20'], // Fifth Client: 2 buildings
-      '6': ['21'], // Sixth Client: 1 building
+      'JMR': ['1', '3', '5', '7', '9', '13'], // JMR Properties: 6 buildings
+      'WFR': ['4'], // West Franklin Realty: 1 building (104 Franklin Street)
+      'PER': ['6', '10'], // Perry Street Partners: 2 buildings
+      'RUB': ['4'], // Rubin Museum of Art: 1 building (104 Franklin Street)
+      'STU': ['11'], // NYC Parks Department: 1 building
+      'ELI': ['8'], // Elizabeth Street Management: 1 building
+      'AVE': ['11'], // First Avenue Properties: 1 building
+      'EAS': ['11'], // East Side Properties: 1 building
+      'SPR': ['5'], // Spring Street Properties: 1 building
+      'WAL': ['7'], // Walker Street Management: 1 building
+      'SEV': ['7'], // Seventh Avenue Properties: 1 building
+      'HQ': ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13'], // Franco Management: All buildings
     };
 
     const buildingData = {
-      '3': { name: '148 Chambers Street', address: '148 Chambers St, New York, NY' },
-      '4': { name: 'Rubin Museum', address: '150 W 17th St, New York, NY' },
-      '5': { name: '178 Spring Street', address: '178 Spring St, New York, NY' },
-      '6': { name: '115 7th Avenue', address: '115 7th Ave, New York, NY' },
-      '7': { name: '200 Broadway', address: '200 Broadway, New York, NY' },
-      '8': { name: '350 5th Avenue', address: '350 5th Ave, New York, NY' },
-      '9': { name: '1 World Trade Center', address: '285 Fulton St, New York, NY' },
-      '10': { name: '432 Park Avenue', address: '432 Park Ave, New York, NY' },
-      '11': { name: '30 Rockefeller Plaza', address: '30 Rockefeller Plaza, New York, NY' },
-      '13': { name: 'Empire State Building', address: '350 5th Ave, New York, NY' },
-      '14': { name: 'Chrysler Building', address: '405 Lexington Ave, New York, NY' },
-      '15': { name: 'One57', address: '157 W 57th St, New York, NY' },
-      '16': { name: 'Central Park Tower', address: '225 W 57th St, New York, NY' },
-      '17': { name: '111 West 57th Street', address: '111 W 57th St, New York, NY' },
-      '18': { name: '53W53', address: '53 W 53rd St, New York, NY' },
-      '19': { name: '220 Central Park South', address: '220 Central Park S, New York, NY' },
-      '20': { name: '15 Central Park West', address: '15 Central Park W, New York, NY' },
-      '21': { name: 'The Mark', address: '25 E 77th St, New York, NY' },
+      '1': { name: '12 West 18th Street', address: '12 West 18th Street, New York, NY 10011' },
+      '3': { name: '135-139 West 17th Street', address: '135-139 West 17th Street, New York, NY 10011' },
+      '4': { name: '104 Franklin Street', address: '104 Franklin Street, New York, NY 10013' },
+      '5': { name: '138 West 17th Street', address: '138 West 17th Street, New York, NY 10011' },
+      '6': { name: '68 Perry Street', address: '68 Perry Street, New York, NY 10014' },
+      '7': { name: '112 West 18th Street', address: '112 West 18th Street, New York, NY 10011' },
+      '8': { name: '41 Elizabeth Street', address: '41 Elizabeth Street, New York, NY 10013' },
+      '9': { name: '117 West 17th Street', address: '117 West 17th Street, New York, NY 10011' },
+      '10': { name: '131 Perry Street', address: '131 Perry Street, New York, NY 10014' },
+      '11': { name: '123 1st Avenue', address: '123 1st Avenue, New York, NY 10003' },
+      '13': { name: '136 West 17th Street', address: '136 West 17th Street, New York, NY 10011' },
     };
 
     const assignedBuildingIds = clientBuildingAssignments[clientId as keyof typeof clientBuildingAssignments] || ['4'];
@@ -213,15 +212,15 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
   };
 
   const generateClientWorkers = (clientId: string, buildings: any[]) => {
-    // Workers assigned to client's buildings
+    // Workers assigned to client's buildings based on canonical data
     const allWorkers = [
-      { id: '1', name: 'Kevin Dutan' },
-      { id: '2', name: 'Maria Rodriguez' },
-      { id: '4', name: 'James Wilson' },
-      { id: '5', name: 'Sarah Chen' },
-      { id: '6', name: 'Michael Brown' },
-      { id: '7', name: 'Lisa Garcia' },
-      { id: '8', name: 'David Lee' },
+      { id: '1', name: 'Greg Hutson' },
+      { id: '2', name: 'Edwin Lema' },
+      { id: '4', name: 'Kevin Dutan' },
+      { id: '5', name: 'Mercedes Inamagua' },
+      { id: '6', name: 'Luis Lopez' },
+      { id: '7', name: 'Angel Guirachocha' },
+      { id: '8', name: 'Shawn Magloire' },
     ];
 
     // Filter workers based on client's buildings

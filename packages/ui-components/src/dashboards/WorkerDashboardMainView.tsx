@@ -97,58 +97,58 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   };
 
   const generateWorkerSpecificData = async (workerId: string, workerName: string): Promise<WorkerDashboardData> => {
-    // Generate worker-specific data based on canonical IDs
+    // Generate worker-specific data based on canonical IDs from data-seed
     const workerSpecificData = {
-      '1': { // Kevin Dutan
-        building: '4', // Rubin Museum
-        totalTasks: 38,
-        completedTasks: 15,
-        completionRate: 39,
-        urgentTasks: 3,
+      '1': { // Greg Hutson
+        building: '1', // 12 West 18th Street
+        totalTasks: 28,
+        completedTasks: 18,
+        completionRate: 64,
+        urgentTasks: 2,
         performance: { thisWeek: 85, lastWeek: 78, monthlyAverage: 82, streak: 5 }
       },
-      '2': { // Maria Rodriguez
-        building: '3', // 148 Chambers Street
+      '2': { // Edwin Lema
+        building: '3', // 135-139 West 17th Street
         totalTasks: 24,
         completedTasks: 18,
         completionRate: 75,
         urgentTasks: 1,
         performance: { thisWeek: 92, lastWeek: 88, monthlyAverage: 89, streak: 8 }
       },
-      '4': { // James Wilson
-        building: '5', // 178 Spring Street
-        totalTasks: 31,
-        completedTasks: 22,
-        completionRate: 71,
-        urgentTasks: 2,
+      '4': { // Kevin Dutan
+        building: '4', // 104 Franklin Street (Rubin Museum area)
+        totalTasks: 38,
+        completedTasks: 15,
+        completionRate: 39,
+        urgentTasks: 3,
         performance: { thisWeek: 78, lastWeek: 82, monthlyAverage: 80, streak: 3 }
       },
-      '5': { // Sarah Chen
-        building: '6', // 115 7th Avenue
+      '5': { // Mercedes Inamagua
+        building: '5', // 138 West 17th Street
         totalTasks: 27,
         completedTasks: 20,
         completionRate: 74,
         urgentTasks: 1,
         performance: { thisWeek: 88, lastWeek: 85, monthlyAverage: 86, streak: 6 }
       },
-      '6': { // Michael Brown
-        building: '7', // 200 Broadway
+      '6': { // Luis Lopez
+        building: '6', // 68 Perry Street
         totalTasks: 29,
         completedTasks: 21,
         completionRate: 72,
         urgentTasks: 2,
         performance: { thisWeek: 81, lastWeek: 79, monthlyAverage: 80, streak: 4 }
       },
-      '7': { // Lisa Garcia
-        building: '8', // 350 5th Avenue
+      '7': { // Angel Guirachocha
+        building: '7', // 112 West 18th Street
         totalTasks: 26,
         completedTasks: 19,
         completionRate: 73,
         urgentTasks: 1,
         performance: { thisWeek: 86, lastWeek: 83, monthlyAverage: 84, streak: 7 }
       },
-      '8': { // David Lee
-        building: '9', // 1 World Trade Center
+      '8': { // Shawn Magloire (Admin)
+        building: '8', // 41 Elizabeth Street
         totalTasks: 33,
         completedTasks: 25,
         completionRate: 76,
@@ -232,38 +232,53 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   };
 
   const generateCurrentBuilding = (buildingId: string): NamedCoordinate => {
-    const buildingNames = {
-      '3': '148 Chambers Street',
-      '4': 'Rubin Museum',
-      '5': '178 Spring Street',
-      '6': '115 7th Avenue',
-      '7': '200 Broadway',
-      '8': '350 5th Avenue',
-      '9': '1 World Trade Center'
+    const buildingData = {
+      '1': { name: '12 West 18th Street', address: '12 West 18th Street, New York, NY 10011', lat: 40.738948, lng: -73.993415 },
+      '3': { name: '135-139 West 17th Street', address: '135-139 West 17th Street, New York, NY 10011', lat: 40.738234, lng: -73.994567 },
+      '4': { name: '104 Franklin Street', address: '104 Franklin Street, New York, NY 10013', lat: 40.719847, lng: -74.005234 },
+      '5': { name: '138 West 17th Street', address: '138 West 17th Street, New York, NY 10011', lat: 40.738156, lng: -73.994789 },
+      '6': { name: '68 Perry Street', address: '68 Perry Street, New York, NY 10014', lat: 40.735123, lng: -74.003456 },
+      '7': { name: '112 West 18th Street', address: '112 West 18th Street, New York, NY 10011', lat: 40.738723, lng: -73.995234 },
+      '8': { name: '41 Elizabeth Street', address: '41 Elizabeth Street, New York, NY 10013', lat: 40.715234, lng: -73.997891 },
+      '9': { name: '117 West 17th Street', address: '117 West 17th Street, New York, NY 10011', lat: 40.738345, lng: -73.994123 },
+      '10': { name: '131 Perry Street', address: '131 Perry Street, New York, NY 10014', lat: 40.735456, lng: -74.003789 },
+      '11': { name: '123 1st Avenue', address: '123 1st Avenue, New York, NY 10003', lat: 40.729123, lng: -73.986456 },
+      '13': { name: '136 West 17th Street', address: '136 West 17th Street, New York, NY 10011', lat: 40.738089, lng: -73.994901 }
     };
+    
+    const building = buildingData[buildingId as keyof typeof buildingData];
+    if (!building) {
+      return {
+        id: buildingId,
+        name: 'Current Building',
+        latitude: 40.7128,
+        longitude: -74.0060,
+        address: 'New York, NY'
+      };
+    }
     
     return {
       id: buildingId,
-      name: buildingNames[buildingId as keyof typeof buildingNames] || 'Current Building',
-      latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
-      longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
-      address: `${buildingNames[buildingId as keyof typeof buildingNames]}, New York, NY`
+      name: building.name,
+      latitude: building.lat,
+      longitude: building.lng,
+      address: building.address
     };
   };
 
   const generateAssignedBuildings = (workerId: string): NamedCoordinate[] => {
-    // Each worker is assigned to 2-4 buildings
+    // Each worker is assigned to 2-4 buildings based on canonical data
     const buildingAssignments = {
-      '1': ['4', '3'], // Kevin: Rubin Museum, 148 Chambers
-      '2': ['3', '5'], // Maria: 148 Chambers, 178 Spring
-      '4': ['5', '6'], // James: 178 Spring, 115 7th
-      '5': ['6', '7'], // Sarah: 115 7th, 200 Broadway
-      '6': ['7', '8'], // Michael: 200 Broadway, 350 5th
-      '7': ['8', '9'], // Lisa: 350 5th, 1 WTC
-      '8': ['9', '3']  // David: 1 WTC, 148 Chambers
+      '1': ['1', '3'], // Greg Hutson: 12 West 18th Street, 135-139 West 17th Street
+      '2': ['3', '5'], // Edwin Lema: 135-139 West 17th Street, 138 West 17th Street
+      '4': ['4', '9'], // Kevin Dutan: 104 Franklin Street, 117 West 17th Street
+      '5': ['5', '7'], // Mercedes Inamagua: 138 West 17th Street, 112 West 18th Street
+      '6': ['6', '10'], // Luis Lopez: 68 Perry Street, 131 Perry Street
+      '7': ['7', '1'], // Angel Guirachocha: 112 West 18th Street, 12 West 18th Street
+      '8': ['8', '11']  // Shawn Magloire: 41 Elizabeth Street, 123 1st Avenue
     };
     
-    const assignedBuildingIds = buildingAssignments[workerId as keyof typeof buildingAssignments] || ['4'];
+    const assignedBuildingIds = buildingAssignments[workerId as keyof typeof buildingAssignments] || ['1'];
     return assignedBuildingIds.map(id => generateCurrentBuilding(id));
   };
 

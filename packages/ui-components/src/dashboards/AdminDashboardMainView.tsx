@@ -150,13 +150,13 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
 
   const generateAllWorkersData = () => {
     const workerData = [
-      { id: '1', name: 'Kevin Dutan', building: '4', tasks: 38, completed: 15 },
-      { id: '2', name: 'Maria Rodriguez', building: '3', tasks: 24, completed: 18 },
-      { id: '4', name: 'James Wilson', building: '5', tasks: 31, completed: 22 },
-      { id: '5', name: 'Sarah Chen', building: '6', tasks: 27, completed: 20 },
-      { id: '6', name: 'Michael Brown', building: '7', tasks: 29, completed: 21 },
-      { id: '7', name: 'Lisa Garcia', building: '8', tasks: 26, completed: 19 },
-      { id: '8', name: 'David Lee', building: '9', tasks: 33, completed: 25 },
+      { id: '1', name: 'Greg Hutson', building: '1', tasks: 28, completed: 18 },
+      { id: '2', name: 'Edwin Lema', building: '3', tasks: 24, completed: 18 },
+      { id: '4', name: 'Kevin Dutan', building: '4', tasks: 38, completed: 15 },
+      { id: '5', name: 'Mercedes Inamagua', building: '5', tasks: 27, completed: 20 },
+      { id: '6', name: 'Luis Lopez', building: '6', tasks: 29, completed: 21 },
+      { id: '7', name: 'Angel Guirachocha', building: '7', tasks: 26, completed: 19 },
+      { id: '8', name: 'Shawn Magloire', building: '8', tasks: 33, completed: 25 },
     ];
 
     return workerData.map(worker => ({
@@ -174,24 +174,17 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
 
   const generateAllBuildingsData = () => {
     const buildingData = [
-      { id: '3', name: '148 Chambers Street', address: '148 Chambers St, New York, NY' },
-      { id: '4', name: 'Rubin Museum', address: '150 W 17th St, New York, NY' },
-      { id: '5', name: '178 Spring Street', address: '178 Spring St, New York, NY' },
-      { id: '6', name: '115 7th Avenue', address: '115 7th Ave, New York, NY' },
-      { id: '7', name: '200 Broadway', address: '200 Broadway, New York, NY' },
-      { id: '8', name: '350 5th Avenue', address: '350 5th Ave, New York, NY' },
-      { id: '9', name: '1 World Trade Center', address: '285 Fulton St, New York, NY' },
-      { id: '10', name: '432 Park Avenue', address: '432 Park Ave, New York, NY' },
-      { id: '11', name: '30 Rockefeller Plaza', address: '30 Rockefeller Plaza, New York, NY' },
-      { id: '13', name: 'Empire State Building', address: '350 5th Ave, New York, NY' },
-      { id: '14', name: 'Chrysler Building', address: '405 Lexington Ave, New York, NY' },
-      { id: '15', name: 'One57', address: '157 W 57th St, New York, NY' },
-      { id: '16', name: 'Central Park Tower', address: '225 W 57th St, New York, NY' },
-      { id: '17', name: '111 West 57th Street', address: '111 W 57th St, New York, NY' },
-      { id: '18', name: '53W53', address: '53 W 53rd St, New York, NY' },
-      { id: '19', name: '220 Central Park South', address: '220 Central Park S, New York, NY' },
-      { id: '20', name: '15 Central Park West', address: '15 Central Park W, New York, NY' },
-      { id: '21', name: 'The Mark', address: '25 E 77th St, New York, NY' },
+      { id: '1', name: '12 West 18th Street', address: '12 West 18th Street, New York, NY 10011' },
+      { id: '3', name: '135-139 West 17th Street', address: '135-139 West 17th Street, New York, NY 10011' },
+      { id: '4', name: '104 Franklin Street', address: '104 Franklin Street, New York, NY 10013' },
+      { id: '5', name: '138 West 17th Street', address: '138 West 17th Street, New York, NY 10011' },
+      { id: '6', name: '68 Perry Street', address: '68 Perry Street, New York, NY 10014' },
+      { id: '7', name: '112 West 18th Street', address: '112 West 18th Street, New York, NY 10011' },
+      { id: '8', name: '41 Elizabeth Street', address: '41 Elizabeth Street, New York, NY 10013' },
+      { id: '9', name: '117 West 17th Street', address: '117 West 17th Street, New York, NY 10011' },
+      { id: '10', name: '131 Perry Street', address: '131 Perry Street, New York, NY 10014' },
+      { id: '11', name: '123 1st Avenue', address: '123 1st Avenue, New York, NY 10003' },
+      { id: '13', name: '136 West 17th Street', address: '136 West 17th Street, New York, NY 10011' },
     ];
 
     return buildingData.map(building => ({
@@ -206,22 +199,37 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
   };
 
   const generateBuildingById = (buildingId: string): NamedCoordinate => {
-    const buildingNames = {
-      '3': '148 Chambers Street',
-      '4': 'Rubin Museum',
-      '5': '178 Spring Street',
-      '6': '115 7th Avenue',
-      '7': '200 Broadway',
-      '8': '350 5th Avenue',
-      '9': '1 World Trade Center',
+    const buildingData = {
+      '1': { name: '12 West 18th Street', address: '12 West 18th Street, New York, NY 10011', lat: 40.738948, lng: -73.993415 },
+      '3': { name: '135-139 West 17th Street', address: '135-139 West 17th Street, New York, NY 10011', lat: 40.738234, lng: -73.994567 },
+      '4': { name: '104 Franklin Street', address: '104 Franklin Street, New York, NY 10013', lat: 40.719847, lng: -74.005234 },
+      '5': { name: '138 West 17th Street', address: '138 West 17th Street, New York, NY 10011', lat: 40.738156, lng: -73.994789 },
+      '6': { name: '68 Perry Street', address: '68 Perry Street, New York, NY 10014', lat: 40.735123, lng: -74.003456 },
+      '7': { name: '112 West 18th Street', address: '112 West 18th Street, New York, NY 10011', lat: 40.738723, lng: -73.995234 },
+      '8': { name: '41 Elizabeth Street', address: '41 Elizabeth Street, New York, NY 10013', lat: 40.715234, lng: -73.997891 },
+      '9': { name: '117 West 17th Street', address: '117 West 17th Street, New York, NY 10011', lat: 40.738345, lng: -73.994123 },
+      '10': { name: '131 Perry Street', address: '131 Perry Street, New York, NY 10014', lat: 40.735456, lng: -74.003789 },
+      '11': { name: '123 1st Avenue', address: '123 1st Avenue, New York, NY 10003', lat: 40.729123, lng: -73.986456 },
+      '13': { name: '136 West 17th Street', address: '136 West 17th Street, New York, NY 10011', lat: 40.738089, lng: -73.994901 }
     };
+    
+    const building = buildingData[buildingId as keyof typeof buildingData];
+    if (!building) {
+      return {
+        id: buildingId,
+        name: 'Building',
+        latitude: 40.7128,
+        longitude: -74.0060,
+        address: 'New York, NY'
+      };
+    }
     
     return {
       id: buildingId,
-      name: buildingNames[buildingId as keyof typeof buildingNames] || 'Building',
-      latitude: 40.7128 + (Math.random() - 0.5) * 0.1,
-      longitude: -74.0060 + (Math.random() - 0.5) * 0.1,
-      address: `${buildingNames[buildingId as keyof typeof buildingNames]}, New York, NY`
+      name: building.name,
+      latitude: building.lat,
+      longitude: building.lng,
+      address: building.address
     };
   };
 

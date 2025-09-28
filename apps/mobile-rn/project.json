@@ -11,12 +11,11 @@
       }
     },
     "build": {
-      "executor": "@nx/react-native:bundle",
-      "outputs": ["{options.bundleOutput}"],
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/mobile-rn"],
       "options": {
-        "entryFile": "apps/mobile-rn/index.js",
-        "bundleOutput": "dist/apps/mobile-rn/index.bundle",
-        "platform": "ios"
+        "command": "npx expo export --platform ios --output-dir ../../dist/apps/mobile-rn",
+        "cwd": "apps/mobile-rn"
       }
     },
     "test": {

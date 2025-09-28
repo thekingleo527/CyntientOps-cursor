@@ -7,7 +7,6 @@
 import { DatabaseManager } from '@cyntientops/database';
 import { ClockInManager, LocationManager, NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { ServiceContainer } from '@cyntientops/business-core';
 
 export interface Command {
   id: string;
@@ -53,6 +52,11 @@ export interface CommandChainConfig {
   enableRollback: boolean;
 }
 
+// Generic service container interface to avoid circular dependency
+export interface IServiceContainer {
+  [key: string]: any;
+}
+
 export class CommandChainManager {
   private static instance: CommandChainManager;
   private databaseManager: DatabaseManager;
@@ -60,7 +64,7 @@ export class CommandChainManager {
   private locationManager: LocationManager;
   private notificationManager: NotificationManager;
   private intelligenceService: IntelligenceService;
-  private serviceContainer: ServiceContainer;
+  private serviceContainer: IServiceContainer;
   
   private commandChains: Map<string, CommandChain> = new Map();
   private commands: Map<string, Command> = new Map();
@@ -75,7 +79,7 @@ export class CommandChainManager {
     locationManager: LocationManager,
     notificationManager: NotificationManager,
     intelligenceService: IntelligenceService,
-    serviceContainer: ServiceContainer
+    serviceContainer: IServiceContainer
   ) {
     this.databaseManager = databaseManager;
     this.clockInManager = clockInManager;
@@ -101,7 +105,7 @@ export class CommandChainManager {
     locationManager: LocationManager,
     notificationManager: NotificationManager,
     intelligenceService: IntelligenceService,
-    serviceContainer: ServiceContainer
+    serviceContainer: IServiceContainer
   ): CommandChainManager {
     if (!CommandChainManager.instance) {
       CommandChainManager.instance = new CommandChainManager(

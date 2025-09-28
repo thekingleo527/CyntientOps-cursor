@@ -5,7 +5,6 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
-import { ServiceContainer } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
 import { WorkerProfile, Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 
@@ -117,10 +116,14 @@ export interface IntelligenceReport {
   generatedAt: Date;
 }
 
+export interface IServiceContainer {
+  [key: string]: any;
+}
+
 export class IntelligenceService {
   private static instance: IntelligenceService;
   private databaseManager: DatabaseManager;
-  private serviceContainer: ServiceContainer;
+  private serviceContainer: IServiceContainer;
   private apiClientManager: APIClientManager;
   private insights: Map<string, PerformanceInsight> = new Map();
   private predictions: Map<string, PredictiveAnalytics> = new Map();
@@ -129,7 +132,7 @@ export class IntelligenceService {
 
   private constructor(
     databaseManager: DatabaseManager,
-    serviceContainer: ServiceContainer,
+    serviceContainer: IServiceContainer,
     apiClientManager: APIClientManager
   ) {
     this.databaseManager = databaseManager;
@@ -139,7 +142,7 @@ export class IntelligenceService {
 
   public static getInstance(
     databaseManager: DatabaseManager,
-    serviceContainer: ServiceContainer,
+    serviceContainer: IServiceContainer,
     apiClientManager: APIClientManager
   ): IntelligenceService {
     if (!IntelligenceService.instance) {

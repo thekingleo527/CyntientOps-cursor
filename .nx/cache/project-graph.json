@@ -1546,7 +1546,7 @@
             "configurations": {}
           },
           "build": {
-            "executor": "@nx/react-native:bundle",
+            "executor": "nx:run-commands",
             "dependsOn": [
               "^build"
             ],
@@ -1555,12 +1555,11 @@
               "^production"
             ],
             "outputs": [
-              "{options.bundleOutput}"
+              "{workspaceRoot}/dist/apps/mobile-rn"
             ],
             "options": {
-              "entryFile": "apps/mobile-rn/index.js",
-              "bundleOutput": "dist/apps/mobile-rn/index.bundle",
-              "platform": "ios"
+              "command": "npx expo export --platform ios --output-dir ../../dist/apps/mobile-rn",
+              "cwd": "apps/mobile-rn"
             },
             "configurations": {}
           },
@@ -8321,11 +8320,6 @@
       },
       {
         "source": "intelligence-services",
-        "target": "business-core",
-        "type": "static"
-      },
-      {
-        "source": "intelligence-services",
         "target": "api-clients",
         "type": "static"
       },
@@ -8382,12 +8376,22 @@
     "command-chains": [
       {
         "source": "command-chains",
+        "target": "domain-schema",
+        "type": "static"
+      },
+      {
+        "source": "command-chains",
         "target": "database",
         "type": "static"
       },
       {
         "source": "command-chains",
-        "target": "business-core",
+        "target": "managers",
+        "type": "static"
+      },
+      {
+        "source": "command-chains",
+        "target": "intelligence-services",
         "type": "static"
       },
       {
@@ -8430,6 +8434,11 @@
       {
         "source": "business-core",
         "target": "intelligence-services",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "command-chains",
         "type": "static"
       },
       {

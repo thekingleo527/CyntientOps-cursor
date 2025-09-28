@@ -1,40 +1,29 @@
 {
   "run": {
-    "command": "nx build mobile-rn",
-    "startTime": "2025-09-28T13:36:10.305Z",
-    "endTime": "2025-09-28T13:36:13.480Z",
+    "command": "nx run mobile-rn:build",
+    "startTime": "2025-09-28T14:24:49.197Z",
+    "endTime": "2025-09-28T14:27:01.724Z",
     "inner": false
   },
   "tasks": [
-    {
-      "taskId": "api-clients:build",
-      "target": "build",
-      "projectName": "api-clients",
-      "hash": "18338528298422195737",
-      "startTime": "2025-09-28T13:36:10.309Z",
-      "endTime": "2025-09-28T13:36:11.035Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
     {
       "taskId": "domain-schema:build",
       "target": "build",
       "projectName": "domain-schema",
       "hash": "6713525525830286934",
-      "startTime": "2025-09-28T13:36:10.309Z",
-      "endTime": "2025-09-28T13:36:11.047Z",
+      "startTime": "2025-09-28T14:24:49.202Z",
+      "endTime": "2025-09-28T14:24:59.736Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
     },
     {
-      "taskId": "business-core:build",
+      "taskId": "api-clients:build",
       "target": "build",
-      "projectName": "business-core",
-      "hash": "15492706421769032081",
-      "startTime": "2025-09-28T13:36:10.309Z",
-      "endTime": "2025-09-28T13:36:11.500Z",
+      "projectName": "api-clients",
+      "hash": "18338528298422195737",
+      "startTime": "2025-09-28T14:24:49.202Z",
+      "endTime": "2025-09-28T14:24:59.765Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
@@ -44,8 +33,8 @@
       "target": "build",
       "projectName": "data-seed",
       "hash": "966726654491713390",
-      "startTime": "2025-09-28T13:36:11.035Z",
-      "endTime": "2025-09-28T13:36:11.526Z",
+      "startTime": "2025-09-28T14:24:49.202Z",
+      "endTime": "2025-09-28T14:24:59.766Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
@@ -55,8 +44,19 @@
       "target": "build",
       "projectName": "database",
       "hash": "17380804878582666008",
-      "startTime": "2025-09-28T13:36:11.526Z",
-      "endTime": "2025-09-28T13:36:11.995Z",
+      "startTime": "2025-09-28T14:24:59.766Z",
+      "endTime": "2025-09-28T14:25:01.010Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "design-tokens:build",
+      "target": "build",
+      "projectName": "design-tokens",
+      "hash": "12165649702586444071",
+      "startTime": "2025-09-28T14:24:59.736Z",
+      "endTime": "2025-09-28T14:25:01.755Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
@@ -65,9 +65,9 @@
       "taskId": "intelligence-services:build",
       "target": "build",
       "projectName": "intelligence-services",
-      "hash": "1089465711228974588",
-      "startTime": "2025-09-28T13:36:11.996Z",
-      "endTime": "2025-09-28T13:36:12.545Z",
+      "hash": "15840995706097535130",
+      "startTime": "2025-09-28T14:25:01.011Z",
+      "endTime": "2025-09-28T14:25:01.851Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
@@ -77,8 +77,52 @@
       "target": "build",
       "projectName": "managers",
       "hash": "16231892846146244589",
-      "startTime": "2025-09-28T13:36:11.996Z",
-      "endTime": "2025-09-28T13:36:12.550Z",
+      "startTime": "2025-09-28T14:25:01.011Z",
+      "endTime": "2025-09-28T14:25:01.859Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "command-chains:build",
+      "target": "build",
+      "projectName": "command-chains",
+      "hash": "9264781559488751926",
+      "startTime": "2025-09-28T14:25:01.859Z",
+      "endTime": "2025-09-28T14:25:02.306Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "offline-support:build",
+      "target": "build",
+      "projectName": "offline-support",
+      "hash": "103536350404305093",
+      "startTime": "2025-09-28T14:25:02.306Z",
+      "endTime": "2025-09-28T14:25:02.695Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "realtime-sync:build",
+      "target": "build",
+      "projectName": "realtime-sync",
+      "hash": "7181750696655010924",
+      "startTime": "2025-09-28T14:25:02.696Z",
+      "endTime": "2025-09-28T14:25:03.065Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    },
+    {
+      "taskId": "business-core:build",
+      "target": "build",
+      "projectName": "business-core",
+      "hash": "11827999754251917831",
+      "startTime": "2025-09-28T14:25:03.066Z",
+      "endTime": "2025-09-28T14:25:03.684Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
@@ -87,9 +131,9 @@
       "taskId": "context-engines:build",
       "target": "build",
       "projectName": "context-engines",
-      "hash": "16792554342049806065",
-      "startTime": "2025-09-28T13:36:12.545Z",
-      "endTime": "2025-09-28T13:36:13.201Z",
+      "hash": "4177938883760618541",
+      "startTime": "2025-09-28T14:25:03.684Z",
+      "endTime": "2025-09-28T14:25:04.244Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
@@ -98,9 +142,9 @@
       "taskId": "ui-components:build",
       "target": "build",
       "projectName": "ui-components",
-      "hash": "7000333694807033004",
-      "startTime": "2025-09-28T13:36:11.501Z",
-      "endTime": "2025-09-28T13:36:13.239Z",
+      "hash": "16157276173317850361",
+      "startTime": "2025-09-28T14:25:04.244Z",
+      "endTime": "2025-09-28T14:25:05.557Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0
@@ -109,12 +153,12 @@
       "taskId": "mobile-rn:build",
       "target": "build",
       "projectName": "mobile-rn",
-      "hash": "18019252913010085199",
-      "startTime": "2025-09-28T13:36:13.239Z",
-      "endTime": "2025-09-28T13:36:13.479Z",
+      "hash": "15826021485177371710",
+      "startTime": "2025-09-28T14:25:05.557Z",
+      "endTime": "2025-09-28T14:27:01.724Z",
       "params": "",
       "cacheStatus": "cache-miss",
-      "status": 1
+      "status": 0
     }
   ]
 }

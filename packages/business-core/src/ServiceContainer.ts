@@ -30,6 +30,8 @@ import { AnalyticsEngine } from './services/AnalyticsEngine';
 import { SecurityManager } from './services/SecurityManager';
 import { ProductionManager } from './services/ProductionManager';
 import { BuildingInfrastructureCatalog } from './services/BuildingInfrastructureCatalog';
+import { CommandChainManager } from '@cyntientops/command-chains';
+import { OperationalDataManager, operationalDataManager } from './OperationalDataManager';
 
 // Types
 import { 
@@ -73,6 +75,7 @@ export class ServiceContainer {
   private _securityManager: SecurityManager | null = null;
   private _productionManager: ProductionManager | null = null;
   private _buildingInfrastructureCatalog: BuildingInfrastructureCatalog | null = null;
+  private _commandChainManager: CommandChainManager | null = null;
   private _metrics: any | null = null; // TODO: Implement BuildingMetricsService
   private _compliance: any | null = null; // TODO: Implement ComplianceService
   private _webSocket: WebSocketManager | null = null;
@@ -290,23 +293,100 @@ export class ServiceContainer {
     return this._buildingInfrastructureCatalog;
   }
 
+  public get commandChainManager(): CommandChainManager {
+    if (!this._commandChainManager) {
+      this._commandChainManager = CommandChainManager.getInstance(
+        this.database,
+        this.clockIn,
+        this.location,
+        this.notifications,
+        this.intelligence,
+        this // Pass this ServiceContainer as IServiceContainer
+      );
+    }
+    return this._commandChainManager;
+  }
+
+  public get operationalData(): OperationalDataManager {
+    return operationalDataManager;
+  }
+
+  // MARK: - Building Data Helper Methods
+  
+  private getBuildingType(buildingId: string): string {
+    const buildingTypes: Record<string, string> = {
+      "14": "Museum", // Rubin Museum
+      "20": "Office", // CyntientOps HQ
+      "16": "Park",   // Stuyvesant Cove
+    };
+    return buildingTypes[buildingId] || "Residential";
+  }
+  
+  private getBuildingSize(buildingId: string): number {
+    const buildingSizes: Record<string, number> = {
+      "14": 50000, // Rubin Museum
+      "20": 10000, // CyntientOps HQ
+      "16": 20000, // Stuyvesant Cove
+    };
+    return buildingSizes[buildingId] || 25000;
+  }
+  
+  private getBuildingYearBuilt(buildingId: string): number {
+    const buildingYears: Record<string, number> = {
+      "14": 2004, // Rubin Museum
+      "20": 2020, // CyntientOps HQ
+      "16": 2010, // Stuyvesant Cove
+    };
+    return buildingYears[buildingId] || 1995;
+  }
+  
+  private getBuildingContractType(buildingId: string): string {
+    const contractTypes: Record<string, string> = {
+      "14": "Museum Contract", // Rubin Museum
+      "20": "Internal", // CyntientOps HQ
+      "16": "Park Contract", // Stuyvesant Cove
+    };
+    return contractTypes[buildingId] || "Standard";
+  }
+  
+  private getBuildingRating(buildingId: string): string {
+    const buildingRatings: Record<string, string> = {
+      "14": "A+", // Rubin Museum
+      "20": "A",  // CyntientOps HQ
+      "16": "A",  // Stuyvesant Cove
+    };
+    return buildingRatings[buildingId] || "B+";
+  }
+
   // MARK: - Building Detail Services (for useBuildingDetailViewModel)
 
   public get buildingDetailsCatalog(): any {
     if (!this._buildingDetailsCatalog) {
-      // TODO: Implement BuildingDetailsCatalog
       this._buildingDetailsCatalog = {
-        getBuildingDetails: (buildingId: string) => ({
-          id: buildingId,
-          name: 'Sample Building',
-          address: '123 Main St',
-          type: 'Residential',
-          size: 50000,
-          yearBuilt: 2020,
-          contractType: 'Standard',
-          rating: 'A',
-        }),
+        getBuildingDetails: (buildingId: string) => {
+          const building = this.operationalData.getBuilding(buildingId);
+          const stats = this.operationalData.getBuildingStatistics(buildingId);
+          
+          return {
+            id: buildingId,
+            name: building?.name || 'Unknown Building',
+            address: building?.address || 'Address not available',
+            type: this.getBuildingType(buildingId),
+            size: this.getBuildingSize(buildingId),
+            yearBuilt: this.getBuildingYearBuilt(buildingId),
+            contractType: this.getBuildingContractType(buildingId),
+            rating: this.getBuildingRating(buildingId),
+            totalTasks: stats.totalTasks,
+            dailyTasks: stats.dailyTasks,
+            weeklyTasks: stats.weeklyTasks,
+            tasksByCategory: stats.tasksByCategory,
+            tasksByWorker: stats.tasksByWorker,
+            latitude: building?.latitude || 40.7589,
+            longitude: building?.longitude || -73.9851,
+          };
+        },
         updateBuildingDetails: async (buildingId: string, updates: any) => {
+          this.operationalData.logEvent('building_details_updated', buildingId, undefined, updates);
           console.log('Updating building details:', buildingId, updates);
         },
       };

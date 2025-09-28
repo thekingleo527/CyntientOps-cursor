@@ -17,60 +17,68 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "scripts/setup-jest-configs.js",
-        "hash": "16206366320795113098"
-      },
-      {
         "file": "CONTINUITY_REPORT_PHASE_4B.md",
         "hash": "5086867959219332568"
-      },
-      {
-        "file": ".eslintrc.js",
-        "hash": "13772985611367207345"
-      },
-      {
-        "file": "verify-folders.sh",
-        "hash": "10935650700356555517"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "2675220573733747715"
-      },
-      {
-        "file": "COMPLETE_SWIFTUI_ANALYSIS.md",
-        "hash": "1560824042097432759"
-      },
-      {
-        "file": "FORENSIC_RECONCILIATION_REPORT.md",
-        "hash": "8636703867579112770"
       },
       {
         "file": "REMAINING_IMPLEMENTATION_ANALYSIS.md",
         "hash": "13939275850397437566"
       },
       {
-        "file": "package.json",
-        "hash": "10056869675672275213"
+        "file": "tsconfig.base.json",
+        "hash": "2675220573733747715"
       },
       {
-        "file": "copy-images.sh",
-        "hash": "11765879550370700119"
+        "file": "verify-folders.sh",
+        "hash": "10935650700356555517"
       },
       {
-        "file": "tsconfig.json",
-        "hash": "12496562632034889801"
+        "file": ".gitignore",
+        "hash": "15535908159169107954"
       },
       {
-        "file": "scripts/setup-nx-projects.js",
-        "hash": "8665214159614902254"
+        "file": ".eslintrc.js",
+        "hash": "13772985611367207345"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1817247490336913443"
       },
       {
         "file": "README.md",
         "hash": "12576029393461459033"
       },
       {
+        "file": "FORENSIC_RECONCILIATION_REPORT.md",
+        "hash": "8636703867579112770"
+      },
+      {
         "file": "scripts/setup-tsconfigs.js",
         "hash": "14530017827863588642"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "12496562632034889801"
+      },
+      {
+        "file": "scripts/setup-jest-configs.js",
+        "hash": "16206366320795113098"
+      },
+      {
+        "file": "copy-images.sh",
+        "hash": "11765879550370700119"
+      },
+      {
+        "file": "PHASE_4B_COMPLETE.md",
+        "hash": "15012949593794021123"
+      },
+      {
+        "file": "COMPLETE_SWIFTUI_ANALYSIS.md",
+        "hash": "1560824042097432759"
+      },
+      {
+        "file": "package.json",
+        "hash": "10056869675672275213"
       },
       {
         "file": "jest.preset.js",
@@ -81,660 +89,16 @@
         "hash": "15005792177748425952"
       },
       {
-        "file": "PHASE_4B_COMPLETE.md",
-        "hash": "15012949593794021123"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "15535908159169107954"
-      },
-      {
-        "file": "nx.json",
-        "hash": "1817247490336913443"
+        "file": "scripts/setup-nx-projects.js",
+        "hash": "8665214159614902254"
       }
     ],
     "projectFileMap": {
-      "context-engines": [
-        {
-          "file": "packages/context-engines/package.json",
-          "hash": "2604820203127716085",
-          "deps": [
-            "database",
-            "business-core",
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/context-engines/project.json",
-          "hash": "1317032141572244102"
-        },
-        {
-          "file": "packages/context-engines/src/AdminContextEngine.ts",
-          "hash": "17469246371754812927",
-          "deps": [
-            "npm:@cyntientops/domain-schema",
-            "business-core",
-            "database"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/AdminDashboardViewModel.ts",
-          "hash": "7075784936424931197",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema",
-            "business-core"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/AdminViewModel.ts",
-          "hash": "14375429455326792477",
-          "deps": [
-            "database",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/BuildingDetailViewModel.ts",
-          "hash": "1969360178220344355",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema",
-            "business-core"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/ClientDashboardViewModel.ts",
-          "hash": "7506747579329082157",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema",
-            "business-core"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/ClientViewModel.ts",
-          "hash": "5627867175170044301",
-          "deps": [
-            "database",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/SiteDepartureViewModel.ts",
-          "hash": "17853550945539723235",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/TaskDetailViewModel.ts",
-          "hash": "4649758077365978716",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/WorkerContextEngine.ts",
-          "hash": "15849000142834084631",
-          "deps": [
-            "npm:@cyntientops/domain-schema",
-            "business-core",
-            "database"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/WorkerDashboardViewModel.ts",
-          "hash": "18039544134440774777",
-          "deps": [
-            "npm:react",
-            "domain-schema",
-            "business-core"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/WorkerViewModel.ts",
-          "hash": "9760973625966912108",
-          "deps": [
-            "database",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/index.ts",
-          "hash": "76668162255766601"
-        },
-        {
-          "file": "packages/context-engines/tsconfig.json",
-          "hash": "14358769491722430809"
-        },
-        {
-          "file": "packages/context-engines/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/context-engines/jest.config.ts",
-          "hash": "16660693488006701022"
-        },
-        {
-          "file": "packages/context-engines/src/useBuildingDetailViewModel.ts",
-          "hash": "9700444974458735894",
-          "deps": [
-            "npm:react",
-            "business-core"
-          ]
-        }
-      ],
-      "design-tokens": [
-        {
-          "file": "packages/design-tokens/package.json",
-          "hash": "2644967112774840746",
-          "deps": [
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/design-tokens/project.json",
-          "hash": "15654075528537152772"
-        },
-        {
-          "file": "packages/design-tokens/src/colors.ts",
-          "hash": "7313569410994403716"
-        },
-        {
-          "file": "packages/design-tokens/src/components/GlassButton.tsx",
-          "hash": "8751475538163491480",
-          "deps": [
-            "npm:react",
-            "npm:react-native"
-          ]
-        },
-        {
-          "file": "packages/design-tokens/src/components/GlassCard.tsx",
-          "hash": "9795424253061541823",
-          "deps": [
-            "npm:react",
-            "npm:react-native"
-          ]
-        },
-        {
-          "file": "packages/design-tokens/src/index.ts",
-          "hash": "14055475168110353722"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/animations.ts",
-          "hash": "6861492684312414945"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/colors.ts",
-          "hash": "18436373176812879596"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/shadows.ts",
-          "hash": "3260748353528967336"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/spacing.ts",
-          "hash": "13827618929632807015"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/typography.ts",
-          "hash": "10206370693186615436"
-        },
-        {
-          "file": "packages/design-tokens/src/user-experience.ts",
-          "hash": "6147373631086948823"
-        },
-        {
-          "file": "packages/design-tokens/tsconfig.json",
-          "hash": "2393965781881047834"
-        },
-        {
-          "file": "packages/design-tokens/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/design-tokens/jest.config.ts",
-          "hash": "14068715896424409074"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/gradients.ts",
-          "hash": "894281856679980773"
-        }
-      ],
-      "business-core": [
-        {
-          "file": "packages/business-core/package.json",
-          "hash": "13788955071342249177",
-          "deps": [
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/business-core/project.json",
-          "hash": "435602960916321035"
-        },
-        {
-          "file": "packages/business-core/src/ServiceContainer.ts",
-          "hash": "14906252361619318019",
-          "deps": [
-            "database",
-            "api-clients",
-            "managers",
-            "realtime-sync",
-            "offline-support",
-            "intelligence-services",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/business-core/src/index.ts",
-          "hash": "5590083505970650828"
-        },
-        {
-          "file": "packages/business-core/src/services/AnalyticsEngine.ts",
-          "hash": "17995433769550848566",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/domain-schema",
-            [
-              "npm:@cyntientops/data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/AuthService.ts",
-          "hash": "5758800911112723432",
-          "deps": [
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/database"
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/BuildingInfrastructureCatalog.ts",
-          "hash": "6828401093223465213",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/domain-schema",
-            [
-              "npm:@cyntientops/data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/BuildingService.ts",
-          "hash": "14740336870410678441",
-          "deps": [
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/ClientService.ts",
-          "hash": "6825158269093205450",
-          "deps": [
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/ComplianceService.ts",
-          "hash": "14314066858796279287",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/NovaAPIService.ts",
-          "hash": "13173608397642794098",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/domain-schema",
-            [
-              "npm:@cyntientops/data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/OperationalDataService.ts",
-          "hash": "12768474043064035707",
-          "deps": [
-            "npm:@cyntientops/data-seed",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/PerformanceOptimizer.ts",
-          "hash": "11039020371501402121",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/domain-schema",
-            [
-              "npm:@cyntientops/data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/ProductionManager.ts",
-          "hash": "923627479999938705",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/domain-schema",
-            [
-              "npm:@cyntientops/data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/RealTimeOrchestrator.ts",
-          "hash": "13649249758913294719",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/realtime-sync",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/RouteManager.ts",
-          "hash": "12861706870136595389",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/domain-schema",
-            [
-              "npm:@cyntientops/data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/SecurityManager.ts",
-          "hash": "1084202949915552177",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/domain-schema",
-            [
-              "npm:@cyntientops/data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/TaskService.ts",
-          "hash": "9203303899175169928",
-          "deps": [
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/business-core/src/services/WorkerService.ts",
-          "hash": "10128088040293306191",
-          "deps": [
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/business-core/tsconfig.json",
-          "hash": "14358769491722430809"
-        },
-        {
-          "file": "packages/business-core/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/business-core/jest.config.ts",
-          "hash": "2958036474163719287"
-        }
-      ],
-      "intelligence-services": [
-        {
-          "file": "packages/intelligence-services/package.json",
-          "hash": "17005413542155384479",
-          "deps": [
-            "domain-schema",
-            "database",
-            "business-core",
-            "api-clients",
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/intelligence-services/project.json",
-          "hash": "16623016507916320772"
-        },
-        {
-          "file": "packages/intelligence-services/src/IntelligenceService.ts",
-          "hash": "8747047728758307433",
-          "deps": [
-            "database",
-            "business-core",
-            "api-clients",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/intelligence-services/src/PerformanceMonitor.ts",
-          "hash": "13408059522088551206",
-          "deps": [
-            "database",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/intelligence-services/src/index.ts",
-          "hash": "7477100502621628310"
-        },
-        {
-          "file": "packages/intelligence-services/tsconfig.json",
-          "hash": "14358769491722430809"
-        },
-        {
-          "file": "packages/intelligence-services/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/intelligence-services/jest.config.ts",
-          "hash": "14280554713170896672"
-        }
-      ],
-      "web-dashboard": [
-        {
-          "file": "apps/web-dashboard/project.json",
-          "hash": "14969217070464133782"
-        }
-      ],
-      "realtime-sync": [
-        {
-          "file": "packages/realtime-sync/package.json",
-          "hash": "15763589414974233956",
-          "deps": [
-            "domain-schema",
-            "database",
-            "offline-support",
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/realtime-sync/project.json",
-          "hash": "7175139258756826395"
-        },
-        {
-          "file": "packages/realtime-sync/src/WebSocketManager.ts",
-          "hash": "17766317017728639276",
-          "deps": [
-            "database",
-            "offline-support"
-          ]
-        },
-        {
-          "file": "packages/realtime-sync/src/index.ts",
-          "hash": "3287287964243162003"
-        },
-        {
-          "file": "packages/realtime-sync/tsconfig.json",
-          "hash": "2393965781881047834"
-        },
-        {
-          "file": "packages/realtime-sync/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/realtime-sync/jest.config.ts",
-          "hash": "1555818307470184519"
-        }
-      ],
-      "domain-schema": [
-        {
-          "file": "packages/domain-schema/package.json",
-          "hash": "6472329140970024068",
-          "deps": [
-            "npm:typescript",
-            "npm:@types/node"
-          ]
-        },
-        {
-          "file": "packages/domain-schema/project.json",
-          "hash": "17221901524903422315"
-        },
-        {
-          "file": "packages/domain-schema/src/canonical-ids.ts",
-          "hash": "13328181330081781539"
-        },
-        {
-          "file": "packages/domain-schema/src/client-profile.ts",
-          "hash": "7382144493823572137"
-        },
-        {
-          "file": "packages/domain-schema/src/core-types.ts",
-          "hash": "15216301620929131735",
-          "deps": [
-            "npm:zod"
-          ]
-        },
-        {
-          "file": "packages/domain-schema/src/index.ts",
-          "hash": "5031854611737152887"
-        },
-        {
-          "file": "packages/domain-schema/src/nova-types.ts",
-          "hash": "10406153052578575053"
-        },
-        {
-          "file": "packages/domain-schema/src/worker-profile.ts",
-          "hash": "1556342199614767830"
-        },
-        {
-          "file": "packages/domain-schema/tsconfig.json",
-          "hash": "12652530012386557562"
-        },
-        {
-          "file": "packages/domain-schema/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/domain-schema/jest.config.ts",
-          "hash": "498063906620239001"
-        }
-      ],
-      "api-clients": [
-        {
-          "file": "packages/api-clients/package-lock.json",
-          "hash": "5807933462730156952"
-        },
-        {
-          "file": "packages/api-clients/package.json",
-          "hash": "16180577441861607600",
-          "deps": [
-            "npm:axios",
-            "npm:@types/node",
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/api-clients/project.json",
-          "hash": "11282684033970059059"
-        },
-        {
-          "file": "packages/api-clients/src/index.ts",
-          "hash": "10519654334061197963"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/DOBAPIClient.ts",
-          "hash": "1732198634364152764",
-          "deps": [
-            "npm:axios",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/DSNYAPIClient.ts",
-          "hash": "7063659659108618795",
-          "deps": [
-            "npm:axios",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/HPDAPIClient.ts",
-          "hash": "10423436360778280344",
-          "deps": [
-            "npm:axios",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/NYCAPIService.ts",
-          "hash": "16516662125475690021"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/NYCComplianceService.ts",
-          "hash": "8892156489478868989"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/NYCDataCoordinator.ts",
-          "hash": "14119235417298169773"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/NYCDataModels.ts",
-          "hash": "15593588470288754484"
-        },
-        {
-          "file": "packages/api-clients/src/quickbooks/QuickBooksAPIClient.ts",
-          "hash": "4598014963646521321"
-        },
-        {
-          "file": "packages/api-clients/src/weather/WeatherAPIClient.ts",
-          "hash": "15773708999542602312",
-          "deps": [
-            "npm:axios",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/api-clients/tsconfig.json",
-          "hash": "8129585908498188104"
-        },
-        {
-          "file": "packages/api-clients/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/api-clients/jest.config.ts",
-          "hash": "16628316717898525306"
-        }
-      ],
       "testing": [
+        {
+          "file": "packages/testing/jest.config.ts",
+          "hash": "16541636179056491192"
+        },
         {
           "file": "packages/testing/package.json",
           "hash": "3540097018675590729",
@@ -770,222 +134,80 @@
         {
           "file": "packages/testing/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/testing/jest.config.ts",
-          "hash": "16541636179056491192"
         }
       ],
-      "offline-support": [
+      "managers": [
         {
-          "file": "packages/offline-support/package.json",
-          "hash": "13766608425242778868",
+          "file": "packages/managers/jest.config.ts",
+          "hash": "5621583631862975182"
+        },
+        {
+          "file": "packages/managers/package.json",
+          "hash": "14495969061696579651",
           "deps": [
             "domain-schema",
             "database",
-            "command-chains",
             "npm:typescript"
           ]
         },
         {
-          "file": "packages/offline-support/project.json",
-          "hash": "5597704732456281035"
+          "file": "packages/managers/project.json",
+          "hash": "1055841693777556632"
         },
         {
-          "file": "packages/offline-support/src/OfflineManager.ts",
-          "hash": "1116593471252072827",
+          "file": "packages/managers/src/ClockInManager.ts",
+          "hash": "4015049411341639569",
           "deps": [
             "database",
-            "command-chains"
+            "domain-schema"
           ]
         },
         {
-          "file": "packages/offline-support/src/index.ts",
-          "hash": "2361693831341280411"
+          "file": "packages/managers/src/LocationManager.ts",
+          "hash": "5263743947543381966",
+          "deps": [
+            "database",
+            "domain-schema"
+          ]
         },
         {
-          "file": "packages/offline-support/tsconfig.json",
+          "file": "packages/managers/src/NotificationManager.ts",
+          "hash": "10435952187395607145",
+          "deps": [
+            "database",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/managers/src/PhotoEvidenceManager.ts",
+          "hash": "9000203437881669083",
+          "deps": [
+            "npm:expo-file-system",
+            "npm:expo-media-library",
+            "database",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/managers/src/WeatherTaskManager.ts",
+          "hash": "8327381071296865709",
+          "deps": [
+            "api-clients",
+            "database",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/managers/src/index.ts",
+          "hash": "9482876118222154683"
+        },
+        {
+          "file": "packages/managers/tsconfig.json",
           "hash": "14358769491722430809"
         },
         {
-          "file": "packages/offline-support/tsconfig.lib.json",
+          "file": "packages/managers/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/offline-support/jest.config.ts",
-          "hash": "13949689828051509241"
-        }
-      ],
-      "database": [
-        {
-          "file": "packages/database/package.json",
-          "hash": "6089241549382071067",
-          "deps": [
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/database/project.json",
-          "hash": "8685686956318044927"
-        },
-        {
-          "file": "packages/database/src/DatabaseManager.ts",
-          "hash": "3799511569733924204",
-          "deps": [
-            "npm:expo-sqlite",
-            [
-              "data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/database/src/DatabaseSchema.ts",
-          "hash": "5248797017167989228"
-        },
-        {
-          "file": "packages/database/src/MigrationManager.ts",
-          "hash": "8212570721038271914",
-          "deps": [
-            "npm:expo-sqlite"
-          ]
-        },
-        {
-          "file": "packages/database/src/QueryBuilder.ts",
-          "hash": "11804286177909276919"
-        },
-        {
-          "file": "packages/database/src/index.ts",
-          "hash": "18090802545814900170"
-        },
-        {
-          "file": "packages/database/src/types.ts",
-          "hash": "2658025148921473655"
-        },
-        {
-          "file": "packages/database/src/utils.ts",
-          "hash": "5239238100324161431",
-          "deps": [
-            "npm:expo-sqlite",
-            "npm:expo-file-system"
-          ]
-        },
-        {
-          "file": "packages/database/tsconfig.json",
-          "hash": "14358769491722430809"
-        },
-        {
-          "file": "packages/database/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/database/jest.config.ts",
-          "hash": "13280116920507752797"
-        }
-      ],
-      "admin-portal": [
-        {
-          "file": "apps/admin-portal/project.json",
-          "hash": "8598826710472841086"
-        }
-      ],
-      "data-seed": [
-        {
-          "file": "packages/data-seed/package.json",
-          "hash": "13901171885045572697",
-          "deps": [
-            "npm:@types/node",
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/data-seed/project.json",
-          "hash": "575674280499301376"
-        },
-        {
-          "file": "packages/data-seed/scripts/validate-seeds.js",
-          "hash": "16071401431159288848",
-          "deps": [
-            "npm:fs",
-            "npm:path"
-          ]
-        },
-        {
-          "file": "packages/data-seed/src/buildings.json",
-          "hash": "200037687652406846"
-        },
-        {
-          "file": "packages/data-seed/src/clients.json",
-          "hash": "336116153656561132"
-        },
-        {
-          "file": "packages/data-seed/src/index.ts",
-          "hash": "9142688861574830799"
-        },
-        {
-          "file": "packages/data-seed/src/routines-complete.json",
-          "hash": "17621779918639668700"
-        },
-        {
-          "file": "packages/data-seed/src/routines.json",
-          "hash": "17621779918639668700"
-        },
-        {
-          "file": "packages/data-seed/src/workers.json",
-          "hash": "8335535934804811817"
-        },
-        {
-          "file": "packages/data-seed/tsconfig.json",
-          "hash": "13332125100380210553"
-        },
-        {
-          "file": "packages/data-seed/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/data-seed/jest.config.ts",
-          "hash": "13321435310125323945"
-        }
-      ],
-      "command-chains": [
-        {
-          "file": "packages/command-chains/package.json",
-          "hash": "15868494473417050248",
-          "deps": [
-            "database",
-            "business-core",
-            "npm:typescript"
-          ]
-        },
-        {
-          "file": "packages/command-chains/project.json",
-          "hash": "6421566016996517506"
-        },
-        {
-          "file": "packages/command-chains/src/CommandChain.ts",
-          "hash": "1677777604932392684",
-          "deps": [
-            "database",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/intelligence-services",
-            "business-core"
-          ]
-        },
-        {
-          "file": "packages/command-chains/src/index.ts",
-          "hash": "2869481671674197348"
-        },
-        {
-          "file": "packages/command-chains/tsconfig.json",
-          "hash": "14358769491722430809"
-        },
-        {
-          "file": "packages/command-chains/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/command-chains/jest.config.ts",
-          "hash": "15700108582114583195"
         }
       ],
       "mobile-rn": [
@@ -1271,7 +493,7 @@
         },
         {
           "file": "apps/mobile-rn/project.json",
-          "hash": "2980547412588556489"
+          "hash": "16389648952549759524"
         },
         {
           "file": "apps/mobile-rn/src/modals/PhotoCaptureModal.tsx",
@@ -1439,84 +661,22 @@
         },
         {
           "file": "apps/mobile-rn/tsconfig.json",
-          "hash": "7516303958689071307"
-        }
-      ],
-      "managers": [
+          "hash": "7127758618448552268"
+        },
         {
-          "file": "packages/managers/package.json",
-          "hash": "14495969061696579651",
+          "file": "apps/mobile-rn/metro.config.js",
+          "hash": "5441803180458640895",
           "deps": [
-            "domain-schema",
-            "database",
-            "npm:typescript"
+            "npm:expo/metro-config",
+            "npm:path"
           ]
-        },
-        {
-          "file": "packages/managers/project.json",
-          "hash": "1055841693777556632"
-        },
-        {
-          "file": "packages/managers/src/ClockInManager.ts",
-          "hash": "4015049411341639569",
-          "deps": [
-            "database",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/managers/src/LocationManager.ts",
-          "hash": "5263743947543381966",
-          "deps": [
-            "database",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/managers/src/NotificationManager.ts",
-          "hash": "10435952187395607145",
-          "deps": [
-            "database",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/managers/src/PhotoEvidenceManager.ts",
-          "hash": "9000203437881669083",
-          "deps": [
-            "npm:expo-file-system",
-            "npm:expo-media-library",
-            "database",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/managers/src/WeatherTaskManager.ts",
-          "hash": "8327381071296865709",
-          "deps": [
-            "api-clients",
-            "database",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/managers/src/index.ts",
-          "hash": "9482876118222154683"
-        },
-        {
-          "file": "packages/managers/tsconfig.json",
-          "hash": "14358769491722430809"
-        },
-        {
-          "file": "packages/managers/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/managers/jest.config.ts",
-          "hash": "5621583631862975182"
         }
       ],
       "ui-components": [
+        {
+          "file": "packages/ui-components/jest.config.ts",
+          "hash": "17722213506890431716"
+        },
         {
           "file": "packages/ui-components/package.json",
           "hash": "11060503204568265209",
@@ -2193,10 +1353,862 @@
         {
           "file": "packages/ui-components/tsconfig.lib.json",
           "hash": "2684171098582105912"
+        }
+      ],
+      "intelligence-services": [
+        {
+          "file": "packages/intelligence-services/jest.config.ts",
+          "hash": "14280554713170896672"
         },
         {
-          "file": "packages/ui-components/jest.config.ts",
-          "hash": "17722213506890431716"
+          "file": "packages/intelligence-services/package.json",
+          "hash": "14781069183479873855",
+          "deps": [
+            "domain-schema",
+            "database",
+            "api-clients",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/intelligence-services/project.json",
+          "hash": "16623016507916320772"
+        },
+        {
+          "file": "packages/intelligence-services/src/IntelligenceService.ts",
+          "hash": "7165869898858433919",
+          "deps": [
+            "database",
+            "api-clients",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/intelligence-services/src/PerformanceMonitor.ts",
+          "hash": "13408059522088551206",
+          "deps": [
+            "database",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/intelligence-services/src/index.ts",
+          "hash": "7477100502621628310"
+        },
+        {
+          "file": "packages/intelligence-services/tsconfig.json",
+          "hash": "14358769491722430809"
+        },
+        {
+          "file": "packages/intelligence-services/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "domain-schema": [
+        {
+          "file": "packages/domain-schema/jest.config.ts",
+          "hash": "498063906620239001"
+        },
+        {
+          "file": "packages/domain-schema/package.json",
+          "hash": "6472329140970024068",
+          "deps": [
+            "npm:typescript",
+            "npm:@types/node"
+          ]
+        },
+        {
+          "file": "packages/domain-schema/project.json",
+          "hash": "17221901524903422315"
+        },
+        {
+          "file": "packages/domain-schema/src/canonical-ids.ts",
+          "hash": "13328181330081781539"
+        },
+        {
+          "file": "packages/domain-schema/src/client-profile.ts",
+          "hash": "7382144493823572137"
+        },
+        {
+          "file": "packages/domain-schema/src/core-types.ts",
+          "hash": "15216301620929131735",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "packages/domain-schema/src/index.ts",
+          "hash": "5031854611737152887"
+        },
+        {
+          "file": "packages/domain-schema/src/nova-types.ts",
+          "hash": "10406153052578575053"
+        },
+        {
+          "file": "packages/domain-schema/src/worker-profile.ts",
+          "hash": "1556342199614767830"
+        },
+        {
+          "file": "packages/domain-schema/tsconfig.json",
+          "hash": "12652530012386557562"
+        },
+        {
+          "file": "packages/domain-schema/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "realtime-sync": [
+        {
+          "file": "packages/realtime-sync/jest.config.ts",
+          "hash": "1555818307470184519"
+        },
+        {
+          "file": "packages/realtime-sync/package.json",
+          "hash": "15763589414974233956",
+          "deps": [
+            "domain-schema",
+            "database",
+            "offline-support",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/realtime-sync/project.json",
+          "hash": "7175139258756826395"
+        },
+        {
+          "file": "packages/realtime-sync/src/WebSocketManager.ts",
+          "hash": "17766317017728639276",
+          "deps": [
+            "database",
+            "offline-support"
+          ]
+        },
+        {
+          "file": "packages/realtime-sync/src/index.ts",
+          "hash": "3287287964243162003"
+        },
+        {
+          "file": "packages/realtime-sync/tsconfig.json",
+          "hash": "2393965781881047834"
+        },
+        {
+          "file": "packages/realtime-sync/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "web-dashboard": [
+        {
+          "file": "apps/web-dashboard/project.json",
+          "hash": "14969217070464133782"
+        }
+      ],
+      "database": [
+        {
+          "file": "packages/database/jest.config.ts",
+          "hash": "13280116920507752797"
+        },
+        {
+          "file": "packages/database/package.json",
+          "hash": "6089241549382071067",
+          "deps": [
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/database/project.json",
+          "hash": "8685686956318044927"
+        },
+        {
+          "file": "packages/database/src/DatabaseManager.ts",
+          "hash": "3799511569733924204",
+          "deps": [
+            "npm:expo-sqlite",
+            [
+              "data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/database/src/DatabaseSchema.ts",
+          "hash": "5248797017167989228"
+        },
+        {
+          "file": "packages/database/src/MigrationManager.ts",
+          "hash": "8212570721038271914",
+          "deps": [
+            "npm:expo-sqlite"
+          ]
+        },
+        {
+          "file": "packages/database/src/QueryBuilder.ts",
+          "hash": "11804286177909276919"
+        },
+        {
+          "file": "packages/database/src/index.ts",
+          "hash": "18090802545814900170"
+        },
+        {
+          "file": "packages/database/src/types.ts",
+          "hash": "2658025148921473655"
+        },
+        {
+          "file": "packages/database/src/utils.ts",
+          "hash": "5239238100324161431",
+          "deps": [
+            "npm:expo-sqlite",
+            "npm:expo-file-system"
+          ]
+        },
+        {
+          "file": "packages/database/tsconfig.json",
+          "hash": "14358769491722430809"
+        },
+        {
+          "file": "packages/database/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "api-clients": [
+        {
+          "file": "packages/api-clients/jest.config.ts",
+          "hash": "16628316717898525306"
+        },
+        {
+          "file": "packages/api-clients/package-lock.json",
+          "hash": "5807933462730156952"
+        },
+        {
+          "file": "packages/api-clients/package.json",
+          "hash": "16180577441861607600",
+          "deps": [
+            "npm:axios",
+            "npm:@types/node",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/api-clients/project.json",
+          "hash": "11282684033970059059"
+        },
+        {
+          "file": "packages/api-clients/src/index.ts",
+          "hash": "10519654334061197963"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/DOBAPIClient.ts",
+          "hash": "1732198634364152764",
+          "deps": [
+            "npm:axios",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/DSNYAPIClient.ts",
+          "hash": "7063659659108618795",
+          "deps": [
+            "npm:axios",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/HPDAPIClient.ts",
+          "hash": "10423436360778280344",
+          "deps": [
+            "npm:axios",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/NYCAPIService.ts",
+          "hash": "16516662125475690021"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/NYCComplianceService.ts",
+          "hash": "8892156489478868989"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/NYCDataCoordinator.ts",
+          "hash": "14119235417298169773"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/NYCDataModels.ts",
+          "hash": "15593588470288754484"
+        },
+        {
+          "file": "packages/api-clients/src/quickbooks/QuickBooksAPIClient.ts",
+          "hash": "4598014963646521321"
+        },
+        {
+          "file": "packages/api-clients/src/weather/WeatherAPIClient.ts",
+          "hash": "15773708999542602312",
+          "deps": [
+            "npm:axios",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/api-clients/tsconfig.json",
+          "hash": "8129585908498188104"
+        },
+        {
+          "file": "packages/api-clients/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "offline-support": [
+        {
+          "file": "packages/offline-support/jest.config.ts",
+          "hash": "13949689828051509241"
+        },
+        {
+          "file": "packages/offline-support/package.json",
+          "hash": "13766608425242778868",
+          "deps": [
+            "domain-schema",
+            "database",
+            "command-chains",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/offline-support/project.json",
+          "hash": "5597704732456281035"
+        },
+        {
+          "file": "packages/offline-support/src/OfflineManager.ts",
+          "hash": "1116593471252072827",
+          "deps": [
+            "database",
+            "command-chains"
+          ]
+        },
+        {
+          "file": "packages/offline-support/src/index.ts",
+          "hash": "2361693831341280411"
+        },
+        {
+          "file": "packages/offline-support/tsconfig.json",
+          "hash": "14358769491722430809"
+        },
+        {
+          "file": "packages/offline-support/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "context-engines": [
+        {
+          "file": "packages/context-engines/jest.config.ts",
+          "hash": "16660693488006701022"
+        },
+        {
+          "file": "packages/context-engines/package.json",
+          "hash": "2604820203127716085",
+          "deps": [
+            "database",
+            "business-core",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/context-engines/project.json",
+          "hash": "1317032141572244102"
+        },
+        {
+          "file": "packages/context-engines/src/AdminContextEngine.ts",
+          "hash": "17469246371754812927",
+          "deps": [
+            "npm:@cyntientops/domain-schema",
+            "business-core",
+            "database"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/AdminDashboardViewModel.ts",
+          "hash": "7075784936424931197",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/AdminViewModel.ts",
+          "hash": "14375429455326792477",
+          "deps": [
+            "database",
+            "npm:@cyntientops/managers",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/BuildingDetailViewModel.ts",
+          "hash": "1969360178220344355",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/ClientDashboardViewModel.ts",
+          "hash": "7506747579329082157",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/ClientViewModel.ts",
+          "hash": "5627867175170044301",
+          "deps": [
+            "database",
+            "npm:@cyntientops/managers",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/SiteDepartureViewModel.ts",
+          "hash": "17853550945539723235",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/TaskDetailViewModel.ts",
+          "hash": "4649758077365978716",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/WorkerContextEngine.ts",
+          "hash": "15849000142834084631",
+          "deps": [
+            "npm:@cyntientops/domain-schema",
+            "business-core",
+            "database"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/WorkerDashboardViewModel.ts",
+          "hash": "18039544134440774777",
+          "deps": [
+            "npm:react",
+            "domain-schema",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/WorkerViewModel.ts",
+          "hash": "9760973625966912108",
+          "deps": [
+            "database",
+            "npm:@cyntientops/managers",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/index.ts",
+          "hash": "76668162255766601"
+        },
+        {
+          "file": "packages/context-engines/src/useBuildingDetailViewModel.ts",
+          "hash": "9700444974458735894",
+          "deps": [
+            "npm:react",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/tsconfig.json",
+          "hash": "14358769491722430809"
+        },
+        {
+          "file": "packages/context-engines/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "command-chains": [
+        {
+          "file": "packages/command-chains/jest.config.ts",
+          "hash": "15700108582114583195"
+        },
+        {
+          "file": "packages/command-chains/package.json",
+          "hash": "4766697457331381265",
+          "deps": [
+            "domain-schema",
+            "database",
+            "managers",
+            "intelligence-services",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/command-chains/project.json",
+          "hash": "6421566016996517506"
+        },
+        {
+          "file": "packages/command-chains/src/CommandChain.ts",
+          "hash": "5423541919003737477",
+          "deps": [
+            "database",
+            "managers",
+            "intelligence-services"
+          ]
+        },
+        {
+          "file": "packages/command-chains/src/index.ts",
+          "hash": "2869481671674197348"
+        },
+        {
+          "file": "packages/command-chains/tsconfig.json",
+          "hash": "14358769491722430809"
+        },
+        {
+          "file": "packages/command-chains/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "design-tokens": [
+        {
+          "file": "packages/design-tokens/jest.config.ts",
+          "hash": "14068715896424409074"
+        },
+        {
+          "file": "packages/design-tokens/package.json",
+          "hash": "2644967112774840746",
+          "deps": [
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/design-tokens/project.json",
+          "hash": "15654075528537152772"
+        },
+        {
+          "file": "packages/design-tokens/src/colors.ts",
+          "hash": "7313569410994403716"
+        },
+        {
+          "file": "packages/design-tokens/src/components/GlassButton.tsx",
+          "hash": "8751475538163491480",
+          "deps": [
+            "npm:react",
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "packages/design-tokens/src/components/GlassCard.tsx",
+          "hash": "9795424253061541823",
+          "deps": [
+            "npm:react",
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "packages/design-tokens/src/index.ts",
+          "hash": "14055475168110353722"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/animations.ts",
+          "hash": "6861492684312414945"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/colors.ts",
+          "hash": "18436373176812879596"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/gradients.ts",
+          "hash": "894281856679980773"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/shadows.ts",
+          "hash": "3260748353528967336"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/spacing.ts",
+          "hash": "13827618929632807015"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/typography.ts",
+          "hash": "10206370693186615436"
+        },
+        {
+          "file": "packages/design-tokens/src/user-experience.ts",
+          "hash": "6147373631086948823"
+        },
+        {
+          "file": "packages/design-tokens/tsconfig.json",
+          "hash": "2393965781881047834"
+        },
+        {
+          "file": "packages/design-tokens/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "business-core": [
+        {
+          "file": "packages/business-core/jest.config.ts",
+          "hash": "2958036474163719287"
+        },
+        {
+          "file": "packages/business-core/package.json",
+          "hash": "13788955071342249177",
+          "deps": [
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/business-core/project.json",
+          "hash": "435602960916321035"
+        },
+        {
+          "file": "packages/business-core/src/OperationalDataManager.ts",
+          "hash": "4949246398157119295"
+        },
+        {
+          "file": "packages/business-core/src/ServiceContainer.ts",
+          "hash": "13382525510834892407",
+          "deps": [
+            "database",
+            "api-clients",
+            "managers",
+            "realtime-sync",
+            "offline-support",
+            "intelligence-services",
+            "command-chains",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/index.ts",
+          "hash": "5590083505970650828"
+        },
+        {
+          "file": "packages/business-core/src/services/AnalyticsEngine.ts",
+          "hash": "17995433769550848566",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/domain-schema",
+            [
+              "npm:@cyntientops/data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/AuthService.ts",
+          "hash": "5758800911112723432",
+          "deps": [
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/database"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/BuildingInfrastructureCatalog.ts",
+          "hash": "6828401093223465213",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/domain-schema",
+            [
+              "npm:@cyntientops/data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/BuildingService.ts",
+          "hash": "14740336870410678441",
+          "deps": [
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/ClientService.ts",
+          "hash": "6825158269093205450",
+          "deps": [
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/ComplianceService.ts",
+          "hash": "14314066858796279287",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/NovaAPIService.ts",
+          "hash": "13173608397642794098",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/domain-schema",
+            [
+              "npm:@cyntientops/data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/OperationalDataService.ts",
+          "hash": "12768474043064035707",
+          "deps": [
+            "npm:@cyntientops/data-seed",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/PerformanceOptimizer.ts",
+          "hash": "11039020371501402121",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/domain-schema",
+            [
+              "npm:@cyntientops/data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/ProductionManager.ts",
+          "hash": "923627479999938705",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/domain-schema",
+            [
+              "npm:@cyntientops/data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/RealTimeOrchestrator.ts",
+          "hash": "13649249758913294719",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/realtime-sync",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/RouteManager.ts",
+          "hash": "12861706870136595389",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/domain-schema",
+            [
+              "npm:@cyntientops/data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/SecurityManager.ts",
+          "hash": "1084202949915552177",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/domain-schema",
+            [
+              "npm:@cyntientops/data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/TaskService.ts",
+          "hash": "9203303899175169928",
+          "deps": [
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/WorkerService.ts",
+          "hash": "10128088040293306191",
+          "deps": [
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/business-core/tsconfig.json",
+          "hash": "14358769491722430809"
+        },
+        {
+          "file": "packages/business-core/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "admin-portal": [
+        {
+          "file": "apps/admin-portal/project.json",
+          "hash": "8598826710472841086"
+        }
+      ],
+      "data-seed": [
+        {
+          "file": "packages/data-seed/jest.config.ts",
+          "hash": "13321435310125323945"
+        },
+        {
+          "file": "packages/data-seed/package.json",
+          "hash": "13901171885045572697",
+          "deps": [
+            "npm:@types/node",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/data-seed/project.json",
+          "hash": "575674280499301376"
+        },
+        {
+          "file": "packages/data-seed/scripts/validate-seeds.js",
+          "hash": "16071401431159288848",
+          "deps": [
+            "npm:fs",
+            "npm:path"
+          ]
+        },
+        {
+          "file": "packages/data-seed/src/buildings.json",
+          "hash": "200037687652406846"
+        },
+        {
+          "file": "packages/data-seed/src/clients.json",
+          "hash": "336116153656561132"
+        },
+        {
+          "file": "packages/data-seed/src/index.ts",
+          "hash": "9142688861574830799"
+        },
+        {
+          "file": "packages/data-seed/src/routines-complete.json",
+          "hash": "17621779918639668700"
+        },
+        {
+          "file": "packages/data-seed/src/routines.json",
+          "hash": "17621779918639668700"
+        },
+        {
+          "file": "packages/data-seed/src/workers.json",
+          "hash": "8335535934804811817"
+        },
+        {
+          "file": "packages/data-seed/tsconfig.json",
+          "hash": "13332125100380210553"
+        },
+        {
+          "file": "packages/data-seed/tsconfig.lib.json",
+          "hash": "2684171098582105912"
         }
       ]
     }

@@ -12,7 +12,6 @@
   "dependencies": {
     "@cyntientops/domain-schema": "workspace:*",
     "@cyntientops/database": "workspace:*",
-    "@cyntientops/business-core": "workspace:*",
     "@cyntientops/api-clients": "workspace:*",
     "uuid": "^9.0.1"
   },

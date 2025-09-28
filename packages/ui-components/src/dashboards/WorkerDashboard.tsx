@@ -17,12 +17,16 @@ import { TaskTimelineView } from './components/TaskTimelineView';
 import { ClockInButton } from './components/ClockInButton';
 import { WeatherRibbon } from './components/WeatherRibbon';
 import { PerformanceMetrics } from './components/PerformanceMetrics';
+import { WorkerIntelligencePanel, QuickActionType } from '../intelligence/WorkerIntelligencePanel';
 
 export interface WorkerDashboardProps {
   workerId: string;
   onTaskPress?: (task: OperationalDataTaskAssignment) => void;
   onClockIn?: () => void;
   onClockOut?: () => void;
+  onPortfolioMapPress?: () => void;
+  onSiteDeparturePress?: () => void;
+  onQuickActionPress?: (action: QuickActionType) => void;
 }
 
 export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
@@ -30,9 +34,16 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
   onTaskPress,
   onClockIn,
   onClockOut,
+  onPortfolioMapPress,
+  onSiteDeparturePress,
+  onQuickActionPress,
 }) => {
   const [worker, setWorker] = useState<WorkerProfile | null>(null);
   const [todaysTasks, setTodaysTasks] = useState<OperationalDataTaskAssignment[]>([]);
+  const [todaysRoutines, setTodaysRoutines] = useState<OperationalDataTaskAssignment[]>([]);
+  const [weeklySchedule, setWeeklySchedule] = useState<any[]>([]);
+  const [portfolioBuildings, setPortfolioBuildings] = useState<any[]>([]);
+  const [currentBuilding, setCurrentBuilding] = useState<any>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isClockedIn, setIsClockedIn] = useState(false);
 
@@ -46,9 +57,17 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
     try {
       const workerData = services.operationalData.getWorkerById(workerId);
       const tasks = services.operationalData.getTodaysTasksForWorker(workerId);
+      const routines = services.operationalData.getTodaysRoutinesForWorker(workerId);
+      const schedule = services.operationalData.getWeeklyScheduleForWorker(workerId);
+      const buildings = services.operationalData.getPortfolioBuildingsForWorker(workerId);
+      const currentBuildingData = services.operationalData.getCurrentBuildingForWorker(workerId);
       
       setWorker(workerData || null);
       setTodaysTasks(tasks);
+      setTodaysRoutines(routines);
+      setWeeklySchedule(schedule);
+      setPortfolioBuildings(buildings);
+      setCurrentBuilding(currentBuildingData);
       
       // Check clock-in status
       const clockInData = services.worker.getClockInData(workerId);
@@ -141,24 +160,23 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
         workerId={workerId}
       />
 
-      {/* Quick Actions */}
-      <GlassCard style={styles.quickActionsCard}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.quickActions}>
-          <GlassButton
-            title="View All Tasks"
-            onPress={() => {}}
-            variant="secondary"
-            size="small"
-          />
-          <GlassButton
-            title="Report Issue"
-            onPress={() => {}}
-            variant="tertiary"
-            size="small"
-          />
-        </View>
-      </GlassCard>
+      {/* Worker Intelligence Panel */}
+      <WorkerIntelligencePanel
+        todaysTasks={todaysTasks}
+        todaysRoutines={todaysRoutines}
+        weeklySchedule={weeklySchedule}
+        worker={worker}
+        portfolioBuildings={portfolioBuildings}
+        currentBuilding={currentBuilding}
+        onTaskPress={onTaskPress}
+        onBuildingPress={(building) => {
+          // TODO: Handle building press
+        }}
+        onPortfolioMapPress={onPortfolioMapPress}
+        onSiteDeparturePress={onSiteDeparturePress}
+        onQuickActionPress={onQuickActionPress}
+        isLoading={isRefreshing}
+      />
     </ScrollView>
   );
 };

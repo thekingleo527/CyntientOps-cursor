@@ -11,6 +11,10 @@ export * from './canonical-ids';
 // Re-export all core types and schemas
 export * from './core-types';
 
+// Profile Types
+export * from './worker-profile';
+export * from './client-profile';
+
 // Version information
 export const DOMAIN_SCHEMA_VERSION = '1.0.0';
 export const SWIFT_COMPATIBILITY_VERSION = '6.0';

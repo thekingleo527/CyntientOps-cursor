@@ -21,6 +21,7 @@ import { WorkerService } from './services/WorkerService';
 import { BuildingService } from './services/BuildingService';
 import { ClientService } from './services/ClientService';
 import { OperationalDataService } from './services/OperationalDataService';
+import { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 
 // Types
 import { 
@@ -56,7 +57,7 @@ export class ServiceContainer {
   private _client: ClientService | null = null;
   
   // MARK: - Layer 2: Business Logic (LAZY)
-  private _dashboardSync: any | null = null; // TODO: Implement DashboardSyncService
+  private _realTimeOrchestrator: RealTimeOrchestrator | null = null;
   private _metrics: any | null = null; // TODO: Implement BuildingMetricsService
   private _compliance: any | null = null; // TODO: Implement ComplianceService
   private _webSocket: WebSocketManager | null = null;
@@ -209,6 +210,18 @@ export class ServiceContainer {
       };
     }
     return this._dashboardSync;
+  }
+  
+  public get realTimeOrchestrator(): RealTimeOrchestrator {
+    if (!this._realTimeOrchestrator) {
+      this._realTimeOrchestrator = RealTimeOrchestrator.getInstance(this.database, this.webSocket, this);
+    }
+    return this._realTimeOrchestrator;
+  }
+  
+  // DashboardSyncService compatibility - delegate to RealTimeOrchestrator
+  public get dashboardSync(): any {
+    return this.realTimeOrchestrator;
   }
   
   public get webSocket(): WebSocketManager {

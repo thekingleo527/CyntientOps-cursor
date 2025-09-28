@@ -48,6 +48,18 @@ export { WorkerIntelligencePanel } from './intelligence/WorkerIntelligencePanel'
 export { AdminIntelligencePanel } from './intelligence/AdminIntelligencePanel';
 export { ClientIntelligencePanel } from './intelligence/ClientIntelligencePanel';
 
+// Header Components
+export { DashboardHeader } from './headers/DashboardHeader';
+
+// Building Components
+export { BuildingDetailPreview } from './buildings/BuildingDetailPreview';
+
+// Profile Components
+export { WorkerProfileView } from './profiles/WorkerProfileView';
+
+// Navigation Components
+export { WorkerNavigationFlow } from './navigation/WorkerNavigationFlow';
+
 // Weather Components
 export { default as WeatherRibbonView } from './weather/WeatherRibbonView';
 

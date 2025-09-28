@@ -21,26 +21,36 @@ import {
   NamedCoordinate,
   UserRole 
 } from '@cyntientops/domain-schema';
+import { RealTimeOrchestrator, RealTimeEventType } from '@cyntientops/business-core';
 
 export interface WorkerIntelligencePanelProps {
-  insights: IntelligenceInsight[];
   todaysTasks: ContextualTask[];
+  todaysRoutines: ContextualTask[];
+  weeklySchedule: any[]; // TODO: Define proper type
   worker?: WorkerProfile;
   portfolioBuildings: NamedCoordinate[];
   currentBuilding?: NamedCoordinate;
   onTaskPress?: (task: ContextualTask) => void;
   onBuildingPress?: (building: NamedCoordinate) => void;
   onPortfolioMapPress?: () => void;
-  onInsightPress?: (insight: IntelligenceInsight) => void;
+  onSiteDeparturePress?: () => void;
+  onQuickActionPress?: (action: QuickActionType) => void;
   isLoading?: boolean;
 }
 
+export enum QuickActionType {
+  PHOTO = 'photo',
+  VENDOR_LOG = 'vendor_log',
+  QUICK_NOTE = 'quick_note',
+  EMERGENCY = 'emergency'
+}
+
 export enum WorkerIntelTab {
-  OPERATIONS = 'Operations',
-  TASKS = 'Tasks', 
-  COMPLIANCE = 'Compliance',
-  PERFORMANCE = 'Performance',
-  PORTFOLIO = 'Portfolio'
+  ROUTINES = 'Routines',
+  PORTFOLIO = 'Portfolio',
+  SITE_DEPARTURE = 'Site Departure',
+  SCHEDULE = 'Schedule',
+  QUICK_ACTION = '(+)'
 }
 
 export interface RouteSequence {
@@ -51,26 +61,64 @@ export interface RouteSequence {
 }
 
 export const WorkerIntelligencePanel: React.FC<WorkerIntelligencePanelProps> = ({
-  insights,
   todaysTasks,
+  todaysRoutines,
+  weeklySchedule,
   worker,
   portfolioBuildings,
   currentBuilding,
   onTaskPress,
   onBuildingPress,
   onPortfolioMapPress,
-  onInsightPress,
+  onSiteDeparturePress,
+  onQuickActionPress,
   isLoading = false
 }) => {
-  const [selectedTab, setSelectedTab] = useState<WorkerIntelTab>(WorkerIntelTab.OPERATIONS);
+  const [selectedTab, setSelectedTab] = useState<WorkerIntelTab>(WorkerIntelTab.ROUTINES);
   const [activeSequences, setActiveSequences] = useState<RouteSequence[]>([]);
   const [upcomingSequences, setUpcomingSequences] = useState<RouteSequence[]>([]);
   const [recentTasks, setRecentTasks] = useState<ContextualTask[]>([]);
+  const [realTimeOrchestrator, setRealTimeOrchestrator] = useState<RealTimeOrchestrator | null>(null);
 
   useEffect(() => {
     loadSequences();
     loadRecentTasks();
+    initializeRealTimeOrchestrator();
   }, [worker, todaysTasks]);
+
+  const initializeRealTimeOrchestrator = async () => {
+    try {
+      // TODO: Get from ServiceContainer
+      const orchestrator = RealTimeOrchestrator.getInstance();
+      setRealTimeOrchestrator(orchestrator);
+      
+      // Subscribe to real-time events
+      orchestrator.subscribe(RealTimeEventType.TASK_ASSIGNED, 'worker', handleTaskAssigned);
+      orchestrator.subscribe(RealTimeEventType.SCHEDULE_UPDATED, 'worker', handleScheduleUpdated);
+      orchestrator.subscribe(RealTimeEventType.ALERT_CREATED, 'worker', handleAlertCreated);
+      
+    } catch (error) {
+      console.error('Failed to initialize real-time orchestrator:', error);
+    }
+  };
+
+  const handleTaskAssigned = (event: any) => {
+    // Update local state when task is assigned
+    console.log('Task assigned:', event.data);
+    // TODO: Update todaysTasks or todaysRoutines
+  };
+
+  const handleScheduleUpdated = (event: any) => {
+    // Update local state when schedule changes
+    console.log('Schedule updated:', event.data);
+    // TODO: Update weeklySchedule
+  };
+
+  const handleAlertCreated = (event: any) => {
+    // Show alert to worker
+    console.log('Alert created:', event.data);
+    // TODO: Show notification or update UI
+  };
 
   const loadSequences = () => {
     // TODO: Load from RouteManager
@@ -149,133 +197,145 @@ export const WorkerIntelligencePanel: React.FC<WorkerIntelligencePanelProps> = (
     </TouchableOpacity>
   );
 
-  const renderOperationsPanel = () => (
+  const renderRoutinesPanel = () => (
     <View style={styles.panelContent}>
       <Text style={styles.panelTitle}>Today's Routines</Text>
       
-      {activeSequences.length === 0 && upcomingSequences.length === 0 ? (
-        <Text style={styles.emptyText}>No active routines right now.</Text>
-      ) : (
-        <View>
-          {activeSequences.length > 0 && (
-            <View style={styles.sequenceSection}>
-              <Text style={styles.sectionTitle}>Active</Text>
-              {activeSequences.map(sequence => (
-                <View key={sequence.id} style={styles.sequenceItem}>
-                  <Text style={styles.sequenceBuilding}>{sequence.buildingName}</Text>
-                  <Text style={styles.sequenceTime}>
-                    {sequence.arrivalTime.toLocaleTimeString()}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
-          
-          {upcomingSequences.length > 0 && (
-            <View style={styles.sequenceSection}>
-              <Text style={styles.sectionTitle}>Upcoming</Text>
-              {upcomingSequences.map(sequence => (
-                <View key={sequence.id} style={styles.sequenceItem}>
-                  <Text style={styles.sequenceBuilding}>{sequence.buildingName}</Text>
-                  <Text style={styles.sequenceTime}>
-                    {sequence.arrivalTime.toLocaleTimeString()}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
-        </View>
-      )}
-    </View>
-  );
-
-  const renderTasksPanel = () => (
-    <View style={styles.panelContent}>
-      <Text style={styles.panelTitle}>Tasks & Maintenance History</Text>
-      
       {isLoading ? (
         <ActivityIndicator size="small" color={Colors.text.primary} />
-      ) : recentTasks.length === 0 ? (
-        <Text style={styles.emptyText}>No recent tasks</Text>
+      ) : todaysRoutines.length === 0 ? (
+        <Text style={styles.emptyText}>No routines scheduled for today.</Text>
       ) : (
-        <View>
-          {recentTasks.map(task => (
+        <ScrollView style={styles.routinesList} showsVerticalScrollIndicator={false}>
+          {todaysRoutines.map(routine => (
             <TouchableOpacity
-              key={task.id}
-              style={styles.taskItem}
-              onPress={() => onTaskPress?.(task)}
+              key={routine.id}
+              style={styles.routineItem}
+              onPress={() => onTaskPress?.(routine)}
             >
-              <View style={styles.taskItemContent}>
-                <View style={[styles.urgencyIndicator, { backgroundColor: getUrgencyColor(task.priority) }]} />
-                <View style={styles.taskInfo}>
-                  <Text style={styles.taskTitle}>{task.title}</Text>
-                  {task.dueDate && (
-                    <Text style={styles.taskDueDate}>
-                      Due: {task.dueDate.toLocaleDateString()}
+              <View style={styles.routineItemContent}>
+                <View style={[styles.urgencyIndicator, { backgroundColor: getUrgencyColor(routine.priority) }]} />
+                <View style={styles.routineInfo}>
+                  <Text style={styles.routineTitle}>{routine.title}</Text>
+                  <Text style={styles.routineBuilding}>{routine.buildingName}</Text>
+                  {routine.dueDate && (
+                    <Text style={styles.routineTime}>
+                      Due: {routine.dueDate.toLocaleTimeString()}
                     </Text>
                   )}
-                  {task.buildingName && (
-                    <Text style={styles.taskBuilding}>{task.buildingName}</Text>
-                  )}
                 </View>
-                <View style={styles.taskStatus}>
-                  {task.status === 'completed' && (
+                <View style={styles.routineStatus}>
+                  {routine.status === 'completed' && (
                     <Text style={styles.completedIcon}>✓</Text>
                   )}
                 </View>
               </View>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       )}
     </View>
   );
 
-  const renderCompliancePanel = () => (
+  const renderSchedulePanel = () => (
     <View style={styles.panelContent}>
-      <Text style={styles.panelTitle}>Compliance Summary</Text>
+      <Text style={styles.panelTitle}>Weekly Schedule</Text>
       
-      <View style={styles.complianceStats}>
-        <Text style={styles.complianceStat}>
-          Sanitation Tasks Today: {getSanitationTaskCount()}
+      {isLoading ? (
+        <ActivityIndicator size="small" color={Colors.text.primary} />
+      ) : weeklySchedule.length === 0 ? (
+        <Text style={styles.emptyText}>No schedule available</Text>
+      ) : (
+        <ScrollView style={styles.scheduleList} showsVerticalScrollIndicator={false}>
+          {weeklySchedule.map((scheduleItem, index) => (
+            <View key={index} style={styles.scheduleItem}>
+              <View style={styles.scheduleHeader}>
+                <Text style={styles.scheduleDate}>
+                  {scheduleItem.date?.toLocaleDateString() || 'Today'}
+                </Text>
+                <Text style={styles.scheduleTaskCount}>
+                  {scheduleItem.tasks?.length || 0} tasks
+                </Text>
+              </View>
+              {scheduleItem.tasks?.slice(0, 3).map((task: any) => (
+                <View key={task.id} style={styles.scheduleTaskItem}>
+                  <Text style={styles.scheduleTaskTitle}>{task.title}</Text>
+                  <Text style={styles.scheduleTaskTime}>
+                    {task.startTime} - {task.endTime}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ))}
+        </ScrollView>
+      )}
+    </View>
+  );
+
+  const renderSiteDeparturePanel = () => (
+    <View style={styles.panelContent}>
+      <Text style={styles.panelTitle}>Site Departure</Text>
+      
+      <View style={styles.departureContent}>
+        <Text style={styles.departureDescription}>
+          Complete your site departure checklist before leaving.
         </Text>
-        <Text style={styles.complianceStat}>
-          DSNY Bin Tasks: {getDSNYBinTaskCount()}
-        </Text>
-      </View>
-      
-      <View style={styles.complianceDivider} />
-      
-      <Text style={styles.sectionTitle}>Documentation</Text>
-      <View style={styles.documentationList}>
-        <View style={styles.documentationItem}>
-          <Text style={styles.documentationIcon}>📄</Text>
-          <Text style={styles.documentationText}>Sanitation (DSNY) Guidance</Text>
-        </View>
-        <View style={styles.documentationItem}>
-          <Text style={styles.documentationIcon}>🛡️</Text>
-          <Text style={styles.documentationText}>Safety Procedures</Text>
-        </View>
-        <View style={styles.documentationItem}>
-          <Text style={styles.documentationIcon}>✅</Text>
-          <Text style={styles.documentationText}>Compliance Checklists</Text>
-        </View>
+        
+        <TouchableOpacity
+          style={styles.departureButton}
+          onPress={onSiteDeparturePress}
+        >
+          <Text style={styles.departureButtonIcon}>🚪</Text>
+          <Text style={styles.departureButtonText}>Start Site Departure</Text>
+        </TouchableOpacity>
+        
+        {currentBuilding && (
+          <View style={styles.currentSiteInfo}>
+            <Text style={styles.currentSiteLabel}>Current Site:</Text>
+            <Text style={styles.currentSiteName}>{currentBuilding.name}</Text>
+            <Text style={styles.currentSiteAddress}>{currentBuilding.address}</Text>
+          </View>
+        )}
       </View>
     </View>
   );
 
-  const renderPerformancePanel = () => (
+  const renderQuickActionPanel = () => (
     <View style={styles.panelContent}>
-      <Text style={styles.panelTitle}>Performance Metrics</Text>
+      <Text style={styles.panelTitle}>Quick Actions</Text>
       
-      {/* TODO: Integrate with PerformanceMetricsView component */}
-      <View style={styles.performancePlaceholder}>
-        <Text style={styles.placeholderText}>
-          Performance metrics will be displayed here
-        </Text>
-        <Text style={styles.placeholderSubtext}>
-          Completion rates, efficiency scores, and trends
-        </Text>
+      <View style={styles.quickActionsGrid}>
+        <TouchableOpacity
+          style={styles.quickActionButton}
+          onPress={() => onQuickActionPress?.(QuickActionType.PHOTO)}
+        >
+          <Text style={styles.quickActionIcon}>📸</Text>
+          <Text style={styles.quickActionText}>Take Photo</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.quickActionButton}
+          onPress={() => onQuickActionPress?.(QuickActionType.VENDOR_LOG)}
+        >
+          <Text style={styles.quickActionIcon}>📝</Text>
+          <Text style={styles.quickActionText}>Vendor Log</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.quickActionButton}
+          onPress={() => onQuickActionPress?.(QuickActionType.QUICK_NOTE)}
+        >
+          <Text style={styles.quickActionIcon}>📋</Text>
+          <Text style={styles.quickActionText}>Quick Note</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.quickActionButton, styles.emergencyButton]}
+          onPress={() => onQuickActionPress?.(QuickActionType.EMERGENCY)}
+        >
+          <Text style={styles.quickActionIcon}>🚨</Text>
+          <Text style={styles.quickActionText}>Emergency</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -312,18 +372,18 @@ export const WorkerIntelligencePanel: React.FC<WorkerIntelligencePanelProps> = (
 
   const renderTabContent = () => {
     switch (selectedTab) {
-      case WorkerIntelTab.OPERATIONS:
-        return renderOperationsPanel();
-      case WorkerIntelTab.TASKS:
-        return renderTasksPanel();
-      case WorkerIntelTab.COMPLIANCE:
-        return renderCompliancePanel();
-      case WorkerIntelTab.PERFORMANCE:
-        return renderPerformancePanel();
+      case WorkerIntelTab.ROUTINES:
+        return renderRoutinesPanel();
       case WorkerIntelTab.PORTFOLIO:
         return renderPortfolioPanel();
+      case WorkerIntelTab.SITE_DEPARTURE:
+        return renderSiteDeparturePanel();
+      case WorkerIntelTab.SCHEDULE:
+        return renderSchedulePanel();
+      case WorkerIntelTab.QUICK_ACTION:
+        return renderQuickActionPanel();
       default:
-        return renderOperationsPanel();
+        return renderRoutinesPanel();
     }
   };
 
@@ -395,120 +455,151 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   
-  // Operations Panel Styles
-  sequenceSection: {
-    marginBottom: Spacing.md,
+  // Routines Panel Styles
+  routinesList: {
+    maxHeight: 200,
   },
-  sectionTitle: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '500',
+  routineItem: {
     marginBottom: Spacing.sm,
   },
-  sequenceItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.xs,
-  },
-  sequenceBuilding: {
-    ...Typography.caption,
-    color: Colors.text.primary,
-    flex: 1,
-  },
-  sequenceTime: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-  },
-  
-  // Tasks Panel Styles
-  taskItem: {
-    marginBottom: Spacing.sm,
-  },
-  taskItemContent: {
+  routineItemContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
-  urgencyIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: Spacing.sm,
-    marginTop: 4,
-  },
-  taskInfo: {
+  routineInfo: {
     flex: 1,
   },
-  taskTitle: {
+  routineTitle: {
     ...Typography.subheadline,
     color: Colors.text.primary,
     fontWeight: '500',
   },
-  taskDueDate: {
+  routineBuilding: {
     ...Typography.caption,
     color: Colors.text.secondary,
     marginTop: 2,
   },
-  taskBuilding: {
+  routineTime: {
     ...Typography.caption,
     color: Colors.text.secondary,
     marginTop: 2,
   },
-  taskStatus: {
+  routineStatus: {
     marginLeft: Spacing.sm,
   },
-  completedIcon: {
+  
+  // Schedule Panel Styles
+  scheduleList: {
+    maxHeight: 200,
+  },
+  scheduleItem: {
+    padding: Spacing.sm,
+    backgroundColor: Colors.glass.medium,
+    borderRadius: 8,
+    marginBottom: Spacing.sm,
+  },
+  scheduleHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  scheduleDate: {
     ...Typography.subheadline,
-    color: Colors.status.success,
-    fontWeight: '600',
+    color: Colors.text.primary,
+    fontWeight: '500',
+  },
+  scheduleTaskCount: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+  },
+  scheduleTaskItem: {
+    marginBottom: Spacing.xs,
+  },
+  scheduleTaskTitle: {
+    ...Typography.caption,
+    color: Colors.text.primary,
+  },
+  scheduleTaskTime: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    fontSize: 10,
   },
   
-  // Compliance Panel Styles
-  complianceStats: {
-    marginBottom: Spacing.md,
+  // Site Departure Panel Styles
+  departureContent: {
+    alignItems: 'center',
   },
-  complianceStat: {
+  departureDescription: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
+  },
+  departureButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.md,
+    backgroundColor: Colors.primary.blue,
+    borderRadius: 12,
+    marginBottom: Spacing.lg,
+  },
+  departureButtonIcon: {
+    fontSize: 20,
+    marginRight: Spacing.sm,
+  },
+  departureButtonText: {
+    ...Typography.subheadline,
+    color: Colors.text.primary,
+    fontWeight: '500',
+  },
+  currentSiteInfo: {
+    alignItems: 'center',
+  },
+  currentSiteLabel: {
     ...Typography.caption,
     color: Colors.text.secondary,
     marginBottom: Spacing.xs,
   },
-  complianceDivider: {
-    height: 1,
-    backgroundColor: Colors.glass.medium,
-    marginVertical: Spacing.md,
+  currentSiteName: {
+    ...Typography.subheadline,
+    color: Colors.text.primary,
+    fontWeight: '500',
   },
-  documentationList: {
-    marginTop: Spacing.sm,
-  },
-  documentationItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-  },
-  documentationIcon: {
-    fontSize: 16,
-    marginRight: Spacing.sm,
-  },
-  documentationText: {
+  currentSiteAddress: {
     ...Typography.caption,
     color: Colors.text.secondary,
+    marginTop: 2,
   },
   
-  // Performance Panel Styles
-  performancePlaceholder: {
-    alignItems: 'center',
-    padding: Spacing.lg,
+  // Quick Actions Panel Styles
+  quickActionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
-  placeholderText: {
-    ...Typography.body,
-    color: Colors.text.primary,
-    textAlign: 'center',
+  quickActionButton: {
+    width: '48%',
+    alignItems: 'center',
+    padding: Spacing.md,
+    backgroundColor: Colors.glass.medium,
+    borderRadius: 12,
     marginBottom: Spacing.sm,
   },
-  placeholderSubtext: {
+  emergencyButton: {
+    backgroundColor: Colors.status.error + '20',
+    borderWidth: 1,
+    borderColor: Colors.status.error,
+  },
+  quickActionIcon: {
+    fontSize: 24,
+    marginBottom: Spacing.sm,
+  },
+  quickActionText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: Colors.text.primary,
     textAlign: 'center',
+    fontWeight: '500',
   },
   
   // Portfolio Panel Styles

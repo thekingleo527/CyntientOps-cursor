@@ -42,5 +42,14 @@ export { WeatherTasksSection } from './weather/WeatherTasksSection';
 // Progress
 export { TodaysProgressDetailView } from './progress/TodaysProgressDetailView';
 
+// Intelligence Components
+export { IntelligencePreviewPanel } from './intelligence/IntelligencePreviewPanel';
+export { WorkerIntelligencePanel } from './intelligence/WorkerIntelligencePanel';
+export { AdminIntelligencePanel } from './intelligence/AdminIntelligencePanel';
+export { ClientIntelligencePanel } from './intelligence/ClientIntelligencePanel';
+
+// Weather Components
+export { default as WeatherRibbonView } from './weather/WeatherRibbonView';
+
 // Re-export design tokens for convenience
 export * from '@cyntientops/design-tokens';

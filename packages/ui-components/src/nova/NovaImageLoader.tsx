@@ -27,7 +27,9 @@ export interface NovaImageInfo {
   width: number;
   height: number;
   cached: boolean;
-  source: 'asset' | 'generated' | 'fallback';
+  source: 'asset' | 'generated' | 'fallback' | 'holographic';
+  originalUri?: string;
+  holographicUri?: string;
 }
 
 export interface NovaImageCache {
@@ -37,8 +39,17 @@ export interface NovaImageCache {
 export interface NovaImageLoaderState {
   isLoading: boolean;
   currentImage: NovaImageInfo | null;
+  holographicImage: NovaImageInfo | null;
   cache: NovaImageCache;
   error: string | null;
+  isProcessingHolographic: boolean;
+}
+
+export interface HolographicEffectOptions {
+  cyanTint: number;
+  glowIntensity: number;
+  scanlineOpacity: number;
+  distortionStrength: number;
 }
 
 // Constants
@@ -64,8 +75,10 @@ export const useNovaImageLoader = () => {
   const [state, setState] = useState<NovaImageLoaderState>({
     isLoading: false,
     currentImage: null,
+    holographicImage: null,
     cache: {},
     error: null,
+    isProcessingHolographic: false,
   });
 
   // Initialize cache directory
@@ -151,6 +164,148 @@ export const useNovaImageLoader = () => {
     }
   }, []);
 
+  // Process holographic transformation
+  const processHolographicTransformation = useCallback(async (
+    originalImage: NovaImageInfo,
+    options: HolographicEffectOptions = {
+      cyanTint: 0.3,
+      glowIntensity: 0.1,
+      scanlineOpacity: 0.8,
+      distortionStrength: 0.2,
+    }
+  ): Promise<NovaImageInfo> => {
+    try {
+      setState(prev => ({ ...prev, isProcessingHolographic: true }));
+      
+      console.log('🔮 Processing holographic transformation...');
+      
+      // Check cache first
+      const cacheKey = `holographic_${originalImage.uri.split('/').pop()}`;
+      const cachedHolographicPath = `${CACHE_DIR}${cacheKey}.jpg`;
+      
+      const fileInfo = await FileSystem.getInfoAsync(cachedHolographicPath);
+      if (fileInfo.exists) {
+        const stats = await FileSystem.getInfoAsync(cachedHolographicPath);
+        if (stats.exists && stats.modificationTime) {
+          const age = Date.now() - (stats.modificationTime * 1000);
+          if (age < CACHE_EXPIRY) {
+            console.log('✅ Loaded cached holographic image');
+            const holographicImage: NovaImageInfo = {
+              uri: cachedHolographicPath,
+              width: 400,
+              height: 400,
+              cached: true,
+              source: 'holographic',
+              originalUri: originalImage.uri,
+              holographicUri: cachedHolographicPath,
+            };
+            
+            setState(prev => ({ 
+              ...prev, 
+              holographicImage,
+              isProcessingHolographic: false 
+            }));
+            
+            return holographicImage;
+          }
+        }
+      }
+      
+      // Generate holographic SVG with effects
+      const holographicSvg = generateHolographicSvg(originalImage, options);
+      
+      // For React Native, we'll create a data URI with the holographic SVG
+      const holographicImage: NovaImageInfo = {
+        uri: 'data:image/svg+xml;base64,' + btoa(holographicSvg),
+        width: 400,
+        height: 400,
+        cached: false,
+        source: 'holographic',
+        originalUri: originalImage.uri,
+        holographicUri: cachedHolographicPath,
+      };
+      
+      console.log('✅ Generated holographic transformation');
+      
+      setState(prev => ({ 
+        ...prev, 
+        holographicImage,
+        isProcessingHolographic: false 
+      }));
+      
+      return holographicImage;
+      
+    } catch (error) {
+      console.error('❌ Failed to process holographic transformation:', error);
+      setState(prev => ({ ...prev, isProcessingHolographic: false }));
+      throw error;
+    }
+  }, []);
+
+  // Generate holographic SVG with effects
+  const generateHolographicSvg = useCallback((
+    originalImage: NovaImageInfo,
+    options: HolographicEffectOptions
+  ): string => {
+    const { cyanTint, glowIntensity, scanlineOpacity, distortionStrength } = options;
+    
+    return `
+      <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Original gradient -->
+          <radialGradient id="originalGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#7B68EE;stop-opacity:1" />
+          </radialGradient>
+          
+          <!-- Holographic cyan overlay -->
+          <radialGradient id="cyanOverlay" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#00FFFF;stop-opacity:${cyanTint}" />
+            <stop offset="100%" style="stop-color:#0080FF;stop-opacity:${cyanTint * 0.5}" />
+          </radialGradient>
+          
+          <!-- Glow effect -->
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:${glowIntensity}" />
+            <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+          </radialGradient>
+          
+          <!-- Scanline pattern -->
+          <pattern id="scanlines" patternUnits="userSpaceOnUse" width="4" height="4">
+            <rect width="4" height="1" fill="#00FFFF" opacity="${scanlineOpacity}" />
+            <rect width="4" height="3" fill="transparent" />
+          </pattern>
+          
+          <!-- Distortion filter -->
+          <filter id="distortion">
+            <feTurbulence baseFrequency="${distortionStrength}" numOctaves="2" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+          </filter>
+        </defs>
+        
+        <!-- Base circle with original gradient -->
+        <circle cx="200" cy="200" r="200" fill="url(#originalGrad)" />
+        
+        <!-- Holographic cyan overlay -->
+        <circle cx="200" cy="200" r="200" fill="url(#cyanOverlay)" />
+        
+        <!-- Glow effect -->
+        <circle cx="200" cy="200" r="200" fill="url(#glow)" />
+        
+        <!-- Brain symbol -->
+        <text x="200" y="220" font-family="Arial" font-size="80" fill="white" text-anchor="middle" filter="url(#distortion)">🧠</text>
+        
+        <!-- Scanline overlay -->
+        <rect width="400" height="400" fill="url(#scanlines)" opacity="0.3" />
+        
+        <!-- Holographic border -->
+        <circle cx="200" cy="200" r="200" fill="none" stroke="#00FFFF" stroke-width="2" opacity="0.6" />
+        <circle cx="200" cy="200" r="180" fill="none" stroke="#00FFFF" stroke-width="1" opacity="0.4" />
+        <circle cx="200" cy="200" r="160" fill="none" stroke="#00FFFF" stroke-width="1" opacity="0.2" />
+      </svg>
+    `;
+  }, []);
+
   // Process and cache image
   const processAndCacheImage = useCallback(async (
     imageUri: string,
@@ -187,7 +342,7 @@ export const useNovaImageLoader = () => {
     }
   }, []);
 
-  // Load Nova AI image with fallback
+  // Load Nova AI image with fallback and holographic processing
   const loadNovaImage = useCallback(async (): Promise<NovaImageInfo> => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     
@@ -196,10 +351,14 @@ export const useNovaImageLoader = () => {
       for (const imageName of IMAGE_NAMES) {
         const cachedImage = await loadCachedImage(imageName);
         if (cachedImage) {
+          // Generate holographic version
+          const holographicImage = await processHolographicTransformation(cachedImage);
+          
           setState(prev => ({
             ...prev,
             isLoading: false,
             currentImage: cachedImage,
+            holographicImage: holographicImage,
             cache: { ...prev.cache, [imageName]: cachedImage },
           }));
           return cachedImage;
@@ -212,10 +371,14 @@ export const useNovaImageLoader = () => {
       
       const fallbackImage = await generateFallbackImage();
       
+      // Generate holographic version of fallback
+      const holographicImage = await processHolographicTransformation(fallbackImage);
+      
       setState(prev => ({
         ...prev,
         isLoading: false,
         currentImage: fallbackImage,
+        holographicImage: holographicImage,
         cache: { ...prev.cache, fallback: fallbackImage },
       }));
       
@@ -247,7 +410,7 @@ export const useNovaImageLoader = () => {
       
       return basicFallback;
     }
-  }, [loadCachedImage, generateFallbackImage]);
+  }, [loadCachedImage, generateFallbackImage, processHolographicTransformation]);
 
   // Clear cache
   const clearCache = useCallback(async () => {
@@ -298,6 +461,7 @@ export const useNovaImageLoader = () => {
   return {
     ...state,
     loadNovaImage,
+    processHolographicTransformation,
     clearCache,
     debugAvailableAssets,
   };

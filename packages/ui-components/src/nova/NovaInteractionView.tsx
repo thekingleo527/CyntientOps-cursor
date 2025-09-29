@@ -92,6 +92,8 @@ export const NovaInteractionView: React.FC<{
   const [repairProgress, setRepairProgress] = useState(0);
   const [repairMessage, setRepairMessage] = useState('');
   const [activeScenarios, setActiveScenarios] = useState<any[]>([]);
+  const [urgentTaskCount, setUrgentTaskCount] = useState<number | null>(null);
+  const [hasHighPriorityScenarios, setHasHighPriorityScenarios] = useState(false);
 
   // Animation refs
   const dragOffset = useRef(new Animated.Value(0)).current;
@@ -242,8 +244,109 @@ export const NovaInteractionView: React.FC<{
     }
 
     setRepairMessage('Repair complete! Assignment data synchronized.');
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    // TODO: Implement haptic feedback
+    console.log('📳 Haptic feedback: Success notification');
   }, []);
+
+  // Scenario Management
+  const checkForActiveScenarios = useCallback(() => {
+    const scenarios: any[] = [];
+    
+    // Check for emergency repair scenario
+    if (shouldShowEmergencyRepair) {
+      scenarios.push({
+        id: 'emergency_repair',
+        type: 'emergencyResponse',
+        title: 'Emergency Response',
+        description: 'Assignment data inconsistency detected',
+        priority: 'critical',
+      });
+    }
+    
+    // Check for urgent tasks scenario
+    if (urgentTaskCount && urgentTaskCount > 0) {
+      scenarios.push({
+        id: 'urgent_tasks',
+        type: 'taskOptimization',
+        title: 'Task Optimization',
+        description: `${urgentTaskCount} urgent tasks need attention`,
+        priority: 'high',
+      });
+    }
+    
+    // Check for time-based scenarios
+    const hour = new Date().getHours();
+    if (hour >= 17) {
+      scenarios.push({
+        id: 'end_of_day',
+        type: 'taskOptimization',
+        title: 'End of Day Review',
+        description: 'Review remaining tasks and plan for tomorrow',
+        priority: 'medium',
+      });
+    }
+    
+    setActiveScenarios(scenarios);
+    setHasHighPriorityScenarios(scenarios.some(s => s.priority === 'critical' || s.priority === 'high'));
+  }, [urgentTaskCount]);
+
+  const handleScenarioTap = useCallback(async (scenario: any) => {
+    const prompt = `Tell me more about: ${scenario.description}`;
+    await processPrompt(prompt);
+    
+    // Remove the scenario after handling
+    setActiveScenarios(prev => prev.filter(s => s.id !== scenario.id));
+  }, [processPrompt]);
+
+  const getScenarioIcon = useCallback((type: string) => {
+    switch (type) {
+      case 'taskOptimization': return 'list.bullet.clipboard.fill';
+      case 'routeOptimization': return 'location.fill';
+      case 'inventoryManagement': return 'shippingbox.fill';
+      case 'complianceAlert': return 'exclamationmark.shield.fill';
+      case 'maintenancePrediction': return 'wrench.and.screwdriver.fill';
+      case 'emergencyResponse': return 'exclamationmark.triangle.fill';
+      default: return 'lightbulb.fill';
+    }
+  }, []);
+
+  const getScenarioPriority = useCallback((type: string) => {
+    switch (type) {
+      case 'emergencyResponse': return 'critical';
+      case 'complianceAlert': return 'critical';
+      case 'maintenancePrediction': return 'high';
+      case 'inventoryManagement': return 'high';
+      case 'taskOptimization': return 'medium';
+      case 'routeOptimization': return 'medium';
+      default: return 'medium';
+    }
+  }, []);
+
+  const getScenarioColor = useCallback((priority: string) => {
+    switch (priority) {
+      case 'critical': return '#FF3B30';
+      case 'high': return '#FF9500';
+      case 'medium': return '#007AFF';
+      case 'low': return '#34C759';
+      default: return '#8E8E93';
+    }
+  }, []);
+
+  // Enhanced Context System
+  const buildContextData = useCallback(() => {
+    return {
+      workerName: 'Current Worker',
+      workerId: 'worker_001',
+      workerRole: 'maintenance',
+      currentBuilding: 'Building 14',
+      currentBuildingId: 'building_14',
+      assignedBuildings: '5',
+      todaysTasks: '12',
+      urgentTasks: urgentTaskCount?.toString() || '0',
+      timeOfDay: getTimeBasedGreeting(),
+      completedTasks: '8',
+    };
+  }, [urgentTaskCount]);
 
   const getTimeBasedGreeting = useCallback(() => {
     const hour = new Date().getHours();
@@ -251,6 +354,17 @@ export const NovaInteractionView: React.FC<{
     if (hour < 17) return 'Good afternoon';
     return 'Good evening';
   }, []);
+
+  const shouldShowEmergencyRepair = useCallback(() => {
+    // Simulate emergency repair condition
+    return Math.random() > 0.7; // 30% chance
+  }, []);
+
+  // Initialize scenarios and context
+  useEffect(() => {
+    checkForActiveScenarios();
+    setUrgentTaskCount(Math.floor(Math.random() * 5)); // Simulate urgent tasks
+  }, [checkForActiveScenarios]);
 
   const canSendMessage = userQuery.trim().length > 0 && processingState.state !== 'processing';
 

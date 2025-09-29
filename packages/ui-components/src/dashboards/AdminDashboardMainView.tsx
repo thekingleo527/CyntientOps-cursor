@@ -7,7 +7,8 @@
 
 /* eslint-disable */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+const { useState, useEffect } = React;
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { GlassCard, Typography, Spacing } from '@cyntientops/design-tokens';
 

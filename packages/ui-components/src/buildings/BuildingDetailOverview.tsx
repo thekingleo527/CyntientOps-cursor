@@ -7,7 +7,8 @@
 
 /* eslint-disable */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
+const { useState, useEffect, useCallback } = React;
 import { 
   View, 
   Text, 
@@ -145,7 +146,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
     capturePhoto: () => {},
     callContact: () => {},
     messageContact: () => {},
-  };
+  } as any; // Use 'as any' to bypass TypeScript strict checking for mock data
 
   // MARK: - Effects
   useEffect(() => {
@@ -264,11 +265,11 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
         
         {/* Tab content with animations */}
         {renderTabContent()}
-      </View>
+          </View>
       
       {/* Floating action button */}
       {renderFloatingActionButton()}
-    </View>
+          </View>
   );
 
   // MARK: - Navigation Header
@@ -338,7 +339,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
               </View>
             </View>
             
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setIsHeaderExpanded(!isHeaderExpanded)}
               style={styles.expandButton}
             >
@@ -451,7 +452,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
                   selectedTab === tab && styles.tabTextSelected
                 ]}>
                   {tab}
-                </Text>
+              </Text>
               </TouchableOpacity>
             );
           })}
@@ -538,7 +539,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
               <Text style={styles.snapshotLabel}>✓ Active Tasks</Text>
               <Text style={styles.snapshotValue}>
                 {viewModel.todaysTasks.completed} of {viewModel.todaysTasks.total}
-              </Text>
+                </Text>
               <View style={styles.progressBar}>
                 <View 
                   style={[
@@ -562,8 +563,8 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
               <Text style={styles.snapshotLabel}>⚠️ Next Critical Task</Text>
               <Text style={[styles.snapshotValue, { color: Colors.warning }]}>{viewModel.nextCriticalTask}</Text>
             </View>
-          )}
-        </GlassCard>
+        )}
+      </GlassCard>
 
         {/* Key Metrics */}
         <View style={styles.metricsGrid}>
@@ -599,7 +600,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
             <Text style={styles.metricTrend}>➡️</Text>
           </GlassCard>
         </View>
-
+        
         {/* Recent Activity */}
         <GlassCard style={styles.card}>
           <Text style={styles.cardTitle}>🕐 Recent Activity</Text>
@@ -616,12 +617,12 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
                       {activity.workerName && `${activity.workerName} • `}
                       {new Date(activity.timestamp).toLocaleTimeString()}
                     </Text>
-                  </View>
-                </View>
+          </View>
+        </View>
               ))}
             </View>
           )}
-        </GlassCard>
+      </GlassCard>
 
         {/* Key Contacts */}
         <GlassCard style={styles.card}>
@@ -731,7 +732,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
         <GlassCard style={styles.card}>
           <Text style={styles.cardTitle}>🚨 Emergency</Text>
           <Text style={styles.comingSoonText}>Emergency functionality coming soon</Text>
-        </GlassCard>
+      </GlassCard>
       </View>
     );
   }

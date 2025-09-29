@@ -29,6 +29,8 @@
     "@nx/js": "^18.0.0",
     "@nx/react-native": "^18.0.0",
     "@nx/workspace": "^18.0.0",
+    "@types/react": "^19.1.15",
+    "@types/react-native": "^0.72.8",
     "nx": "^18.0.0",
     "typescript": "^5.9.2"
   },

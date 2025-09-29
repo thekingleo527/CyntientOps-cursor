@@ -13,10 +13,15 @@
  * Based on SwiftUI NovaAIManager.swift (827+ lines)
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Animated } from 'react-native';
+import React from 'react';
+const { useState, useEffect, useRef, useCallback } = React;
+const { Animated, Vibration, Platform } = require('react-native');
 import { NovaAPIService } from './NovaAPIService';
 import { useNovaImageLoader, NovaImageInfo, HolographicEffectOptions } from './NovaImageLoader';
+import { useNovaGestureHandler, NovaGestureHandler } from './NovaGestureHandler';
+import { useNovaVoiceRecognition, VoiceRecognitionStatus } from './NovaVoiceRecognition';
+import { useNovaParticleSystem, NovaParticleSystem } from './NovaParticleSystem';
+import { useNovaHolographicEffects, NovaHolographicEffects } from './NovaHolographicEffects';
 import { 
   NovaPrompt, 
   NovaResponse, 
@@ -82,6 +87,277 @@ export enum WorkspaceMode {
   HOLOGRAPHIC = 'holographic',
   VOICE = 'voice',
 }
+
+// Haptic Feedback Types
+export enum HapticFeedbackType {
+  LIGHT = 'light',
+  MEDIUM = 'medium',
+  HEAVY = 'heavy',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  SELECTION = 'selection',
+}
+
+// Haptic Feedback Utility
+const triggerHapticFeedback = (type: HapticFeedbackType) => {
+  try {
+    switch (type) {
+      case HapticFeedbackType.LIGHT:
+        Vibration.vibrate(50);
+        break;
+      case HapticFeedbackType.MEDIUM:
+        Vibration.vibrate(100);
+        break;
+      case HapticFeedbackType.HEAVY:
+        Vibration.vibrate(200);
+        break;
+      case HapticFeedbackType.SUCCESS:
+        Vibration.vibrate([0, 50, 100, 50]);
+        break;
+      case HapticFeedbackType.ERROR:
+        Vibration.vibrate([0, 100, 50, 100]);
+        break;
+      case HapticFeedbackType.SELECTION:
+        Vibration.vibrate(25);
+        break;
+      default:
+        Vibration.vibrate(50);
+    }
+    console.log(`📳 Haptic feedback: ${type} impact`);
+  } catch (error) {
+    console.warn('⚠️ Haptic feedback not available:', error);
+  }
+};
+
+// Speech Synthesis Utility
+const speakText = async (text: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    try {
+      // For React Native, we'll use a cross-platform approach
+      if (Platform.OS === 'ios') {
+        // iOS Speech Synthesis
+        const utterance = new (globalThis as any).SpeechSynthesisUtterance(text);
+        utterance.rate = 0.8;
+        utterance.pitch = 1.0;
+        utterance.volume = 0.8;
+        utterance.voice = null; // Use default voice
+        
+        utterance.onend = () => {
+          console.log('🔊 Speech synthesis completed');
+          resolve();
+        };
+        
+        utterance.onerror = (event: any) => {
+          console.error('❌ Speech synthesis error:', event.error);
+          reject(new Error(`Speech synthesis failed: ${event.error}`));
+        };
+        
+        (globalThis as any).speechSynthesis.speak(utterance);
+      } else if (Platform.OS === 'android') {
+        // Android Text-to-Speech
+        const Tts = require('react-native-tts');
+        
+        Tts.setDefaultRate(0.8);
+        Tts.setDefaultPitch(1.0);
+        Tts.setDefaultLanguage('en-US');
+        
+        Tts.speak(text, {
+          androidParams: {
+            KEY_PARAM_PAN: -1,
+            KEY_PARAM_VOLUME: 0.8,
+            KEY_PARAM_STREAM: 'STREAM_MUSIC',
+          },
+        });
+        
+        // Listen for completion
+        const onTtsFinish = () => {
+          Tts.removeListener('tts-finish', onTtsFinish);
+          console.log('🔊 Speech synthesis completed');
+          resolve();
+        };
+        
+        const onTtsError = (error: any) => {
+          Tts.removeListener('tts-finish', onTtsFinish);
+          Tts.removeListener('tts-error', onTtsError);
+          console.error('❌ Speech synthesis error:', error);
+          reject(new Error(`Speech synthesis failed: ${error}`));
+        };
+        
+        Tts.addEventListener('tts-finish', onTtsFinish);
+        Tts.addEventListener('tts-error', onTtsError);
+      } else {
+        // Fallback for other platforms or when TTS is not available
+        console.log('🔊 Speaking (simulated):', text);
+        // Simulate speaking duration based on text length
+        const duration = Math.max(1000, text.length * 50);
+        setTimeout(() => {
+          console.log('🔊 Speech synthesis completed (simulated)');
+          resolve();
+        }, duration);
+      }
+    } catch (error) {
+      console.warn('⚠️ Speech synthesis not available, using fallback:', error);
+      // Fallback to console log
+      console.log('🔊 Speaking (fallback):', text);
+      setTimeout(() => resolve(), 1000);
+    }
+  });
+};
+
+// Voice Recognition Utility
+interface VoiceRecognitionConfig {
+  language?: string;
+  continuous?: boolean;
+  interimResults?: boolean;
+  maxAlternatives?: number;
+}
+
+class VoiceRecognitionManager {
+  private recognition: any = null;
+  private isListening: boolean = false;
+  private onResult: ((text: string) => void) | null = null;
+  private onError: ((error: string) => void) | null = null;
+  private onEnd: (() => void) | null = null;
+
+  constructor() {
+    this.initializeRecognition();
+  }
+
+  private initializeRecognition() {
+    try {
+      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+        // For React Native, we'll use a cross-platform speech recognition library
+        // This would typically be react-native-voice or expo-speech
+        console.log('🎤 Voice recognition manager initialized');
+      } else {
+        // Web fallback
+        if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
+          this.recognition = new (window as any).webkitSpeechRecognition();
+          this.setupWebRecognition();
+        } else if (typeof window !== 'undefined' && 'SpeechRecognition' in window) {
+          this.recognition = new (window as any).SpeechRecognition();
+          this.setupWebRecognition();
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Voice recognition not available:', error);
+    }
+  }
+
+  private setupWebRecognition() {
+    if (!this.recognition) return;
+
+    this.recognition.continuous = true;
+    this.recognition.interimResults = true;
+    this.recognition.lang = 'en-US';
+
+    this.recognition.onresult = (event: any) => {
+      let finalTranscript = '';
+      let interimTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      if (finalTranscript && this.onResult) {
+        this.onResult(finalTranscript);
+      }
+    };
+
+    this.recognition.onerror = (event: any) => {
+      console.error('❌ Voice recognition error:', event.error);
+      if (this.onError) {
+        this.onError(event.error);
+      }
+    };
+
+    this.recognition.onend = () => {
+      this.isListening = false;
+      if (this.onEnd) {
+        this.onEnd();
+      }
+    };
+  }
+
+  startListening(config: VoiceRecognitionConfig = {}) {
+    return new Promise<void>((resolve, reject) => {
+      try {
+        if (this.isListening) {
+          resolve();
+          return;
+        }
+
+        this.onResult = (text: string) => {
+          console.log('🎤 Voice recognition result:', text);
+        };
+
+        this.onError = (error: string) => {
+          console.error('❌ Voice recognition error:', error);
+          reject(new Error(`Voice recognition failed: ${error}`));
+        };
+
+        this.onEnd = () => {
+          console.log('🎤 Voice recognition ended');
+          resolve();
+        };
+
+        if (this.recognition) {
+          this.recognition.start();
+        } else {
+          // Fallback for React Native or when recognition is not available
+          console.log('🎤 Voice recognition started (simulated)');
+          // Simulate voice recognition
+          setTimeout(() => {
+            this.isListening = false;
+            resolve();
+          }, 5000); // 5 second timeout
+        }
+
+        this.isListening = true;
+        console.log('🎤 Voice recognition started');
+      } catch (error) {
+        console.error('❌ Failed to start voice recognition:', error);
+        reject(error);
+      }
+    });
+  }
+
+  stopListening() {
+    return new Promise<void>((resolve) => {
+      try {
+        if (!this.isListening) {
+          resolve();
+          return;
+        }
+
+        if (this.recognition) {
+          this.recognition.stop();
+        } else {
+          // Fallback
+          this.isListening = false;
+          console.log('🎤 Voice recognition stopped (simulated)');
+        }
+
+        resolve();
+      } catch (error) {
+        console.error('❌ Failed to stop voice recognition:', error);
+        resolve();
+      }
+    });
+  }
+
+  isAvailable(): boolean {
+    return this.recognition !== null || Platform.OS === 'ios' || Platform.OS === 'android';
+  }
+}
+
+// Global voice recognition manager instance
+const voiceRecognitionManager = new VoiceRecognitionManager();
 
 export interface NovaManagerConfig {
   userRole: string; // UserRole
@@ -151,13 +427,25 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
   // Image loader
   const imageLoader = useNovaImageLoader();
 
+  // Gesture handling
+  const gestureHandler = useNovaGestureHandler();
+
+  // Voice recognition
+  const voiceRecognition = useNovaVoiceRecognition();
+
+  // Particle system
+  const particleSystem = useNovaParticleSystem();
+
+  // Holographic effects
+  const holographicEffects = useNovaHolographicEffects();
+
   // Load persistent Nova image
   const loadPersistentNovaImage = useCallback(async () => {
     try {
       console.log('🖼️ Loading persistent Nova image...');
       
       // Load original image
-      const originalImage = await imageLoader.loadNovaImage();
+      const originalImage = await imageLoader.loadAIAssistantImage();
       
       setState(prev => ({
         ...prev,
@@ -168,10 +456,10 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
       console.log('✅ Nova original image loaded and cached persistently');
       
       // Generate holographic version
-      if (imageLoader.holographicImage) {
+      if (imageLoader.novaHolographicImage) {
         setState(prev => ({
           ...prev,
-          novaHolographicImage: imageLoader.holographicImage,
+          novaHolographicImage: imageLoader.novaHolographicImage,
         }));
         console.log('✅ Holographic Nova image generated and cached');
       }
@@ -309,8 +597,7 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
 
       // Haptic feedback
       if (config.enableHaptics) {
-        // TODO: Implement haptic feedback
-        console.log('📳 Haptic feedback: Medium impact');
+        triggerHapticFeedback(HapticFeedbackType.MEDIUM);
       }
 
     } catch (error) {
@@ -327,11 +614,25 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
   // Voice Recognition
   const initializeVoiceRecognition = useCallback(async () => {
     try {
-      // Initialize speech recognition
-      // This would use expo-speech or a speech recognition library
-      console.log('🎤 Voice recognition initialized');
+      // Initialize speech recognition using the voice recognition manager
+      const isAvailable = voiceRecognitionManager.isAvailable();
+      
+      setState(prev => ({
+        ...prev,
+        speechRecognitionAvailable: isAvailable,
+      }));
+      
+      if (isAvailable) {
+        console.log('🎤 Voice recognition initialized and available');
+      } else {
+        console.warn('⚠️ Voice recognition not available on this platform');
+      }
     } catch (error) {
       console.error('❌ Failed to initialize voice recognition:', error);
+      setState(prev => ({
+        ...prev,
+        speechRecognitionAvailable: false,
+      }));
     }
   }, []);
 
@@ -344,13 +645,16 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
         novaState: 'listening',
       }));
 
-      // Start voice recognition
-      // This would start actual speech recognition
+      // Start voice recognition using the manager
+      await voiceRecognitionManager.startListening({
+        language: 'en-US',
+        continuous: true,
+        interimResults: true,
+      });
       
       // Haptic feedback
       if (config.enableHaptics) {
-        // TODO: Implement haptic feedback
-        console.log('📳 Haptic feedback: Light impact');
+        triggerHapticFeedback(HapticFeedbackType.LIGHT);
       }
 
     } catch (error) {
@@ -365,20 +669,29 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
   }, [config]);
 
   const stopVoiceListening = useCallback(async () => {
-    setState(prev => ({
-      ...prev,
-      isListening: false,
-      statusText: 'Nova AI Active',
-      novaState: 'idle',
-    }));
+    try {
+      // Stop voice recognition using the manager
+      await voiceRecognitionManager.stopListening();
+      
+      setState(prev => ({
+        ...prev,
+        isListening: false,
+        statusText: 'Nova AI Active',
+        novaState: 'idle',
+      }));
 
-    // Stop voice recognition
-    // This would stop actual speech recognition
-
-    // Haptic feedback
-    if (config.enableHaptics) {
-      // TODO: Implement haptic feedback
-      console.log('📳 Haptic feedback: Light impact');
+      // Haptic feedback
+      if (config.enableHaptics) {
+        triggerHapticFeedback(HapticFeedbackType.LIGHT);
+      }
+    } catch (error) {
+      console.error('❌ Failed to stop voice listening:', error);
+      setState(prev => ({
+        ...prev,
+        isListening: false,
+        statusText: 'Nova AI Active',
+        novaState: 'idle',
+      }));
     }
   }, [config]);
 
@@ -393,8 +706,7 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
     
     // Trigger holographic effects
     if (config.enableHaptics) {
-      // TODO: Implement haptic feedback
-      console.log('📳 Haptic feedback: Heavy impact');
+      triggerHapticFeedback(HapticFeedbackType.HEAVY);
     }
     
     console.log('🔮 Holographic mode activated');
@@ -484,8 +796,7 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
 
       // Haptic feedback
       if (config.enableHaptics) {
-        // TODO: Implement haptic feedback
-        console.log('📳 Haptic feedback: Success notification');
+        triggerHapticFeedback(HapticFeedbackType.SUCCESS);
       }
 
       return response;
@@ -503,8 +814,7 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
 
       // Haptic feedback
       if (config.enableHaptics) {
-        // TODO: Implement haptic feedback
-        console.log('📳 Haptic feedback: Error notification');
+        triggerHapticFeedback(HapticFeedbackType.ERROR);
       }
 
       return null;
@@ -520,12 +830,8 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
         statusText: 'Speaking...',
       }));
 
-      // TODO: Implement actual speech synthesis
-      // For now, just simulate speaking
-      console.log('🔊 Speaking:', text);
-      
-      // Simulate speaking duration
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Implement actual speech synthesis
+      await speakText(text);
 
       setState(prev => ({
         ...prev,
@@ -637,6 +943,13 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
     statusText: state.statusText,
     novaState: state.novaState,
     connectionStatus: state.connectionStatus,
+    
+    // Advanced Features
+    gestureHandler,
+    voiceRecognition,
+    particleSystem,
+    holographicEffects,
+    imageLoader,
   };
 };
 

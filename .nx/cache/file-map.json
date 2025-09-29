@@ -17,52 +17,40 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "CONTINUITY_REPORT_PHASE_4B.md",
-        "hash": "5086867959219332568"
+        "file": "SWIFTUI_TO_REACT_RECONCILIATION_ANALYSIS.md",
+        "hash": "1495956401689246691"
       },
       {
-        "file": "nx.json",
-        "hash": "1817247490336913443"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "15535908159169107954"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "2675220573733747715"
-      },
-      {
-        "file": "COMPLETE_SWIFTUI_ANALYSIS.md",
-        "hash": "1560824042097432759"
-      },
-      {
-        "file": "REMAINING_IMPLEMENTATION_ANALYSIS.md",
-        "hash": "13939275850397437566"
-      },
-      {
-        "file": "scripts/setup-nx-projects.js",
-        "hash": "8665214159614902254"
-      },
-      {
-        "file": "FORENSIC_RECONCILIATION_REPORT.md",
-        "hash": "8636703867579112770"
-      },
-      {
-        "file": "package.json",
-        "hash": "10056869675672275213"
+        "file": ".eslintrc.js",
+        "hash": "13772985611367207345"
       },
       {
         "file": "package-lock.json",
         "hash": "15005792177748425952"
       },
       {
-        "file": "PHASE_4B_COMPLETE.md",
-        "hash": "15012949593794021123"
+        "file": "package.json",
+        "hash": "10056869675672275213"
       },
       {
         "file": "verify-folders.sh",
         "hash": "10935650700356555517"
+      },
+      {
+        "file": "scripts/setup-jest-configs.js",
+        "hash": "16206366320795113098"
+      },
+      {
+        "file": "README.md",
+        "hash": "12576029393461459033"
+      },
+      {
+        "file": "scripts/setup-nx-projects.js",
+        "hash": "8665214159614902254"
+      },
+      {
+        "file": "scripts/setup-tsconfigs.js",
+        "hash": "14530017827863588642"
       },
       {
         "file": "jest.preset.js",
@@ -73,24 +61,24 @@
         "hash": "11765879550370700119"
       },
       {
-        "file": ".eslintrc.js",
-        "hash": "13772985611367207345"
+        "file": ".gitignore",
+        "hash": "15535908159169107954"
       },
       {
-        "file": "README.md",
-        "hash": "12576029393461459033"
+        "file": "CONTINUITY_REPORT_PHASE_4B.md",
+        "hash": "16746233106981281618"
       },
       {
-        "file": "scripts/setup-jest-configs.js",
-        "hash": "16206366320795113098"
-      },
-      {
-        "file": "scripts/setup-tsconfigs.js",
-        "hash": "14530017827863588642"
+        "file": "tsconfig.base.json",
+        "hash": "2675220573733747715"
       },
       {
         "file": "tsconfig.json",
         "hash": "12496562632034889801"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1817247490336913443"
       }
     ],
     "projectFileMap": {
@@ -1550,12 +1538,14 @@
         },
         {
           "file": "packages/ui-components/src/dashboards/AdminDashboard.tsx",
-          "hash": "11716590107737790378",
+          "hash": "16099411151459299255",
           "deps": [
             "npm:react",
             "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "business-core"
+            "npm:expo-linear-gradient",
+            "design-tokens",
+            "business-core",
+            "domain-schema"
           ]
         },
         {
@@ -1570,23 +1560,24 @@
         },
         {
           "file": "packages/ui-components/src/dashboards/ClientDashboard.tsx",
-          "hash": "15220444339745491481",
+          "hash": "9228992611819466446",
           "deps": [
             "npm:react",
             "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/domain-schema",
-            "business-core"
+            "npm:expo-linear-gradient",
+            "design-tokens",
+            "business-core",
+            "domain-schema"
           ]
         },
         {
           "file": "packages/ui-components/src/dashboards/ClientDashboardMainView.tsx",
-          "hash": "2464854699032228635",
+          "hash": "8632783731004910938",
           "deps": [
             "npm:react",
             "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/domain-schema"
+            "design-tokens",
+            "domain-schema"
           ]
         },
         {
@@ -1901,10 +1892,7 @@
         },
         {
           "file": "packages/ui-components/src/index.ts",
-          "hash": "646401599764664660",
-          "deps": [
-            "npm:@cyntientops/design-tokens"
-          ]
+          "hash": "16088566892697928369"
         },
         {
           "file": "packages/ui-components/src/intelligence/AdminIntelligencePanel.tsx",
@@ -2136,6 +2124,68 @@
         {
           "file": "packages/ui-components/tsconfig.lib.json",
           "hash": "2684171098582105912"
+        },
+        {
+          "file": "packages/ui-components/src/nova/NovaAIManager.tsx",
+          "hash": "688138570791012930",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:expo-linear-gradient",
+            "npm:expo-blur",
+            "npm:expo-speech",
+            "npm:expo-haptics"
+          ]
+        },
+        {
+          "file": "packages/ui-components/src/nova/NovaInteractionView.tsx",
+          "hash": "9216309850419343357",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:expo-linear-gradient",
+            "npm:expo-blur",
+            "npm:expo-haptics"
+          ]
+        },
+        {
+          "file": "packages/ui-components/src/nova/NovaHolographicView.tsx",
+          "hash": "11087558157181375764",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:expo-linear-gradient",
+            "npm:expo-blur",
+            "npm:expo-haptics"
+          ]
+        },
+        {
+          "file": "packages/ui-components/src/security/SecurityManager.tsx",
+          "hash": "11164010700167655752",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:expo-linear-gradient",
+            "npm:expo-blur",
+            "npm:expo-local-authentication",
+            "npm:expo-secure-store",
+            "npm:expo-file-system",
+            "npm:expo-crypto",
+            "npm:expo-haptics"
+          ]
+        },
+        {
+          "file": "packages/ui-components/src/dsny/DSNYTaskManager.tsx",
+          "hash": "800773977157449315",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:expo-linear-gradient",
+            "npm:expo-blur",
+            "npm:expo-location",
+            "npm:expo-camera",
+            "npm:expo-haptics"
+          ]
         }
       ],
       "domain-schema": [

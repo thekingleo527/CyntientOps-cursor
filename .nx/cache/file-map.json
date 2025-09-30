@@ -19,16 +19,52 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "jest.preset.js",
-        "hash": "2599607768644681757"
-      },
-      {
-        "file": "CONTINUITY_REPORT_SEPTEMBER_2025.md",
-        "hash": "4789608956812148879"
+        "file": "copy-images.sh",
+        "hash": "11765879550370700119"
       },
       {
         "file": "scripts/setup-nx-projects.js",
         "hash": "8665214159614902254"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "15439930483179106296"
+      },
+      {
+        "file": "scripts/setup-tsconfigs.js",
+        "hash": "14530017827863588642"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "2599607768644681757"
+      },
+      {
+        "file": ".eslintrc.js",
+        "hash": "13772985611367207345"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "2675220573733747715"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "15535908159169107954"
+      },
+      {
+        "file": "README.md",
+        "hash": "12576029393461459033"
+      },
+      {
+        "file": "verify-folders.sh",
+        "hash": "10935650700356555517"
+      },
+      {
+        "file": "package.json",
+        "hash": "15351180261667345527"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "12496562632034889801"
       },
       {
         "file": "nx.json",
@@ -39,44 +75,8 @@
         "hash": "16206366320795113098"
       },
       {
-        "file": "tsconfig.json",
-        "hash": "12496562632034889801"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "15439930483179106296"
-      },
-      {
-        "file": "package.json",
-        "hash": "15351180261667345527"
-      },
-      {
-        "file": "README.md",
-        "hash": "12576029393461459033"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "15535908159169107954"
-      },
-      {
-        "file": "scripts/setup-tsconfigs.js",
-        "hash": "14530017827863588642"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "2675220573733747715"
-      },
-      {
-        "file": "copy-images.sh",
-        "hash": "11765879550370700119"
-      },
-      {
-        "file": ".eslintrc.js",
-        "hash": "13772985611367207345"
-      },
-      {
-        "file": "verify-folders.sh",
-        "hash": "10935650700356555517"
+        "file": "CONTINUITY_REPORT_SEPTEMBER_2025.md",
+        "hash": "17484226539450662799"
       }
     ],
     "projectFileMap": {
@@ -1783,7 +1783,7 @@
         },
         {
           "file": "packages/ui-components/src/buildings/tabs/BuildingHistoryTab.tsx",
-          "hash": "15884437223953670737",
+          "hash": "10380195090402485900",
           "deps": [
             "npm:react",
             "npm:react-native",
@@ -1927,16 +1927,6 @@
           ]
         },
         {
-          "file": "packages/ui-components/src/buildings/tabs/BuildingMaintenanceTab.tsx",
-          "hash": "17020363493968282595",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "design-tokens",
-            "business-core"
-          ]
-        },
-        {
           "file": "packages/ui-components/src/buildings/tabs/BuildingSanitationTab.tsx",
           "hash": "11203994082595503358",
           "deps": [
@@ -1959,7 +1949,7 @@
         },
         {
           "file": "packages/ui-components/src/buildings/BuildingDetailViewComplete.tsx",
-          "hash": "13940873949589983362",
+          "hash": "17213443809181158",
           "deps": [
             "npm:react",
             "npm:react-native",

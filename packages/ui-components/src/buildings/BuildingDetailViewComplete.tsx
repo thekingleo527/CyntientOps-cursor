@@ -28,7 +28,7 @@ import { BuildingOverviewTab } from './tabs/BuildingOverviewTab';
 import { BuildingRoutesTab } from './tabs/BuildingRoutesTab';
 import { BuildingTasksTab } from './tabs/BuildingTasksTab';
 import { BuildingTeamTab } from './tabs/BuildingTeamTab';
-import { BuildingMaintenanceTab } from './tabs/BuildingMaintenanceTab';
+import { BuildingHistoryTab } from './tabs/BuildingHistoryTab';
 import { BuildingSanitationTab } from './tabs/BuildingSanitationTab';
 import { BuildingInventoryTab } from './tabs/BuildingInventoryTab';
 import { BuildingSpacesTab } from './tabs/BuildingSpacesTab';
@@ -52,7 +52,7 @@ export enum BuildingDetailTab {
   ROUTES = 'Routes',
   TASKS = 'Tasks',
   WORKERS = 'Workers',
-  MAINTENANCE = 'Maintenance',
+  HISTORY = 'History',
   SANITATION = 'Sanitation',
   INVENTORY = 'Inventory',
   SPACES = 'Spaces',
@@ -284,13 +284,13 @@ export const BuildingDetailViewComplete: React.FC<BuildingDetailViewCompleteProp
             onClockOutWorker={(workerId) => console.log('Clock out worker:', workerId)}
           />
         );
-      case BuildingDetailTab.MAINTENANCE:
+      case BuildingDetailTab.HISTORY:
         return (
-          <BuildingMaintenanceTab
+          <BuildingHistoryTab
             buildingId={buildingId}
             buildingName={buildingName}
             container={container}
-            onMaintenancePress={onTaskPress}
+            onHistoryItemPress={onTaskPress}
           />
         );
       case BuildingDetailTab.SANITATION:

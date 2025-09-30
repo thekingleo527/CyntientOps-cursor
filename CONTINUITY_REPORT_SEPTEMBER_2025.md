@@ -350,10 +350,9 @@ Inspection Completion → WorkCompletionManager → Building History
 
 #### **Building Management**: 100% Complete ✅
 - Building Overview: ✅ 100%
-- Building History: ✅ 100%
+- Building History & Maintenance: ✅ 100% (Consolidated)
 - Building Spaces (with Media): ✅ 100%
 - Building Inspections: ✅ 100%
-- Building Maintenance: ✅ 100%
 - Building Sanitation: ✅ 100%
 
 #### **Work Completion System**: 100% Complete ✅

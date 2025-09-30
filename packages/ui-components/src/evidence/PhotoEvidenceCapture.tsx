@@ -1,6 +1,7 @@
 /**
  * 📸 Photo Evidence Capture
  * Purpose: Photo evidence management system for task documentation
+ * Features: Smart photo requirements, before/after photos for salting/shoveling sidewalks
  */
 
 import React from 'react';
@@ -8,7 +9,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, Image, ScrollView, Act
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
-import { smartPhotoRequirement, PhotoCategory, TaskCategory } from '@cyntientops/business-core';
+import { smartPhotoRequirement, PhotoCategory as SmartPhotoCategory, TaskCategory } from '@cyntientops/business-core';
 import { intelligentPhotoStorage } from '@cyntientops/business-core';
 
 export interface PhotoEvidenceCaptureProps {
@@ -73,7 +74,7 @@ export const PhotoEvidenceCapture: React.FC<PhotoEvidenceCaptureProps> = ({
     setPhotoTips(tips);
   }, [task]);
 
-  const handleAddPhoto = async (category: PhotoCategory) => {
+  const handleAddPhoto = async (category: SmartPhotoCategory) => {
     if (!photoRequirements?.requiresPhotos) {
       Alert.alert(
         'No Photos Required',
@@ -207,7 +208,7 @@ export const PhotoEvidenceCapture: React.FC<PhotoEvidenceCaptureProps> = ({
                     {photoRequirements.beforePhoto && (
                       <TouchableOpacity 
                         style={[styles.requirementButton, styles.beforeButton]}
-                        onPress={() => handleAddPhoto(PhotoCategory.BEFORE)}
+                        onPress={() => handleAddPhoto(SmartPhotoCategory.BEFORE)}
                         disabled={isLoading}
                       >
                         <Text style={styles.requirementButtonText}>📷 BEFORE</Text>
@@ -216,7 +217,7 @@ export const PhotoEvidenceCapture: React.FC<PhotoEvidenceCaptureProps> = ({
                     {photoRequirements.afterPhoto && (
                       <TouchableOpacity 
                         style={[styles.requirementButton, styles.afterButton]}
-                        onPress={() => handleAddPhoto(PhotoCategory.AFTER)}
+                        onPress={() => handleAddPhoto(SmartPhotoCategory.AFTER)}
                         disabled={isLoading}
                       >
                         <Text style={styles.requirementButtonText}>✅ AFTER</Text>
@@ -225,7 +226,7 @@ export const PhotoEvidenceCapture: React.FC<PhotoEvidenceCaptureProps> = ({
                     {photoRequirements.duringPhoto && (
                       <TouchableOpacity 
                         style={[styles.requirementButton, styles.duringButton]}
-                        onPress={() => handleAddPhoto(PhotoCategory.DURING)}
+                        onPress={() => handleAddPhoto(SmartPhotoCategory.DURING)}
                         disabled={isLoading}
                       >
                         <Text style={styles.requirementButtonText}>⚡ DURING</Text>
@@ -234,7 +235,7 @@ export const PhotoEvidenceCapture: React.FC<PhotoEvidenceCaptureProps> = ({
                     {photoRequirements.issuePhoto && (
                       <TouchableOpacity 
                         style={[styles.requirementButton, styles.issueButton]}
-                        onPress={() => handleAddPhoto(PhotoCategory.ISSUE)}
+                        onPress={() => handleAddPhoto(SmartPhotoCategory.ISSUE)}
                         disabled={isLoading}
                       >
                         <Text style={styles.requirementButtonText}>⚠️ ISSUE</Text>
@@ -243,7 +244,7 @@ export const PhotoEvidenceCapture: React.FC<PhotoEvidenceCaptureProps> = ({
                     {photoRequirements.completionPhoto && (
                       <TouchableOpacity 
                         style={[styles.requirementButton, styles.completionButton]}
-                        onPress={() => handleAddPhoto(PhotoCategory.COMPLETION)}
+                        onPress={() => handleAddPhoto(SmartPhotoCategory.COMPLETION)}
                         disabled={isLoading}
                       >
                         <Text style={styles.requirementButtonText}>🎯 COMPLETION</Text>

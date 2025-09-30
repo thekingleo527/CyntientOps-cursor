@@ -144,13 +144,13 @@ const WorkerTabNavigator: React.FC = () => {
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.secondaryText,
         tabBarStyle: {
-          backgroundColor: isDark ? Colors.darkBackground : Colors.baseBackground,
-          borderTopColor: isDark ? Colors.darkBorder : Colors.lightBorder,
+          backgroundColor: Colors.background,
+          borderTopColor: Colors.borderSubtle,
         },
         headerStyle: {
-          backgroundColor: isDark ? Colors.darkBackground : Colors.baseBackground,
+          backgroundColor: Colors.background,
         },
-        headerTintColor: isDark ? Colors.lightText : Colors.primaryText,
+        headerTintColor: Colors.primaryText,
         headerTitleStyle: {
           fontFamily: Typography.fonts.primary,
           fontWeight: Typography.weights.semibold,
@@ -221,13 +221,13 @@ const AdminTabNavigator: React.FC = () => {
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.secondaryText,
         tabBarStyle: {
-          backgroundColor: isDark ? Colors.darkBackground : Colors.baseBackground,
-          borderTopColor: isDark ? Colors.darkBorder : Colors.lightBorder,
+          backgroundColor: Colors.background,
+          borderTopColor: Colors.borderSubtle,
         },
         headerStyle: {
-          backgroundColor: isDark ? Colors.darkBackground : Colors.baseBackground,
+          backgroundColor: Colors.background,
         },
-        headerTintColor: isDark ? Colors.lightText : Colors.primaryText,
+        headerTintColor: Colors.primaryText,
         headerTitleStyle: {
           fontFamily: Typography.fonts.primary,
           fontWeight: Typography.weights.semibold,
@@ -302,13 +302,13 @@ const ClientTabNavigator: React.FC = () => {
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.secondaryText,
         tabBarStyle: {
-          backgroundColor: isDark ? Colors.darkBackground : Colors.baseBackground,
-          borderTopColor: isDark ? Colors.darkBorder : Colors.lightBorder,
+          backgroundColor: Colors.background,
+          borderTopColor: Colors.borderSubtle,
         },
         headerStyle: {
-          backgroundColor: isDark ? Colors.darkBackground : Colors.baseBackground,
+          backgroundColor: Colors.background,
         },
-        headerTintColor: isDark ? Colors.lightText : Colors.primaryText,
+        headerTintColor: Colors.primaryText,
         headerTitleStyle: {
           fontFamily: Typography.fonts.primary,
           fontWeight: Typography.weights.semibold,
@@ -364,14 +364,14 @@ const MainStackNavigator: React.FC = () => {
     <RootStack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: isDark ? Colors.darkBackground : Colors.baseBackground,
+          backgroundColor: Colors.background,
         },
-        headerTintColor: isDark ? Colors.lightText : Colors.primaryText,
+        headerTintColor: Colors.primaryText,
         headerTitleStyle: {
           fontFamily: Typography.fonts.primary,
           fontWeight: Typography.weights.semibold,
         },
-        cardStyle: { backgroundColor: isDark ? Colors.darkBackground : Colors.baseBackground }
+        cardStyle: { backgroundColor: Colors.background }
       }}
     >
       <RootStack.Screen 

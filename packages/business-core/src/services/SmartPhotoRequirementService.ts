@@ -168,6 +168,15 @@ export class SmartPhotoRequirementService {
       'exterior cleaning',
       'power wash',
       'steam clean',
+      'salt sidewalk',
+      'salt walkway',
+      'shovel sidewalk',
+      'shovel walkway',
+      'snow removal',
+      'ice removal',
+      'de-ice',
+      'snow shoveling',
+      'sidewalk salting',
       
       // Trash and waste management
       'trash bin set out',
@@ -386,6 +395,13 @@ export class SmartPhotoRequirementService {
       tips.push('💡 For sidewalk cleaning: Capture the full width of the sidewalk in your photos');
       tips.push('💡 Show any debris, stains, or dirt that needs to be cleaned');
       tips.push('💡 After photo should show clean, dry sidewalk surface');
+    }
+
+    if (title.includes('salt') || title.includes('shovel') || title.includes('snow') || title.includes('ice')) {
+      tips.push('💡 For snow/ice removal: Show the full sidewalk area before and after');
+      tips.push('💡 Before photo should show snow/ice accumulation and conditions');
+      tips.push('💡 After photo should show clear, safe walking surface');
+      tips.push('💡 Include any ice patches or slippery areas in before photo');
     }
 
     if (title.includes('trash') || title.includes('bin')) {

@@ -600,12 +600,12 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.lightBackground,
+    backgroundColor: Colors.glassOverlay,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.lg,
     paddingHorizontal: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.lightBorder,
+    borderColor: Colors.borderSubtle,
   },
   inputIcon: {
     marginRight: Spacing.sm,
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.lightBackground,
+    backgroundColor: Colors.glassOverlay,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md,
     marginBottom: Spacing.lg,
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
     paddingTop: Spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Colors.lightBorder,
+    borderTopColor: Colors.borderSubtle,
   },
   roleCardsTitle: {
     fontSize: Typography.sizes.sm,

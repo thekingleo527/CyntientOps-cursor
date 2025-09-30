@@ -19,64 +19,64 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "verify-folders.sh",
-        "hash": "10935650700356555517"
+        "file": "README.md",
+        "hash": "12576029393461459033"
       },
       {
-        "file": "scripts/setup-jest-configs.js",
-        "hash": "16206366320795113098"
+        "file": "verify-folders.sh",
+        "hash": "10935650700356555517"
       },
       {
         "file": "tsconfig.json",
         "hash": "12496562632034889801"
       },
       {
-        "file": "README.md",
-        "hash": "12576029393461459033"
-      },
-      {
         "file": ".gitignore",
         "hash": "15535908159169107954"
-      },
-      {
-        "file": "copy-images.sh",
-        "hash": "11765879550370700119"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "2675220573733747715"
-      },
-      {
-        "file": "CONTINUITY_REPORT_SEPTEMBER_2025.md",
-        "hash": "5332914773933249174"
-      },
-      {
-        "file": "scripts/setup-tsconfigs.js",
-        "hash": "14530017827863588642"
-      },
-      {
-        "file": "nx.json",
-        "hash": "1817247490336913443"
       },
       {
         "file": ".eslintrc.js",
         "hash": "13772985611367207345"
       },
       {
-        "file": "package.json",
-        "hash": "15351180261667345527"
+        "file": "scripts/setup-jest-configs.js",
+        "hash": "16206366320795113098"
       },
       {
-        "file": "package-lock.json",
-        "hash": "15439930483179106296"
+        "file": "scripts/setup-tsconfigs.js",
+        "hash": "14530017827863588642"
       },
       {
         "file": "scripts/setup-nx-projects.js",
         "hash": "8665214159614902254"
       },
       {
+        "file": "nx.json",
+        "hash": "1817247490336913443"
+      },
+      {
+        "file": "CONTINUITY_REPORT_SEPTEMBER_2025.md",
+        "hash": "5332914773933249174"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "15439930483179106296"
+      },
+      {
         "file": "jest.preset.js",
         "hash": "2599607768644681757"
+      },
+      {
+        "file": "copy-images.sh",
+        "hash": "11765879550370700119"
+      },
+      {
+        "file": "package.json",
+        "hash": "15351180261667345527"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "2675220573733747715"
       }
     ],
     "projectFileMap": {
@@ -397,7 +397,7 @@
         },
         {
           "file": "packages/business-core/src/index.ts",
-          "hash": "5590083505970650828"
+          "hash": "2172412767784592797"
         },
         {
           "file": "packages/business-core/src/services/AuthService.ts",
@@ -715,7 +715,7 @@
         },
         {
           "file": "packages/business-core/src/services/SmartPhotoRequirementService.ts",
-          "hash": "1233503335101412418"
+          "hash": "11382901709315847897"
         },
         {
           "file": "packages/business-core/src/services/IntelligentPhotoStorageService.ts",
@@ -1079,7 +1079,7 @@
         },
         {
           "file": "packages/ui-components/src/evidence/PhotoEvidenceCapture.tsx",
-          "hash": "12390330904717459906",
+          "hash": "4166436982495723276",
           "deps": [
             "npm:react",
             "npm:react-native",
@@ -1835,7 +1835,7 @@
         },
         {
           "file": "packages/ui-components/src/navigation/AppNavigator.tsx",
-          "hash": "3895145936885303069",
+          "hash": "14923528144461510768",
           "deps": [
             "npm:react",
             "npm:@react-navigation/native",
@@ -1851,7 +1851,7 @@
         },
         {
           "file": "packages/ui-components/src/auth/LoginScreen.tsx",
-          "hash": "11635577449081251382",
+          "hash": "12567245046309966669",
           "deps": [
             "npm:react",
             "npm:react-native",

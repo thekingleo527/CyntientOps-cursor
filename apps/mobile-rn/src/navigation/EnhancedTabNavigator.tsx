@@ -1,12 +1,10 @@
 /**
  * @cyntientops/mobile-rn
- * 
+ *
  * Enhanced Tab Navigator - Role-based tab structure
  * Worker: Home, Schedule, SiteDeparture, Map, Intelligence (5 tabs)
- * Client: Home, Intelligence (2 tabs)  
- * Admin: Home, Workers, Intelligence (3 tabs)
- * 
- * Note: Portfolio and Map functionality are within Intelligence panels
+ * Client: Home, Portfolio, Intelligence (3 tabs)
+ * Admin: Home, Portfolio, Workers, Intelligence (4 tabs)
  */
 
 import React, { useState } from 'react';
@@ -25,7 +23,9 @@ import { WorkerScheduleTab } from './tabs/WorkerScheduleTab';
 import { WorkerSiteDepartureTab } from './tabs/WorkerSiteDepartureTab';
 import { WorkerMapTab } from './tabs/WorkerMapTab';
 import { WorkerIntelligenceTab } from './tabs/WorkerIntelligenceTab';
+import { ClientPortfolioTab } from './tabs/ClientPortfolioTab';
 import { ClientIntelligenceTab } from './tabs/ClientIntelligenceTab';
+import { AdminPortfolioTab } from './tabs/AdminPortfolioTab';
 import { AdminWorkersTab } from './tabs/AdminWorkersTab';
 import { AdminIntelligenceTab } from './tabs/AdminIntelligenceTab';
 
@@ -196,8 +196,27 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                 />
               )}
             </Tab.Screen>
-            
-            {/* Client Tab 2: Intelligence */}
+
+            {/* Client Tab 2: Portfolio */}
+            <Tab.Screen
+              name="ClientPortfolio"
+              options={{
+                title: 'Portfolio',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="map-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <ClientPortfolioTab
+                  clientId={userId}
+                  clientName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+
+            {/* Client Tab 3: Intelligence */}
             <Tab.Screen
               name="ClientIntelligence"
               options={{
@@ -242,8 +261,27 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                 />
               )}
             </Tab.Screen>
-            
-            {/* Admin Tab 2: Workers */}
+
+            {/* Admin Tab 2: Portfolio */}
+            <Tab.Screen
+              name="AdminPortfolio"
+              options={{
+                title: 'Portfolio',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="map-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <AdminPortfolioTab
+                  adminId={userId}
+                  adminName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+
+            {/* Admin Tab 3: Workers */}
             <Tab.Screen
               name="AdminWorkers"
               options={{
@@ -261,8 +299,8 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                 />
               )}
             </Tab.Screen>
-            
-            {/* Admin Tab 3: Intelligence */}
+
+            {/* Admin Tab 4: Intelligence */}
             <Tab.Screen
               name="AdminIntelligence"
               options={{

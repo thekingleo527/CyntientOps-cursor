@@ -7,14 +7,17 @@
   "scripts": {
     "build": "tsc",
     "validate": "node scripts/validate-seeds.js",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "update-property-values": "ts-node scripts/updatePropertyValues.ts"
   },
   "dependencies": {
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@cyntientops/api-clients": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "ts-node": "^10.9.0"
   },
   "files": [
     "dist",

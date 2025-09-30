@@ -101,20 +101,20 @@ export async function normalizeNYCAddress(raw: string): Promise<NormalizedAddres
  */
 async function queryOATHSummons(address: NormalizedAddress): Promise<DSNYSummons[]> {
   // Match DSNY variants with correct field names from jz4z-kudi dataset
-  // DSNY agency values found: SANITATION POLICE, SANITATION OTHERS, SANITATION DEPT, etc.
-  const dsnyAgencies = [
-    'DSNY - SANITATION ENFORCEMENT AGENTS',
-    'DSNY - SANITATION OTHERS',
-    'SANITATION DEPT',
-    'SANITATION POLICE',
-    'SANITATION OTHERS',
-    'SANITATION PIU',
-    'SANITATION RECYCLING',
-    'SANITATION VENDOR ENFORCEMENT',
-    'SANITATION ENVIRON. POLICE',
-    'SANITATION COMMERC.WASTE ZONE',
-    'DOS - ENFORCEMENT AGENTS'
-  ];
+    // DSNY agency values found in OATH dataset
+    const dsnyAgencies = [
+      'SANITATION OTHERS',           // Most common DSNY agency
+      'SANITATION DEPT',             // Older DSNY violations
+      'SANITATION POLICE',           // DSNY enforcement
+      'DSNY - SANITATION ENFORCEMENT AGENTS',
+      'DSNY - SANITATION OTHERS',
+      'SANITATION PIU',
+      'SANITATION RECYCLING',
+      'SANITATION VENDOR ENFORCEMENT',
+      'SANITATION ENVIRON. POLICE',
+      'SANITATION COMMERC.WASTE ZONE',
+      'DOS - ENFORCEMENT AGENTS'     // Department of Sanitation enforcement
+    ];
 
   const agencyFilter = dsnyAgencies.map(a => `issuing_agency='${a}'`).join(' OR ');
 

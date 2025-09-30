@@ -1,13 +1,14 @@
 // packages/api-clients/src/nyc/NYCAPIService.ts
 
-import {
-  HPDViolation,
-  DOBPermit,
-  DSNYRoute,
+import { 
+  HPDViolation, 
+  DOBPermit, 
+  DSNYRoute, 
   LL97Emission,
   DSNYViolation,
-  NYCComplianceData
+  NYCComplianceData 
 } from './NYCDataModels.js';
+import { dsnyViolationsService, DSNYViolationsResult } from './DSNYViolationsService.js';
 
 export interface APIConfig {
   baseURL: string;
@@ -176,6 +177,11 @@ export class NYCAPIService {
     };
 
     return this.fetch<DSNYViolation[]>(endpoint);
+  }
+
+  // DSNY Violations API - using new service
+  async getDSNYViolations(address: string, useDemoData = false): Promise<DSNYViolationsResult> {
+    return dsnyViolationsService.getViolationsForAddress(address, useDemoData);
   }
 
   // Get comprehensive compliance data for a building

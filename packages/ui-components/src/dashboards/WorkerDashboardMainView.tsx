@@ -80,31 +80,41 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   onMessageSent,
   onEmergencyAlert,
 }) => {
-  // const { 
-  //   worker: workerState, 
-  //   tasks: taskState, 
-  //   buildings: buildingState, 
+  // const {
+  //   worker: workerState,
+  //   tasks: taskState,
+  //   buildings: buildingState,
   //   novaAI: novaAIState,
   //   realTime: realTimeState,
-  //   ui: uiState 
+  //   ui: uiState
   // } = useAppState();
-  
-  const workerState = { 
-    currentWorker: { avatar: undefined }, 
-    isClockedIn: false, 
-    currentBuilding: undefined, 
-    clockInTime: undefined 
+
+  // Import real data from data-seed
+  const buildingsData = require('@cyntientops/data-seed/buildings.json');
+  const workersData = require('@cyntientops/data-seed/workers.json');
+  const routinesData = require('@cyntientops/data-seed/routines.json');
+
+  // Calculate real worker assignments from routines
+  const workerRoutines = routinesData.filter((r: any) => r.workerId.toString() === workerId);
+  const assignedBuildingIds = [...new Set(workerRoutines.map((r: any) => r.buildingId))];
+  const workerBuildings = buildingsData.filter((b: any) => assignedBuildingIds.includes(b.id));
+
+  const workerState = {
+    currentWorker: { avatar: undefined },
+    isClockedIn: false,
+    currentBuilding: undefined,
+    clockInTime: undefined
   };
-  const taskState = { 
-    totalTasks: 0, 
-    completedTasks: 0, 
-    completionRate: 0, 
-    urgentTasks: [], 
-    todaysTasks: [] 
+  const taskState = {
+    totalTasks: 0,
+    completedTasks: 0,
+    completionRate: 0,
+    urgentTasks: [],
+    todaysTasks: []
   };
-  const buildingState = { 
-    assignedBuildings: [], 
-    weather: undefined 
+  const buildingState = {
+    assignedBuildings: [],
+    weather: undefined
   };
   const novaAIState = { intelligence: { recommendations: [], alerts: [], predictions: [] } };
   const realTimeState = { emergencyAlerts: [], recentMessages: [] };
@@ -127,14 +137,14 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
       clientSatisfaction: 95.2
     },
     portfolioMetrics: {
-      totalBuildings: 3,
-      activeBuildings: 3,
+      totalBuildings: workerBuildings.length, // Real count from worker's routines
+      activeBuildings: workerBuildings.filter((b: any) => b.isActive).length, // Real active count
       complianceRate: 97.8,
       maintenanceBacklog: 2
     },
     workerMetrics: {
-      totalWorkers: 1,
-      activeWorkers: 1,
+      totalWorkers: 1, // This worker
+      activeWorkers: 1, // This worker is active
       averageWorkload: 7.5,
       productivityScore: 89.3
     }
@@ -272,7 +282,8 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
 
   const generateUrgentTasks = (workerId: string, count: number): OperationalDataTaskAssignment[] => {
     const urgentTaskTypes = ['Emergency Cleanup', 'Safety Inspection', 'Equipment Repair', 'Compliance Issue'];
-    const buildings = ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '21']; // All actual buildings
+    // Use real building IDs from worker's assigned buildings
+    const buildings = assignedBuildingIds;
     
     return Array.from({ length: count }, (_, index) => ({
       id: `urgent_${workerId}_${index}`,
@@ -295,7 +306,8 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
       'Daily Cleaning', 'Maintenance Check', 'Inventory Count', 'Safety Walk',
       'Equipment Inspection', 'Waste Management', 'Security Check', 'Compliance Review'
     ];
-    const buildings = ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '21'];
+    // Use real building IDs from worker's assigned buildings
+    const buildings = assignedBuildingIds;
     const statuses = ['Pending', 'In Progress', 'Completed'];
     
     return Array.from({ length: Math.min(totalTasks, 12) }, (_, index) => ({
@@ -315,28 +327,9 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   };
 
   const generateCurrentBuilding = (buildingId: string): NamedCoordinate => {
-    const buildingData = {
-      '1': { name: '12 West 18th Street', address: '12 West 18th Street, New York, NY 10011', lat: 40.738948, lng: -73.993415 },
-      '3': { name: '135-139 West 17th Street', address: '135-139 West 17th Street, New York, NY 10011', lat: 40.738234, lng: -73.994567 },
-      '4': { name: '104 Franklin Street', address: '104 Franklin Street, New York, NY 10013', lat: 40.719847, lng: -74.005234 },
-      '5': { name: '138 West 17th Street', address: '138 West 17th Street, New York, NY 10011', lat: 40.738156, lng: -73.994789 },
-      '6': { name: '68 Perry Street', address: '68 Perry Street, New York, NY 10014', lat: 40.735123, lng: -74.003456 },
-      '7': { name: '112 West 18th Street', address: '112 West 18th Street, New York, NY 10011', lat: 40.738723, lng: -73.995234 },
-      '8': { name: '41 Elizabeth Street', address: '41 Elizabeth Street, New York, NY 10013', lat: 40.715234, lng: -73.997891 },
-      '9': { name: '117 West 17th Street', address: '117 West 17th Street, New York, NY 10011', lat: 40.738345, lng: -73.994123 },
-      '10': { name: '131 Perry Street', address: '131 Perry Street, New York, NY 10014', lat: 40.735456, lng: -74.003789 },
-      '11': { name: '123 1st Avenue', address: '123 1st Avenue, New York, NY 10003', lat: 40.729123, lng: -73.986456 },
-      '13': { name: '136 West 17th Street', address: '136 West 17th Street, New York, NY 10011', lat: 40.738089, lng: -73.994901 },
-      '14': { name: 'Rubin Museum (142–148 W 17th) - CyntientOps HQ', address: '150 West 17th Street, New York, NY 10011', lat: 40.738012, lng: -73.995123 },
-      '15': { name: '133 East 15th Street', address: '133 East 15th Street, New York, NY 10003', lat: 40.734567, lng: -73.988234 },
-      '16': { name: 'Stuyvesant Cove Park', address: 'Stuyvesant Cove Park, New York, NY 10009', lat: 40.713456, lng: -73.973789 },
-      '17': { name: '178 Spring Street', address: '178 Spring Street, New York, NY 10012', lat: 40.724123, lng: -74.002456 },
-      '18': { name: '36 Walker Street', address: '36 Walker Street, New York, NY 10013', lat: 40.718234, lng: -74.004567 },
-      '19': { name: '115 7th Avenue', address: '115 7th Avenue, New York, NY 10011', lat: 40.738890, lng: -73.996234 },
-      '21': { name: '148 Chambers Street', address: '148 Chambers Street, New York, NY 10007', lat: 40.714567, lng: -74.009123 }
-    };
-    
-    const building = buildingData[buildingId as keyof typeof buildingData];
+    // Load real building data from data-seed
+    const building = buildingsData.find((b: any) => b.id === buildingId);
+
     if (!building) {
       return {
         id: buildingId,
@@ -346,30 +339,26 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         address: 'New York, NY'
       };
     }
-    
+
     return {
       id: buildingId,
       name: building.name,
-      latitude: building.lat,
-      longitude: building.lng,
+      latitude: building.latitude,
+      longitude: building.longitude,
       address: building.address
     };
   };
 
   const generateAssignedBuildings = (workerId: string): NamedCoordinate[] => {
-    // Each worker is assigned to 3-4 buildings based on canonical data and actual portfolio
-    const buildingAssignments = {
-      '1': ['1', '3', '7'], // Greg Hutson: 12 West 18th Street, 135-139 West 17th Street, 112 West 18th Street
-      '2': ['3', '5', '9'], // Edwin Lema: 135-139 West 17th Street, 138 West 17th Street, 117 West 17th Street
-      '4': ['4', '9', '14'], // Kevin Dutan: 104 Franklin Street, 117 West 17th Street, Rubin Museum HQ
-      '5': ['5', '7', '13'], // Mercedes Inamagua: 138 West 17th Street, 112 West 18th Street, 136 West 17th Street
-      '6': ['6', '10', '16'], // Luis Lopez: 68 Perry Street, 131 Perry Street, Stuyvesant Cove Park
-      '7': ['7', '1', '15'], // Angel Guirachocha: 112 West 18th Street, 12 West 18th Street, 133 East 15th Street
-      '8': ['8', '11', '17', '18', '19', '21']  // Shawn Magloire: 41 Elizabeth Street, 123 1st Avenue, 178 Spring Street, 36 Walker Street, 115 7th Avenue, 148 Chambers Street
-    };
-    
-    const assignedBuildingIds = buildingAssignments[workerId as keyof typeof buildingAssignments] || ['1'];
-    return assignedBuildingIds.map(id => generateCurrentBuilding(id));
+    // Get real building assignments from routines.json
+    // assignedBuildingIds and workerBuildings are already calculated above
+    return workerBuildings.map((b: any) => ({
+      id: b.id,
+      name: b.name,
+      latitude: b.latitude,
+      longitude: b.longitude,
+      address: b.address
+    }));
   };
 
   const generateWeatherData = (workerId?: string): WeatherSnapshot => {

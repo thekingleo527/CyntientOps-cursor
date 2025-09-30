@@ -46,6 +46,20 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
   //   ui: uiState 
   // } = useAppState();
   
+  // Import real data
+  const buildingsData = require('@cyntientops/data-seed/buildings.json');
+  const workersData = require('@cyntientops/data-seed/workers.json');
+  const routinesData = require('@cyntientops/data-seed/routines.json');
+
+  // Filter buildings by this client's client_id (would come from props in real implementation)
+  const clientBuildings = buildingsData.filter((b: any) => b.client_id === clientId);
+
+  // Find workers assigned to this client's buildings via routines
+  const clientBuildingIds = clientBuildings.map((b: any) => b.id);
+  const routinesForClient = routinesData.filter((r: any) => clientBuildingIds.includes(r.buildingId));
+  const workerIdsForClient = [...new Set(routinesForClient.map((r: any) => r.workerId))];
+  const activeWorkersForClient = workersData.filter((w: any) => workerIdsForClient.includes(w.id.toString()));
+
   const clientState = { portfolio: { buildings: [], compliance: { score: 0.95 } } };
   const taskState = { tasks: [] };
   const buildingState = { buildings: [] };
@@ -53,7 +67,7 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
   const realTimeState = { notifications: [] };
   const uiState = { isLoading: false, theme: 'light' };
 
-  // Real-time analytics data for client portfolio
+  // Real-time analytics data for THIS client's portfolio (client-specific)
   const analyticsData: AnalyticsData = {
     performanceMetrics: {
       overallCompletionRate: 91.2,
@@ -62,14 +76,14 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
       clientSatisfaction: 96.8
     },
     portfolioMetrics: {
-      totalBuildings: 8,
-      activeBuildings: 8,
+      totalBuildings: clientBuildings.length, // Real count for THIS client
+      activeBuildings: clientBuildings.filter((b: any) => b.isActive).length, // Active buildings for THIS client
       complianceRate: 98.5,
       maintenanceBacklog: 3
     },
     workerMetrics: {
-      totalWorkers: 5,
-      activeWorkers: 4,
+      totalWorkers: activeWorkersForClient.length, // Workers assigned to THIS client's buildings
+      activeWorkers: activeWorkersForClient.filter((w: any) => w.isActive).length, // Active workers for THIS client
       averageWorkload: 6.2,
       productivityScore: 92.1
     }

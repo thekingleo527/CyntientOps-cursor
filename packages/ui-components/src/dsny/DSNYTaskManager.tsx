@@ -208,38 +208,29 @@ export const useDSNYTaskManager = () => {
   // Load collection schedules
   const loadCollectionSchedules = useCallback(async () => {
     try {
-      // In a real implementation, this would load from API
-      const schedules: DSNYCollectionSchedule[] = [
-        {
-          id: '1',
-          buildingId: '14',
-          buildingName: 'Rubin Museum',
-          address: '142-148 W 17th St',
-          collectionDay: 'tuesday',
+      // Load real building data
+      const buildingsData = require('@cyntientops/data-seed/buildings.json');
+
+      // Generate schedules for all buildings (in production, this would come from database)
+      const schedules: DSNYCollectionSchedule[] = buildingsData.map((building: any, index: number) => {
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+        const types = ['trash', 'recycling', 'compost'];
+
+        return {
+          id: `schedule-${building.id}`,
+          buildingId: building.id,
+          buildingName: building.name,
+          address: building.address,
+          collectionDay: days[index % days.length] as any,
           collectionTime: {
             setOutAfter: '20:00',
             pickupBetween: '06:00-12:00',
           },
-          collectionType: 'trash',
+          collectionType: types[index % types.length] as any,
           isActive: true,
-          nextCollection: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
-        },
-        {
-          id: '2',
-          buildingId: '10',
-          buildingName: '131 Perry Street',
-          address: '131 Perry St',
-          collectionDay: 'wednesday',
-          collectionTime: {
-            setOutAfter: '20:00',
-            pickupBetween: '06:00-12:00',
-          },
-          collectionType: 'recycling',
-          isActive: true,
-          nextCollection: new Date(Date.now() + 48 * 60 * 60 * 1000), // Day after tomorrow
-        },
-        // Add more schedules...
-      ];
+          nextCollection: new Date(Date.now() + ((index % 7) + 1) * 24 * 60 * 60 * 1000),
+        };
+      });
 
       setCollectionSchedules(schedules);
     } catch (error) {
@@ -251,86 +242,62 @@ export const useDSNYTaskManager = () => {
   // Load DSNY tasks
   const loadDSNYTasks = useCallback(async () => {
     try {
-      // In a real implementation, this would load from API
-      const tasks: DSNYTask[] = [
-        {
-          id: '1',
-          buildingId: '14',
-          buildingName: 'Rubin Museum',
-          address: '142-148 W 17th St',
-          taskType: 'set_out',
-          scheduledTime: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
-          deadline: new Date(Date.now() + 4 * 60 * 60 * 1000), // 4 hours from now
-          status: 'pending',
-          priority: 'high',
-          assignedWorkerId: '4',
-          assignedWorkerName: 'Kevin Dutan',
-          description: 'Set out trash for Tuesday collection',
+      // Load real data
+      const buildingsData = require('@cyntientops/data-seed/buildings.json');
+      const workersData = require('@cyntientops/data-seed/workers.json');
+      const routinesData = require('@cyntientops/data-seed/routines.json');
+
+      // Generate tasks from schedules (in production, this would come from database)
+      const tasks: DSNYTask[] = collectionSchedules.slice(0, 5).map((schedule, index) => {
+        // Find worker assigned to this building
+        const routine = routinesData.find((r: any) => r.buildingId === schedule.buildingId);
+        const worker = workersData.find((w: any) => w.id.toString() === routine?.workerId?.toString());
+
+        const taskTypes = ['set_out', 'pickup_verification', 'compliance_check'];
+        const priorities = ['high', 'medium', 'low'];
+        const statuses = ['pending', 'in_progress', 'completed'];
+
+        return {
+          id: `task-${schedule.id}-${index}`,
+          buildingId: schedule.buildingId,
+          buildingName: schedule.buildingName,
+          address: schedule.address,
+          taskType: taskTypes[index % taskTypes.length] as any,
+          scheduledTime: new Date(Date.now() + (index + 1) * 60 * 60 * 1000),
+          deadline: new Date(Date.now() + (index + 3) * 60 * 60 * 1000),
+          status: statuses[index % statuses.length] as any,
+          priority: priorities[index % priorities.length] as any,
+          assignedWorkerId: worker?.id?.toString() || '1',
+          assignedWorkerName: worker?.name || 'Unassigned',
+          description: `${taskTypes[index % taskTypes.length].replace('_', ' ')} for ${schedule.collectionType}`,
           instructions: [
-            'Move trash bins to designated area',
-            'Ensure bins are properly sealed',
-            'Check for any contamination',
+            'Follow DSNY guidelines',
             'Take photo evidence',
+            'Report any issues',
+            'Update task status',
           ],
-          estimatedDuration: 15,
+          estimatedDuration: 15 + (index * 5),
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
-        {
-          id: '2',
-          buildingId: '10',
-          buildingName: '131 Perry Street',
-          address: '131 Perry St',
-          taskType: 'compliance_check',
-          scheduledTime: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour from now
-          deadline: new Date(Date.now() + 3 * 60 * 60 * 1000), // 3 hours from now
-          status: 'pending',
-          priority: 'medium',
-          assignedWorkerId: '5',
-          assignedWorkerName: 'Mercedes Inamagua',
-          description: 'Check recycling compliance',
-          instructions: [
-            'Inspect recycling bins',
-            'Check for contamination',
-            'Verify proper sorting',
-            'Report any violations',
-          ],
-          estimatedDuration: 20,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        // Add more tasks...
-      ];
+        };
+      });
 
       setDSNYTasks(tasks);
     } catch (error) {
       console.error('Failed to load DSNY tasks:', error);
       setError('Failed to load DSNY tasks');
     }
-  }, []);
+  }, [collectionSchedules]);
 
   // Load violations
   const loadViolations = useCallback(async () => {
     try {
-      // In a real implementation, this would load from API
-      const violationsData: DSNYViolation[] = [
-        {
-          id: '1',
-          buildingId: '14',
-          violationType: 'late_setout',
-          severity: 'warning',
-          description: 'Trash set out after 8 PM deadline',
-          reportedBy: 'DSNY Inspector',
-          reportedAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // Yesterday
-          photoEvidence: [],
-          location: {
-            latitude: 40.7589,
-            longitude: -73.9851,
-          },
-          status: 'reported',
-        },
-        // Add more violations...
-      ];
+      // Load real building data
+      const buildingsData = require('@cyntientops/data-seed/buildings.json');
+
+      // Generate sample violations (in production, this would come from database)
+      // For now, empty or minimal violations
+      const violationsData: DSNYViolation[] = [];
 
       setViolations(violationsData);
     } catch (error) {
@@ -342,31 +309,20 @@ export const useDSNYTaskManager = () => {
   // Load compliance status
   const loadComplianceStatus = useCallback(async () => {
     try {
-      // In a real implementation, this would load from API
-      const complianceData: DSNYComplianceStatus[] = [
-        {
-          buildingId: '14',
-          buildingName: 'Rubin Museum',
-          complianceScore: 85,
-          violationsThisMonth: 1,
-          violationsThisYear: 3,
-          lastViolation: new Date(Date.now() - 24 * 60 * 60 * 1000),
-          nextCollection: new Date(Date.now() + 24 * 60 * 60 * 1000),
-          collectionHistory: [
-            {
-              date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-              status: 'completed',
-              notes: 'On time collection',
-            },
-            {
-              date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-              status: 'violation',
-              notes: 'Late set out',
-            },
-          ],
-        },
-        // Add more compliance data...
-      ];
+      // Load real building data
+      const buildingsData = require('@cyntientops/data-seed/buildings.json');
+
+      // Generate compliance status for all buildings
+      const complianceData: DSNYComplianceStatus[] = buildingsData.map((building: any) => ({
+        buildingId: building.id,
+        buildingName: building.name,
+        complianceScore: Math.round(building.compliance_score * 100) || 95,
+        violationsThisMonth: 0,
+        violationsThisYear: 0,
+        lastViolation: undefined,
+        nextCollection: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        collectionHistory: [],
+      }));
 
       setComplianceStatus(complianceData);
     } catch (error) {
@@ -378,14 +334,18 @@ export const useDSNYTaskManager = () => {
   // Load worker assignments
   const loadWorkerAssignments = useCallback(async () => {
     try {
-      // In a real implementation, this would load from API
-      const assignments: DSNYWorkerAssignment[] = [
-        {
-          workerId: '4',
-          workerName: 'Kevin Dutan',
-          assignedTasks: dsnyTasks.filter(task => task.assignedWorkerId === '4'),
-          completedTasks: [],
-          pendingTasks: dsnyTasks.filter(task => task.assignedWorkerId === '4' && task.status === 'pending'),
+      // Load real worker data
+      const workersData = require('@cyntientops/data-seed/workers.json');
+
+      // Generate worker assignments from real data
+      const assignments: DSNYWorkerAssignment[] = workersData.map((worker: any) => {
+        const workerTasks = dsnyTasks.filter(task => task.assignedWorkerId === worker.id.toString());
+        return {
+          workerId: worker.id.toString(),
+          workerName: worker.name,
+          assignedTasks: workerTasks,
+          completedTasks: workerTasks.filter(t => t.status === 'completed'),
+          pendingTasks: workerTasks.filter(t => t.status === 'pending'),
           overdueTasks: [],
           totalTasks: dsnyTasks.filter(task => task.assignedWorkerId === '4').length,
           completionRate: 0,

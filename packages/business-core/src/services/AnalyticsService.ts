@@ -1003,24 +1003,30 @@ export class AnalyticsService implements IAnalyticsService {
   private getFallbackDashboardAnalytics(userRole: string): any {
     console.log(`📊 Providing fallback dashboard analytics for ${userRole}`);
 
+    // Load real data from data-seed
+    const buildingsData = require('@cyntientops/data-seed/buildings.json');
+    const workersData = require('@cyntientops/data-seed/workers.json');
+    const routinesData = require('@cyntientops/data-seed/routines.json');
+
+    // Calculate real system-wide metrics
     const baseMetrics = {
       performanceMetrics: {
-        overallCompletionRate: 85.0,
-        averageTaskTime: 45,
-        workerEfficiency: 88.0,
-        clientSatisfaction: 92.0
+        overallCompletionRate: 85.0, // TODO: Calculate from task completions
+        averageTaskTime: 45, // TODO: Calculate from task durations
+        workerEfficiency: 88.0, // TODO: Calculate from worker performance
+        clientSatisfaction: 92.0 // TODO: Calculate from feedback
       },
       portfolioMetrics: {
-        totalBuildings: 10,
-        activeBuildings: 9,
-        complianceRate: 94.0,
-        maintenanceBacklog: 5
+        totalBuildings: buildingsData.length, // Real: 18 locations
+        activeBuildings: buildingsData.filter((b: any) => b.isActive).length, // Real: 18 active
+        complianceRate: 94.0, // TODO: Calculate from building compliance scores
+        maintenanceBacklog: 5 // TODO: Calculate from overdue tasks
       },
       workerMetrics: {
-        totalWorkers: 8,
-        activeWorkers: 6,
-        averageWorkload: 7.5,
-        productivityScore: 88.0
+        totalWorkers: workersData.length, // Real: 7 workers
+        activeWorkers: workersData.filter((w: any) => w.isActive).length, // Real: 7 active
+        averageWorkload: 7.5, // TODO: Calculate from routines per worker
+        productivityScore: 88.0 // TODO: Calculate from completion rates
       }
     };
 
@@ -1029,37 +1035,48 @@ export class AnalyticsService implements IAnalyticsService {
       case 'Admin':
         return baseMetrics;
       case 'Client':
+        // For client: filter by entityId (clientId)
+        const clientBuildings = buildingsData.filter((b: any) => b.client_id === entityId);
+        const clientBuildingIds = clientBuildings.map((b: any) => b.id);
+        const routinesForClient = routinesData.filter((r: any) => clientBuildingIds.includes(r.buildingId));
+        const workerIdsForClient = [...new Set(routinesForClient.map((r: any) => r.workerId))];
+
         return {
           ...baseMetrics,
           portfolioMetrics: {
             ...baseMetrics.portfolioMetrics,
-            totalBuildings: 3,
-            activeBuildings: 3,
+            totalBuildings: clientBuildings.length, // Real count for THIS client
+            activeBuildings: clientBuildings.filter((b: any) => b.isActive).length,
             complianceRate: 96.0,
             maintenanceBacklog: 1
           },
           workerMetrics: {
             ...baseMetrics.workerMetrics,
-            totalWorkers: 2,
-            activeWorkers: 2,
+            totalWorkers: workerIdsForClient.length, // Workers assigned to THIS client
+            activeWorkers: workerIdsForClient.length,
             averageWorkload: 5.0,
             productivityScore: 92.0
           }
         };
       case 'Worker':
+        // For worker: filter by entityId (workerId)
+        const workerRoutines = routinesData.filter((r: any) => r.workerId.toString() === entityId);
+        const assignedBuildingIds = [...new Set(workerRoutines.map((r: any) => r.buildingId))];
+        const workerBuildingsForWorker = buildingsData.filter((b: any) => assignedBuildingIds.includes(b.id));
+
         return {
           ...baseMetrics,
           portfolioMetrics: {
             ...baseMetrics.portfolioMetrics,
-            totalBuildings: 2,
-            activeBuildings: 2,
+            totalBuildings: workerBuildingsForWorker.length, // Real buildings for THIS worker
+            activeBuildings: workerBuildingsForWorker.filter((b: any) => b.isActive).length,
             complianceRate: 98.0,
             maintenanceBacklog: 0
           },
           workerMetrics: {
             ...baseMetrics.workerMetrics,
-            totalWorkers: 1,
-            activeWorkers: 1,
+            totalWorkers: 1, // This worker
+            activeWorkers: 1, // This worker is active
             averageWorkload: 6.0,
             productivityScore: 90.0
           }

@@ -1,8 +1,8 @@
 /**
- * 🔑 Building Spaces Tab - Photo Repository
+ * 🔑 Building Spaces Tab
  * Mirrors: SwiftUI BuildingDetailView Spaces tab functionality
- * Purpose: Building spaces management, access control, and photo repository
- * Features: Space inventory, access codes, key management, space utilization, photo gallery with smart location tagging
+ * Purpose: Building spaces management, access control, and comprehensive media repository
+ * Features: Space inventory, access codes, key management, space utilization, photo/video/document gallery with smart location tagging
  */
 
 import React, { useState, useEffect } from 'react';
@@ -48,6 +48,45 @@ export interface BuildingSpace {
   photos?: PhotoEvidence[];
   photoCount?: number;
   lastPhotoDate?: Date;
+}
+
+// Media management interfaces
+export interface MediaItem {
+  id: string;
+  type: 'photo' | 'video' | 'document';
+  title: string;
+  description?: string;
+  uri: string;
+  thumbnailUri?: string;
+  timestamp: Date;
+  workerId: string;
+  workerName: string;
+  taskId?: string;
+  taskName?: string;
+  spaceId?: string;
+  spaceName?: string;
+  tags: string[];
+  metadata: {
+    size: number;
+    format: string;
+    dimensions?: { width: number; height: number };
+    location?: { latitude: number; longitude: number };
+    smartLocation?: {
+      detectedSpace?: string;
+      detectedFloor?: number;
+      confidence: number;
+    };
+  };
+}
+
+export interface MediaStats {
+  totalPhotos: number;
+  totalVideos: number;
+  totalDocuments: number;
+  totalSize: number;
+  recentUploads: number;
+  spaceCoverage: number;
+  taskCoverage: number;
 }
 
 export interface BuildingSpacesTabProps {

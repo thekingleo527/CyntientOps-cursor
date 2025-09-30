@@ -218,8 +218,7 @@ Inspection Completion → WorkCompletionManager → Building History
 #### **New Architecture**:
 - **BuildingOverviewTab.tsx** - Real building data with infrastructure catalog
 - **BuildingHistoryTab.tsx** - Unified work completion history
-- **BuildingMediaTab.tsx** - Photo documentation and media management
-- **BuildingSpacesTab.tsx** - Enhanced with inspection integration and photo repository
+- **BuildingSpacesTab.tsx** - Enhanced with comprehensive media repository (photos, videos, documents) and inspection integration
 - **BuildingInspectionView.tsx** - Monthly building walkthrough inspections
 - **BuildingMaintenanceTab.tsx** - Complete maintenance records and scheduling
 - **BuildingSanitationTab.tsx** - DSNY integration and compliance tracking
@@ -352,8 +351,7 @@ Inspection Completion → WorkCompletionManager → Building History
 #### **Building Management**: 100% Complete ✅
 - Building Overview: ✅ 100%
 - Building History: ✅ 100%
-- Building Media: ✅ 100%
-- Building Spaces: ✅ 100%
+- Building Spaces (with Media): ✅ 100%
 - Building Inspections: ✅ 100%
 - Building Maintenance: ✅ 100%
 - Building Sanitation: ✅ 100%

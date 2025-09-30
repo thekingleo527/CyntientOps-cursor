@@ -469,56 +469,62 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
         <View style={styles.infrastructureSection}>
           <Text style={styles.sectionTitle}>Building Infrastructure</Text>
           <View style={styles.infrastructureGrid}>
-            {/* @ts-ignore - boiler fields from database */}
-            {buildingDetails.building.boilerCount !== undefined && (
-              <View style={styles.infrastructureCard}>
-                <Text style={styles.infrastructureTitle}>Boiler System</Text>
-                {/* @ts-ignore */}
-                <Text style={styles.infrastructureValue}>
-                  {/* @ts-ignore */}
-                  {buildingDetails.building.boilerCount === 0 ? 'No Boiler' :
-                   /* @ts-ignore */
-                   `${buildingDetails.building.boilerCount} Boiler${buildingDetails.building.boilerCount > 1 ? 's' : ''}`}
-                </Text>
-                {/* @ts-ignore */}
-                {buildingDetails.building.boilerLocation && (
-                  <Text style={styles.infrastructureDetail}>
-                    {/* @ts-ignore */}
-                    Location: {buildingDetails.building.boilerLocation}
+            {/* Boiler System - Only show if building has infrastructure data */}
+            {(() => {
+              const building = buildingDetails.building as any;
+              const hasBoilerData = building.boilerCount !== undefined;
+
+              if (!hasBoilerData) return null;
+
+              const boilerCount = building.boilerCount || 0;
+              const hasBoiler = boilerCount > 0;
+
+              return (
+                <View style={styles.infrastructureCard}>
+                  <Text style={styles.infrastructureTitle}>Boiler System</Text>
+                  <Text style={styles.infrastructureValue}>
+                    {hasBoiler ? `${boilerCount} Boiler${boilerCount > 1 ? 's' : ''}` : 'No Boiler'}
                   </Text>
-                )}
-                {/* @ts-ignore */}
-                {buildingDetails.building.sharedBoilerWith && (
-                  <Text style={styles.infrastructureDetail}>
-                    {/* @ts-ignore */}
-                    Shared with: {buildingDetails.building.sharedBoilerWith}
+                  {hasBoiler && building.boilerLocation && (
+                    <Text style={styles.infrastructureDetail}>
+                      {building.boilerLocation.charAt(0).toUpperCase() + building.boilerLocation.slice(1)}
+                    </Text>
+                  )}
+                  {building.sharedBoilerWith && (
+                    <Text style={styles.infrastructureDetail}>
+                      Shared with {building.sharedBoilerWith}
+                    </Text>
+                  )}
+                  {building.sharedBoilerProviderFor?.length > 0 && (
+                    <Text style={styles.infrastructureDetail}>
+                      Provides for {building.sharedBoilerProviderFor.join(', ')}
+                    </Text>
+                  )}
+                </View>
+              );
+            })()}
+
+            {/* Garbage Collection - Only show if building has data */}
+            {(() => {
+              const building = buildingDetails.building as any;
+              const hasGarbageData = building.garbageBinSetOut !== undefined;
+
+              if (!hasGarbageData) return null;
+
+              const requiresSetOut = building.garbageBinSetOut;
+
+              return (
+                <View style={styles.infrastructureCard}>
+                  <Text style={styles.infrastructureTitle}>Garbage Collection</Text>
+                  <Text style={styles.infrastructureValue}>
+                    {requiresSetOut ? 'Bin Set-Out' : 'Standard Pickup'}
                   </Text>
-                )}
-                {/* @ts-ignore */}
-                {buildingDetails.building.sharedBoilerProviderFor && buildingDetails.building.sharedBoilerProviderFor.length > 0 && (
                   <Text style={styles.infrastructureDetail}>
-                    {/* @ts-ignore */}
-                    Provides for: {buildingDetails.building.sharedBoilerProviderFor.join(', ')}
+                    {requiresSetOut ? 'Street-side collection' : 'Building-side collection'}
                   </Text>
-                )}
-              </View>
-            )}
-            {/* @ts-ignore - garbage bin field from database */}
-            {buildingDetails.building.garbageBinSetOut !== undefined && (
-              <View style={styles.infrastructureCard}>
-                <Text style={styles.infrastructureTitle}>Garbage Collection</Text>
-                <Text style={styles.infrastructureValue}>
-                  {/* @ts-ignore */}
-                  {buildingDetails.building.garbageBinSetOut ? 'Bin Set-Out Required' : 'Standard Collection'}
-                </Text>
-                <Text style={styles.infrastructureDetail}>
-                  {/* @ts-ignore */}
-                  {buildingDetails.building.garbageBinSetOut
-                    ? 'Building has <9 units - requires bin set-out on street for collection'
-                    : 'Standard building-side pickup'}
-                </Text>
-              </View>
-            )}
+                </View>
+              );
+            })()}
           </View>
         </View>
       </ScrollView>

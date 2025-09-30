@@ -313,7 +313,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
 
   const generateUrgentTasks = (workerId: string, count: number): OperationalDataTaskAssignment[] => {
     const urgentTaskTypes = ['Emergency Cleanup', 'Safety Inspection', 'Equipment Repair', 'Compliance Issue'];
-    const buildings = ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '20', '21']; // All buildings
+    const buildings = ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '21']; // All actual buildings
     
     return Array.from({ length: count }, (_, index) => ({
       id: `urgent_${workerId}_${index}`,
@@ -336,7 +336,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
       'Daily Cleaning', 'Maintenance Check', 'Inventory Count', 'Safety Walk',
       'Equipment Inspection', 'Waste Management', 'Security Check', 'Compliance Review'
     ];
-    const buildings = ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '20', '21'];
+    const buildings = ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '21'];
     const statuses = ['Pending', 'In Progress', 'Completed'];
     
     return Array.from({ length: Math.min(totalTasks, 12) }, (_, index) => ({
@@ -370,12 +370,11 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
       '13': { name: '136 West 17th Street', address: '136 West 17th Street, New York, NY 10011', lat: 40.738089, lng: -73.994901 },
       '14': { name: 'Rubin Museum (142–148 W 17th) - CyntientOps HQ', address: '150 West 17th Street, New York, NY 10011', lat: 40.738012, lng: -73.995123 },
       '15': { name: '133 East 15th Street', address: '133 East 15th Street, New York, NY 10003', lat: 40.734567, lng: -73.988234 },
-      '16': { name: 'Stuyvesant Cove Park', address: 'Stuyvesant Cove Park, New York, NY 10010', lat: 40.731234, lng: -73.978456 },
-      '17': { name: '145 East 15th Street', address: '145 East 15th Street, New York, NY 10003', lat: 40.734789, lng: -73.988123 },
-      '18': { name: '157 East 15th Street', address: '157 East 15th Street, New York, NY 10003', lat: 40.735012, lng: -73.987890 },
-      '19': { name: '169 East 15th Street', address: '169 East 15th Street, New York, NY 10003', lat: 40.735234, lng: -73.987567 },
-      '20': { name: '181 East 15th Street', address: '181 East 15th Street, New York, NY 10003', lat: 40.735456, lng: -73.987234 },
-      '21': { name: '193 East 15th Street', address: '193 East 15th Street, New York, NY 10003', lat: 40.735678, lng: -73.986901 }
+      '16': { name: 'Stuyvesant Cove Park', address: 'Stuyvesant Cove Park, New York, NY 10009', lat: 40.713456, lng: -73.973789 },
+      '17': { name: '178 Spring Street', address: '178 Spring Street, New York, NY 10012', lat: 40.724123, lng: -74.002456 },
+      '18': { name: '36 Walker Street', address: '36 Walker Street, New York, NY 10013', lat: 40.718234, lng: -74.004567 },
+      '19': { name: '115 7th Avenue', address: '115 7th Avenue, New York, NY 10011', lat: 40.738890, lng: -73.996234 },
+      '21': { name: '148 Chambers Street', address: '148 Chambers Street, New York, NY 10007', lat: 40.714567, lng: -74.009123 }
     };
     
     const building = buildingData[buildingId as keyof typeof buildingData];
@@ -399,7 +398,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   };
 
   const generateAssignedBuildings = (workerId: string): NamedCoordinate[] => {
-    // Each worker is assigned to 3-5 buildings based on canonical data and expanded coverage
+    // Each worker is assigned to 3-4 buildings based on canonical data and actual portfolio
     const buildingAssignments = {
       '1': ['1', '3', '7'], // Greg Hutson: 12 West 18th Street, 135-139 West 17th Street, 112 West 18th Street
       '2': ['3', '5', '9'], // Edwin Lema: 135-139 West 17th Street, 138 West 17th Street, 117 West 17th Street
@@ -407,7 +406,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
       '5': ['5', '7', '13'], // Mercedes Inamagua: 138 West 17th Street, 112 West 18th Street, 136 West 17th Street
       '6': ['6', '10', '16'], // Luis Lopez: 68 Perry Street, 131 Perry Street, Stuyvesant Cove Park
       '7': ['7', '1', '15'], // Angel Guirachocha: 112 West 18th Street, 12 West 18th Street, 133 East 15th Street
-      '8': ['8', '11', '17', '18', '19', '20', '21']  // Shawn Magloire: 41 Elizabeth Street, 123 1st Avenue, East 15th Street buildings
+      '8': ['8', '11', '17', '18', '19', '21']  // Shawn Magloire: 41 Elizabeth Street, 123 1st Avenue, 178 Spring Street, 36 Walker Street, 115 7th Avenue, 148 Chambers Street
     };
     
     const assignedBuildingIds = buildingAssignments[workerId as keyof typeof buildingAssignments] || ['1'];

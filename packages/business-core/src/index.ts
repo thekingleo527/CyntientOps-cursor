@@ -20,6 +20,9 @@ export { SecurityManager } from './services/SecurityManager';
 export { ProductionManager } from './services/ProductionManager';
 export { BuildingInfrastructureCatalog } from './services/BuildingInfrastructureCatalog';
 export { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
+export { SystemDateTimeService, systemDateTime } from './services/SystemDateTimeService';
+export { SmartPhotoRequirementService, smartPhotoRequirement, PhotoCategory, TaskCategory } from './services/SmartPhotoRequirementService';
+export { IntelligentPhotoStorageService, intelligentPhotoStorage } from './services/IntelligentPhotoStorageService';
 
 // Managers
 export { ClockInManager } from './managers/ClockInManager';

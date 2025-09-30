@@ -19,46 +19,6 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "nx.json",
-        "hash": "1817247490336913443"
-      },
-      {
-        "file": "scripts/setup-nx-projects.js",
-        "hash": "8665214159614902254"
-      },
-      {
-        "file": "CONTINUITY_REPORT_PHASE_4B.md",
-        "hash": "8261881439086238926"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "12496562632034889801"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "15535908159169107954"
-      },
-      {
-        "file": "PHASE_1_COMPLETION_REPORT.md",
-        "hash": "15571517900552733526"
-      },
-      {
-        "file": "package.json",
-        "hash": "15351180261667345527"
-      },
-      {
-        "file": "scripts/setup-tsconfigs.js",
-        "hash": "14530017827863588642"
-      },
-      {
-        "file": "COMPREHENSIVE_SWIFTUI_REACT_RECONCILIATION_ANALYSIS.md",
-        "hash": "12695388131799130588"
-      },
-      {
-        "file": "CONTINUITY_REPORT_SEPTEMBER_2025.md",
-        "hash": "10283788352228750796"
-      },
-      {
         "file": "verify-folders.sh",
         "hash": "10935650700356555517"
       },
@@ -67,36 +27,56 @@
         "hash": "16206366320795113098"
       },
       {
-        "file": "REDUNDANCY_ELIMINATION_AND_PHASE_COMPLETION_REPORT.md",
-        "hash": "2144353523906872936"
-      },
-      {
-        "file": "SWIFTUI_TO_REACT_RECONCILIATION_ANALYSIS.md",
-        "hash": "1495956401689246691"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "2675220573733747715"
-      },
-      {
-        "file": "copy-images.sh",
-        "hash": "11765879550370700119"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "15439930483179106296"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "2599607768644681757"
+        "file": "tsconfig.json",
+        "hash": "12496562632034889801"
       },
       {
         "file": "README.md",
         "hash": "12576029393461459033"
       },
       {
+        "file": ".gitignore",
+        "hash": "15535908159169107954"
+      },
+      {
+        "file": "copy-images.sh",
+        "hash": "11765879550370700119"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "2675220573733747715"
+      },
+      {
+        "file": "CONTINUITY_REPORT_SEPTEMBER_2025.md",
+        "hash": "5332914773933249174"
+      },
+      {
+        "file": "scripts/setup-tsconfigs.js",
+        "hash": "14530017827863588642"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1817247490336913443"
+      },
+      {
         "file": ".eslintrc.js",
         "hash": "13772985611367207345"
+      },
+      {
+        "file": "package.json",
+        "hash": "15351180261667345527"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "15439930483179106296"
+      },
+      {
+        "file": "scripts/setup-nx-projects.js",
+        "hash": "8665214159614902254"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "2599607768644681757"
       }
     ],
     "projectFileMap": {
@@ -728,6 +708,18 @@
           "deps": [
             "npm:events"
           ]
+        },
+        {
+          "file": "packages/business-core/src/services/SystemDateTimeService.ts",
+          "hash": "5374778731967221732"
+        },
+        {
+          "file": "packages/business-core/src/services/SmartPhotoRequirementService.ts",
+          "hash": "1233503335101412418"
+        },
+        {
+          "file": "packages/business-core/src/services/IntelligentPhotoStorageService.ts",
+          "hash": "10815190825127358287"
         }
       ],
       "ui-components": [
@@ -1087,15 +1079,13 @@
         },
         {
           "file": "packages/ui-components/src/evidence/PhotoEvidenceCapture.tsx",
-          "hash": "7031481973103309523",
+          "hash": "12390330904717459906",
           "deps": [
             "npm:react",
             "npm:react-native",
-            "npm:expo-camera",
-            "npm:expo-image-picker",
             "design-tokens",
-            "npm:../../../glass",
-            "domain-schema"
+            "domain-schema",
+            "business-core"
           ]
         },
         {

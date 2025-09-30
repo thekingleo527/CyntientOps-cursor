@@ -1,15 +1,15 @@
 /**
  * 📸 Photo Evidence Capture
- * Purpose: Complete photo capture and management system for task evidence
+ * Purpose: Photo evidence management system for task documentation
  */
 
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Alert, Image, ScrollView, ActivityIndicator } from 'react-native';
-import { Camera, CameraType, FlashMode } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
+import { smartPhotoRequirement, PhotoCategory, TaskCategory } from '@cyntientops/business-core';
+import { intelligentPhotoStorage } from '@cyntientops/business-core';
 
 export interface PhotoEvidenceCaptureProps {
   task: OperationalDataTaskAssignment;
@@ -20,26 +20,14 @@ export interface PhotoEvidenceCaptureProps {
 
 export interface PhotoEvidenceData {
   id: string;
-  taskId: string;
-  buildingId: string;
-  workerId: string;
-  photoPath: string;
-  photoCategory: PhotoCategory;
-  notes: string;
-  takenAt: Date;
-  uploadedAt?: Date;
-  isSynced: boolean;
-  metadata: PhotoMetadata;
-}
-
-export interface PhotoMetadata {
-  latitude?: number;
-  longitude?: number;
-  accuracy?: number;
-  weatherCondition?: string;
-  temperature?: number;
-  buildingName?: string;
-  taskName?: string;
+  uri: string;
+  timestamp: Date;
+  category: PhotoCategory;
+  notes?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 export enum PhotoCategory {
@@ -47,540 +35,530 @@ export enum PhotoCategory {
   DURING = 'during',
   AFTER = 'after',
   ISSUE = 'issue',
-  COMPLETION = 'completion',
-  SAFETY = 'safety',
-  COMPLIANCE = 'compliance',
-  GENERAL = 'general'
+  COMPLETION = 'completion'
 }
 
 export const PhotoEvidenceCapture: React.FC<PhotoEvidenceCaptureProps> = ({
   task,
   onPhotoCaptured,
   onClose,
-  existingPhotos = [],
+  existingPhotos = []
 }) => {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [cameraType, setCameraType] = useState<CameraType>(CameraType.back);
-  const [flashMode, setFlashMode] = useState<FlashMode>(FlashMode.off);
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<PhotoCategory>(PhotoCategory.DURING);
-  const [notes, setNotes] = useState('');
-  const [showGallery, setShowGallery] = useState(false);
-  const [capturedPhotos, setCapturedPhotos] = useState<PhotoEvidenceData[]>(existingPhotos);
-  const cameraRef = useRef<Camera>(null);
+  const [photos, setPhotos] = React.useState<PhotoEvidenceData[]>(existingPhotos);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [photoRequirements, setPhotoRequirements] = React.useState<any>(null);
+  const [smartPrompts, setSmartPrompts] = React.useState<string[]>([]);
+  const [photoTips, setPhotoTips] = React.useState<string[]>([]);
 
+  // Initialize smart photo requirements
   React.useEffect(() => {
-    requestCameraPermission();
-  }, []);
+    const requirements = smartPhotoRequirement.getPhotoRequirements(
+      task.title,
+      task.category as TaskCategory,
+      task.description
+    );
+    const prompts = smartPhotoRequirement.getSmartPhotoPrompts(
+      task.title,
+      task.category as TaskCategory,
+      task.description
+    );
+    const tips = smartPhotoRequirement.getPhotoTips(
+      task.title,
+      task.category as TaskCategory,
+      task.description
+    );
 
-  const requestCameraPermission = async () => {
-    const { status } = await Camera.requestCameraPermissionsAsync();
-    setHasPermission(status === 'granted');
-  };
+    setPhotoRequirements(requirements);
+    setSmartPrompts(prompts);
+    setPhotoTips(tips);
+  }, [task]);
 
-  const takePicture = async () => {
-    if (!cameraRef.current || isCapturing) return;
+  const handleAddPhoto = async (category: PhotoCategory) => {
+    if (!photoRequirements?.requiresPhotos) {
+      Alert.alert(
+        'No Photos Required',
+        `This task "${task.title}" does not require photos. ${photoRequirements?.reasoning || ''}`
+      );
+      return;
+    }
 
-    setIsCapturing(true);
+    setIsLoading(true);
     try {
-      const photo = await cameraRef.current.takePictureAsync({
-        quality: 0.8,
-        base64: false,
-        exif: true,
-      });
-
-      if (photo) {
-        const photoData: PhotoEvidenceData = {
-          id: `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      // Simulate photo capture and intelligent processing
+      const mockPhotoUri = 'https://via.placeholder.com/300x200/10b981/ffffff?text=Photo+Evidence';
+      
+      // Process with intelligent storage
+      const storageResult = await intelligentPhotoStorage.processAndStorePhoto(
+        mockPhotoUri,
+        intelligentPhotoStorage.getOptimalSettingsForTaskType(task.category),
+        {
           taskId: task.id,
-          buildingId: task.assigned_building_id || '',
-          workerId: task.assigned_worker_id || '',
-          photoPath: photo.uri,
-          photoCategory: selectedCategory,
-          notes: notes,
-          takenAt: new Date(),
-          isSynced: false,
-          metadata: {
-            latitude: photo.exif?.GPSLatitude,
-            longitude: photo.exif?.GPSLongitude,
-            accuracy: photo.exif?.GPSHPositioningError,
-            buildingName: task.assigned_building_id,
-            taskName: task.name,
-          }
-        };
+          taskTitle: task.title,
+          category: task.category,
+          workerId: 'current_worker',
+          buildingId: task.buildingId || 'default'
+        }
+      );
 
-        setCapturedPhotos(prev => [...prev, photoData]);
-        onPhotoCaptured(photoData);
-        
-        Alert.alert(
-          'Photo Captured',
-          'Photo evidence has been saved successfully.',
-          [{ text: 'OK' }]
-        );
-      }
+      const newPhoto: PhotoEvidenceData = {
+        id: `photo_${Date.now()}`,
+        uri: storageResult.compressedUri,
+        timestamp: new Date(),
+        category: category,
+        notes: `Intelligently processed - ${Math.round(storageResult.compressionRatio * 100)}% compression`
+      };
+
+      setPhotos(prev => [...prev, newPhoto]);
     } catch (error) {
-      console.error('Error taking picture:', error);
-      Alert.alert('Error', 'Failed to capture photo. Please try again.');
+      Alert.alert('Error', 'Failed to process photo. Please try again.');
     } finally {
-      setIsCapturing(false);
+      setIsLoading(false);
     }
   };
 
-  const pickImageFromGallery = async () => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-      });
+  const handleRemovePhoto = (photoId: string) => {
+    Alert.alert(
+      'Remove Photo',
+      'Are you sure you want to remove this photo?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Remove', style: 'destructive', onPress: () => {
+          setPhotos(prev => prev.filter(photo => photo.id !== photoId));
+        }}
+      ]
+    );
+  };
 
-      if (!result.canceled && result.assets[0]) {
-        const asset = result.assets[0];
-        const photoData: PhotoEvidenceData = {
-          id: `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          taskId: task.id,
-          buildingId: task.assigned_building_id || '',
-          workerId: task.assigned_worker_id || '',
-          photoPath: asset.uri,
-          photoCategory: selectedCategory,
-          notes: notes,
-          takenAt: new Date(),
-          isSynced: false,
-          metadata: {
-            buildingName: task.assigned_building_id,
-            taskName: task.name,
-          }
-        };
+  const handleSubmit = () => {
+    if (photos.length === 0) {
+      Alert.alert('No Photos', 'Please add at least one photo before submitting.');
+      return;
+    }
 
-        setCapturedPhotos(prev => [...prev, photoData]);
-        onPhotoCaptured(photoData);
-      }
-    } catch (error) {
-      console.error('Error picking image:', error);
-      Alert.alert('Error', 'Failed to select image from gallery.');
+    setIsLoading(true);
+    // Simulate photo processing
+    setTimeout(() => {
+      photos.forEach(photo => onPhotoCaptured(photo));
+      setIsLoading(false);
+      onClose();
+    }, 1000);
+  };
+
+  const getCategoryColor = (category: PhotoCategory) => {
+    switch (category) {
+      case PhotoCategory.BEFORE: return Colors.info;
+      case PhotoCategory.DURING: return Colors.primaryAction;
+      case PhotoCategory.AFTER: return Colors.success;
+      case PhotoCategory.ISSUE: return Colors.warning;
+      case PhotoCategory.COMPLETION: return Colors.role.admin.primary;
+      default: return Colors.secondaryText;
     }
   };
 
-  const renderCategorySelector = () => (
-    <View style={styles.categorySelector}>
-      <Text style={styles.categoryLabel}>Photo Category:</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-        {Object.values(PhotoCategory).map(category => (
-          <TouchableOpacity
-            key={category}
-            style={[
-              styles.categoryButton,
-              selectedCategory === category && styles.selectedCategoryButton,
-            ]}
-            onPress={() => setSelectedCategory(category)}
-          >
-            <Text style={[
-              styles.categoryButtonText,
-              selectedCategory === category && styles.selectedCategoryButtonText,
-            ]}>
-              {category.toUpperCase()}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
-  );
+  const getCategoryIcon = (category: PhotoCategory) => {
+    switch (category) {
+      case PhotoCategory.BEFORE: return '📷';
+      case PhotoCategory.DURING: return '⚡';
+      case PhotoCategory.AFTER: return '✅';
+      case PhotoCategory.ISSUE: return '⚠️';
+      case PhotoCategory.COMPLETION: return '🎯';
+      default: return '📸';
+    }
+  };
 
-  const renderCameraControls = () => (
-    <View style={styles.cameraControls}>
-      <TouchableOpacity
-        style={styles.controlButton}
-        onPress={() => setCameraType(
-          cameraType === CameraType.back ? CameraType.front : CameraType.back
-        )}
-      >
-        <Text style={styles.controlButtonText}>🔄</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.captureButton, isCapturing && styles.capturingButton]}
-        onPress={takePicture}
-        disabled={isCapturing}
-      >
-        {isCapturing ? (
-          <ActivityIndicator color={Colors.text.primary} />
-        ) : (
-          <Text style={styles.captureButtonText}>📸</Text>
-        )}
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.controlButton}
-        onPress={() => setFlashMode(
-          flashMode === FlashMode.off ? FlashMode.on : FlashMode.off
-        )}
-      >
-        <Text style={styles.controlButtonText}>
-          {flashMode === FlashMode.off ? '⚡' : '⚡'}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderPhotoGallery = () => (
-    <Modal
-      visible={showGallery}
-      animationType="slide"
-      transparent={false}
-      onRequestClose={() => setShowGallery(false)}
-    >
-      <View style={styles.galleryContainer}>
-        <View style={styles.galleryHeader}>
-          <Text style={styles.galleryTitle}>Photo Evidence</Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setShowGallery(false)}
-          >
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>📸 Photo Evidence</Text>
+        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>✕</Text>
           </TouchableOpacity>
         </View>
         
-        <ScrollView style={styles.galleryScroll}>
-          {capturedPhotos.map(photo => (
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <GlassCard style={styles.taskInfo} intensity="regular" cornerRadius="card">
+          <Text style={styles.taskTitle}>{task.title}</Text>
+          <Text style={styles.taskDescription}>{task.description}</Text>
+          <Text style={styles.taskMeta}>
+            📍 {task.buildingName} • ⏰ {new Date(task.dueDate).toLocaleDateString()}
+          </Text>
+        </GlassCard>
+
+        <GlassCard style={styles.photosSection} intensity="regular" cornerRadius="card">
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Photo Evidence ({photos.length})</Text>
+            {photoRequirements?.requiresPhotos && (
+              <Text style={styles.requirementText}>{photoRequirements.reasoning}</Text>
+            )}
+          </View>
+
+          {/* Smart Photo Requirements */}
+          {photoRequirements && (
+            <View style={styles.requirementsSection}>
+              {!photoRequirements.requiresPhotos ? (
+                <View style={styles.noPhotosRequired}>
+                  <Text style={styles.noPhotosText}>✅ No photos required for this task</Text>
+                  <Text style={styles.noPhotosReason}>{photoRequirements.reasoning}</Text>
+                </View>
+              ) : (
+                <View style={styles.photoRequirements}>
+                  <Text style={styles.requirementsTitle}>📸 Required Photos:</Text>
+                  <View style={styles.requirementButtons}>
+                    {photoRequirements.beforePhoto && (
+                      <TouchableOpacity 
+                        style={[styles.requirementButton, styles.beforeButton]}
+                        onPress={() => handleAddPhoto(PhotoCategory.BEFORE)}
+                        disabled={isLoading}
+                      >
+                        <Text style={styles.requirementButtonText}>📷 BEFORE</Text>
+                      </TouchableOpacity>
+                    )}
+                    {photoRequirements.afterPhoto && (
+                      <TouchableOpacity 
+                        style={[styles.requirementButton, styles.afterButton]}
+                        onPress={() => handleAddPhoto(PhotoCategory.AFTER)}
+                        disabled={isLoading}
+                      >
+                        <Text style={styles.requirementButtonText}>✅ AFTER</Text>
+                      </TouchableOpacity>
+                    )}
+                    {photoRequirements.duringPhoto && (
+                      <TouchableOpacity 
+                        style={[styles.requirementButton, styles.duringButton]}
+                        onPress={() => handleAddPhoto(PhotoCategory.DURING)}
+                        disabled={isLoading}
+                      >
+                        <Text style={styles.requirementButtonText}>⚡ DURING</Text>
+                      </TouchableOpacity>
+                    )}
+                    {photoRequirements.issuePhoto && (
+                      <TouchableOpacity 
+                        style={[styles.requirementButton, styles.issueButton]}
+                        onPress={() => handleAddPhoto(PhotoCategory.ISSUE)}
+                        disabled={isLoading}
+                      >
+                        <Text style={styles.requirementButtonText}>⚠️ ISSUE</Text>
+                      </TouchableOpacity>
+                    )}
+                    {photoRequirements.completionPhoto && (
+                      <TouchableOpacity 
+                        style={[styles.requirementButton, styles.completionButton]}
+                        onPress={() => handleAddPhoto(PhotoCategory.COMPLETION)}
+                        disabled={isLoading}
+                      >
+                        <Text style={styles.requirementButtonText}>🎯 COMPLETION</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              )}
+            </View>
+          )}
+
+          {/* Smart Photo Tips */}
+          {photoTips.length > 0 && (
+            <View style={styles.tipsSection}>
+              <Text style={styles.tipsTitle}>💡 Photo Tips:</Text>
+              {photoTips.map((tip, index) => (
+                <Text key={index} style={styles.tipText}>{tip}</Text>
+              ))}
+            </View>
+          )}
+
+          {photos.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateText}>No photos added yet</Text>
+              <Text style={styles.emptyStateSubtext}>Tap "Add Photo" to start documenting this task</Text>
+            </View>
+          ) : (
+            <View style={styles.photosList}>
+              {photos.map((photo) => (
             <View key={photo.id} style={styles.photoItem}>
-              <Image source={{ uri: photo.photoPath }} style={styles.photoThumbnail} />
+                  <Image source={{ uri: photo.uri }} style={styles.photoThumbnail} />
               <View style={styles.photoInfo}>
+                    <View style={styles.photoHeader}>
                 <Text style={styles.photoCategory}>
-                  {photo.photoCategory.toUpperCase()}
+                        {getCategoryIcon(photo.category)} {photo.category.toUpperCase()}
                 </Text>
-                <Text style={styles.photoDate}>
-                  {photo.takenAt.toLocaleString()}
+                      <Text style={styles.photoTime}>
+                        {photo.timestamp.toLocaleTimeString()}
                 </Text>
+                    </View>
                 {photo.notes && (
                   <Text style={styles.photoNotes}>{photo.notes}</Text>
                 )}
               </View>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
-    </Modal>
-  );
-
-  if (hasPermission === null) {
-    return (
-      <View style={styles.permissionContainer}>
-        <Text style={styles.permissionText}>Requesting camera permission...</Text>
-      </View>
-    );
-  }
-
-  if (hasPermission === false) {
-    return (
-      <View style={styles.permissionContainer}>
-        <Text style={styles.permissionText}>Camera permission is required to capture photos.</Text>
-        <TouchableOpacity style={styles.permissionButton} onPress={requestCameraPermission}>
-          <Text style={styles.permissionButtonText}>Grant Permission</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  return (
-    <Modal
-      visible={true}
-      animationType="slide"
-      transparent={false}
-      onRequestClose={onClose}
-    >
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Photo Evidence</Text>
-          <Text style={styles.subtitle}>{task.name}</Text>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>✕</Text>
+                  <TouchableOpacity 
+                    onPress={() => handleRemovePhoto(photo.id)}
+                    style={styles.removeButton}
+                  >
+                    <Text style={styles.removeButtonText}>🗑️</Text>
           </TouchableOpacity>
         </View>
-
-        {renderCategorySelector()}
-
-        <View style={styles.cameraContainer}>
-          <Camera
-            ref={cameraRef}
-            style={styles.camera}
-            type={cameraType}
-            flashMode={flashMode}
-          >
-            <View style={styles.cameraOverlay}>
-              <View style={styles.taskInfo}>
-                <Text style={styles.taskName}>{task.name}</Text>
-                <Text style={styles.taskCategory}>{task.category}</Text>
-              </View>
+              ))}
             </View>
-          </Camera>
-        </View>
+          )}
+        </GlassCard>
 
-        {renderCameraControls()}
-
-        <View style={styles.bottomControls}>
           <TouchableOpacity
-            style={styles.galleryButton}
-            onPress={() => setShowGallery(true)}
-          >
-            <Text style={styles.galleryButtonText}>
-              📷 Gallery ({capturedPhotos.length})
+          style={[styles.submitButton, isLoading && styles.submitButtonDisabled]}
+          onPress={handleSubmit}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color={Colors.primaryText} />
+          ) : (
+            <Text style={styles.submitButtonText}>
+              Submit {photos.length} Photo{photos.length !== 1 ? 's' : ''}
             </Text>
+          )}
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.pickButton}
-            onPress={pickImageFromGallery}
-          >
-            <Text style={styles.pickButtonText}>📁 Pick from Gallery</Text>
-          </TouchableOpacity>
-        </View>
-
-        {renderPhotoGallery()}
+      </ScrollView>
       </View>
-    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.base.background,
+    backgroundColor: Colors.background,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: Spacing.lg,
+    padding: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.glass.thin,
+    borderBottomColor: Colors.borderSubtle,
   },
-  title: {
-    ...Typography.titleLarge,
-    color: Colors.text.primary,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    marginTop: 2,
+  headerTitle: {
+    ...Typography.headline,
+    color: Colors.primaryText,
   },
   closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Colors.glass.medium,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: Spacing.sm,
   },
   closeButtonText: {
-    ...Typography.titleMedium,
-    color: Colors.text.secondary,
-  },
-  categorySelector: {
-    padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.glass.thin,
-  },
-  categoryLabel: {
     ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '600',
-    marginBottom: Spacing.sm,
+    color: Colors.secondaryText,
   },
-  categoryScroll: {
-    flexDirection: 'row',
-  },
-  categoryButton: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    marginRight: Spacing.sm,
-    backgroundColor: Colors.glass.medium,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.glass.thin,
-  },
-  selectedCategoryButton: {
-    backgroundColor: Colors.primary.blue + '20',
-    borderColor: Colors.primary.blue,
-  },
-  categoryButtonText: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    fontWeight: '500',
-  },
-  selectedCategoryButtonText: {
-    color: Colors.primary.blue,
-    fontWeight: '600',
-  },
-  cameraContainer: {
+  content: {
     flex: 1,
-    margin: Spacing.lg,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  camera: {
-    flex: 1,
-  },
-  cameraOverlay: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    padding: Spacing.lg,
+    padding: Spacing.md,
   },
   taskInfo: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    marginBottom: Spacing.md,
     padding: Spacing.md,
-    borderRadius: 8,
   },
-  taskName: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '600',
+  taskTitle: {
+    ...Typography.headline,
+    color: Colors.primaryText,
+    marginBottom: Spacing.sm,
   },
-  taskCategory: {
+  taskDescription: {
+    ...Typography.body,
+    color: Colors.secondaryText,
+    marginBottom: Spacing.sm,
+  },
+  taskMeta: {
     ...Typography.caption,
-    color: Colors.text.secondary,
-    marginTop: 2,
+    color: Colors.tertiaryText,
   },
-  cameraControls: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    padding: Spacing.lg,
-    backgroundColor: Colors.glass.thin,
+  photosSection: {
+    marginBottom: Spacing.md,
+    padding: Spacing.md,
   },
-  controlButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.glass.medium,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  controlButtonText: {
-    fontSize: 20,
-  },
-  captureButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: Colors.primary.blue,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: Colors.text.primary,
-  },
-  capturingButton: {
-    backgroundColor: Colors.status.warning,
-  },
-  captureButtonText: {
-    fontSize: 32,
-  },
-  bottomControls: {
-    flexDirection: 'row',
-    padding: Spacing.lg,
-    gap: Spacing.md,
-  },
-  galleryButton: {
-    flex: 1,
-    paddingVertical: Spacing.md,
-    backgroundColor: Colors.primary.green,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  galleryButtonText: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
-    fontWeight: '600',
-  },
-  pickButton: {
-    flex: 1,
-    paddingVertical: Spacing.md,
-    backgroundColor: Colors.primary.purple,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  pickButtonText: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
-    fontWeight: '600',
-  },
-  permissionContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Spacing.lg,
-  },
-  permissionText: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
-    textAlign: 'center',
-    marginBottom: Spacing.lg,
-  },
-  permissionButton: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    backgroundColor: Colors.primary.blue,
-    borderRadius: 12,
-  },
-  permissionButtonText: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
-    fontWeight: '600',
-  },
-  galleryContainer: {
-    flex: 1,
-    backgroundColor: Colors.base.background,
-  },
-  galleryHeader: {
+  sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.glass.thin,
+    marginBottom: Spacing.md,
   },
-  galleryTitle: {
-    ...Typography.titleLarge,
-    color: Colors.text.primary,
-    fontWeight: 'bold',
+  sectionTitle: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
   },
-  galleryScroll: {
-    flex: 1,
+  addButton: {
+    backgroundColor: Colors.primaryAction,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: 8,
+  },
+  addButtonText: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  emptyState: {
     padding: Spacing.lg,
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    ...Typography.body,
+    color: Colors.secondaryText,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  emptyStateSubtext: {
+    ...Typography.caption,
+    color: Colors.tertiaryText,
+    textAlign: 'center',
+  },
+  photosList: {
+    gap: Spacing.sm,
   },
   photoItem: {
     flexDirection: 'row',
-    backgroundColor: Colors.glass.thin,
+    alignItems: 'center',
+    padding: Spacing.sm,
+    backgroundColor: Colors.glassOverlay,
     borderRadius: 8,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
   },
   photoThumbnail: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     borderRadius: 8,
-    marginRight: Spacing.md,
+    marginRight: Spacing.sm,
   },
   photoInfo: {
     flex: 1,
   },
+  photoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
   photoCategory: {
-    ...Typography.subheadline,
-    color: Colors.primary.blue,
+    ...Typography.caption,
+    color: Colors.primaryAction,
     fontWeight: '600',
   },
-  photoDate: {
+  photoTime: {
     ...Typography.caption,
-    color: Colors.text.secondary,
-    marginTop: 2,
+    color: Colors.tertiaryText,
   },
   photoNotes: {
-    ...Typography.body,
-    color: Colors.text.primary,
-    marginTop: Spacing.sm,
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  removeButton: {
+    padding: Spacing.sm,
+  },
+  removeButtonText: {
+    fontSize: 16,
+  },
+  submitButton: {
+    backgroundColor: Colors.success,
+    padding: Spacing.md,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: Spacing.md,
+  },
+  submitButtonDisabled: {
+    backgroundColor: Colors.inactive,
+  },
+  submitButtonText: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  requirementText: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+    fontStyle: 'italic',
+  },
+  requirementsSection: {
+    marginBottom: Spacing.md,
+  },
+  noPhotosRequired: {
+    backgroundColor: Colors.success + '20',
+    padding: Spacing.md,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.success + '40',
+  },
+  noPhotosText: {
+    ...Typography.subheadline,
+    color: Colors.success,
+    fontWeight: '600',
+    marginBottom: Spacing.xs,
+  },
+  noPhotosReason: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  photoRequirements: {
+    backgroundColor: Colors.glassOverlay,
+    padding: Spacing.md,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
+  },
+  requirementsTitle: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+  },
+  requirementButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+  },
+  requirementButton: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: 8,
+    borderWidth: 1,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  beforeButton: {
+    backgroundColor: Colors.info + '20',
+    borderColor: Colors.info,
+  },
+  afterButton: {
+    backgroundColor: Colors.success + '20',
+    borderColor: Colors.success,
+  },
+  duringButton: {
+    backgroundColor: Colors.primaryAction + '20',
+    borderColor: Colors.primaryAction,
+  },
+  issueButton: {
+    backgroundColor: Colors.warning + '20',
+    borderColor: Colors.warning,
+  },
+  completionButton: {
+    backgroundColor: Colors.role.admin.primary + '20',
+    borderColor: Colors.role.admin.primary,
+  },
+  requirementButtonText: {
+    ...Typography.caption,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  tipsSection: {
+    backgroundColor: Colors.glassOverlay,
+    padding: Spacing.md,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
+    marginBottom: Spacing.md,
+  },
+  tipsTitle: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+  },
+  tipText: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+    marginBottom: Spacing.xs,
   },
 });
-
-export default PhotoEvidenceCapture;

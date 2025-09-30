@@ -14,6 +14,7 @@ import { WeatherTaskManager } from '@cyntientops/managers';
 import { WebSocketManager } from '@cyntientops/realtime-sync';
 import { OfflineManager } from '@cyntientops/offline-support';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
+import { AlertsService } from './services/AlertsService';
 
 // Services
 import { TaskService } from './services/TaskService';
@@ -92,7 +93,7 @@ export class ServiceContainer {
   private _inventory: any | null = null; // TODO: Implement InventoryService
   private _weather: any | null = null; // TODO: Implement WeatherService
   private _vendorAccess: any | null = null; // TODO: Implement VendorAccessService
-  private _alerts: any | null = null; // TODO: Implement AlertsService
+  private _alerts: AlertsService | null = null;
   private _system: any | null = null; // TODO: Implement SystemService
   
   // Building Detail Services
@@ -767,12 +768,9 @@ export class ServiceContainer {
     return this._vendorAccess;
   }
 
-  public get alerts(): any {
+  public get alerts(): AlertsService {
     if (!this._alerts) {
-      // TODO: Implement AlertsService
-      this._alerts = {
-        getCriticalAlerts: async () => []
-      };
+      this._alerts = AlertsService.getInstance();
     }
     return this._alerts;
   }
@@ -834,21 +832,11 @@ export class ServiceContainer {
     return this._webSocket;
   }
   
-  public get intelligence(): Promise<IntelligenceService> {
-    return new Promise(async (resolve, reject) => {
-      if (this._intelligence) {
-        resolve(this._intelligence);
-        return;
-      }
-      
-      try {
-        this._intelligence = IntelligenceService.getInstance();
-        await this._intelligence.initialize();
-        resolve(this._intelligence);
-      } catch (error) {
-        reject(error);
-      }
-    });
+  public get intelligence(): IntelligenceService {
+    if (!this._intelligence) {
+      this._intelligence = IntelligenceService.getInstance();
+    }
+    return this._intelligence;
   }
   
   // MARK: - Manager Accessors

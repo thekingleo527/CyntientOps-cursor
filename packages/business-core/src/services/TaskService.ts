@@ -71,6 +71,22 @@ export class TaskService {
     }));
   }
 
+  /**
+   * Get all tasks (alias for compatibility)
+   */
+  public getAllTasks(): OperationalDataTaskAssignment[] {
+    const allTasks: OperationalDataTaskAssignment[] = [];
+    
+    // Get tasks for all workers
+    const workers = this.operationalDataService.getWorkers();
+    workers.forEach(worker => {
+      const workerTasks = this.generateWorkerTasks(worker.id);
+      allTasks.push(...workerTasks.now, ...workerTasks.next, ...workerTasks.today, ...workerTasks.urgent, ...workerTasks.completed);
+    });
+    
+    return allTasks;
+  }
+
   generateWorkerTasks(workerId: string): TaskSchedule {
     const workerRoutines = this.routines.filter(r => r.workerId === workerId);
     const now = new Date();

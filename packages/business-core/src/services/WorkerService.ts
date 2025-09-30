@@ -50,6 +50,13 @@ export class WorkerService {
   }
 
   /**
+   * Get all workers (alias for compatibility)
+   */
+  public getAllWorkers(): WorkerProfile[] {
+    return this.getWorkers();
+  }
+
+  /**
    * Get worker by ID
    */
   public getWorkerById(workerId: string): WorkerProfile | undefined {

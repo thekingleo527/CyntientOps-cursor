@@ -52,6 +52,13 @@ export class BuildingService {
   }
 
   /**
+   * Get all buildings (alias for compatibility)
+   */
+  public getAllBuildings(): any[] {
+    return this.getBuildings();
+  }
+
+  /**
    * Get building by ID
    */
   public getBuildingById(buildingId: string): any | undefined {

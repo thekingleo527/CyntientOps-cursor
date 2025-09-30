@@ -11,6 +11,8 @@ export { AdminViewModel } from './AdminViewModel';
 
 // ViewModel Hooks
 export { useBuildingDetailViewModel } from './useBuildingDetailViewModel';
+export { useWorkerDashboardViewModel, WorkerDashboardViewModel } from './WorkerDashboardViewModel';
+export { AdminDashboardViewModel } from './AdminDashboardViewModel';
 
 // Context Engines
 export { WorkerContextEngine } from './WorkerContextEngine';

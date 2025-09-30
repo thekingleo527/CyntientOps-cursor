@@ -26,6 +26,8 @@ export { IntelligentPhotoStorageService, intelligentPhotoStorage } from './servi
 export { WeatherTriggeredTaskManager } from './services/WeatherTriggeredTaskManager';
 export { RouteOptimizationService } from './services/RouteOptimizationService';
 export { AdvancedVoiceProcessingService } from './services/AdvancedVoiceProcessingService';
+export { IntelligenceService } from './services/IntelligenceService';
+export { AlertsService } from './services/AlertsService';
 
 // Managers
 export { ClockInManager } from './managers/ClockInManager';

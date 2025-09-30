@@ -455,6 +455,30 @@ export interface WorkerDashboardViewModelActions {
   setHeroExpanded: (expanded: boolean) => void;
 }
 
+// Class-based implementation for getInstance compatibility
+export class WorkerDashboardViewModel {
+  private static instance: WorkerDashboardViewModel | null = null;
+  private container: ServiceContainer;
+  private workerId: string;
+
+  private constructor(container: ServiceContainer, workerId: string) {
+    this.container = container;
+    this.workerId = workerId;
+  }
+
+  public static getInstance(container: ServiceContainer, workerId: string): WorkerDashboardViewModel {
+    if (!WorkerDashboardViewModel.instance) {
+      WorkerDashboardViewModel.instance = new WorkerDashboardViewModel(container, workerId);
+    }
+    return WorkerDashboardViewModel.instance;
+  }
+
+  // Delegate to the hook implementation
+  public getViewModel() {
+    return useWorkerDashboardViewModel(this.container, this.workerId);
+  }
+}
+
 export function useWorkerDashboardViewModel(
   container: ServiceContainer,
   workerId: string

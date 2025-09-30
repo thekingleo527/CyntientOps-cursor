@@ -39,6 +39,9 @@ export interface BuildingInfrastructure {
   sharedBoilerProviderFor?: string[];
   sharedBoilerProviderForIds?: string[];
 
+  // Hot Water System
+  hotWaterTank: boolean;
+
   // Garbage Collection
   garbageBinSetOut: boolean;
 
@@ -191,6 +194,7 @@ export class BuildingInfrastructureCatalog {
           sharedBoilerBuildingId: (building as any).sharedBoilerBuildingId,
           sharedBoilerProviderFor: (building as any).sharedBoilerProviderFor,
           sharedBoilerProviderForIds: (building as any).sharedBoilerProviderForIds,
+          hotWaterTank: (building as any).hotWaterTank || false,
           garbageBinSetOut: (building as any).garbageBinSetOut || false,
 
           roofDrains: (building as any).roofDrains || false,

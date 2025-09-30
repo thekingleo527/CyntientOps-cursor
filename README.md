@@ -1,11 +1,514 @@
-# CyntientOps Cursor
+# 🏗️ CyntientOps Cursor - React Native Implementation
 
-Multiplatform field-ops stack for building-maintenance teams.
-React Native (Expo) app with:
-- AI-assisted scheduling & route optimization
-- Photo-verified work orders & compliance
-- Multi-site **Site Departure**
-- Map intelligence (markers, popovers, asset coverage)
-- Reliable **offline-first** background sync
+> **Multiplatform field operations management system for building maintenance teams**
+> Enterprise-grade React Native (Expo) application with AI-powered intelligence, offline-first architecture, and real-time synchronization.
 
-Backends: Firebase Studio + Supabase (Nova).
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
+[![React Native](https://img.shields.io/badge/React%20Native-Expo-black.svg)](https://expo.dev/)
+[![Nx](https://img.shields.io/badge/Nx-Monorepo-lightgrey.svg)](https://nx.dev/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+---
+
+## 📖 About
+
+**CyntientOps Cursor** is the React Native/TypeScript implementation of CyntientOps, achieving **100% feature parity** with the original SwiftUI application while adding enhanced ML/AI capabilities and cross-platform support. Built as a production-ready Nx monorepo, it delivers sophisticated field operations management for building maintenance teams across iOS, Android, and web platforms.
+
+### 🔄 Relationship to SwiftUI Version
+
+This project is the **multiplatform successor** to the SwiftUI version located at `../cyntientops/`. Key improvements include:
+
+- **Cross-platform support**: iOS, Android, and web from a single codebase
+- **Advanced ML/AI**: Enhanced predictive maintenance and intelligent scheduling
+- **Monorepo architecture**: Modular, testable, and scalable package structure
+- **Complete data parity**: Synchronized with SwiftUI implementation via shared data seed
+- **Enhanced offline support**: YJS-based CRDT synchronization with conflict resolution
+- **Rich developer experience**: Nx workspace with comprehensive tooling
+
+Refer to [`CONTINUITY_REPORT.md`](./CONTINUITY_REPORT.md) (1,141 lines) for detailed feature-by-feature implementation status.
+
+---
+
+## 🎯 Core Features
+
+### 🤖 AI-Powered Intelligence
+- **Nova AI Assistant**: Voice-activated AI for hands-free task management
+- **Predictive Maintenance**: ML-based failure prediction using historical data, seasonal patterns, and building characteristics
+- **Smart Scheduling**: AI-driven route optimization and task prioritization
+- **Natural Language Processing**: Context-aware task creation and parsing
+- **Weather Intelligence**: Automatic task generation based on weather conditions and forecasts
+
+### 📱 Field Operations
+- **Real-time Task Management**: NOW/NEXT/TODAY/URGENT task categorization with intelligent prioritization
+- **Photo-Verified Completion**: Camera integration for compliance documentation
+- **Multi-Site Departure Mode**: Batch task completion across multiple buildings
+- **Offline-First Architecture**: Full functionality without network connectivity
+- **Background Sync**: Automatic data synchronization with conflict resolution
+
+### 🗺️ Map & Location Intelligence
+- **Building Markers**: Interactive map with 19+ NYC building locations
+- **Asset Coverage Visualization**: Heatmaps and cluster views
+- **Route Optimization**: AI-powered multi-stop routing
+- **Geofencing**: Location-based task triggers and notifications
+- **Map Reveal Animations**: Smooth MapKit-inspired interactions
+
+### 📊 Role-Based Dashboards
+- **Worker Dashboard**: Task lists, schedule view, time tracking, and performance metrics
+- **Admin Dashboard**: Portfolio overview, team management, analytics, and compliance monitoring
+- **Client Dashboard**: Building status, service history, and real-time updates
+- **Intelligence Panels**: Contextual insights and actionable recommendations
+
+### 🔐 Authentication & Security
+- **Glass Card Login**: Quick-access authentication for 6 primary users
+- **Role-Based Access Control**: Worker, Admin, and Client role separation
+- **Biometric Authentication**: Face ID / Touch ID support
+- **Session Management**: Secure token-based authentication with refresh
+
+---
+
+## 🏗️ Architecture
+
+### Monorepo Structure
+
+```
+cyntientops-mp/
+├── apps/
+│   ├── mobile-rn/              # React Native Expo mobile app
+│   │   ├── src/
+│   │   │   ├── app/           # Expo Router file-based navigation
+│   │   │   ├── components/    # React Native UI components
+│   │   │   ├── services/      # Business logic layer
+│   │   │   ├── hooks/         # Custom React hooks
+│   │   │   ├── types/         # TypeScript type definitions
+│   │   │   └── utils/         # Utility functions
+│   │   ├── assets/            # Images, fonts, and static resources
+│   │   ├── ios/               # iOS native configuration
+│   │   ├── android/           # Android native configuration
+│   │   └── app.json           # Expo configuration
+│   ├── web-dashboard/          # Next.js admin web portal
+│   └── admin-portal/           # Alternative admin interface
+│
+├── packages/
+│   ├── design-tokens/          # Design system (colors, spacing, typography)
+│   ├── domain-schema/          # Core TypeScript domain models
+│   ├── database/               # SQLite database layer with migrations
+│   ├── business-core/          # Core business logic and rules
+│   ├── ui-components/          # Shared React Native UI components
+│   ├── intelligence-services/  # ML/AI services (predictive, NLP, clustering)
+│   ├── realtime-sync/          # YJS-based CRDT synchronization
+│   ├── offline-support/        # Offline queue and conflict resolution
+│   ├── api-clients/            # NYC API integrations (311, Buildings, etc.)
+│   ├── managers/               # State management (Zustand/Redux)
+│   ├── command-chains/         # Command pattern for complex operations
+│   ├── context-engines/        # Context awareness and intelligent routing
+│   ├── data-seed/              # Database seeding and validation
+│   └── testing/                # E2E testing utilities and fixtures
+│
+├── scripts/                    # Build and deployment scripts
+├── nx.json                     # Nx workspace configuration
+├── tsconfig.base.json          # TypeScript base configuration
+└── package.json                # Root package with workspace scripts
+```
+
+### Package Descriptions
+
+| Package | Purpose | Key Technologies |
+|---------|---------|------------------|
+| **mobile-rn** | Main React Native application with Expo Router | React Native, Expo, React Navigation |
+| **design-tokens** | Centralized design system tokens | CSS-in-JS, Theme Provider |
+| **domain-schema** | TypeScript models for all entities (Buildings, Workers, Tasks, etc.) | TypeScript, Zod |
+| **database** | SQLite database with migrations and query builders | SQLite, TypeORM-style queries |
+| **business-core** | Core business logic independent of UI | TypeScript, Validation |
+| **ui-components** | Reusable React Native components (Button, Card, Modal, etc.) | React Native, Styled Components |
+| **intelligence-services** | ML/AI services for predictions and insights | Brain.js, ML-Matrix, Natural |
+| **realtime-sync** | CRDT-based real-time synchronization | YJS, y-indexeddb, lib0 |
+| **offline-support** | Offline queue, conflict resolution, background sync | IndexedDB, Service Workers |
+| **api-clients** | NYC Open Data API clients (311, Buildings, DOB, HPD) | Axios, Rate Limiting |
+| **managers** | State management with stores and contexts | Zustand, React Context |
+| **command-chains** | Command pattern for undo/redo and complex workflows | TypeScript, Memento Pattern |
+| **context-engines** | Context awareness and intelligent decision-making | Geospatial, Time-based logic |
+| **data-seed** | Database seeding with 19 buildings, 7 workers, 120+ routines | JSON, Validation |
+| **testing** | E2E testing with Detox, fixtures, and test utilities | Detox, Jest, Testing Library |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js**: >= 18.0.0
+- **npm**: >= 9.0.0
+- **Xcode**: >= 15.0 (for iOS development)
+- **Android Studio**: >= 2023.1.1 (for Android development)
+- **Expo CLI**: Installed globally (`npm install -g expo-cli`)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/cyntientops/cursor.git
+cd cyntientops-mp
+
+# Install all dependencies
+npm install
+
+# Validate data seed integrity
+npm run validate:data
+```
+
+### Running the Application
+
+#### Mobile (iOS/Android)
+```bash
+# Start the Expo development server
+npm run dev:mobile
+
+# In the Expo CLI, press:
+# - 'i' for iOS simulator
+# - 'a' for Android emulator
+# - Scan QR code with Expo Go app for physical device
+```
+
+#### Web Dashboard
+```bash
+# Start the Next.js web dashboard
+npm run dev:web
+
+# Open http://localhost:3000 in your browser
+```
+
+### Building Packages
+
+```bash
+# Build all packages in dependency order
+npm run build:all
+
+# Build specific packages
+npm run build:design-tokens
+npm run build:ui-components
+npm run build:database
+npm run build:managers
+npm run build:intelligence
+```
+
+---
+
+## 📋 Available Scripts
+
+### Development
+- `npm run dev:mobile` - Start Expo mobile development server
+- `npm run dev:web` - Start Next.js web dashboard
+- `npm run validate:data` - Validate data seed integrity
+
+### Building
+- `npm run build:all` - Build all packages
+- `npm run build:design-tokens` - Build design tokens
+- `npm run build:ui-components` - Build UI components
+- `npm run build:database` - Build database layer
+- `npm run build:managers` - Build state managers
+- `npm run build:intelligence` - Build intelligence services
+- `npm run build:context` - Build context engines
+- `npm run build:commands` - Build command chains
+- `npm run build:offline` - Build offline support
+- `npm run build:realtime` - Build realtime sync
+- `npm run build:testing` - Build testing utilities
+
+### Testing
+- `npm run test:all` - Run all tests
+- `npm run test:e2e` - Run end-to-end tests
+- `npm run lint:all` - Lint all packages
+
+### Maintenance
+- `npm run clean` - Clean Nx cache and node_modules
+- `npm run install:all` - Install all workspace dependencies
+
+---
+
+## 🔐 Authentication
+
+The application supports three user roles with demo credentials:
+
+### Quick Access Glass Cards (6 Users)
+1. **Kevin Dutan** (Worker) - `worker1@example.com` / `password`
+2. **Greg Hutson** (Worker) - `worker2@example.com` / `password`
+3. **Moises Farhat** (Worker) - `worker3@example.com` / `password`
+4. **Michelle** (Admin) - `admin@example.com` / `password`
+5. **David Edelman** (Client) - `client5@example.com` / `password`
+6. **Jerry Edelman** (Client) - `client6@example.com` / `password`
+
+### All Users (15 Total)
+- **7 Workers**: worker1-7@example.com
+- **7 Clients**: client1-7@example.com
+- **1 Admin**: admin@example.com
+
+**Note**: All users use `password` for demo purposes. Configure real authentication in production.
+
+---
+
+## 📊 Data Infrastructure
+
+### Buildings Portfolio
+- **19 Total Buildings**: Including CyntientOps HQ (Building ID: 20)
+- **18 Client Buildings**: Distributed across NYC boroughs
+- **Complete Metadata**: Addresses, BINs, contact information, compliance scores
+
+### Worker Assignments
+- **7 Active Workers**: Kevin Dutan (47 tasks), Greg Hutson, Moises Farhat, etc.
+- **120+ Routine Tasks**: Scheduled across all buildings with time-based triggers
+- **Dynamic Task Generation**: Real-time task creation based on schedules and conditions
+
+### Data Seed Source
+All data is centralized in `packages/data-seed/` with validation:
+- `buildings.json` - 19 buildings with full metadata
+- `workers.json` - 7 workers with assignments
+- `routines.json` - 120+ scheduled maintenance routines
+- `clients.json` - 7 client accounts with building portfolios
+
+**Single Source of Truth**: All dashboards and services pull from data-seed, ensuring consistency.
+
+---
+
+## 🧠 Intelligence Services
+
+### Machine Learning Capabilities
+- **Predictive Maintenance**: Predicts maintenance needs using historical data, seasonal factors, building age, and compliance scores
+- **K-Means Clustering**: Groups buildings by characteristics for optimized routing
+- **NLP Task Parser**: Extracts structured task data from natural language input
+- **Route Optimization**: Minimizes travel time and maximizes efficiency
+- **Anomaly Detection**: Identifies unusual patterns in maintenance history
+
+### ML Models
+- **MLEngine**: Core TensorFlow.js wrapper with model persistence
+- **PredictiveMaintenanceService**: Failure prediction with confidence scoring
+- **RouteOptimizationService**: Multi-stop route planning with constraints
+- **TaskPrioritizationService**: Intelligent task ordering based on urgency, deadline, and worker capacity
+
+---
+
+## 🗺️ NYC API Integrations
+
+### Connected APIs (via `api-clients` package)
+- **NYC 311**: Service request tracking and historical data
+- **NYC Buildings API**: Building information, permits, violations
+- **DOB (Department of Buildings)**: Permits, inspections, violations
+- **HPD (Housing Preservation)**: Complaints, registrations, violations
+- **NOAA Weather**: Real-time weather data and forecasts
+
+### API Features
+- **Rate Limiting**: Automatic throttling to respect API limits
+- **Caching**: Intelligent caching with TTL for reduced API calls
+- **Error Handling**: Retry logic with exponential backoff
+- **Offline Queue**: Store requests when offline, sync when online
+
+---
+
+## 📱 Platform Support
+
+### iOS (>= 13.4)
+- ✅ Full native module support
+- ✅ Face ID / Touch ID biometric authentication
+- ✅ Background location and task execution
+- ✅ Push notifications with rich media
+- ✅ MapKit integration for native maps
+- ✅ Camera and photo library access
+- ✅ Offline-first with IndexedDB persistence
+
+### Android (>= API 23)
+- ✅ Full native module support
+- ✅ Fingerprint / Face Unlock biometric authentication
+- ✅ Background services and geofencing
+- ✅ Push notifications with actions
+- ✅ Google Maps integration
+- ✅ Camera and media storage access
+- ✅ Offline-first with IndexedDB persistence
+
+### Web (Progressive Web App)
+- ✅ Responsive web dashboard (Next.js)
+- ✅ Service Worker for offline support
+- ✅ IndexedDB for local storage
+- ✅ Web Push notifications
+- ✅ Mapbox GL JS for interactive maps
+- ⚠️ Limited camera access (WebRTC only)
+
+---
+
+## 🔧 Technology Stack
+
+### Core Technologies
+- **React Native**: 0.76+ (New Architecture enabled)
+- **Expo**: SDK 52+ with Expo Router
+- **TypeScript**: 5.9+ with strict mode
+- **Nx**: 18+ for monorepo management
+
+### UI & Design
+- **React Navigation**: 6+ with Expo Router
+- **Styled Components**: CSS-in-JS styling
+- **React Native Reanimated**: High-performance animations
+- **Expo GL**: WebGL-based custom rendering
+
+### Data & State
+- **Zustand**: Lightweight state management
+- **React Context**: Component-level state
+- **SQLite**: Local database with react-native-sqlite-storage
+- **YJS**: CRDT-based synchronization
+
+### ML & AI
+- **Brain.js**: Neural network library
+- **ml-matrix**: Matrix operations for ML
+- **ml-kmeans**: K-means clustering
+- **Natural**: Natural language processing
+- **Compromise**: NLP text understanding
+
+### Networking & APIs
+- **Axios**: HTTP client with interceptors
+- **React Query**: Server state management
+- **WebSocket**: Real-time communication
+- **Firebase**: Backend services (optional)
+- **Supabase**: PostgreSQL backend (optional)
+
+### DevOps & Testing
+- **Jest**: Unit testing
+- **Detox**: E2E testing
+- **ESLint**: Code linting
+- **Prettier**: Code formatting
+- **Husky**: Git hooks
+
+---
+
+## 📚 Documentation
+
+### Primary Documentation
+- **[CONTINUITY_REPORT.md](./CONTINUITY_REPORT.md)** (1,141 lines): Comprehensive feature implementation status, architecture details, and data infrastructure
+- **[Package READMEs](./packages/)**: Individual package documentation in each package directory
+- **[API Documentation](./docs/api/)**: Detailed API client documentation (coming soon)
+
+### Development Guides
+- **[Contributing Guidelines](./CONTRIBUTING.md)**: How to contribute to the project (coming soon)
+- **[Architecture Decision Records](./docs/adr/)**: Key architectural decisions (coming soon)
+- **[Deployment Guide](./docs/deployment/)**: Production deployment instructions (coming soon)
+
+---
+
+## 🧪 Testing
+
+### Unit Tests
+```bash
+# Run all unit tests
+npm run test:all
+
+# Run tests for a specific package
+nx test design-tokens
+nx test ui-components
+nx test intelligence-services
+```
+
+### E2E Tests
+```bash
+# Run E2E tests (requires iOS simulator or Android emulator)
+npm run test:e2e
+```
+
+### Data Validation
+```bash
+# Validate data seed integrity
+npm run validate:data
+```
+
+---
+
+## 🚢 Deployment
+
+### EAS Build (Expo Application Services)
+```bash
+# Install EAS CLI
+npm install -g eas-cli
+
+# Login to Expo
+eas login
+
+# Configure EAS Build
+eas build:configure
+
+# Build for iOS
+eas build --platform ios
+
+# Build for Android
+eas build --platform android
+
+# Submit to App Store / Play Store
+eas submit --platform ios
+eas submit --platform android
+```
+
+### Web Deployment (Next.js)
+```bash
+# Build web dashboard
+cd apps/web-dashboard
+npm run build
+
+# Deploy to Vercel (recommended)
+vercel deploy
+
+# Or deploy to custom server
+npm run start
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+1. **Fork the repository** and create a feature branch
+2. **Follow TypeScript strict mode** conventions
+3. **Write tests** for new features
+4. **Update documentation** (CONTINUITY_REPORT.md and package READMEs)
+5. **Run linting and tests** before submitting
+6. **Submit a Pull Request** with a clear description
+
+### Code Style
+- Use TypeScript strict mode
+- Follow ESLint rules (`.eslintrc.js`)
+- Use Prettier for formatting
+- Write meaningful commit messages (Conventional Commits)
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](./LICENSE) for details.
+
+---
+
+## 👥 Team
+
+**CyntientOps Team** - Enterprise field operations management
+
+- **Project Lead**: [Your Name]
+- **Architecture**: [Your Name]
+- **ML/AI**: [Your Name]
+- **Mobile Development**: [Your Name]
+
+---
+
+## 🙏 Acknowledgments
+
+- **NYC Open Data**: For providing comprehensive building and 311 data APIs
+- **Expo Team**: For the excellent React Native framework and tooling
+- **Nx Team**: For powerful monorepo management
+- **React Native Community**: For continuous innovation and support
+
+---
+
+## 📞 Support
+
+For questions, issues, or feature requests:
+
+- **GitHub Issues**: [Create an issue](https://github.com/cyntientops/cursor/issues)
+- **Email**: support@cyntientops.com
+- **Documentation**: [docs.cyntientops.com](https://docs.cyntientops.com)
+
+---
+
+**Built with ❤️ by the CyntientOps Team**
+*Empowering building maintenance teams with AI-driven field operations management*

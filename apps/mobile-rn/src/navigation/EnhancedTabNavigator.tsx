@@ -1,37 +1,39 @@
 /**
  * @cyntientops/mobile-rn
  * 
- * Enhanced Tab Navigator - Based on Audit Recommendations
- * Features: Weather integration, Global Nova, Clock-in flow, Emergency access
+ * Enhanced Tab Navigator - Role-based tab structure
+ * Worker: Home, Schedule, SiteDeparture, Map, Intelligence (5 tabs)
+ * Client: Home, Intelligence (2 tabs)  
+ * Admin: Home, Workers, Intelligence (3 tabs)
+ * 
+ * Note: Portfolio and Map functionality are within Intelligence panels
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
+import { Ionicons } from '@cyntientops/ui-components/src/mocks/expo-vector-icons';
+import { Colors } from '@cyntientops/design-tokens';
 
-// Import screens
+// Import main dashboard screens
 import { WorkerDashboardMainView } from '@cyntientops/ui-components/src/dashboards/WorkerDashboardMainView';
 import { ClientDashboardMainView } from '@cyntientops/ui-components/src/dashboards/ClientDashboardMainView';
 import { AdminDashboardMainView } from '@cyntientops/ui-components/src/dashboards/AdminDashboardMainView';
-import { BuildingDetailScreen } from '../screens/BuildingDetailScreen';
-import { TaskTimelineScreen } from '../screens/TaskTimelineScreen';
 
-// Import new tab screens
+// Import tab screens
 import { WorkerScheduleTab } from './tabs/WorkerScheduleTab';
+import { WorkerSiteDepartureTab } from './tabs/WorkerSiteDepartureTab';
 import { WorkerMapTab } from './tabs/WorkerMapTab';
 import { WorkerIntelligenceTab } from './tabs/WorkerIntelligenceTab';
-import { ClientPortfolioTab } from './tabs/ClientPortfolioTab';
-import { ClientMapTab } from './tabs/ClientMapTab';
+import { ClientIntelligenceTab } from './tabs/ClientIntelligenceTab';
 import { AdminWorkersTab } from './tabs/AdminWorkersTab';
-import { AdminPortfolioTab } from './tabs/AdminPortfolioTab';
+import { AdminIntelligenceTab } from './tabs/AdminIntelligenceTab';
 
 // Import global components
 import { EmergencyQuickAccess } from '../components/EmergencyQuickAccess';
 import { WeatherAlertBanner } from '../components/WeatherAlertBanner';
+
+const Tab = createBottomTabNavigator();
 
 // Types
 export interface TabNavigatorProps {
@@ -40,351 +42,311 @@ export interface TabNavigatorProps {
   userName: string;
 }
 
-export interface TabConfig {
-  name: string;
-  component: React.ComponentType<any>;
-  icon: string;
-  label: string;
-  badge?: number;
-  showWeather?: boolean;
-}
-
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
-
-// Worker Tab Configuration
-const WorkerTabs: TabConfig[] = [
-  {
-    name: 'WorkerHome',
-    component: WorkerDashboardMainView,
-    icon: 'home',
-    label: 'Home',
-    showWeather: true,
-  },
-  {
-    name: 'Schedule',
-    component: WorkerScheduleTab,
-    icon: 'calendar',
-    label: 'Schedule',
-    showWeather: true,
-  },
-  {
-    name: 'Map',
-    component: WorkerMapTab,
-    icon: 'map',
-    label: 'Map',
-  },
-  {
-    name: 'Intelligence',
-    component: WorkerIntelligenceTab,
-    icon: 'analytics',
-    label: 'Nova',
-  },
-];
-
-// Client Tab Configuration
-const ClientTabs: TabConfig[] = [
-  {
-    name: 'ClientHome',
-    component: ClientDashboardMainView,
-    icon: 'home',
-    label: 'Home',
-  },
-  {
-    name: 'Portfolio',
-    component: ClientPortfolioTab,
-    icon: 'business',
-    label: 'Portfolio',
-  },
-  {
-    name: 'Map',
-    component: ClientMapTab,
-    icon: 'map',
-    label: 'Map',
-  },
-  {
-    name: 'Intelligence',
-    component: WorkerIntelligenceTab, // Reuse for now
-    icon: 'analytics',
-    label: 'Insights',
-  },
-];
-
-// Admin Tab Configuration
-const AdminTabs: TabConfig[] = [
-  {
-    name: 'AdminHome',
-    component: AdminDashboardMainView,
-    icon: 'home',
-    label: 'Home',
-  },
-  {
-    name: 'Workers',
-    component: AdminWorkersTab,
-    icon: 'people',
-    label: 'Workers',
-  },
-  {
-    name: 'Portfolio',
-    component: AdminPortfolioTab,
-    icon: 'business',
-    label: 'Portfolio',
-  },
-  {
-    name: 'Map',
-    component: WorkerMapTab, // Reuse for now
-    icon: 'map',
-    label: 'Map',
-  },
-  {
-    name: 'Intelligence',
-    component: WorkerIntelligenceTab, // Reuse for now
-    icon: 'analytics',
-    label: 'Analytics',
-  },
-];
-
-// Tab Icon Component
-const TabIcon: React.FC<{
-  name: string;
-  focused: boolean;
-  color: string;
-  size: number;
-  badge?: number;
-}> = ({ name, focused, color, size, badge }) => {
-  const iconName = focused ? `${name}-outline` : `${name}`;
-  
-  return (
-    <View style={styles.tabIconContainer}>
-      <Ionicons name={iconName as any} size={size} color={color} />
-      {badge && badge > 0 && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{badge}</Text>
-        </View>
-      )}
-    </View>
-  );
-};
-
-// Weather Badge Component
-const WeatherBadge: React.FC<{ show: boolean }> = ({ show }) => {
-  if (!show) return null;
-  
-  return (
-    <View style={styles.weatherBadge}>
-      <Text style={styles.weatherBadgeText}>🌤️</Text>
-    </View>
-  );
-};
-
-// Main Tab Navigator
 export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
   userRole,
   userId,
   userName,
 }) => {
-  const [emergencyMode, setEmergencyMode] = useState(false);
+  const [showEmergencyAccess, setShowEmergencyAccess] = useState(false);
   const [weatherAlerts, setWeatherAlerts] = useState<string[]>([]);
 
-  // Get tab configuration based on role
-  const getTabConfig = (): TabConfig[] => {
-    switch (userRole) {
-      case 'worker':
-        return WorkerTabs;
-      case 'client':
-        return ClientTabs;
-      case 'admin':
-        return AdminTabs;
-      default:
-        return WorkerTabs;
-    }
+  // Mock weather alerts for demonstration
+  React.useEffect(() => {
+    setWeatherAlerts([
+      'Rain expected in 2 hours - consider rescheduling outdoor tasks',
+      'High winds warning - secure loose materials',
+    ]);
+  }, []);
+
+  const handleEmergencyActivation = () => {
+    setShowEmergencyAccess(true);
   };
 
-  const tabs = getTabConfig();
+  const handleEmergencyClose = () => {
+    setShowEmergencyAccess(false);
+  };
 
-  // Emergency detection (triple-tap or shake)
-  useEffect(() => {
-    let tapCount = 0;
-    let tapTimer: NodeJS.Timeout;
-
-    const handleTripleTap = () => {
-      tapCount++;
-      if (tapCount === 3) {
-        setEmergencyMode(true);
-        Alert.alert(
-          'Emergency Mode',
-          'Emergency mode activated. All emergency contacts have been notified.',
-          [{ text: 'OK', onPress: () => setEmergencyMode(false) }]
+  const getTabScreens = () => {
+    switch (userRole) {
+      case 'worker':
+        return (
+          <>
+            {/* Worker Tab 1: Home (default) */}
+            <Tab.Screen
+              name="WorkerHome"
+              options={{
+                title: 'Home',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="home-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <WorkerDashboardMainView
+                  workerId={userId}
+                  workerName={userName}
+                  userRole={userRole}
+                  onTaskPress={(task) => console.log('Task pressed:', task)}
+                  onBuildingPress={(buildingId) => console.log('Building pressed:', buildingId)}
+                  onClockIn={(buildingId) => console.log('Clock in:', buildingId)}
+                  onClockOut={() => console.log('Clock out')}
+                  onHeaderRoute={(route) => console.log('Header route:', route)}
+                />
+              )}
+            </Tab.Screen>
+            
+            {/* Worker Tab 2: Schedule */}
+            <Tab.Screen
+              name="WorkerSchedule"
+              options={{
+                title: 'Schedule',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="calendar-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <WorkerScheduleTab
+                  workerId={userId}
+                  userName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+            
+            {/* Worker Tab 3: Site Departure */}
+            <Tab.Screen
+              name="WorkerSiteDeparture"
+              options={{
+                title: 'Departure',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="exit-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <WorkerSiteDepartureTab
+                  workerId={userId}
+                  userName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+            
+            {/* Worker Tab 4: Map */}
+            <Tab.Screen
+              name="WorkerMap"
+              options={{
+                title: 'Map',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="map-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <WorkerMapTab
+                  userId={userId}
+                  userName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+            
+            {/* Worker Tab 5: Intelligence */}
+            <Tab.Screen
+              name="WorkerIntelligence"
+              options={{
+                title: 'Intelligence',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="bulb-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <WorkerIntelligenceTab
+                  userId={userId}
+                  userName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+          </>
         );
-      }
-      
-      clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => {
-        tapCount = 0;
-      }, 1000);
-    };
 
-    // Add triple-tap detection to tab bar
-    return () => clearTimeout(tapTimer);
-  }, []);
+      case 'client':
+        return (
+          <>
+            {/* Client Tab 1: Home (default) */}
+            <Tab.Screen
+              name="ClientHome"
+              options={{
+                title: 'Home',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="business-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <ClientDashboardMainView
+                  clientId={userId}
+                  clientName={userName}
+                  userRole={userRole}
+                  onBuildingPress={(buildingId) => console.log('Building pressed:', buildingId)}
+                  onHeaderRoute={(route) => console.log('Header route:', route)}
+                />
+              )}
+            </Tab.Screen>
+            
+            {/* Client Tab 2: Intelligence */}
+            <Tab.Screen
+              name="ClientIntelligence"
+              options={{
+                title: 'Intelligence',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="bulb-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <ClientIntelligenceTab
+                  clientId={userId}
+                  clientName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+          </>
+        );
 
-  // Weather alert monitoring
-  useEffect(() => {
-    // Simulate weather alerts
-    const alerts = ['High wind warning', 'Rain expected in 2 hours'];
-    setWeatherAlerts(alerts);
-  }, []);
+      case 'admin':
+        return (
+          <>
+            {/* Admin Tab 1: Home (default) */}
+            <Tab.Screen
+              name="AdminHome"
+              options={{
+                title: 'Home',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="settings-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <AdminDashboardMainView
+                  adminId={userId}
+                  adminName={userName}
+                  userRole={userRole}
+                  onWorkerPress={(workerId) => console.log('Worker pressed:', workerId)}
+                  onBuildingPress={(buildingId) => console.log('Building pressed:', buildingId)}
+                  onHeaderRoute={(route) => console.log('Header route:', route)}
+                />
+              )}
+            </Tab.Screen>
+            
+            {/* Admin Tab 2: Workers */}
+            <Tab.Screen
+              name="AdminWorkers"
+              options={{
+                title: 'Workers',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="people-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <AdminWorkersTab
+                  adminId={userId}
+                  adminName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+            
+            {/* Admin Tab 3: Intelligence */}
+            <Tab.Screen
+              name="AdminIntelligence"
+              options={{
+                title: 'Intelligence',
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons name="bulb-outline" color={color} size={size} />
+                ),
+              }}
+            >
+              {() => (
+                <AdminIntelligenceTab
+                  adminId={userId}
+                  adminName={userName}
+                  userRole={userRole}
+                />
+              )}
+            </Tab.Screen>
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <View style={styles.container}>
       {/* Weather Alert Banner */}
       {weatherAlerts.length > 0 && (
-        <WeatherAlertBanner alerts={weatherAlerts} />
-      )}
-
-      {/* Emergency Mode Overlay */}
-      {emergencyMode && (
-        <EmergencyQuickAccess
-          onClose={() => setEmergencyMode(false)}
-          userId={userId}
+        <WeatherAlertBanner
+          alerts={weatherAlerts}
+          onAlertPress={(alert) => console.log('Alert pressed:', alert)}
+          autoDismiss={true}
+          dismissDelay={5000}
         />
       )}
 
       {/* Main Tab Navigator */}
       <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            const tab = tabs.find(t => t.name === route.name);
-            return (
-              <TabIcon
-                name={tab?.icon || 'help'}
-                focused={focused}
-                color={color}
-                size={size}
-                badge={tab?.badge}
-              />
-            );
-          },
-          tabBarLabel: ({ focused, color }) => {
-            const tab = tabs.find(t => t.name === route.name);
-            return (
-              <View style={styles.tabLabelContainer}>
-                <Text style={[styles.tabLabel, { color }]}>
-                  {tab?.label}
-                </Text>
-                {tab?.showWeather && <WeatherBadge show={true} />}
-              </View>
-            );
-          },
+        screenOptions={{
+          headerShown: false,
           tabBarStyle: {
             backgroundColor: Colors.background,
-            borderTopColor: Colors.border.medium,
             borderTopWidth: 1,
-            height: 80,
-            paddingBottom: 10,
-            paddingTop: 10,
+            borderTopColor: Colors.border.light,
+            elevation: 0,
+            shadowOpacity: 0,
           },
-          tabBarActiveTintColor: Colors.role.worker.primary,
+          tabBarActiveTintColor: getRoleColor(userRole),
           tabBarInactiveTintColor: Colors.text.tertiary,
-          headerShown: false,
-        })}
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: '600',
+          },
+        }}
       >
-        {tabs.map((tab) => (
-          <Tab.Screen
-            key={tab.name}
-            name={tab.name}
-            component={tab.component}
-            initialParams={{
-              userId,
-              userName,
-              userRole,
-            }}
-          />
-        ))}
+        {getTabScreens()}
       </Tab.Navigator>
 
+      {/* Emergency Quick Access Modal */}
+      {showEmergencyAccess && (
+        <EmergencyQuickAccess
+          onClose={handleEmergencyClose}
+          userId={userId}
+        />
+      )}
     </View>
   );
 };
 
-// Stack Navigator for detailed screens
-export const EnhancedStackNavigator: React.FC<TabNavigatorProps> = ({
-  userRole,
-  userId,
-  userName,
-}) => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: Colors.background,
-          borderBottomColor: Colors.border.medium,
-        },
-        headerTintColor: Colors.text.primary,
-        headerTitleStyle: {
-          fontWeight: '600',
-        },
-      }}
-    >
-      <Stack.Screen
-        name="MainTabs"
-        component={EnhancedTabNavigator}
-        options={{ headerShown: false }}
-        initialParams={{ userRole, userId, userName }}
-      />
-      <Stack.Screen
-        name="BuildingDetail"
-        component={BuildingDetailScreen}
-        options={{ title: 'Building Details' }}
-      />
-      <Stack.Screen
-        name="TaskTimeline"
-        component={TaskTimelineScreen}
-        options={{ title: 'Task Timeline' }}
-      />
-    </Stack.Navigator>
-  );
+// Helper function to get role-specific colors
+const getRoleColor = (role: string) => {
+  switch (role) {
+    case 'worker': return Colors.role.worker.primary;
+    case 'client': return Colors.role.client.primary;
+    case 'admin': return Colors.role.admin.primary;
+    default: return Colors.primaryAction;
+  }
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  tabIconContainer: {
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badge: {
-    position: 'absolute',
-    top: -5,
-    right: -5,
-    backgroundColor: Colors.status.error,
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badgeText: {
-    color: Colors.text.inverse,
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  tabLabelContainer: {
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  tabLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  weatherBadge: {
-    marginTop: 2,
-  },
-  weatherBadgeText: {
-    fontSize: 10,
   },
 });
 

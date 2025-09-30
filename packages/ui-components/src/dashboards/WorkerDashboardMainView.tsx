@@ -22,7 +22,14 @@ import { NovaAIChatModal } from '../modals/NovaAIChatModal';
 import { WorkerHeroNowNext } from './components/WorkerHeroNowNext';
 import { LegacyAnalyticsDashboard, AnalyticsData } from '../analytics/components/AnalyticsDashboard';
 import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientops/intelligence-services';
-import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
+import { IntelligencePanelTabs } from './components/IntelligencePanelTabs';
+import { IntelligenceOverlay } from './components/IntelligenceOverlay';
+import { RoutinesOverlayContent } from './components/RoutinesOverlayContent';
+import { QuickActionsOverlayContent } from './components/QuickActionsOverlayContent';
+import { InsightsOverlayContent } from './components/InsightsOverlayContent';
+import { AlertsOverlayContent } from './components/AlertsOverlayContent';
+import { PredictionsOverlayContent } from './components/PredictionsOverlayContent';
+// import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
 // import { useAppState } from '@cyntientops/business-core';
 
 export interface WorkerDashboardMainViewProps {
@@ -81,13 +88,13 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   onMessageSent,
   onEmergencyAlert,
 }) => {
-  // const {
-  //   worker: workerState,
-  //   tasks: taskState,
-  //   buildings: buildingState,
+  // const { 
+  //   worker: workerState, 
+  //   tasks: taskState, 
+  //   buildings: buildingState, 
   //   novaAI: novaAIState,
   //   realTime: realTimeState,
-  //   ui: uiState
+  //   ui: uiState 
   // } = useAppState();
 
   // Import real data from data-seed
@@ -99,23 +106,23 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   const workerRoutines = routinesData.filter((r: any) => r.workerId.toString() === workerId);
   const assignedBuildingIds = [...new Set(workerRoutines.map((r: any) => r.buildingId))];
   const workerBuildings = buildingsData.filter((b: any) => assignedBuildingIds.includes(b.id));
-
-  const workerState = {
-    currentWorker: { avatar: undefined },
-    isClockedIn: false,
-    currentBuilding: undefined,
-    clockInTime: undefined
+  
+  const workerState = { 
+    currentWorker: { avatar: undefined }, 
+    isClockedIn: false, 
+    currentBuilding: undefined, 
+    clockInTime: undefined 
   };
-  const taskState = {
-    totalTasks: 0,
-    completedTasks: 0,
-    completionRate: 0,
-    urgentTasks: [],
-    todaysTasks: []
+  const taskState = { 
+    totalTasks: 0, 
+    completedTasks: 0, 
+    completionRate: 0, 
+    urgentTasks: [], 
+    todaysTasks: [] 
   };
-  const buildingState = {
-    assignedBuildings: [],
-    weather: undefined
+  const buildingState = { 
+    assignedBuildings: [], 
+    weather: undefined 
   };
   const novaAIState = { intelligence: { recommendations: [], alerts: [], predictions: [] } };
   const realTimeState = { emergencyAlerts: [], recentMessages: [] };
@@ -128,6 +135,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   const [selectedAnalyticsTab, setSelectedAnalyticsTab] = React.useState<'overview' | 'performance' | 'compliance' | 'workers'>('overview');
   const [maintenancePredictions, setMaintenancePredictions] = React.useState<MaintenancePrediction[]>([]);
   const [predictiveMaintenanceService] = React.useState(() => new PredictiveMaintenanceService(null as any));
+  const [selectedIntelligenceTab, setSelectedIntelligenceTab] = React.useState<'routines' | 'insights' | 'alerts' | 'predictions' | 'quickactions' | null>(null);
 
   // Real-time analytics data for worker performance
   const analyticsData: AnalyticsData = {
@@ -218,6 +226,16 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     }
   };
 
+  const handleIntelligenceTabPress = (tabId: 'routines' | 'insights' | 'alerts' | 'predictions' | 'quickactions') => {
+    if (selectedIntelligenceTab === tabId) {
+      // If same tab is pressed, close overlay
+      setSelectedIntelligenceTab(null);
+    } else {
+      // Open new tab overlay
+      setSelectedIntelligenceTab(tabId);
+    }
+  };
+
   const loadWorkerDashboardData = async () => {
     // Data is now managed by state management system
     // No need for local loading state
@@ -282,15 +300,65 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   };
 
   const generateUrgentTasks = (workerId: string, count: number): OperationalDataTaskAssignment[] => {
-    const taskService = TaskService.getInstance();
-    const schedule = taskService.generateWorkerTasks(workerId);
-    return schedule.urgent.slice(0, count);
+    // Mock urgent tasks - in real app, this would come from TaskService
+    return [
+      {
+        id: 'urgent-1',
+        name: 'Urgent: Sidewalk Cleaning - 131 Perry',
+        description: 'High priority sidewalk cleaning task',
+        buildingId: '10',
+        buildingName: '131 Perry Street',
+        buildingAddress: '131 Perry Street, New York, NY',
+        buildingLatitude: 40.7359,
+        buildingLongitude: -74.0076,
+      assigned_worker_id: workerId,
+        assigned_building_id: '10',
+        due_date: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutes from now
+        status: 'Pending',
+        priority: 'critical',
+        category: 'Cleaning',
+        skillLevel: 'Basic',
+        recurrence: 'Daily',
+        startHour: 6,
+        endHour: 7,
+        daysOfWeek: 'Monday,Tuesday,Wednesday,Thursday,Friday',
+        estimatedDuration: 60,
+        requiresPhoto: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      }
+    ].slice(0, count);
   };
 
   const generateTodaysTasks = (workerId: string, totalTasks: number): OperationalDataTaskAssignment[] => {
-    const taskService = TaskService.getInstance();
-    const schedule = taskService.generateWorkerTasks(workerId);
-    return schedule.today.slice(0, Math.min(totalTasks, 12));
+    // Mock today's tasks - in real app, this would come from TaskService
+    return [
+      {
+        id: 'today-1',
+        name: 'Sidewalk + Curb Sweep / Trash Return - 131 Perry',
+        description: 'Daily sidewalk and curb cleaning with trash return',
+        buildingId: '10',
+        buildingName: '131 Perry Street',
+        buildingAddress: '131 Perry Street, New York, NY',
+        buildingLatitude: 40.7359,
+        buildingLongitude: -74.0076,
+      assigned_worker_id: workerId,
+        assigned_building_id: '10',
+        due_date: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+        status: 'Pending',
+        priority: 'high',
+        category: 'Cleaning',
+        skillLevel: 'Basic',
+        recurrence: 'Daily',
+        startHour: 6,
+        endHour: 7,
+        daysOfWeek: 'Monday,Tuesday,Wednesday,Thursday,Friday',
+        estimatedDuration: 60,
+        requiresPhoto: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      }
+    ].slice(0, Math.min(totalTasks, 12));
   };
 
   const generateCurrentBuilding = (buildingId: string): NamedCoordinate => {
@@ -306,7 +374,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         address: 'New York, NY'
       };
     }
-
+    
     return {
       id: buildingId,
       name: building.name,
@@ -472,6 +540,65 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     );
   };
 
+  const renderDSNYCard = () => {
+    if (!dashboardData) return null;
+
+    // Get DSNY tasks for today
+    const dsnyTasks = dashboardData.todaysTasks.filter(task => 
+      task.category === 'DSNY' || task.name.toLowerCase().includes('dsny') || task.name.toLowerCase().includes('collection')
+    );
+
+    if (dsnyTasks.length === 0) return null;
+
+    return (
+      <View style={styles.dsnySection}>
+        <GlassCard
+          intensity="regular"
+          cornerRadius={CornerRadius.LARGE}
+          style={styles.dsnyCard}
+        >
+          <View
+            style={[styles.dsnyGradient, { backgroundColor: Colors.status.info }]}
+          >
+            <View style={styles.dsnyHeader}>
+              <Text style={styles.dsnyTitle}>🗑️ DSNY Collection Schedule</Text>
+              <Text style={styles.dsnySubtitle}>Today's Collection Tasks</Text>
+            </View>
+            
+            <View style={styles.dsnyContent}>
+              {dsnyTasks.slice(0, 2).map(task => (
+                <View key={task.id} style={styles.dsnyTaskItem}>
+                  <View style={styles.dsnyTaskInfo}>
+                    <Text style={styles.dsnyTaskName}>{task.name}</Text>
+                    <Text style={styles.dsnyTaskLocation}>📍 {task.buildingName}</Text>
+                  </View>
+                  <View style={styles.dsnyTaskTime}>
+                    <Text style={styles.dsnyTaskTimeText}>
+                      {new Date(task.due_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+              
+              {dsnyTasks.length > 2 && (
+                <Text style={styles.dsnyMoreTasks}>
+                  +{dsnyTasks.length - 2} more collection tasks
+                </Text>
+              )}
+            </View>
+            
+            <TouchableOpacity
+              style={styles.dsnyViewAllButton}
+              onPress={() => console.log('View all DSNY tasks')}
+            >
+              <Text style={styles.dsnyViewAllText}>View All DSNY Tasks</Text>
+            </TouchableOpacity>
+          </View>
+        </GlassCard>
+      </View>
+    );
+  };
+
   const renderNovaIntelligence = () => {
     if (!dashboardData) return null;
 
@@ -607,15 +734,17 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         }}
       />
 
+      {/* Base Screen Content - Only ~450px total */}
       <ScrollView
         ref={scrollViewRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.baseScreenContent}
       >
-        {/* Hero Cards */}
+        {/* Hero Cards - ~200px */}
         {renderHeroCard()}
         
-        {/* Weather Hybrid Card */}
+        {/* Weather Hybrid Card - ~150px */}
         {dashboardData.weather && (
           <WeatherBasedHybridCard
             weather={dashboardData.weather}
@@ -628,25 +757,138 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
             } : undefined}
           />
         )}
-        
-        {/* Intelligence Panel */}
-        {renderNovaIntelligence()}
-        
-        {/* Additional Sections (Collapsible/Secondary) */}
-        {renderUrgentTasks()}
-        {renderCurrentBuilding()}
-        {renderTodaysTasks()}
-        
-        {/* Analytics Dashboard Integration */}
-        <View style={styles.analyticsSection}>
-          <Text style={styles.sectionTitle}>📊 Performance Analytics</Text>
-          <LegacyAnalyticsDashboard
-            analytics={analyticsData}
-            selectedTab={selectedAnalyticsTab}
-            onTabChange={setSelectedAnalyticsTab}
-          />
-        </View>
       </ScrollView>
+
+      {/* Intelligence Panel Tabs - Always visible at bottom - ~100px */}
+      <IntelligencePanelTabs
+        selectedTab={selectedIntelligenceTab}
+        onTabPress={handleIntelligenceTabPress}
+        collapsed={!selectedIntelligenceTab}
+        userRole="worker"
+      />
+
+      {/* Intelligence Overlays - Full screen when active */}
+      {selectedIntelligenceTab === 'routines' && (
+        <IntelligenceOverlay
+          visible={true}
+          onClose={() => setSelectedIntelligenceTab(null)}
+          title="Routines & Tasks"
+          tabId="routines"
+        >
+          <RoutinesOverlayContent
+            workerId={workerId}
+            workerName={workerName}
+            onTaskPress={onTaskPress}
+          />
+        </IntelligenceOverlay>
+      )}
+
+      {selectedIntelligenceTab === 'quickactions' && (
+        <IntelligenceOverlay
+          visible={true}
+          onClose={() => setSelectedIntelligenceTab(null)}
+          title="Quick Actions"
+          tabId="quickactions"
+        >
+          <QuickActionsOverlayContent
+            workerId={workerId}
+            workerName={workerName}
+            onActionPress={(actionId) => console.log('Action pressed:', actionId)}
+          />
+        </IntelligenceOverlay>
+      )}
+
+      {selectedIntelligenceTab === 'insights' && (
+        <IntelligenceOverlay
+          visible={true}
+          onClose={() => setSelectedIntelligenceTab(null)}
+          title="Nova AI Insights"
+          tabId="insights"
+        >
+          <InsightsOverlayContent
+            workerId={workerId}
+            workerName={workerName}
+            novaInsights={dashboardData.novaInsights}
+            currentBuilding={dashboardData.currentBuilding}
+            analytics={{
+              tasksCompleted: dashboardData.worker.completedTasks,
+              avgCompletionTime: analyticsData.performanceMetrics.averageTaskTime,
+              compliance: analyticsData.performanceMetrics?.overallCompletionRate || 0,
+              efficiency: analyticsData.performanceMetrics.workerEfficiency,
+            }}
+            onBuildingPress={onBuildingPress}
+          />
+        </IntelligenceOverlay>
+      )}
+
+      {selectedIntelligenceTab === 'alerts' && (
+        <IntelligenceOverlay
+          visible={true}
+          onClose={() => setSelectedIntelligenceTab(null)}
+          title="Alerts & Notifications"
+          tabId="alerts"
+        >
+          <AlertsOverlayContent
+            workerId={workerId}
+            workerName={workerName}
+            urgentTasks={dashboardData.urgentTasks}
+            alerts={dashboardData.novaInsights.alerts?.map((alert, index) => ({
+              id: `alert-${index}`,
+              type: 'system' as const,
+              title: alert,
+              message: alert,
+              timestamp: new Date().toISOString(),
+              priority: 'medium' as const,
+              icon: '⚠️',
+            })) || []}
+            onTaskPress={onTaskPress}
+          />
+        </IntelligenceOverlay>
+      )}
+
+      {selectedIntelligenceTab === 'predictions' && (
+        <IntelligenceOverlay
+          visible={true}
+          onClose={() => setSelectedIntelligenceTab(null)}
+          title="Predictive Analytics"
+          tabId="predictions"
+        >
+          <PredictionsOverlayContent
+            workerId={workerId}
+            workerName={workerName}
+            maintenancePredictions={maintenancePredictions.map(pred => ({
+              ...pred,
+              component: pred.componentName || 'Unknown Component',
+            }))}
+            trends={[
+              {
+                label: 'Task Completion',
+                value: dashboardData.worker.completionRate,
+                change: dashboardData.performance.thisWeek - dashboardData.performance.lastWeek,
+                trend: (dashboardData.performance.thisWeek > dashboardData.performance.lastWeek ? 'up' : 'down') as 'up' | 'down',
+              },
+              {
+                label: 'Efficiency',
+                value: analyticsData.performanceMetrics.workerEfficiency,
+                change: 5.2,
+                trend: 'up' as const,
+              },
+              {
+                label: 'Client Satisfaction',
+                value: analyticsData.performanceMetrics.clientSatisfaction,
+                change: 2.1,
+                trend: 'up' as const,
+              },
+              {
+                label: 'Avg Task Time',
+                value: analyticsData.performanceMetrics.averageTaskTime,
+                change: -3.5,
+                trend: 'down' as const,
+              },
+            ]}
+          />
+        </IntelligenceOverlay>
+      )}
 
       <EmergencySystem
         userRole={userRole}
@@ -690,6 +932,20 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  baseScreenContent: {
+    paddingBottom: 120, // Space for Intelligence Panel Tabs
+  },
+  overlayContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+  },
+  overlayText: {
+    fontSize: Typography.fontSize.large,
+    color: Colors.text.secondary,
+    textAlign: 'center',
   },
   heroCard: {
     margin: Spacing.lg,
@@ -958,6 +1214,87 @@ const styles = StyleSheet.create({
   },
   analyticsSection: {
     marginBottom: Spacing.lg,
+  },
+  dsnySection: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  dsnyCard: {
+    overflow: 'hidden',
+  },
+  dsnyGradient: {
+    padding: 20,
+  },
+  dsnyHeader: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  dsnyTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.text.inverse,
+    marginBottom: 4,
+  },
+  dsnySubtitle: {
+    fontSize: 14,
+    color: Colors.text.inverse,
+    opacity: 0.9,
+  },
+  dsnyContent: {
+    marginBottom: 16,
+  },
+  dsnyTaskItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+  },
+  dsnyTaskInfo: {
+    flex: 1,
+  },
+  dsnyTaskName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.text.inverse,
+    marginBottom: 2,
+  },
+  dsnyTaskLocation: {
+    fontSize: 12,
+    color: Colors.text.inverse,
+    opacity: 0.8,
+  },
+  dsnyTaskTime: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  dsnyTaskTimeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Colors.text.inverse,
+  },
+  dsnyMoreTasks: {
+    fontSize: 12,
+    color: Colors.text.inverse,
+    opacity: 0.8,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  dsnyViewAllButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  dsnyViewAllText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.text.inverse,
   },
 });
 

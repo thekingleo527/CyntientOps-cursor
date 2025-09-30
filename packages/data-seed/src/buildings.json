@@ -186,9 +186,10 @@
     "boilerCount": 1,
     "boilerLocation": "basement",
     "garbageBinSetOut": true,
-    "roofDrains": false,
-    "backyardDrains": false,
-    "drainCheckRequired": "none"
+    "roofDrains": true,
+    "backyardDrains": true,
+    "drainCheckRequired": "seasonal",
+    "drainNotes": "2nd floor tenant roof drain accessible through 2R"
   },
   {
     "id": "7",
@@ -345,9 +346,9 @@
     "boilerCount": 1,
     "boilerLocation": "basement",
     "garbageBinSetOut": false,
-    "roofDrains": false,
+    "roofDrains": true,
     "backyardDrains": false,
-    "drainCheckRequired": "none"
+    "drainCheckRequired": "seasonal"
   },
   {
     "id": "11",
@@ -497,9 +498,9 @@
     "boilerCount": 1,
     "boilerLocation": "basement",
     "garbageBinSetOut": true,
-    "roofDrains": false,
+    "roofDrains": true,
     "backyardDrains": false,
-    "drainCheckRequired": "none"
+    "drainCheckRequired": "seasonal"
   },
   {
     "id": "16",

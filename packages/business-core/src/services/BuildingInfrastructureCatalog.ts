@@ -46,6 +46,7 @@ export interface BuildingInfrastructure {
   roofDrains: boolean;
   backyardDrains: boolean;
   drainCheckRequired: 'none' | 'seasonal' | 'before_and_after_rains' | 'as_needed';
+  drainNotes?: string;
 
   // DSNY Collection Details
   dsnyCollection: {
@@ -195,6 +196,7 @@ export class BuildingInfrastructureCatalog {
           roofDrains: (building as any).roofDrains || false,
           backyardDrains: (building as any).backyardDrains || false,
           drainCheckRequired: (building as any).drainCheckRequired || 'none',
+          drainNotes: (building as any).drainNotes,
 
           dsnyCollection: {
             collectionDay,

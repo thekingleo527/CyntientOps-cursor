@@ -598,6 +598,7 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
               const roofDrains = building.roofDrains || false;
               const backyardDrains = building.backyardDrains || false;
               const checkRequired = building.drainCheckRequired || 'none';
+              const drainNotes = building.drainNotes;
 
               if (!roofDrains && !backyardDrains) return null;
 
@@ -620,7 +621,7 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
                   : checkRequired === 'as_needed'
                   ? 'Check drains as needed based on weather conditions and observations.'
                   : 'No regular checks required.'
-              }\n\nDrainage inspection checklist and maintenance logs coming soon.`;
+              }${drainNotes ? `\n\nNote: ${drainNotes}` : ''}\n\nDrainage inspection checklist and maintenance logs coming soon.`;
 
               return (
                 <TouchableOpacity

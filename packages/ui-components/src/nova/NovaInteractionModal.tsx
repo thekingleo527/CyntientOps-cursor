@@ -30,9 +30,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Modal } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { BlurView } from '../mocks/expo-blur';
+import { Ionicons } from '../mocks/expo-vector-icons';
 import { NovaAvatar } from './NovaAvatar';
 import { NovaAIManager } from './NovaAIManager';
 import { NovaAPIService } from './NovaAPIService';

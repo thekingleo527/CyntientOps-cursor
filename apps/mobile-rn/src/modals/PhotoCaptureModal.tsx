@@ -6,10 +6,11 @@
 
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Alert, Modal, Dimensions } from 'react-native';
-import { Camera, CameraType, FlashMode } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
+import { Camera, CameraView, CameraType, FlashMode } from '../mocks/expo-camera';
+import * as ImagePicker from '../mocks/expo-image-picker';
+import { MediaTypeOptions } from '../mocks/expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DatabaseManager } from '@cyntientops/database';
+import { DatabaseManager } from '../mocks/database';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 
 interface PhotoCaptureModalProps {
@@ -31,7 +32,7 @@ export const PhotoCaptureModal: React.FC<PhotoCaptureModalProps> = ({
   const [cameraType, setCameraType] = useState(CameraType.back);
   const [flashMode, setFlashMode] = useState(FlashMode.off);
   const [isCapturing, setIsCapturing] = useState(false);
-  const cameraRef = useRef<Camera>(null);
+  const cameraRef = useRef<any>(null);
 
   React.useEffect(() => {
     getCameraPermissions();
@@ -75,7 +76,7 @@ export const PhotoCaptureModal: React.FC<PhotoCaptureModalProps> = ({
   const pickImageFromGallery = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
@@ -159,12 +160,9 @@ export const PhotoCaptureModal: React.FC<PhotoCaptureModalProps> = ({
         </View>
 
         <View style={styles.cameraContainer}>
-          <Camera
+          <CameraView
             ref={cameraRef}
             style={styles.camera}
-            type={cameraType}
-            flashMode={flashMode}
-            ratio="4:3"
           />
         </View>
 

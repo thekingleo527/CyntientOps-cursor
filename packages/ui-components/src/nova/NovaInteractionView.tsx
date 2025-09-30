@@ -30,9 +30,9 @@ import {
   PanGestureHandler,
   State,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import * as Haptics from 'expo-haptics';
+import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { BlurView } from '../mocks/expo-blur';
+import * as Haptics from '../mocks/expo-haptics';
 import { useNovaAIManager, NovaPrompt, NovaResponse, NovaInsight } from './NovaAIManager';
 
 // Types

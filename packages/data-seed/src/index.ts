@@ -2,7 +2,7 @@
  * @cyntientops/data-seed
  *
  * Complete operational data seed for CyntientOps
- * Contains: 7 workers, 17 buildings, 6 clients, 48+ routine tasks
+ * Contains: 7 workers, 19 buildings, 7 clients, 120 routine tasks
  * Preserves all canonical IDs from Swift implementation
  */
 
@@ -21,14 +21,14 @@ export const DATA_VALIDATION = {
   EXPECTED_WORKERS: 7,
   EXPECTED_BUILDINGS: 18, // Actual count from buildings.json
   EXPECTED_CLIENTS: 7, // Actual count from clients.json
-  EXPECTED_ROUTINES: 88, // All 88 operational tasks now extracted
+  EXPECTED_ROUTINES: 120, // All 120 operational tasks now extracted
 
   // Canonical ID validation - ONLY REAL IDs from JSON files
   VALID_WORKER_IDS: ['1', '2', '4', '5', '6', '7', '8'],
-  VALID_BUILDING_IDS: ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '21'],
+  VALID_BUILDING_IDS: ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '20', '21'],
 
   // Key assignments validation
-  KEVIN_DUTAN_TASKS: 38, // Kevin has 38 tasks as expected
+  KEVIN_DUTAN_TASKS: 47, // Kevin has 47 tasks as expected
   RUBIN_MUSEUM_ID: '14',
   KEVIN_DUTAN_ID: '4'
 } as const;

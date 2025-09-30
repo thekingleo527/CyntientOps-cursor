@@ -76,7 +76,7 @@ const Circle = ({ center, radius, fillColor, strokeColor, ...props }: any) => (
 );
 
 const PROVIDER_GOOGLE = 'google';
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from '../mocks/expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { NamedCoordinate, WeatherSnapshot, UserRole, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';

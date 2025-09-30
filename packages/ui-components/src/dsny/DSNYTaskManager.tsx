@@ -347,13 +347,12 @@ export const useDSNYTaskManager = () => {
           completedTasks: workerTasks.filter(t => t.status === 'completed'),
           pendingTasks: workerTasks.filter(t => t.status === 'pending'),
           overdueTasks: [],
-          totalTasks: dsnyTasks.filter(task => task.assignedWorkerId === '4').length,
-          completionRate: 0,
+          totalTasks: workerTasks.length,
+          completionRate: workerTasks.length > 0 ? (workerTasks.filter(t => t.status === 'completed').length / workerTasks.length) * 100 : 0,
           averageCompletionTime: 0,
           lastActivity: new Date(),
-        },
-        // Add more assignments...
-      ];
+        };
+      });
 
       setWorkerAssignments(assignments);
     } catch (error) {

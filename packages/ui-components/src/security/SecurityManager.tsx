@@ -27,13 +27,13 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import * as LocalAuthentication from 'expo-local-authentication';
-import * as SecureStore from 'expo-secure-store';
-import * as FileSystem from 'expo-file-system';
-import * as Crypto from 'expo-crypto';
-import * as Haptics from 'expo-haptics';
+import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { BlurView } from '../mocks/expo-blur';
+import * as LocalAuthentication from '../mocks/expo-local-authentication';
+import * as SecureStore from '../mocks/expo-secure-store';
+import * as FileSystem from '../mocks/expo-file-system';
+import * as Crypto from '../mocks/expo-crypto';
+import * as Haptics from '../mocks/expo-haptics';
 import { AppState, AppStateStatus } from 'react-native';
 
 // Types

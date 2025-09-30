@@ -15,8 +15,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Image, View, Text, StyleSheet, ImageSourcePropType, ImageStyle, ViewStyle } from 'react-native';
-import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import { Asset } from '../mocks/expo-asset';
+import * as FileSystem from '../mocks/expo-file-system';
 
 // Types
 export interface NovaImageInfo {

@@ -136,6 +136,29 @@ export const Colors = {
   
   // Role colors (nested for specific access)
   role: RoleColors,
+  
+  // Legacy compatibility - add the missing properties that components expect
+  base: BaseColors,
+  glass: GlassColors,
+  text: TextColors,
+  status: StatusColors,
+  border: BorderColors,
+  primary: RoleColors.worker.primary,
+  secondary: RoleColors.worker.secondary,
+  accent: RoleColors.worker.accent,
+  
+  // Additional missing properties
+  blue: '#3b82f6',
+  green: '#10b981',
+  medium: BorderColors.medium,
+  glassOverlayLight: 'rgba(255, 255, 255, 0.1)',
+  glassOverlayDark: 'rgba(255, 255, 255, 0.2)',
+  
+  // Fix border color access
+  borderLight: BorderColors.light,
+  borderMedium: BorderColors.medium,
+  borderStrong: BorderColors.strong,
+  borderAccent: BorderColors.accent,
 } as const;
 
 export type ColorRole = keyof typeof RoleColors;

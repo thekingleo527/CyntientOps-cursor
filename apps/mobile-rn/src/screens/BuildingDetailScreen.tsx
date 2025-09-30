@@ -464,6 +464,63 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
             </View>
           </View>
         </View>
+
+        {/* Building Infrastructure */}
+        <View style={styles.infrastructureSection}>
+          <Text style={styles.sectionTitle}>Building Infrastructure</Text>
+          <View style={styles.infrastructureGrid}>
+            {/* @ts-ignore - boiler fields from database */}
+            {buildingDetails.building.boilerCount !== undefined && (
+              <View style={styles.infrastructureCard}>
+                <Text style={styles.infrastructureTitle}>Boiler System</Text>
+                {/* @ts-ignore */}
+                <Text style={styles.infrastructureValue}>
+                  {/* @ts-ignore */}
+                  {buildingDetails.building.boilerCount === 0 ? 'No Boiler' :
+                   /* @ts-ignore */
+                   `${buildingDetails.building.boilerCount} Boiler${buildingDetails.building.boilerCount > 1 ? 's' : ''}`}
+                </Text>
+                {/* @ts-ignore */}
+                {buildingDetails.building.boilerLocation && (
+                  <Text style={styles.infrastructureDetail}>
+                    {/* @ts-ignore */}
+                    Location: {buildingDetails.building.boilerLocation}
+                  </Text>
+                )}
+                {/* @ts-ignore */}
+                {buildingDetails.building.sharedBoilerWith && (
+                  <Text style={styles.infrastructureDetail}>
+                    {/* @ts-ignore */}
+                    Shared with: {buildingDetails.building.sharedBoilerWith}
+                  </Text>
+                )}
+                {/* @ts-ignore */}
+                {buildingDetails.building.sharedBoilerProviderFor && buildingDetails.building.sharedBoilerProviderFor.length > 0 && (
+                  <Text style={styles.infrastructureDetail}>
+                    {/* @ts-ignore */}
+                    Provides for: {buildingDetails.building.sharedBoilerProviderFor.join(', ')}
+                  </Text>
+                )}
+              </View>
+            )}
+            {/* @ts-ignore - garbage bin field from database */}
+            {buildingDetails.building.garbageBinSetOut !== undefined && (
+              <View style={styles.infrastructureCard}>
+                <Text style={styles.infrastructureTitle}>Garbage Collection</Text>
+                <Text style={styles.infrastructureValue}>
+                  {/* @ts-ignore */}
+                  {buildingDetails.building.garbageBinSetOut ? 'Bin Set-Out Required' : 'Standard Collection'}
+                </Text>
+                <Text style={styles.infrastructureDetail}>
+                  {/* @ts-ignore */}
+                  {buildingDetails.building.garbageBinSetOut
+                    ? 'Building has <9 units - requires bin set-out on street for collection'
+                    : 'Standard building-side pickup'}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
       </ScrollView>
     );
   };
@@ -930,6 +987,40 @@ const styles = StyleSheet.create({
   inventoryCount: {
     color: '#9ca3af',
     fontSize: 12,
+  },
+  infrastructureSection: {
+    padding: 20,
+  },
+  infrastructureGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  infrastructureCard: {
+    flex: 1,
+    minWidth: (width - 60) / 2,
+    backgroundColor: '#1f1f1f',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  infrastructureTitle: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  infrastructureValue: {
+    color: '#10b981',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  infrastructureDetail: {
+    color: '#9ca3af',
+    fontSize: 12,
+    marginTop: 4,
   },
   tasksHeader: {
     padding: 20,

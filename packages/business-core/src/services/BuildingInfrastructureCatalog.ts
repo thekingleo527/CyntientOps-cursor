@@ -30,7 +30,18 @@ export interface BuildingInfrastructure {
   hasParking: boolean;
   hasRooftop: boolean;
   hasBasement: boolean;
-  
+
+  // Boiler Infrastructure
+  boilerCount: number;
+  boilerLocation?: string;
+  sharedBoilerWith?: string;
+  sharedBoilerBuildingId?: string;
+  sharedBoilerProviderFor?: string[];
+  sharedBoilerProviderForIds?: string[];
+
+  // Garbage Collection
+  garbageBinSetOut: boolean;
+
   // DSNY Collection Details
   dsnyCollection: {
     collectionDay: string; // Monday, Tuesday, etc.
@@ -167,7 +178,15 @@ export class BuildingInfrastructureCatalog {
           hasParking: Math.random() > 0.4,
           hasRooftop: Math.random() > 0.6,
           hasBasement: Math.random() > 0.5,
-          
+
+          boilerCount: (building as any).boilerCount || 0,
+          boilerLocation: (building as any).boilerLocation,
+          sharedBoilerWith: (building as any).sharedBoilerWith,
+          sharedBoilerBuildingId: (building as any).sharedBoilerBuildingId,
+          sharedBoilerProviderFor: (building as any).sharedBoilerProviderFor,
+          sharedBoilerProviderForIds: (building as any).sharedBoilerProviderForIds,
+          garbageBinSetOut: (building as any).garbageBinSetOut || false,
+
           dsnyCollection: {
             collectionDay,
             collectionTime: '6:00 AM',

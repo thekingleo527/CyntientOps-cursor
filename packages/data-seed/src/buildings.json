@@ -148,7 +148,6 @@
     "valuationMethod": "unit_aggregation",
     "boilerCount": 1,
     "boilerLocation": "basement",
-    "hotWaterTank": true,
     "garbageBinSetOut": true,
     "roofDrains": true,
     "backyardDrains": true,
@@ -231,6 +230,7 @@
     "sharedBoilerWith": "117 West 17th Street",
     "sharedBoilerBuildingId": "9",
     "hotWaterTank": true,
+    "hotWaterFilterChangeFrequency": 90,
     "garbageBinSetOut": false,
     "roofDrains": true,
     "backyardDrains": false,
@@ -313,6 +313,7 @@
       "7"
     ],
     "hotWaterTank": true,
+    "hotWaterFilterChangeFrequency": 90,
     "garbageBinSetOut": false,
     "roofDrains": true,
     "backyardDrains": false,

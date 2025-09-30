@@ -40,7 +40,9 @@ export interface BuildingInfrastructure {
   sharedBoilerProviderForIds?: string[];
 
   // Hot Water System
-  hotWaterTank: boolean;
+  hotWaterTank?: boolean;
+  hotWaterTankCount?: number;
+  hotWaterFilterChangeFrequency?: number; // days
 
   // Garbage Collection
   garbageBinSetOut: boolean;
@@ -194,7 +196,9 @@ export class BuildingInfrastructureCatalog {
           sharedBoilerBuildingId: (building as any).sharedBoilerBuildingId,
           sharedBoilerProviderFor: (building as any).sharedBoilerProviderFor,
           sharedBoilerProviderForIds: (building as any).sharedBoilerProviderForIds,
-          hotWaterTank: (building as any).hotWaterTank || false,
+          hotWaterTank: (building as any).hotWaterTank,
+          hotWaterTankCount: (building as any).hotWaterTankCount,
+          hotWaterFilterChangeFrequency: (building as any).hotWaterFilterChangeFrequency,
           garbageBinSetOut: (building as any).garbageBinSetOut || false,
 
           roofDrains: (building as any).roofDrains || false,

@@ -5,7 +5,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
-import { WorkerProfile, Building } from '@cyntientops/domain-schema';
+// import { WorkerProfile, Building } from '@cyntientops/domain-schema'; // Unused for now
 
 export interface LocationData {
   workerId: string;
@@ -271,7 +271,7 @@ export class LocationManager {
   /**
    * Check if worker was inside geofence (simplified)
    */
-  private wasWorkerInsideGeofence(workerId: string, buildingId: string): boolean {
+  private wasWorkerInsideGeofence(_workerId: string, _buildingId: string): boolean {
     // This would check the last known location state
     // For now, return false (simplified implementation)
     return false;
@@ -439,7 +439,7 @@ export class LocationManager {
   /**
    * Get location statistics for worker
    */
-  public getLocationStats(workerId: string, period: 'daily' | 'weekly' | 'monthly' = 'daily'): {
+  public getLocationStats(workerId: string, _period: 'daily' | 'weekly' | 'monthly' = 'daily'): {
     totalDistance: number;
     averageSpeed: number;
     timeSpent: number;

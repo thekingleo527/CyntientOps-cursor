@@ -10,6 +10,7 @@ export { LocationManager } from './LocationManager';
 export { NotificationManager } from './NotificationManager';
 export { PhotoEvidenceManager } from './PhotoEvidenceManager';
 export { WeatherTaskManager } from './WeatherTaskManager';
+export { WorkCompletionManager } from './WorkCompletionManager';
 
 export type { 
   ClockInData, 
@@ -41,13 +42,28 @@ export type {
   WeatherTaskAdjustment
 } from './WeatherTaskManager';
 
+export type { 
+  WorkCompletionRecord,
+  RoutineCompletion,
+  TaskCompletion,
+  MaintenanceCompletion,
+  InspectionCompletion,
+  WorkCompletionStats
+} from './WorkCompletionManager';
+
 // Manager initialization helper
 export async function initializeManagers(databaseManager: any, weatherClient?: any) {
-  const clockInManager = ClockInManager.getInstance(databaseManager);
-  const locationManager = LocationManager.getInstance(databaseManager);
-  const notificationManager = NotificationManager.getInstance(databaseManager);
-  const photoEvidenceManager = PhotoEvidenceManager.getInstance(databaseManager);
-  const weatherTaskManager = weatherClient ? WeatherTaskManager.getInstance(weatherClient, databaseManager) : null;
+  const { ClockInManager: ClockInMgr } = await import('./ClockInManager');
+  const { LocationManager: LocationMgr } = await import('./LocationManager');
+  const { NotificationManager: NotificationMgr } = await import('./NotificationManager');
+  const { PhotoEvidenceManager: PhotoEvidenceMgr } = await import('./PhotoEvidenceManager');
+  const { WeatherTaskManager: WeatherTaskMgr } = await import('./WeatherTaskManager');
+  
+  const clockInManager = ClockInMgr.getInstance(databaseManager);
+  const locationManager = LocationMgr.getInstance(databaseManager);
+  const notificationManager = NotificationMgr.getInstance(databaseManager);
+  const photoEvidenceManager = PhotoEvidenceMgr.getInstance(databaseManager);
+  const weatherTaskManager = weatherClient ? WeatherTaskMgr.getInstance(weatherClient, databaseManager) : null;
 
   return {
     clockIn: clockInManager,
@@ -58,11 +74,12 @@ export async function initializeManagers(databaseManager: any, weatherClient?: a
   };
 }
 
-// Default exports
+// Default exports - using dynamic imports to avoid circular dependencies
 export default {
-  ClockInManager,
-  LocationManager,
-  NotificationManager,
-  PhotoEvidenceManager,
-  WeatherTaskManager
+  get ClockInManager() { return require('./ClockInManager').ClockInManager; },
+  get LocationManager() { return require('./LocationManager').LocationManager; },
+  get NotificationManager() { return require('./NotificationManager').NotificationManager; },
+  get PhotoEvidenceManager() { return require('./PhotoEvidenceManager').PhotoEvidenceManager; },
+  get WeatherTaskManager() { return require('./WeatherTaskManager').WeatherTaskManager; },
+  get WorkCompletionManager() { return require('./WorkCompletionManager').WorkCompletionManager; }
 };

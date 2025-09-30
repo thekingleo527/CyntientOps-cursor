@@ -5,7 +5,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
-import { WorkerProfile, ClockStatus } from '@cyntientops/domain-schema';
+import { ClockStatus } from '@cyntientops/domain-schema';
 
 export interface ClockInData {
   workerId: string;
@@ -370,7 +370,7 @@ export class ClockInManager {
   /**
    * Get clock in statistics for a worker
    */
-  public getWorkerClockStats(workerId: string, period: 'daily' | 'weekly' | 'monthly' = 'daily'): {
+  public getWorkerClockStats(workerId: string, _period: 'daily' | 'weekly' | 'monthly' = 'daily'): {
     totalSessions: number;
     totalHours: number;
     averageHours: number;

@@ -5,7 +5,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
-import { WorkerProfile, Building } from '@cyntientops/domain-schema';
+// import { WorkerProfile, Building } from '@cyntientops/domain-schema'; // Unused for now
 
 export interface NotificationData {
   id: string;

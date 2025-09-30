@@ -4,7 +4,7 @@
  * Purpose: Weather-based task adjustments and outdoor work risk assessment
  */
 
-import { WeatherAPIClient, WeatherForecast, WeatherAlert, TaskWeatherAdjustment } from '@cyntientops/api-clients';
+import { WeatherAPIClient, WeatherForecast, WeatherAlert } from '@cyntientops/api-clients';
 import { DatabaseManager } from '@cyntientops/database';
 import { OperationalDataTaskAssignment, WorkerProfile } from '@cyntientops/domain-schema';
 

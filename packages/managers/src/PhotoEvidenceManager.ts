@@ -584,20 +584,7 @@ export class PhotoEvidenceManager {
   }
 
   // Photo repository methods for BuildingSpacesTab
-  async getPhotosForBuilding(buildingId: string): Promise<PhotoEvidence[]> {
-    try {
-      const photos = await this.dbManager.query(`
-        SELECT * FROM photo_evidence 
-        WHERE building_id = ? 
-        ORDER BY timestamp DESC
-      `, [buildingId]);
-
-      return photos.map(this.mapDatabaseToPhotoEvidence);
-    } catch (error) {
-      console.error('Failed to get photos for building:', error);
-      return [];
-    }
-  }
+  // Note: getPhotosForBuilding method already exists above
 
   async getPhotosForSpace(spaceId: string): Promise<PhotoEvidence[]> {
     try {

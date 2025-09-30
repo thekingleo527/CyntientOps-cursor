@@ -4,7 +4,8 @@
  * Features: Routine confirmation, task completion, maintenance records, site departure integration
  */
 
-import { ServiceContainer } from '@cyntientops/business-core';
+// Removed ServiceContainer import to break circular dependency
+// WorkCompletionManager is now independent and can be used by business-core
 
 export interface WorkCompletionRecord {
   id: string;
@@ -73,10 +74,14 @@ export interface WorkCompletionStats {
 }
 
 export class WorkCompletionManager {
-  private container: ServiceContainer;
+  private databaseManager: any;
+  private taskService: any;
+  private buildingService: any;
 
-  constructor(container: ServiceContainer) {
-    this.container = container;
+  constructor(databaseManager: any, taskService?: any, buildingService?: any) {
+    this.databaseManager = databaseManager;
+    this.taskService = taskService;
+    this.buildingService = buildingService;
   }
 
   /**
@@ -301,7 +306,7 @@ export class WorkCompletionManager {
 
       query += ` ORDER BY completed_at DESC`;
 
-      const results = await this.container.database.query(query, params);
+      const results = await this.databaseManager.query(query, params);
       return results.map(this.mapDatabaseRecordToWorkCompletion);
     } catch (error) {
       console.error('Failed to get building history:', error);
@@ -413,7 +418,7 @@ export class WorkCompletionManager {
     qualityScore?: number
   ): Promise<void> {
     try {
-      await this.container.database.query(`
+      await this.databaseManager.query(`
         UPDATE work_completion_records 
         SET status = 'verified', 
             verified_by = ?, 
@@ -430,7 +435,7 @@ export class WorkCompletionManager {
 
   // Private helper methods
   private async saveWorkCompletion(record: WorkCompletionRecord): Promise<void> {
-    await this.container.database.query(`
+    await this.databaseManager.query(`
       INSERT INTO work_completion_records (
         id, building_id, building_name, worker_id, worker_name, work_type, category,
         title, description, location, completed_at, duration, status, verification_method,
@@ -480,7 +485,7 @@ export class WorkCompletionManager {
   }
 
   private async getBuildingName(buildingId: string): Promise<string> {
-    const result = await this.container.database.query(
+    const result = await this.databaseManager.query(
       'SELECT name FROM buildings WHERE id = ?',
       [buildingId]
     );
@@ -488,7 +493,7 @@ export class WorkCompletionManager {
   }
 
   private async getWorkerDetails(workerId: string): Promise<{ name: string }> {
-    const result = await this.container.database.query(
+    const result = await this.databaseManager.query(
       'SELECT name FROM workers WHERE id = ?',
       [workerId]
     );
@@ -496,7 +501,7 @@ export class WorkCompletionManager {
   }
 
   private async getTaskDetails(taskId: string): Promise<any> {
-    const result = await this.container.database.query(
+    const result = await this.databaseManager.query(
       'SELECT * FROM tasks WHERE id = ?',
       [taskId]
     );
@@ -504,7 +509,7 @@ export class WorkCompletionManager {
   }
 
   private async getMaintenanceDetails(maintenanceId: string): Promise<any> {
-    const result = await this.container.database.query(
+    const result = await this.databaseManager.query(
       'SELECT * FROM maintenance_records WHERE id = ?',
       [maintenanceId]
     );

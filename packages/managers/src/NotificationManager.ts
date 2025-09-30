@@ -193,7 +193,7 @@ export class NotificationManager {
    */
   public async sendNotification(notification: Omit<NotificationData, 'id' | 'isRead' | 'createdAt'>): Promise<string> {
     try {
-      const id = `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const id = `notif_${Date.now()}_${type}_${targetId}`;
       
       const fullNotification: NotificationData = {
         ...notification,

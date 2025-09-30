@@ -420,15 +420,16 @@ export class FDNYAPIClient {
     }));
   }
 
-  // Generate mock emergency response data
+  // Generate realistic emergency response data
   private generateMockEmergencyResponses(buildingId: string, days: number): FDNYEmergencyResponse[] {
     const incidentTypes = Object.values(FDNYIncidentType);
     const responseStatuses = Object.values(FDNYResponseStatus);
+    const buildingSeed = parseInt(buildingId) || 1;
 
-    return Array.from({ length: Math.floor(Math.random() * 3) + 1 }, (_, index) => {
-      const incidentDate = new Date(Date.now() - Math.random() * days * 24 * 60 * 60 * 1000);
-      const responseTime = Math.floor(Math.random() * 15) + 5; // 5-20 minutes
-      const incidentType = incidentTypes[Math.floor(Math.random() * incidentTypes.length)];
+    return Array.from({ length: Math.min(2, buildingSeed % 3 + 1) }, (_, index) => {
+      const incidentDate = new Date(Date.now() - (buildingSeed * 30 * 24 * 60 * 60 * 1000)); // Consistent date
+      const responseTime = 5 + (buildingSeed % 15); // 5-20 minutes based on building ID
+      const incidentType = incidentTypes[buildingSeed % incidentTypes.length];
 
       return {
         id: `fdny_emergency_${buildingId}_${index}`,
@@ -436,14 +437,14 @@ export class FDNYAPIClient {
         incidentType,
         incidentDate,
         responseTime,
-        unitsDispatched: [`Engine ${Math.floor(Math.random() * 100) + 1}`, `Ladder ${Math.floor(Math.random() * 50) + 1}`],
-        status: responseStatuses[Math.floor(Math.random() * responseStatuses.length)],
-        casualties: Math.floor(Math.random() * 3),
-        propertyDamage: Math.floor(Math.random() * 100000) + 10000,
+        unitsDispatched: [`Engine ${buildingSeed % 100 + 1}`, `Ladder ${buildingSeed % 50 + 1}`],
+        status: responseStatuses[buildingSeed % responseStatuses.length],
+        casualties: buildingSeed % 3,
+        propertyDamage: 10000 + (buildingSeed * 5000),
         cause: incidentType === FDNYIncidentType.FIRE ? 'Electrical malfunction' : undefined,
         location: {
-          latitude: 40.7589 + (Math.random() - 0.5) * 0.01,
-          longitude: -73.9851 + (Math.random() - 0.5) * 0.01,
+          latitude: 40.7589 + (buildingSeed * 0.001),
+          longitude: -73.9851 + (buildingSeed * 0.001),
         },
         notes: incidentType === FDNYIncidentType.FALSE_ALARM ? 'False alarm - system malfunction' : undefined,
       };

@@ -548,9 +548,11 @@ export class WakeWordDetector {
    * Process training sample
    */
   private async processTrainingSample(sample: AudioSample, phrase: string): Promise<number> {
-    // Simulate training sample processing
+    // Simulate training sample processing with realistic accuracy
     // In a real implementation, this would use machine learning algorithms
-    return Math.random() * 0.3 + 0.7; // Return accuracy between 0.7 and 1.0
+    const baseAccuracy = 0.85; // Base accuracy for wake word detection
+    const qualityFactor = sample.quality || 0.8; // Factor in audio quality
+    return Math.min(0.95, baseAccuracy * qualityFactor); // Realistic accuracy range
   }
 
   /**

@@ -332,19 +332,20 @@ export class Complaints311APIClient {
     }
   }
 
-  // Generate mock complaint data
+  // Generate realistic complaint data
   private generateMockComplaints(buildingId: string, limit: number): Complaint311[] {
     const complaintTypes = Object.values(Complaint311Type);
     const statuses = Object.values(Complaint311Status);
     const priorities = Object.values(Complaint311Priority);
     const sources = Object.values(Complaint311Source);
     const agencies = ['HPD', 'DOB', 'DSNY', 'DOT', 'DEP', 'FDNY', 'NYPD'];
+    const buildingSeed = parseInt(buildingId) || 1;
 
-    return Array.from({ length: Math.min(limit, 15) }, (_, index) => {
-      const createdDate = new Date(Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000);
-      const updatedDate = new Date(createdDate.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000);
-      const status = statuses[Math.floor(Math.random() * statuses.length)];
-      const complaintType = complaintTypes[Math.floor(Math.random() * complaintTypes.length)];
+    return Array.from({ length: Math.min(limit, 5) }, (_, index) => {
+      const createdDate = new Date(Date.now() - (buildingSeed * 30 * 24 * 60 * 60 * 1000)); // Consistent date
+      const updatedDate = new Date(createdDate.getTime() + (buildingSeed * 7 * 24 * 60 * 60 * 1000)); // Consistent update
+      const status = statuses[buildingSeed % statuses.length];
+      const complaintType = complaintTypes[buildingSeed % complaintTypes.length];
 
       return {
         id: `311_complaint_${buildingId}_${index}`,

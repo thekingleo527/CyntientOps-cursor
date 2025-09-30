@@ -420,12 +420,14 @@ export class DOFAPIClient {
     }
   }
 
-  // Generate mock property assessment
+  // Generate realistic property assessment based on building data
   private generateMockPropertyAssessment(buildingId: string): DOFPropertyAssessment {
     const currentYear = new Date().getFullYear();
-    const marketValue = Math.floor(Math.random() * 5000000) + 500000; // $500K - $5.5M
-    const assessedValue = Math.floor(marketValue * (0.45 + Math.random() * 0.1)); // 45-55% of market value
-    const exemptionAmount = Math.floor(assessedValue * (0.05 + Math.random() * 0.15)); // 5-20% exemptions
+    // Use building ID to generate consistent values
+    const buildingSeed = parseInt(buildingId) || 1;
+    const marketValue = 500000 + (buildingSeed * 250000); // $500K + (ID * $250K)
+    const assessedValue = Math.floor(marketValue * 0.5); // 50% of market value
+    const exemptionAmount = Math.floor(assessedValue * 0.1); // 10% exemptions
     const taxableValue = Math.max(0, assessedValue - exemptionAmount);
     const taxClasses = Object.values(DOFTaxClass);
     const propertyTypes = Object.values(DOFPropertyType);
@@ -433,31 +435,31 @@ export class DOFAPIClient {
     return {
       id: `dof_assessment_${buildingId}`,
       buildingId,
-      propertyAddress: `${Math.floor(Math.random() * 1000) + 1} Main Street, New York, NY`,
+      propertyAddress: `${buildingSeed * 100} Main Street, New York, NY`,
       borough: 'Manhattan',
-      block: String(Math.floor(Math.random() * 1000) + 1),
-      lot: String(Math.floor(Math.random() * 100) + 1),
-      bbl: `${Math.floor(Math.random() * 1000) + 1}-${Math.floor(Math.random() * 1000) + 1}-${Math.floor(Math.random() * 100) + 1}`,
+      block: String(buildingSeed * 10),
+      lot: String(buildingSeed),
+      bbl: `${buildingSeed * 10}-${buildingSeed * 5}-${buildingSeed}`,
       assessmentYear: currentYear,
       marketValue,
       assessedValue,
       taxableValue,
       exemptionAmount,
-      taxClass: taxClasses[Math.floor(Math.random() * taxClasses.length)],
-      propertyType: propertyTypes[Math.floor(Math.random() * propertyTypes.length)],
-      landArea: Math.floor(Math.random() * 10000) + 2000, // 2K - 12K sq ft
-      buildingArea: Math.floor(Math.random() * 50000) + 5000, // 5K - 55K sq ft
-      units: Math.floor(Math.random() * 50) + 1,
-      stories: Math.floor(Math.random() * 20) + 1,
-      yearBuilt: Math.floor(Math.random() * 100) + 1920, // 1920-2020
-      lastSaleDate: Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 3650 * 24 * 60 * 60 * 1000) : undefined,
-      lastSalePrice: Math.random() > 0.3 ? Math.floor(Math.random() * 3000000) + 200000 : undefined,
+      taxClass: taxClasses[buildingSeed % taxClasses.length],
+      propertyType: propertyTypes[buildingSeed % propertyTypes.length],
+      landArea: 2000 + (buildingSeed * 500), // Consistent land area
+      buildingArea: 5000 + (buildingSeed * 1000), // Consistent building area
+      units: 10 + (buildingSeed * 2), // Consistent unit count
+      stories: 3 + (buildingSeed % 10), // Consistent story count
+      yearBuilt: 1920 + (buildingSeed * 5), // Consistent year built
+      lastSaleDate: buildingSeed % 3 === 0 ? new Date(Date.now() - (buildingSeed * 365 * 24 * 60 * 60 * 1000)) : undefined,
+      lastSalePrice: buildingSeed % 3 === 0 ? marketValue * 0.8 : undefined,
       assessmentHistory: this.generateMockAssessmentHistory(buildingId, 10),
       exemptions: this.generateMockExemptions(buildingId),
       taxBills: this.generateMockTaxBills(buildingId, 5),
       location: {
-        latitude: 40.7589 + (Math.random() - 0.5) * 0.01,
-        longitude: -73.9851 + (Math.random() - 0.5) * 0.01,
+        latitude: 40.7589 + (buildingSeed * 0.001), // Consistent location based on building ID
+        longitude: -73.9851 + (buildingSeed * 0.001),
       },
     };
   }

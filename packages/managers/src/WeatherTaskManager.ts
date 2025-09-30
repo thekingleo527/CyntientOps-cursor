@@ -375,7 +375,7 @@ export class WeatherTaskManager {
   private async storeWeatherAdjustment(adjustment: WeatherTaskAdjustment): Promise<void> {
     try {
       await this.dbManager.insert('weather_adjustments', {
-        id: `weather_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `weather_${Date.now()}_${taskType}_${buildingId}`,
         task_id: adjustment.taskId,
         original_schedule: adjustment.originalSchedule.getTime(),
         adjusted_schedule: adjustment.adjustedSchedule?.getTime(),

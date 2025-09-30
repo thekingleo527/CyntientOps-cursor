@@ -117,8 +117,8 @@ export class ViolationRiskPredictor {
       // Label: 1 if violation occurred, 0 if not
       labels.push(1); // This record IS a violation
 
-      // Also add "no violation" samples for balance
-      if (Math.random() > 0.5) {
+      // Add "no violation" samples for balance (deterministic approach)
+      if (i % 2 === 0) { // Every other sample gets a "no violation" counterpart
         // Create synthetic "no violation" sample
         const noViolationFeatures = [...featureVector];
         noViolationFeatures[3] = Math.min(100, featureVector[3] + 20); // Higher compliance

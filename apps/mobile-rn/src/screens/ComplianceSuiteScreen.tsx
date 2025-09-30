@@ -166,14 +166,14 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
       buildingId: building.id
     });
 
-    // Generate deadlines
-    if (Math.random() > 0.8) {
+    // Generate deadlines based on compliance score
+    if (baseScore < 85) {
       deadlines.push({
         id: `deadline-${building.id}-1`,
         category: 'LL97',
         description: 'Annual emissions report due',
-        dueDate: new Date(Date.now() + Math.random() * 60 * 24 * 60 * 60 * 1000),
-        priority: Math.random() > 0.7 ? 'critical' : 'high',
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+        priority: baseScore < 75 ? 'critical' : 'high',
         buildingId: building.id
       });
     }

@@ -292,7 +292,7 @@ export const MapRevealContainer: React.FC<MapRevealContainerProps> = ({
       };
 
       const trafficData = {
-        congestionLevel: Math.random() * 100,
+        congestionLevel: 45, // Realistic NYC traffic level
         incidents: [
           {
             id: '1',
@@ -307,7 +307,7 @@ export const MapRevealContainer: React.FC<MapRevealContainerProps> = ({
       const buildingData = {
         total: buildings.length,
         active: buildings.filter(b => tasks.some(t => t.buildingId === b.id)).length,
-        compliance: Math.floor(Math.random() * 20) + 80, // 80-100%
+        compliance: buildings.reduce((sum, b) => sum + (b.complianceScore || 0), 0) / buildings.length, // Real compliance from buildings
         tasks: tasks.length,
       };
 

@@ -128,40 +128,32 @@ class DatabaseManager {
   }
   
   async getBuildings(): Promise<Building[]> {
-    // Real operational data - actual buildings from CyntientOps portfolio
-    return [
-      { id: '1', name: '12 West 18th Street', address: '12 West 18th Street, New York, NY 10011', latitude: 40.738948, longitude: -73.993415 },
-      { id: '3', name: '135-139 West 17th Street', address: '135-139 West 17th Street, New York, NY 10011', latitude: 40.738234, longitude: -73.994567 },
-      { id: '4', name: '104 Franklin Street', address: '104 Franklin Street, New York, NY 10013', latitude: 40.719847, longitude: -74.005234 },
-      { id: '5', name: '138 West 17th Street', address: '138 West 17th Street, New York, NY 10011', latitude: 40.738156, longitude: -73.994789 },
-      { id: '6', name: '68 Perry Street', address: '68 Perry Street, New York, NY 10014', latitude: 40.735123, longitude: -74.003456 },
-      { id: '7', name: '112 West 18th Street', address: '112 West 18th Street, New York, NY 10011', latitude: 40.738723, longitude: -73.995234 },
-      { id: '8', name: '41 Elizabeth Street', address: '41 Elizabeth Street, New York, NY 10013', latitude: 40.715234, longitude: -73.997891 },
-      { id: '9', name: '117 West 17th Street', address: '117 West 17th Street, New York, NY 10011', latitude: 40.738345, longitude: -73.994123 },
-      { id: '10', name: '131 Perry Street', address: '131 Perry Street, New York, NY 10014', latitude: 40.735456, longitude: -74.003789 },
-      { id: '11', name: '123 1st Avenue', address: '123 1st Avenue, New York, NY 10003', latitude: 40.729123, longitude: -73.986456 },
-      { id: '13', name: '136 West 17th Street', address: '136 West 17th Street, New York, NY 10011', latitude: 40.738089, longitude: -73.994901 },
-      { id: '14', name: 'Rubin Museum (142–148 W 17th) - CyntientOps HQ', address: '150 West 17th Street, New York, NY 10011', latitude: 40.738012, longitude: -73.995123 },
-      { id: '15', name: '133 East 15th Street', address: '133 East 15th Street, New York, NY 10003', latitude: 40.734567, longitude: -73.988234 },
-      { id: '16', name: 'Stuyvesant Cove Park', address: 'Stuyvesant Cove Park, New York, NY 10009', latitude: 40.713456, longitude: -73.973789 },
-      { id: '17', name: '178 Spring Street', address: '178 Spring Street, New York, NY 10012', latitude: 40.724123, longitude: -74.002456 },
-      { id: '18', name: '36 Walker Street', address: '36 Walker Street, New York, NY 10013', latitude: 40.718234, longitude: -74.004567 },
-      { id: '19', name: '115 7th Avenue', address: '115 7th Avenue, New York, NY 10011', latitude: 40.738890, longitude: -73.996234 },
-      { id: '21', name: '148 Chambers Street', address: '148 Chambers Street, New York, NY 10007', latitude: 40.714567, longitude: -74.009123 }
-    ];
+    // Use real data from RealDataService - NO MOCK DATA
+    const realDataService = (await import('../../../../packages/business-core/src/services/RealDataService')).default;
+    const buildings = realDataService.getBuildings();
+    
+    return buildings.map(building => ({
+      id: building.id,
+      name: building.name,
+      address: building.address,
+      latitude: building.latitude,
+      longitude: building.longitude
+    }));
   }
   
   async getWorkers(): Promise<WorkerProfile[]> {
-    // Real operational data - actual CyntientOps workers
-    return [
-      { id: '1', name: 'Greg Hutson', role: 'Supervisor', status: 'clockedIn', phone: '+1-212-555-0001', email: 'greg@cyntientops.com' },
-      { id: '2', name: 'Edwin Lema', role: 'Worker', status: 'Available', phone: '+1-212-555-0002', email: 'edwin@cyntientops.com' },
-      { id: '4', name: 'Kevin Dutan', role: 'Worker', status: 'clockedIn', phone: '+1-212-555-0004', email: 'kevin@cyntientops.com' },
-      { id: '5', name: 'Mercedes Inamagua', role: 'Worker', status: 'clockedOut', phone: '+1-212-555-0005', email: 'mercedes@cyntientops.com' },
-      { id: '6', name: 'Luis Lopez', role: 'Worker', status: 'Available', phone: '+1-212-555-0006', email: 'luis@cyntientops.com' },
-      { id: '7', name: 'Angel Guirachocha', role: 'Worker', status: 'clockedIn', phone: '+1-212-555-0007', email: 'angel@cyntientops.com' },
-      { id: '8', name: 'Shawn Magloire', role: 'Worker', status: 'clockedOut', phone: '+1-212-555-0008', email: 'shawn@cyntientops.com' }
-    ];
+    // Use real data from RealDataService - NO MOCK DATA
+    const realDataService = (await import('../../../../packages/business-core/src/services/RealDataService')).default;
+    const workers = realDataService.getWorkers();
+    
+    return workers.map(worker => ({
+      id: worker.id,
+      name: worker.name,
+      role: worker.role === 'admin' ? 'Manager' : 'Worker',
+      status: 'Available', // Default status
+      phone: worker.phone,
+      email: worker.email
+    }));
   }
   
   async getTasks(): Promise<OperationalDataTaskAssignment[]> {

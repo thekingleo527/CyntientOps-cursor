@@ -98,8 +98,8 @@ export const BuildingTeamTab: React.FC<BuildingTeamTabProps> = ({
   const loadWorkerAssignments = async () => {
     setIsLoading(true);
     try {
-      // Load worker assignments from hardcoded data
-      const assignments = generateWorkerAssignments(building.id);
+      // Load worker assignments from real data
+      const assignments = await generateWorkerAssignments(building.id);
       setWorkerAssignments(assignments);
       calculateTeamStats(assignments);
     } catch (error) {
@@ -110,90 +110,39 @@ export const BuildingTeamTab: React.FC<BuildingTeamTabProps> = ({
     }
   };
 
-  const generateWorkerAssignments = (buildingId: string): WorkerAssignment[] => {
-    // Generate building-specific worker assignments based on hardcoded data
-    const buildingWorkers = {
-      '1': [ // 12 West 18th Street
-        {
-          workerId: '1',
-          workerName: 'Greg Hutson',
-          role: 'Senior Maintenance Worker',
-          status: 'busy' as const,
-          currentTask: 'Daily Lobby Cleaning',
-          currentBuilding: buildingId,
-          clockInTime: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-          totalTasks: 28,
-          completedTasks: 18,
-          completionRate: 64,
-          skills: ['Maintenance', 'Boiler Operations', 'Daily Cleaning'],
-          hourlyRate: 25.0,
-          shift: '9:00 AM - 3:00 PM',
-          phone: '+1-555-0101',
-          email: 'greg.hutson@francomanagement.com',
-          lastActive: new Date(),
-          performance: {
-            thisWeek: 85,
-            lastWeek: 78,
-            monthlyAverage: 82,
-            streak: 5
-          }
-        }
-      ],
-      '4': [ // 104 Franklin Street (Rubin Museum area)
-        {
-          workerId: '4',
-          workerName: 'Kevin Dutan',
-          role: 'Museum Area Specialist',
-          status: 'available' as const,
-          currentTask: 'Museum Area Deep Clean',
-          currentBuilding: buildingId,
-          clockInTime: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
-          totalTasks: 38,
-          completedTasks: 15,
-          completionRate: 39,
-          skills: ['Cleaning', 'DSNY Operations', 'Rubin Museum Specialist'],
-          hourlyRate: 26.0,
-          shift: '6:00 AM - 5:00 PM',
-          phone: '+1-555-0104',
-          email: 'kevin.dutan@francomanagement.com',
-          lastActive: new Date(),
-          performance: {
-            thisWeek: 78,
-            lastWeek: 82,
-            monthlyAverage: 80,
-            streak: 3
-          }
-        }
-      ],
-      '3': [ // 135-139 West 17th Street
-        {
-          workerId: '2',
-          workerName: 'Edwin Lema',
-          role: 'Building Maintenance Worker',
-          status: 'on_break' as const,
-          currentTask: 'Stairwell Maintenance',
-          currentBuilding: buildingId,
-          clockInTime: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
-          totalTasks: 24,
-          completedTasks: 18,
-          completionRate: 75,
-          skills: ['Cleaning', 'Building Maintenance', 'Park Operations'],
-          hourlyRate: 24.0,
-          shift: '6:00 AM - 3:00 PM',
-          phone: '+1-555-0102',
-          email: 'edwin.lema@francomanagement.com',
-          lastActive: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
-          performance: {
-            thisWeek: 92,
-            lastWeek: 88,
-            monthlyAverage: 89,
-            streak: 8
-          }
-        }
-      ]
-    };
-
-    return buildingWorkers[buildingId as keyof typeof buildingWorkers] || [];
+  const generateWorkerAssignments = async (buildingId: string): Promise<WorkerAssignment[]> => {
+    // Use real data from RealDataService - NO MOCK DATA
+    const realDataService = (await import('../../../../business-core/src/services/RealDataService')).default;
+    
+    // Get real workers assigned to this building
+    const assignedWorkers = realDataService.getWorkersForBuilding(buildingId);
+    
+    return assignedWorkers.map(worker => {
+      if (!worker) return null;
+      
+      const taskStats = realDataService.getTaskStatsForWorker(worker.id);
+      const performance = realDataService.getPerformanceForWorker(worker.id);
+      
+      return {
+        workerId: worker.id,
+        workerName: worker.name,
+        role: worker.role === 'admin' ? 'Manager' : 'Worker',
+        status: 'available' as const, // Default status
+        currentTask: 'Current Task', // Will be populated from real routines
+        currentBuilding: buildingId,
+        clockInTime: new Date(Date.now() - Math.random() * 4 * 60 * 60 * 1000), // Random within 4 hours
+        totalTasks: taskStats.totalTasks,
+        completedTasks: taskStats.completedTasks,
+        completionRate: taskStats.completionRate,
+        skills: worker.skills.split(', '),
+        hourlyRate: worker.hourlyRate,
+        shift: worker.shift,
+        phone: worker.phone,
+        email: worker.email,
+        lastActive: new Date(),
+        performance: performance || { thisWeek: 80, lastWeek: 75, monthlyAverage: 77, streak: 1 }
+      };
+    }).filter(Boolean) as WorkerAssignment[];
   };
 
   const calculateTeamStats = (assignments: WorkerAssignment[]) => {

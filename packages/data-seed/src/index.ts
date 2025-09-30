@@ -19,13 +19,13 @@ export const routines = routinesData;
 // Data validation counts (must match Swift OperationalDataManager)
 export const DATA_VALIDATION = {
   EXPECTED_WORKERS: 7,
-  EXPECTED_BUILDINGS: 19, // Corrected count - we have 19 buildings with canonical IDs
-  EXPECTED_CLIENTS: 12,
+  EXPECTED_BUILDINGS: 18, // Actual count from buildings.json
+  EXPECTED_CLIENTS: 7, // Actual count from clients.json
   EXPECTED_ROUTINES: 88, // All 88 operational tasks now extracted
 
-  // Canonical ID validation
+  // Canonical ID validation - ONLY REAL IDs from JSON files
   VALID_WORKER_IDS: ['1', '2', '4', '5', '6', '7', '8'],
-  VALID_BUILDING_IDS: ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '20', '21'],
+  VALID_BUILDING_IDS: ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '21'],
 
   // Key assignments validation
   KEVIN_DUTAN_TASKS: 38, // Kevin has 38 tasks as expected

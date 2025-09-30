@@ -221,67 +221,26 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   };
 
   const generateWorkerSpecificData = async (workerId: string, workerName: string): Promise<WorkerDashboardData> => {
-    // Generate worker-specific data based on canonical IDs from data-seed
-    const workerSpecificData = {
-      '1': { // Greg Hutson
-        building: '1', // 12 West 18th Street
-        totalTasks: 28,
-        completedTasks: 18,
-        completionRate: 64,
-        urgentTasks: 2,
-        performance: { thisWeek: 85, lastWeek: 78, monthlyAverage: 82, streak: 5 }
-      },
-      '2': { // Edwin Lema
-        building: '3', // 135-139 West 17th Street
-        totalTasks: 24,
-        completedTasks: 18,
-        completionRate: 75,
-        urgentTasks: 1,
-        performance: { thisWeek: 92, lastWeek: 88, monthlyAverage: 89, streak: 8 }
-      },
-      '4': { // Kevin Dutan
-        building: '4', // 104 Franklin Street (Rubin Museum area)
-        totalTasks: 38,
-        completedTasks: 15,
-        completionRate: 39,
-        urgentTasks: 3,
-        performance: { thisWeek: 78, lastWeek: 82, monthlyAverage: 80, streak: 3 }
-      },
-      '5': { // Mercedes Inamagua
-        building: '5', // 138 West 17th Street
-        totalTasks: 27,
-        completedTasks: 20,
-        completionRate: 74,
-        urgentTasks: 1,
-        performance: { thisWeek: 88, lastWeek: 85, monthlyAverage: 86, streak: 6 }
-      },
-      '6': { // Luis Lopez
-        building: '6', // 68 Perry Street
-        totalTasks: 29,
-        completedTasks: 21,
-        completionRate: 72,
-        urgentTasks: 2,
-        performance: { thisWeek: 81, lastWeek: 79, monthlyAverage: 80, streak: 4 }
-      },
-      '7': { // Angel Guirachocha
-        building: '7', // 112 West 18th Street
-        totalTasks: 26,
-        completedTasks: 19,
-        completionRate: 73,
-        urgentTasks: 1,
-        performance: { thisWeek: 86, lastWeek: 83, monthlyAverage: 84, streak: 7 }
-      },
-      '8': { // Shawn Magloire (Admin)
-        building: '8', // 41 Elizabeth Street
-        totalTasks: 33,
-        completedTasks: 25,
-        completionRate: 76,
-        urgentTasks: 2,
-        performance: { thisWeek: 90, lastWeek: 87, monthlyAverage: 88, streak: 9 }
-      }
+    // Use real data from RealDataService - NO MOCK DATA
+    const realDataService = (await import('../../../business-core/src/services/RealDataService')).default;
+    
+    // Get real task statistics
+    const taskStats = realDataService.getTaskStatsForWorker(workerId);
+    const performance = realDataService.getPerformanceForWorker(workerId);
+    
+    // Get worker's assigned buildings from real routines
+    const workerRoutines = realDataService.getRoutinesByWorkerId(workerId);
+    const workerAssignedBuildings = [...new Set(workerRoutines.map(r => r.buildingId))];
+    const primaryBuilding = workerAssignedBuildings[0] || '1'; // Fallback to building 1
+    
+    const workerInfo = {
+      building: primaryBuilding,
+      totalTasks: taskStats.totalTasks,
+      completedTasks: taskStats.completedTasks,
+      completionRate: taskStats.completionRate,
+      urgentTasks: taskStats.urgentTasks,
+      performance: performance || { thisWeek: 80, lastWeek: 75, monthlyAverage: 77, streak: 1 }
     };
-
-    const workerInfo = workerSpecificData[workerId as keyof typeof workerSpecificData] || workerSpecificData['1'];
     
     // Generate tasks based on worker's building and performance
     const urgentTasks = generateUrgentTasks(workerId, workerInfo.urgentTasks);

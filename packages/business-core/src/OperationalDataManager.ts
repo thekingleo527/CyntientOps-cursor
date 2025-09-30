@@ -37,7 +37,7 @@ export const CanonicalIDs = {
   
   Buildings: {
     westEighteenth12: "1",
-    eastTwentieth29_31: "2",
+    // Note: ID "2" removed - not in actual buildings.json
     westSeventeenth135_139: "3",
     franklin104: "4",
     westSeventeenth138: "5",
@@ -49,18 +49,16 @@ export const CanonicalIDs = {
     firstAvenue123: "11",
     // Note: ID "12" not in use
     westSeventeenth136: "13",
-    rubinMuseum: "14",      // 🏛️ Kevin's primary location
+    rubinMuseum: "14",      // 🏛️ Kevin's primary location + CyntientOps HQ
     eastFifteenth133: "15",
     stuyvesantCove: "16",
     springStreet178: "17",
     walker36: "18",
     seventhAvenue115: "19",
-    cyntientOpsHQ: "20",
     chambers148: "21",
     
     nameMap: {
       "1": "12 West 18th Street",
-      "2": "29-31 East 20th Street",
       "3": "135-139 West 17th Street",
       "4": "104 Franklin Street",
       "5": "138 West 17th Street",
@@ -71,13 +69,12 @@ export const CanonicalIDs = {
       "10": "131 Perry Street",
       "11": "123 1st Avenue",
       "13": "136 West 17th Street",
-      "14": "Rubin Museum (142–148 W 17th)",
+      "14": "Rubin Museum (142–148 W 17th) - CyntientOps HQ",
       "15": "133 East 15th Street",
       "16": "Stuyvesant Cove Park",
       "17": "178 Spring Street",
       "18": "36 Walker Street",
       "19": "115 7th Avenue",
-      "20": "CyntientOps HQ",
       "21": "148 Chambers Street"
     },
     

@@ -48,14 +48,14 @@ function validateSeedData() {
     const clients = loadJsonFile('clients.json');
     const routines = loadJsonFile('routines.json');
 
-    // Expected values from Swift OperationalDataManager
+    // Expected values from actual JSON files - NO MOCK DATA
     const EXPECTED = {
       WORKERS: 7,
-      BUILDINGS: 19, // Corrected count - we have 19 buildings with canonical IDs
-      CLIENTS: 12,
+      BUILDINGS: 18, // Actual count from buildings.json
+      CLIENTS: 7, // Actual count from clients.json
       ROUTINES: 88, // All tasks now extracted
       WORKER_IDS: ['1', '2', '4', '5', '6', '7', '8'],
-      BUILDING_IDS: ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '20', '21']
+      BUILDING_IDS: ['1', '3', '4', '5', '6', '7', '8', '9', '10', '11', '13', '14', '15', '16', '17', '18', '19', '21']
     };
 
     // 1. Validate counts

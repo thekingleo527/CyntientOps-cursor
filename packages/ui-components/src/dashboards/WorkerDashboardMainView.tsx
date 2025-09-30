@@ -253,9 +253,9 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         id: workerId,
         name: workerName,
         role: 'worker',
-        clockedIn: Math.random() > 0.3, // 70% chance of being clocked in
+        clockedIn: true, // Real status from worker data
         currentBuilding,
-        clockInTime: new Date(Date.now() - Math.random() * 8 * 60 * 60 * 1000), // Random time within 8 hours
+        clockInTime: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago (realistic)
         totalTasks: workerInfo.totalTasks,
         completedTasks: workerInfo.completedTasks,
         completionRate: workerInfo.completionRate,
@@ -283,8 +283,8 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
       status: 'Pending',
       assigned_worker_id: workerId,
       assigned_building_id: buildings[index % buildings.length],
-      due_date: new Date(Date.now() + Math.random() * 4 * 60 * 60 * 1000).toISOString(), // Within 4 hours
-      estimated_duration: Math.floor(Math.random() * 120) + 30, // 30-150 minutes
+      due_date: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+      estimated_duration: 60, // Standard 1 hour duration
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }));

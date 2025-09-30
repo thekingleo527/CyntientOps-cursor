@@ -130,7 +130,7 @@ export const BuildingTeamTab: React.FC<BuildingTeamTabProps> = ({
         status: 'available' as const, // Default status
         currentTask: 'Current Task', // Will be populated from real routines
         currentBuilding: buildingId,
-        clockInTime: new Date(Date.now() - Math.random() * 4 * 60 * 60 * 1000), // Random within 4 hours
+        clockInTime: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago (realistic)
         totalTasks: taskStats.totalTasks,
         completedTasks: taskStats.completedTasks,
         completionRate: taskStats.completionRate,

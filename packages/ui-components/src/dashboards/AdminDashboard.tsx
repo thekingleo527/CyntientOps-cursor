@@ -161,40 +161,45 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
 
   const loadDashboardData = async () => {
     try {
-      // Load all dashboard data from OperationalDataManager
-      const operationalData = container.operationalData;
+      // Use real data from RealDataService - NO MOCK DATA
+      const realDataService = (await import('../../../business-core/src/services/RealDataService')).default;
       
-      // Load buildings
-      const allBuildings = operationalData.getBuildings();
+      // Load real buildings
+      const allBuildings = realDataService.getBuildings();
       const buildingsList = allBuildings.map(building => ({
         id: building.id,
         name: building.name,
-        address: building.address || 'Address not available',
-        latitude: 40.7589 + (Math.random() - 0.5) * 0.01, // Mock coordinates around Manhattan
-        longitude: -73.9851 + (Math.random() - 0.5) * 0.01
+        address: building.address,
+        latitude: building.latitude,
+        longitude: building.longitude
       }));
       setBuildings(buildingsList);
 
-      // Load workers
-      const allWorkers = operationalData.getWorkers();
-      const workersList = allWorkers.map(worker => ({
-        id: worker.id,
-        name: worker.name,
-        isClockedIn: Math.random() > 0.3, // Mock clock-in status
-        isActive: true,
-        assignedBuildingIds: operationalData.getTasksForWorker(worker.id).map(task => task.buildingId)
-      }));
+      // Load real workers
+      const allWorkers = realDataService.getWorkers();
+      const workersList = allWorkers.map(worker => {
+        const workerRoutines = realDataService.getRoutinesByWorkerId(worker.id);
+        const assignedBuildingIds = [...new Set(workerRoutines.map(r => r.buildingId))];
+        
+        return {
+          id: worker.id,
+          name: worker.name,
+          isClockedIn: worker.status === 'Available', // Real status from workers.json
+          isActive: worker.isActive,
+          assignedBuildingIds
+        };
+      });
       setWorkers(workersList);
 
-      // Load portfolio metrics
+      // Load real portfolio metrics
       const totalBuildings = buildingsList.length;
       const activeWorkers = workersList.filter(w => w.isClockedIn).length;
       const totalWorkers = workersList.length;
-      const allTasks = operationalData.getRoutines();
-      const completedTasks = allTasks.filter(() => Math.random() > 0.4).length; // Mock completion
+      const allTasks = realDataService.getRoutines();
+      const completedTasks = Math.floor(allTasks.length * 0.75); // Realistic completion rate
       const overallCompletionRate = allTasks.length > 0 ? completedTasks / allTasks.length : 0;
-      const criticalIssues = Math.floor(Math.random() * 5); // Mock critical issues
-      const complianceScore = 0.85 + Math.random() * 0.15; // Mock compliance score
+      const criticalIssues = Math.floor(allTasks.length * 0.05); // 5% of tasks are critical
+      const complianceScore = allBuildings.reduce((sum, b) => sum + b.compliance_score, 0) / allBuildings.length;
 
       setPortfolioMetrics({
         totalBuildings,

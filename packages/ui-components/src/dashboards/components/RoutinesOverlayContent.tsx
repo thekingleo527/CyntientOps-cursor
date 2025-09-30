@@ -18,6 +18,7 @@ import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../../glass';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import { TaskTimelineView } from '../../timeline/TaskTimelineView';
+import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
 
 export interface RoutinesOverlayContentProps {
   workerId: string;
@@ -40,67 +41,20 @@ export const RoutinesOverlayContent: React.FC<RoutinesOverlayContentProps> = ({
 
   const loadRoutinesData = async () => {
     try {
-      // Mock data - in real app, this would come from TaskService
-      const mockTasks: OperationalDataTaskAssignment[] = [
-        {
-          id: 'task-1',
-          name: 'Sidewalk + Curb Sweep / Trash Return - 131 Perry',
-          description: 'Daily sidewalk and curb cleaning with trash return',
-          buildingId: '10',
-          buildingName: '131 Perry Street',
-          buildingAddress: '131 Perry Street, New York, NY',
-          buildingLatitude: 40.7359,
-          buildingLongitude: -74.0076,
-          assigned_worker_id: workerId,
-          assigned_building_id: '10',
-          due_date: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
-          status: 'Pending',
-          priority: 'high',
-          category: 'Cleaning',
-          skillLevel: 'Basic',
-          recurrence: 'Daily',
-          startHour: 6,
-          endHour: 7,
-          daysOfWeek: 'Monday,Tuesday,Wednesday,Thursday,Friday',
-          estimatedDuration: 60,
-          requiresPhoto: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 'task-2',
-          name: 'Lobby Cleaning - 131 Perry',
-          description: 'Daily lobby cleaning and maintenance',
-          buildingId: '10',
-          buildingName: '131 Perry Street',
-          buildingAddress: '131 Perry Street, New York, NY',
-          buildingLatitude: 40.7359,
-          buildingLongitude: -74.0076,
-          assigned_worker_id: workerId,
-          assigned_building_id: '10',
-          due_date: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // 4 hours from now
-          status: 'Pending',
-          priority: 'medium',
-          category: 'Cleaning',
-          skillLevel: 'Basic',
-          recurrence: 'Daily',
-          startHour: 10,
-          endHour: 11,
-          daysOfWeek: 'Monday,Tuesday,Wednesday,Thursday,Friday',
-          estimatedDuration: 60,
-          requiresPhoto: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ];
+      // Load real tasks from TaskService
+      const taskService = TaskService.getInstance();
+      const schedule = taskService.generateWorkerTasks(workerId);
 
-      setTodaysTasks(mockTasks);
-      
-      // Filter DSNY tasks
-      const dsnyTasks = mockTasks.filter(task => 
-        task.category === 'DSNY' || task.name.toLowerCase().includes('dsny') || task.name.toLowerCase().includes('trash')
+      // Combine all tasks from different time slots
+      const allTasks = [...schedule.now, ...schedule.next, ...schedule.today];
+
+      setTodaysTasks(allTasks);
+
+      // Filter DSNY tasks (trash/recycling related)
+      const filteredDsnyTasks = allTasks.filter(task =>
+        task.category === 'DSNY' || task.name.toLowerCase().includes('dsny') || task.name.toLowerCase().includes('trash') || task.name.toLowerCase().includes('recycling')
       );
-      setDsnyTasks(dsnyTasks);
+      setDsnyTasks(filteredDsnyTasks);
     } catch (error) {
       console.error('Failed to load routines data:', error);
     }

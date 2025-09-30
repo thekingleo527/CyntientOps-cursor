@@ -84,7 +84,6 @@ export class NYCAPIService {
       const response = await fetch(endpoint.url, {
         method: endpoint.method,
         headers: {
-          'X-App-Token': this.API_KEYS.DSNY_API_TOKEN,
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
@@ -126,7 +125,7 @@ export class NYCAPIService {
   // HPD Violations API
   async getHPDViolations(bbl: string): Promise<HPDViolation[]> {
     const endpoint: APIEndpoint = {
-      url: `${this.API_CONFIG.HPD.baseURL}/hpd-violations.json?$where=bbl='${bbl}'`,
+      url: `${this.API_CONFIG.HPD.baseURL}/wvxf-dwi5.json?$where=bbl='${bbl}'&$limit=100`,
       cacheKey: `hpd_violations_${bbl}`,
       method: 'GET',
     };
@@ -135,10 +134,10 @@ export class NYCAPIService {
   }
 
   // DOB Permits API
-  async getDOBPermits(bbl: string): Promise<DOBPermit[]> {
+  async getDOBPermits(bin: string): Promise<DOBPermit[]> {
     const endpoint: APIEndpoint = {
-      url: `${this.API_CONFIG.DOB.baseURL}/dob-permits.json?$where=bbl='${bbl}'`,
-      cacheKey: `dob_permits_${bbl}`,
+      url: `${this.API_CONFIG.DOB.baseURL}/ipu4-2q9a.json?$where=bin__='${bin}'&$limit=100`,
+      cacheKey: `dob_permits_${bin}`,
       method: 'GET',
     };
 
@@ -157,11 +156,11 @@ export class NYCAPIService {
   }
 
   // Get comprehensive compliance data for a building
-  async getBuildingComplianceData(bbl: string): Promise<NYCComplianceData> {
+  async getBuildingComplianceData(bbl: string, bin: string): Promise<NYCComplianceData> {
     try {
       const [violations, permits, emissions] = await Promise.all([
         this.getHPDViolations(bbl),
-        this.getDOBPermits(bbl),
+        this.getDOBPermits(bin),
         this.getLL97Emissions(bbl),
       ]);
 

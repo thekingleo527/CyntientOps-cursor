@@ -46,7 +46,7 @@ export class AuthenticationService {
 
   // Complete user credentials mapping
   private readonly USER_CREDENTIALS: Record<string, UserCredentials> = {
-    // Workers (7 users)
+    // Workers (7 users) - matches workers.json exactly
     'greg.hutson@francomanagement.com': {
       email: 'greg.hutson@francomanagement.com',
       password: 'password',
@@ -62,28 +62,28 @@ export class AuthenticationService {
       password: 'password',
       username: 'kevin.dutan'
     },
-    'moises.farhat@francomanagement.com': {
-      email: 'moises.farhat@francomanagement.com',
+    'mercedes.inamagua@francomanagement.com': {
+      email: 'mercedes.inamagua@francomanagement.com',
       password: 'password',
-      username: 'mfarhat'
+      username: 'mercedes.inamagua'
     },
-    'michelle@francomanagement.com': {
-      email: 'michelle@francomanagement.com',
+    'luis.lopez@francomanagement.com': {
+      email: 'luis.lopez@francomanagement.com',
       password: 'password',
-      username: 'michelle'
+      username: 'luis.lopez'
     },
-    'david.edelman@francomanagement.com': {
-      email: 'david.edelman@francomanagement.com',
+    'angel.guirachocha@francomanagement.com': {
+      email: 'angel.guirachocha@francomanagement.com',
       password: 'password',
-      username: 'david'
+      username: 'angel.guirachocha'
     },
-    'jerry.edelman@francomanagement.com': {
-      email: 'jerry.edelman@francomanagement.com',
+    'shawn.magloire@francomanagement.com': {
+      email: 'shawn.magloire@francomanagement.com',
       password: 'password',
-      username: 'jedelman'
+      username: 'shawn.magloire'
     },
 
-    // Client Users (7 users)
+    // Client Users (7 users) - property managers/clients
     'david@jmrealty.org': {
       email: 'david@jmrealty.org',
       password: 'password',
@@ -99,36 +99,36 @@ export class AuthenticationService {
       password: 'password',
       username: 'solarone'
     },
-    'contact@gelmanrealty.com': {
-      email: 'contact@gelmanrealty.com',
+    'management@grandelizabeth.com': {
+      email: 'management@grandelizabeth.com',
       password: 'password',
       username: 'gelman'
     },
-    'admin@rubinmuseum.org': {
-      email: 'admin@rubinmuseum.org',
+    'property@citadelrealty.com': {
+      email: 'property@citadelrealty.com',
       password: 'password',
-      username: 'rubin'
+      username: 'citadel'
     },
-    'operations@cyntientops.com': {
-      email: 'operations@cyntientops.com',
+    'admin@corbelproperty.com': {
+      email: 'admin@corbelproperty.com',
       password: 'password',
-      username: 'cyntientops'
+      username: 'corbel'
     },
-    'admin@cyntientops.com': {
-      email: 'admin@cyntientops.com',
+    'management@chelsea115.com': {
+      email: 'management@chelsea115.com',
       password: 'password',
-      username: 'admin'
+      username: 'chelsea'
     }
   };
 
-  // Glass card user mappings (for quick login)
+  // Glass card user mappings (for quick login) - Workers only
   private readonly GLASS_CARD_USERS = {
     'kevin.dutan': 'kevin.dutan@francomanagement.com',
     'greg.hutson': 'greg.hutson@francomanagement.com',
-    'mfarhat': 'mfarhat@farhatrealtymanagement.com',
-    'michelle': 'michelle@francomanagement.com',
-    'david': 'david@jmrealty.org',
-    'jedelman': 'jerry.edelman@francomanagement.com'
+    'edwin.lema': 'edwin.lema@francomanagement.com',
+    'mercedes.inamagua': 'mercedes.inamagua@francomanagement.com',
+    'luis.lopez': 'luis.lopez@francomanagement.com',
+    'shawn.magloire': 'shawn.magloire@francomanagement.com'
   };
 
   constructor(db: DatabaseManager) {
@@ -261,7 +261,7 @@ export class AuthenticationService {
   }
 
   /**
-   * Get all available users for glass cards
+   * Get all available users for glass cards (Workers only)
    */
   getGlassCardUsers(): Array<{
     username: string;
@@ -283,28 +283,28 @@ export class AuthenticationService {
         email: 'greg.hutson@francomanagement.com'
       },
       {
-        username: 'mfarhat',
-        name: 'Moises Farhat',
-        role: 'Admin',
-        email: 'mfarhat@farhatrealtymanagement.com'
+        username: 'edwin.lema',
+        name: 'Edwin Lema',
+        role: 'Worker',
+        email: 'edwin.lema@francomanagement.com'
       },
       {
-        username: 'michelle',
-        name: 'Michelle',
-        role: 'Admin',
-        email: 'michelle@francomanagement.com'
+        username: 'mercedes.inamagua',
+        name: 'Mercedes Inamagua',
+        role: 'Worker',
+        email: 'mercedes.inamagua@francomanagement.com'
       },
       {
-        username: 'david',
-        name: 'David Edelman',
-        role: 'Client',
-        email: 'david@jmrealty.org'
+        username: 'luis.lopez',
+        name: 'Luis Lopez',
+        role: 'Worker',
+        email: 'luis.lopez@francomanagement.com'
       },
       {
-        username: 'jedelman',
-        name: 'Jerry Edelman',
+        username: 'shawn.magloire',
+        name: 'Shawn Magloire',
         role: 'Admin',
-        email: 'jerry.edelman@francomanagement.com'
+        email: 'shawn.magloire@francomanagement.com'
       }
     ];
   }

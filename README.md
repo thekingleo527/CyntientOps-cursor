@@ -46,7 +46,7 @@ Refer to [`CONTINUITY_REPORT.md`](./CONTINUITY_REPORT.md) (1,141 lines) for deta
 - **Background Sync**: Automatic data synchronization with conflict resolution
 
 ### 🗺️ Map & Location Intelligence
-- **Building Markers**: Interactive map with 19+ NYC building locations
+- **Building Markers**: Interactive map with 18 NYC building locations
 - **Asset Coverage Visualization**: Heatmaps and cluster views
 - **Route Optimization**: AI-powered multi-stop routing
 - **Geofencing**: Location-based task triggers and notifications
@@ -127,7 +127,7 @@ cyntientops-mp/
 | **managers** | State management with stores and contexts | Zustand, React Context |
 | **command-chains** | Command pattern for undo/redo and complex workflows | TypeScript, Memento Pattern |
 | **context-engines** | Context awareness and intelligent decision-making | Geospatial, Time-based logic |
-| **data-seed** | Database seeding with 19 buildings, 7 workers, 120+ routines | JSON, Validation |
+| **data-seed** | Database seeding with 18 buildings, 7 workers, 120 routines | JSON, Validation |
 | **testing** | E2E testing with Detox, fixtures, and test utilities | Detox, Jest, Testing Library |
 
 ---
@@ -228,18 +228,17 @@ npm run build:intelligence
 
 The application supports three user roles with demo credentials:
 
-### Quick Access Glass Cards (6 Users)
-1. **Kevin Dutan** (Worker) - `worker1@example.com` / `password`
-2. **Greg Hutson** (Worker) - `worker2@example.com` / `password`
-3. **Moises Farhat** (Worker) - `worker3@example.com` / `password`
-4. **Michelle** (Admin) - `admin@example.com` / `password`
-5. **David Edelman** (Client) - `client5@example.com` / `password`
-6. **Jerry Edelman** (Client) - `client6@example.com` / `password`
+### Quick Access Glass Cards (6 Workers)
+1. **Kevin Dutan** (Worker) - `kevin.dutan@francomanagement.com` / `password`
+2. **Greg Hutson** (Worker) - `greg.hutson@francomanagement.com` / `password`
+3. **Edwin Lema** (Worker) - `edwin.lema@francomanagement.com` / `password`
+4. **Mercedes Inamagua** (Worker) - `mercedes.inamagua@francomanagement.com` / `password`
+5. **Luis Lopez** (Worker) - `luis.lopez@francomanagement.com` / `password`
+6. **Shawn Magloire** (Admin) - `shawn.magloire@francomanagement.com` / `password`
 
-### All Users (15 Total)
-- **7 Workers**: worker1-7@example.com
-- **7 Clients**: client1-7@example.com
-- **1 Admin**: admin@example.com
+### All Users (14 Total)
+- **7 Workers**: Greg Hutson, Edwin Lema, Kevin Dutan, Mercedes Inamagua, Luis Lopez, Angel Guirachocha, Shawn Magloire (Admin)
+- **7 Clients/Property Managers**: david@jmrealty.org, mfarhat@farhatrealtymanagement.com, facilities@solarone.org, management@grandelizabeth.com, property@citadelrealty.com, admin@corbelproperty.com, management@chelsea115.com
 
 **Note**: All users use `password` for demo purposes. Configure real authentication in production.
 
@@ -248,20 +247,20 @@ The application supports three user roles with demo credentials:
 ## 📊 Data Infrastructure
 
 ### Buildings Portfolio
-- **19 Total Buildings**: Including CyntientOps HQ (Building ID: 20)
-- **18 Client Buildings**: Distributed across NYC boroughs
+- **18 Total Buildings**: Distributed across NYC boroughs including Rubin Museum (CyntientOps HQ)
+- **18 Client Buildings**: All active with complete management data
 - **Complete Metadata**: Addresses, BINs, contact information, compliance scores
 
 ### Worker Assignments
-- **7 Active Workers**: Kevin Dutan (47 tasks), Greg Hutson, Moises Farhat, etc.
-- **120+ Routine Tasks**: Scheduled across all buildings with time-based triggers
+- **7 Active Workers**: Kevin Dutan, Greg Hutson, Edwin Lema, Mercedes Inamagua, Luis Lopez, Angel Guirachocha, Shawn Magloire (Admin)
+- **120 Routine Tasks**: Scheduled across all buildings with time-based triggers
 - **Dynamic Task Generation**: Real-time task creation based on schedules and conditions
 
 ### Data Seed Source
 All data is centralized in `packages/data-seed/` with validation:
-- `buildings.json` - 19 buildings with full metadata
+- `buildings.json` - 18 buildings with full metadata
 - `workers.json` - 7 workers with assignments
-- `routines.json` - 120+ scheduled maintenance routines
+- `routines.json` - 120 scheduled maintenance routines
 - `clients.json` - 7 client accounts with building portfolios
 
 **Single Source of Truth**: All dashboards and services pull from data-seed, ensuring consistency.

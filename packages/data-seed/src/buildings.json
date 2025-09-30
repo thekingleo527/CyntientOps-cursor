@@ -353,25 +353,5 @@
     "borough": "Manhattan",
     "compliance_score": 0.79,
     "client_id": "JMR"
-  },
-  {
-    "id": "20",
-    "name": "CyntientOps HQ",
-    "address": "CyntientOps Headquarters, New York, NY",
-    "latitude": 40.7589,
-    "longitude": -73.9851,
-    "imageAssetName": "CyntientOps_HQ",
-    "numberOfUnits": 1,
-    "yearBuilt": 2024,
-    "squareFootage": 5000,
-    "managementCompany": "CyntientOps",
-    "primaryContact": "Operations Team",
-    "contactEmail": "operations@cyntientops.com",
-    "contactPhone": "+1-212-555-0123",
-    "isActive": true,
-    "normalized_name": "cyntientops_hq",
-    "borough": "Manhattan",
-    "compliance_score": 1.0,
-    "client_id": "CYNT"
   }
 ]

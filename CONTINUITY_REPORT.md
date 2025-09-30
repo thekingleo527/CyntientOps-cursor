@@ -15,14 +15,14 @@ The CyntientOps React Native implementation has achieved **complete feature pari
 
 ### 📊 **Data Infrastructure Updates**
 - **Routines Data**: Expanded from 88 to 120 routine tasks with complete worker and building assignments
-- **Building Portfolio**: Added CyntientOps HQ (ID: 20) bringing total to 19 buildings
-- **Worker Assignments**: Kevin Dutan now has 47 tasks (increased from 38)
+- **Building Portfolio**: 18 total buildings with Rubin Museum (ID: 14) serving as CyntientOps HQ
+- **Worker Assignments**: All 7 workers with assigned routines across all buildings
 - **Data Validation**: Updated all validation counts and canonical ID references
 - **Cross-Reference Integrity**: All routines properly reference existing workers and buildings
 
 ### 🔐 **Authentication System - COMPLETE**
-- **User Credentials**: All 15 users (7 workers + 7 clients + 1 admin) mapped with proper credentials
-- **Glass Card Login**: 6 quick-access glass cards for immediate login (Kevin Dutan, Greg Hutson, Moises Farhat, Michelle, David Edelman, Jerry Edelman)
+- **User Credentials**: All 14 users (7 workers including 1 admin + 7 clients/property managers) mapped with proper credentials
+- **Glass Card Login**: 6 quick-access glass cards for immediate login (Kevin Dutan, Greg Hutson, Edwin Lema, Mercedes Inamagua, Luis Lopez, Shawn Magloire)
 - **Role-Based Access**: Complete authentication service with worker, admin, and client role support
 - **Password Security**: All users use "password" for demo purposes (production-ready for real authentication)
 - **Session Management**: Full session validation and user profile management

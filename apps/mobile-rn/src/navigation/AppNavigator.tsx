@@ -7,14 +7,10 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '../mocks/react-navigation-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Screens
-import { WorkerDashboardScreen } from '../screens/WorkerDashboardScreen';
-import { ClientDashboardScreen } from '../screens/ClientDashboardScreen';
-import { AdminDashboardScreen } from '../screens/AdminDashboardScreen';
 import { BuildingDetailScreen } from '../screens/BuildingDetailScreen';
 import { TaskTimelineScreen } from '../screens/TaskTimelineScreen';
 import { LoginScreen } from '../screens/LoginScreen';
@@ -22,12 +18,15 @@ import { MultisiteDepartureScreen } from '../screens/MultisiteDepartureScreen';
 import { WeeklyRoutineScreen } from '../screens/WeeklyRoutineScreen';
 import { DailyRoutineScreen } from '../screens/DailyRoutineScreen';
 
+// Enhanced Tab Navigator
+import { EnhancedTabNavigator } from './EnhancedTabNavigator';
+
 // Types
 import { WorkerProfile } from '@cyntientops/domain-schema';
 
 export type RootStackParamList = {
   Login: undefined;
-  Main: { userRole: 'worker' | 'client' | 'admin'; userId: string };
+  Main: { userRole: 'worker' | 'client' | 'admin'; userId: string; userName: string };
   BuildingDetail: { buildingId: string };
   TaskTimeline: { taskId: string };
   ClockInModal: { buildingId: string };
@@ -37,14 +36,7 @@ export type RootStackParamList = {
   DailyRoutine: undefined;
 };
 
-export type MainTabParamList = {
-  WorkerDashboard: { workerId: string };
-  ClientDashboard: { clientId: string };
-  AdminDashboard: undefined;
-};
-
 const Stack = createStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator<MainTabParamList>();
 
 interface AppNavigatorProps {
   initialUser?: WorkerProfile;
@@ -61,63 +53,16 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
     }, 1000);
   }, []);
 
+  // Use EnhancedTabNavigator with role-based tabs
   const MainTabs = ({ route }: { route: any }) => {
-    const { userRole, userId } = route.params;
+    const { userRole, userId, userName } = route.params;
 
     return (
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: '#0f0f0f',
-            borderTopColor: 'rgba(255, 255, 255, 0.1)',
-            borderTopWidth: 1,
-          },
-          tabBarActiveTintColor: '#10b981',
-          tabBarInactiveTintColor: '#6b7280',
-        }}
-      >
-        {userRole === 'worker' && (
-          <Tab.Screen
-            name="WorkerDashboard"
-            component={WorkerDashboardScreen}
-            initialParams={{ workerId: userId }}
-            options={{
-              title: 'Dashboard',
-              tabBarIcon: ({ color, size }) => (
-                <View style={[styles.tabIcon, { backgroundColor: color }]} />
-              ),
-            }}
-          />
-        )}
-        
-        {userRole === 'client' && (
-          <Tab.Screen
-            name="ClientDashboard"
-            component={ClientDashboardScreen}
-            initialParams={{ clientId: userId }}
-            options={{
-              title: 'Portfolio',
-              tabBarIcon: ({ color, size }) => (
-                <View style={[styles.tabIcon, { backgroundColor: color }]} />
-              ),
-            }}
-          />
-        )}
-        
-        {userRole === 'admin' && (
-          <Tab.Screen
-            name="AdminDashboard"
-            component={AdminDashboardScreen}
-            options={{
-              title: 'Admin',
-              tabBarIcon: ({ color, size }) => (
-                <View style={[styles.tabIcon, { backgroundColor: color }]} />
-              ),
-            }}
-          />
-        )}
-      </Tab.Navigator>
+      <EnhancedTabNavigator
+        userRole={userRole}
+        userId={userId}
+        userName={userName}
+      />
     );
   };
 
@@ -138,15 +83,34 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
         }}
       >
         {!user ? (
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Login">
+            {() => (
+              <LoginScreen
+                onLoginSuccess={(authenticatedUser) => {
+                  // Convert AuthenticatedUser to WorkerProfile format
+                  const workerProfile: WorkerProfile = {
+                    id: authenticatedUser.id,
+                    name: authenticatedUser.name,
+                    email: authenticatedUser.email,
+                    role: authenticatedUser.role,
+                    phone: authenticatedUser.profile.phone || '',
+                    status: 'Available',
+                    capabilities: (authenticatedUser.profile as any).capabilities || {}
+                  };
+                  setUser(workerProfile);
+                }}
+              />
+            )}
+          </Stack.Screen>
         ) : (
           <>
-            <Stack.Screen 
-              name="Main" 
+            <Stack.Screen
+              name="Main"
               component={MainTabs}
-              initialParams={{ 
+              initialParams={{
                 userRole: user.role === 'admin' ? 'admin' : 'worker',
-                userId: user.id 
+                userId: user.id,
+                userName: user.name
               }}
             />
             <Stack.Screen 
@@ -212,11 +176,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0a0a0a',
-  },
-  tabIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
   },
 });
 

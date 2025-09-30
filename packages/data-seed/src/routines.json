@@ -1454,9 +1454,9 @@
   {
     "id": "task-087",
     "title": "Scheduled Repairs & Follow-ups - CyntientOps HQ",
-    "description": "Handle scheduled repairs and follow-up maintenance",
-    "building": "CyntientOps HQ",
-    "buildingId": "20",
+    "description": "Handle scheduled repairs and follow-up maintenance at Rubin Museum HQ",
+    "building": "Rubin Museum (142–148 W 17th) - CyntientOps HQ",
+    "buildingId": "14",
     "assignedWorker": "Edwin Lema",
     "workerId": "2",
     "category": "Maintenance",

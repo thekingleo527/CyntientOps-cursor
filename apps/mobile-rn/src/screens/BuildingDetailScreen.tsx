@@ -402,24 +402,40 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
 
         {/* Quick Stats */}
         <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
+          <TouchableOpacity
+            style={styles.statCard}
+            onPress={() => setSelectedTab(BuildingDetailTab.TASKS)}
+            activeOpacity={0.7}
+          >
             <Text style={styles.statValue}>{buildingDetails.activeTasks.length}</Text>
             <Text style={styles.statLabel}>Active Tasks</Text>
-          </View>
-          <View style={styles.statCard}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.statCard}
+            onPress={() => setSelectedTab(BuildingDetailTab.TEAM)}
+            activeOpacity={0.7}
+          >
             <Text style={styles.statValue}>{buildingDetails.assignedWorkers.length}</Text>
             <Text style={styles.statLabel}>Team Members</Text>
-          </View>
-          <View style={styles.statCard}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.statCard}
+            onPress={() => setSelectedTab(BuildingDetailTab.TASKS)}
+            activeOpacity={0.7}
+          >
             <Text style={styles.statValue}>{buildingDetails.completionRate.toFixed(0)}%</Text>
             <Text style={styles.statLabel}>Completion Rate</Text>
-          </View>
-          <View style={styles.statCard}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.statCard}
+            onPress={() => setSelectedTab(BuildingDetailTab.TASKS)}
+            activeOpacity={0.7}
+          >
             <Text style={styles.statValue}>
               {buildingDetails.lastServiceDate.toLocaleDateString()}
             </Text>
             <Text style={styles.statLabel}>Last Service</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Location Map */}
@@ -438,30 +454,58 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
         <View style={styles.inventorySection}>
           <Text style={styles.sectionTitle}>Inventory Status</Text>
           <View style={styles.inventoryGrid}>
-            <View style={styles.inventoryCard}>
+            <TouchableOpacity
+              style={styles.inventoryCard}
+              onPress={() => Alert.alert(
+                'Cleaning Supplies',
+                `${buildingDetails.inventorySummary.cleaningLow} items low out of ${buildingDetails.inventorySummary.cleaningTotal} total.\n\nInventory management coming soon.`
+              )}
+              activeOpacity={0.7}
+            >
               <Text style={styles.inventoryTitle}>Cleaning Supplies</Text>
               <Text style={styles.inventoryCount}>
                 {buildingDetails.inventorySummary.cleaningLow} low / {buildingDetails.inventorySummary.cleaningTotal} total
               </Text>
-            </View>
-            <View style={styles.inventoryCard}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.inventoryCard}
+              onPress={() => Alert.alert(
+                'Equipment',
+                `${buildingDetails.inventorySummary.equipmentLow} items low out of ${buildingDetails.inventorySummary.equipmentTotal} total.\n\nInventory management coming soon.`
+              )}
+              activeOpacity={0.7}
+            >
               <Text style={styles.inventoryTitle}>Equipment</Text>
               <Text style={styles.inventoryCount}>
                 {buildingDetails.inventorySummary.equipmentLow} low / {buildingDetails.inventorySummary.equipmentTotal} total
               </Text>
-            </View>
-            <View style={styles.inventoryCard}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.inventoryCard}
+              onPress={() => Alert.alert(
+                'Maintenance',
+                `${buildingDetails.inventorySummary.maintenanceLow} items low out of ${buildingDetails.inventorySummary.maintenanceTotal} total.\n\nInventory management coming soon.`
+              )}
+              activeOpacity={0.7}
+            >
               <Text style={styles.inventoryTitle}>Maintenance</Text>
               <Text style={styles.inventoryCount}>
                 {buildingDetails.inventorySummary.maintenanceLow} low / {buildingDetails.inventorySummary.maintenanceTotal} total
               </Text>
-            </View>
-            <View style={styles.inventoryCard}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.inventoryCard}
+              onPress={() => Alert.alert(
+                'Safety',
+                `${buildingDetails.inventorySummary.safetyLow} items low out of ${buildingDetails.inventorySummary.safetyTotal} total.\n\nInventory management coming soon.`
+              )}
+              activeOpacity={0.7}
+            >
               <Text style={styles.inventoryTitle}>Safety</Text>
               <Text style={styles.inventoryCount}>
                 {buildingDetails.inventorySummary.safetyLow} low / {buildingDetails.inventorySummary.safetyTotal} total
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -479,8 +523,22 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
               const boilerCount = building.boilerCount || 0;
               const hasBoiler = boilerCount > 0;
 
+              const boilerInfo = hasBoiler
+                ? `${boilerCount} Boiler${boilerCount > 1 ? 's' : ''} in ${building.boilerLocation || 'building'}.${
+                    building.sharedBoilerWith ? `\n\nShared with ${building.sharedBoilerWith}.` : ''
+                  }${
+                    building.sharedBoilerProviderFor?.length > 0
+                      ? `\n\nProvides boiler service for ${building.sharedBoilerProviderFor.join(', ')}.`
+                      : ''
+                  }\n\nBoiler maintenance schedule and blowdown logs coming soon.`
+                : 'This building has no boiler system.';
+
               return (
-                <View style={styles.infrastructureCard}>
+                <TouchableOpacity
+                  style={styles.infrastructureCard}
+                  onPress={() => Alert.alert('Boiler System', boilerInfo)}
+                  activeOpacity={0.7}
+                >
                   <Text style={styles.infrastructureTitle}>Boiler System</Text>
                   <Text style={styles.infrastructureValue}>
                     {hasBoiler ? `${boilerCount} Boiler${boilerCount > 1 ? 's' : ''}` : 'No Boiler'}
@@ -500,7 +558,7 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
                       Provides for {building.sharedBoilerProviderFor.join(', ')}
                     </Text>
                   )}
-                </View>
+                </TouchableOpacity>
               );
             })()}
 
@@ -514,7 +572,11 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
               const requiresSetOut = building.garbageBinSetOut;
 
               return (
-                <View style={styles.infrastructureCard}>
+                <TouchableOpacity
+                  style={styles.infrastructureCard}
+                  onPress={() => setSelectedTab(BuildingDetailTab.COLLECTION_SCHEDULE)}
+                  activeOpacity={0.7}
+                >
                   <Text style={styles.infrastructureTitle}>Garbage Collection</Text>
                   <Text style={styles.infrastructureValue}>
                     {requiresSetOut ? 'Bin Set-Out' : 'Standard Pickup'}
@@ -522,7 +584,7 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
                   <Text style={styles.infrastructureDetail}>
                     {requiresSetOut ? 'Street-side collection' : 'Building-side collection'}
                   </Text>
-                </View>
+                </TouchableOpacity>
               );
             })()}
 
@@ -550,8 +612,22 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
                 'none': 'No checks required'
               }[checkRequired] || 'No checks required';
 
+              const drainInfo = `Drainage System:\n\n${drainTypes.join(' + ')} Drains\n\n${
+                checkRequired === 'before_and_after_rains'
+                  ? 'Critical: Check drains before and after rain events to prevent water damage and flooding.'
+                  : checkRequired === 'seasonal'
+                  ? 'Seasonal maintenance: Check drains at the beginning and end of each season.'
+                  : checkRequired === 'as_needed'
+                  ? 'Check drains as needed based on weather conditions and observations.'
+                  : 'No regular checks required.'
+              }\n\nDrainage inspection checklist and maintenance logs coming soon.`;
+
               return (
-                <View style={styles.infrastructureCard}>
+                <TouchableOpacity
+                  style={styles.infrastructureCard}
+                  onPress={() => Alert.alert('Drainage System', drainInfo)}
+                  activeOpacity={0.7}
+                >
                   <Text style={styles.infrastructureTitle}>Drainage System</Text>
                   <Text style={styles.infrastructureValue}>
                     {drainTypes.join(' + ')} Drains
@@ -559,7 +635,7 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
                   <Text style={styles.infrastructureDetail}>
                     {checkText}
                   </Text>
-                </View>
+                </TouchableOpacity>
               );
             })()}
           </View>

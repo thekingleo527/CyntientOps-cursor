@@ -5,6 +5,266 @@
  */
 
 import React, { useState, useEffect } from 'react';
+// Real violation data from NYC APIs
+const realViolationData = {
+  "1": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "3": {
+    "hpd": 0,
+    "dob": 1,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "4": {
+    "hpd": 4,
+    "dob": 71,
+    "dsny": 50,
+    "outstanding": 1027,
+    "score": 75
+  },
+  "5": {
+    "hpd": 0,
+    "dob": 1,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "6": {
+    "hpd": 0,
+    "dob": 61,
+    "dsny": 22,
+    "outstanding": 2100,
+    "score": 45
+  },
+  "7": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "8": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 50,
+    "outstanding": 0,
+    "score": 100
+  },
+  "9": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "10": {
+    "hpd": 0,
+    "dob": 76,
+    "dsny": 14,
+    "outstanding": 2550,
+    "score": 70
+  },
+  "11": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "13": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "14": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "15": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "16": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "17": {
+    "hpd": 0,
+    "dob": 3,
+    "dsny": 14,
+    "outstanding": 14687,
+    "score": 30
+  },
+  "18": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 23,
+    "outstanding": 1825,
+    "score": 60
+  },
+  "19": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "21": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 50,
+    "outstanding": 2425,
+    "score": 50
+  }
+};
+
+// Real violation data from NYC APIs
+const realViolationData = {
+  "1": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "3": {
+    "hpd": 0,
+    "dob": 1,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "4": {
+    "hpd": 4,
+    "dob": 71,
+    "dsny": 50,
+    "outstanding": 1027,
+    "score": 75
+  },
+  "5": {
+    "hpd": 0,
+    "dob": 1,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "6": {
+    "hpd": 0,
+    "dob": 61,
+    "dsny": 22,
+    "outstanding": 2100,
+    "score": 45
+  },
+  "7": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "8": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 50,
+    "outstanding": 0,
+    "score": 100
+  },
+  "9": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "10": {
+    "hpd": 0,
+    "dob": 76,
+    "dsny": 14,
+    "outstanding": 2550,
+    "score": 70
+  },
+  "11": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "13": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "14": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "15": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "16": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "17": {
+    "hpd": 0,
+    "dob": 3,
+    "dsny": 14,
+    "outstanding": 14687,
+    "score": 30
+  },
+  "18": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 23,
+    "outstanding": 1825,
+    "score": 60
+  },
+  "19": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 0,
+    "outstanding": 0,
+    "score": 100
+  },
+  "21": {
+    "hpd": 0,
+    "dob": 0,
+    "dsny": 50,
+    "outstanding": 2425,
+    "score": 50
+  }
+};
+
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 // TODO: Replace with proper imports once packages are built
@@ -393,8 +653,8 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
               <View style={[styles.statusBadge, { backgroundColor: getStatusColor(buildingDetails.operationalStatus) }]}>
                 <Text style={styles.statusText}>{buildingDetails.operationalStatus.toUpperCase()}</Text>
               </View>
-              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(buildingDetails.complianceStatus) }]}>
-                <Text style={styles.statusText}>{buildingDetails.complianceStatus.toUpperCase()}</Text>
+              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(realViolationData[buildingDetails.id]?.score >= 90 ? "excellent" : realViolationData[buildingDetails.id]?.score >= 70 ? "good" : realViolationData[buildingDetails.id]?.score >= 50 ? "warning" : "critical") }]}>
+                <Text style={styles.statusText}>{realViolationData[buildingDetails.id]?.score >= 90 ? "excellent" : realViolationData[buildingDetails.id]?.score >= 70 ? "good" : realViolationData[buildingDetails.id]?.score >= 50 ? "warning" : "critical".toUpperCase()}</Text>
               </View>
             </View>
           </View>
@@ -730,22 +990,739 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
       <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
         <View style={styles.complianceHeader}>
           <Text style={styles.sectionTitle}>Compliance Status</Text>
-          <View style={[styles.complianceBadge, { backgroundColor: getStatusColor(buildingDetails.complianceStatus) }]}>
-            <Text style={styles.complianceText}>{buildingDetails.complianceStatus.toUpperCase()}</Text>
+          <View style={[styles.complianceBadge, { backgroundColor: getStatusColor(realViolationData[buildingDetails.id]?.score >= 90 ? "excellent" : realViolationData[buildingDetails.id]?.score >= 70 ? "good" : realViolationData[buildingDetails.id]?.score >= 50 ? "warning" : "critical") }]}>
+            <Text style={styles.complianceText}>{realViolationData[buildingDetails.id]?.score >= 90 ? "excellent" : realViolationData[buildingDetails.id]?.score >= 70 ? "good" : realViolationData[buildingDetails.id]?.score >= 50 ? "warning" : "critical".toUpperCase()}</Text>
           </View>
         </View>
 
         {/* Compliance Categories */}
         <View style={styles.complianceGrid}>
-          {['HPD', 'DOB', 'FDNY', 'LL97', 'LL11', 'DEP'].map((category) => (
-            <View key={category} style={styles.complianceCard}>
-              <Text style={styles.complianceCategory}>{category}</Text>
-              <View style={[styles.complianceStatus, { backgroundColor: '#10b981' }]}>
-                <Text style={styles.complianceStatusText}>COMPLIANT</Text>
-              </View>
-              <Text style={styles.complianceDetails}>No violations</Text>
+          {(() => {
+            const buildingId = buildingDetails.id;
+            const data = realViolationData[buildingId] || { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 };
+            
+            const getStatus = (count, outstanding = 0) => {
+              if (count === 0 && outstanding === 0) return { text: 'COMPLIANT', color: '#10b981' };
+              if (outstanding > 1000) return { text: 'CRITICAL', color: '#ef4444' };
+              if (count > 0) return { text: 'VIOLATIONS', color: '#f59e0b' };
+              return { text: 'COMPLIANT', color: '#10b981' };
+            };
+            
+            return [
+              { key: 'HPD', label: 'HPD', count: data.hpd, outstanding: 0 },
+              { key: 'DOB', label: 'DOB', count: data.dob, outstanding: 0 },
+              { key: 'DSNY', label: 'DSNY', count: data.dsny, outstanding: data.outstanding }
+            ].map((category) => {
+              const status = getStatus(category.count, category.outstanding);
+              return (
+                <View key={category.key} style={styles.complianceCard}>
+                  <Text style={styles.complianceCategory}>{category.label}</Text>
+                  <View style={[styles.complianceStatus, { backgroundColor: status.color }]}>
+                    <Text style={styles.complianceStatusText}>{status.text}</Text>
+                  </View>
+                  <Text style={styles.complianceDetails}>
+                    {category.count} {category.count === 1 ? 'violation' : 'violations'}
+                    {category.outstanding > 0 && ' • 
+        </View>
+
+        {/* Recent Inspections */}
+        <View style={styles.inspectionsSection}>
+          <Text style={styles.sectionTitle}>Recent Inspections</Text>
+          <View style={styles.inspectionCard}>
+            <Text style={styles.inspectionDate}>Last HPD Inspection: 2024-01-15</Text>
+            <Text style={styles.inspectionResult}>Status: Passed</Text>
+          </View>
+          <View style={styles.inspectionCard}>
+            <Text style={styles.inspectionDate}>Last DOB Inspection: 2024-01-10</Text>
+            <Text style={styles.inspectionResult}>Status: Passed</Text>
+          </View>
+        </View>
+      </ScrollView>
+    );
+  };
+
+  const renderCollectionScheduleTab = () => {
+    if (!buildingDetails) return null;
+
+    const schedule = buildingDetails.collectionSchedule;
+    if (!schedule) {
+      return (
+        <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.complianceHeader}>
+            <Text style={styles.sectionTitle}>Collection Schedule</Text>
+          </View>
+          <View style={styles.noDataContainer}>
+            <Text style={styles.noDataText}>Collection schedule not available</Text>
+            <Text style={styles.noDataSubtext}>NYC API data not loaded for this building</Text>
+          </View>
+        </ScrollView>
+      );
+    }
+
+    const formatDate = (date: Date) => {
+      return date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    };
+
+    return (
+      <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.complianceHeader}>
+          <Text style={styles.sectionTitle}>DSNY Collection Schedule</Text>
+          <Text style={styles.sectionSubtitle}>{schedule.buildingName}</Text>
+        </View>
+
+        {/* Collection Schedule Cards */}
+        <View style={styles.scheduleGrid}>
+          <View style={styles.scheduleCard}>
+            <Text style={styles.scheduleType}>Regular Trash</Text>
+            <Text style={styles.scheduleDay}>{schedule.regularCollectionDay}</Text>
+            <Text style={styles.scheduleDate}>Next: {formatDate(schedule.nextCollectionDate)}</Text>
+          </View>
+
+          <View style={styles.scheduleCard}>
+            <Text style={styles.scheduleType}>Recycling</Text>
+            <Text style={styles.scheduleDay}>{schedule.recyclingDay}</Text>
+            <Text style={styles.scheduleDate}>Next: {formatDate(schedule.nextRecyclingDate)}</Text>
+          </View>
+
+          <View style={styles.scheduleCard}>
+            <Text style={styles.scheduleType}>Organics</Text>
+            <Text style={styles.scheduleDay}>{schedule.organicsDay}</Text>
+            <Text style={styles.scheduleDate}>Next: {formatDate(schedule.nextOrganicsDate)}</Text>
+          </View>
+
+          <View style={styles.scheduleCard}>
+            <Text style={styles.scheduleType}>Bulk Pickup</Text>
+            <Text style={styles.scheduleDay}>{schedule.bulkPickupDay}</Text>
+            <Text style={styles.scheduleDate}>Next: {formatDate(schedule.nextBulkPickupDate)}</Text>
+          </View>
+        </View>
+
+        {/* Special Instructions */}
+        <View style={styles.instructionsContainer}>
+          <Text style={styles.instructionsTitle}>Collection Guidelines</Text>
+          {schedule.specialInstructions.map((instruction, index) => (
+            <View key={index} style={styles.instructionItem}>
+              <Text style={styles.instructionBullet}>•</Text>
+              <Text style={styles.instructionText}>{instruction}</Text>
             </View>
           ))}
+        </View>
+
+        {/* Building Info */}
+        <View style={styles.buildingInfoContainer}>
+          <Text style={styles.buildingInfoTitle}>Building Information</Text>
+          <Text style={styles.buildingInfoText}>BIN: {schedule.bin}</Text>
+          <Text style={styles.buildingInfoText}>Frequency: {schedule.collectionFrequency}</Text>
+          <Text style={styles.buildingInfoText}>Address: {schedule.address}</Text>
+        </View>
+      </ScrollView>
+    );
+  };
+
+  const renderTabContent = () => {
+    switch (selectedTab) {
+      case BuildingDetailTab.OVERVIEW:
+        return renderOverviewTab();
+      case BuildingDetailTab.TASKS:
+        return renderTasksTab();
+      case BuildingDetailTab.TEAM:
+        return renderTeamTab();
+      case BuildingDetailTab.COMPLIANCE:
+        return renderComplianceTab();
+      case BuildingDetailTab.COLLECTION_SCHEDULE:
+        return renderCollectionScheduleTab();
+      default:
+        return renderOverviewTab();
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading building details...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!buildingDetails) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Building not found</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.backButtonText}>‹</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Building Details</Text>
+        <TouchableOpacity style={styles.menuButton}>
+          <Text style={styles.menuButtonText}>⋯</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Tab Bar */}
+      <View style={styles.tabBar}>
+        {Object.values(BuildingDetailTab).map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.tabButton, selectedTab === tab && styles.tabButtonActive]}
+            onPress={() => setSelectedTab(tab)}
+          >
+            <Text style={[styles.tabButtonText, selectedTab === tab && styles.tabButtonTextActive]}>
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Tab Content */}
+      {renderTabContent()}
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0a0a0a',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: '#ef4444',
+    fontSize: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1f1f1f',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  headerTitle: {
+    flex: 1,
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  menuButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1f1f1f',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#1f1f1f',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  tabButtonActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#3b82f6',
+  },
+  tabButtonText: {
+    color: '#9ca3af',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  tabButtonTextActive: {
+    color: '#3b82f6',
+    fontWeight: '600',
+  },
+  tabContent: {
+    flex: 1,
+  },
+  buildingHeader: {
+    padding: 20,
+  },
+  buildingImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  buildingInfo: {
+    alignItems: 'flex-start',
+  },
+  buildingName: {
+    color: '#ffffff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  buildingAddress: {
+    color: '#9ca3af',
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  statusText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  statCard: {
+    flex: 1,
+    minWidth: (width - 60) / 2,
+    backgroundColor: '#1f1f1f',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  statValue: {
+    color: '#ffffff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  statLabel: {
+    color: '#9ca3af',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  mapContainer: {
+    padding: 20,
+  },
+  sectionTitle: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  inventorySection: {
+    padding: 20,
+  },
+  inventoryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  inventoryCard: {
+    flex: 1,
+    minWidth: (width - 60) / 2,
+    backgroundColor: '#1f1f1f',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  inventoryTitle: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  inventoryCount: {
+    color: '#9ca3af',
+    fontSize: 12,
+  },
+  infrastructureSection: {
+    padding: 20,
+  },
+  infrastructureGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  infrastructureCard: {
+    flex: 1,
+    minWidth: (width - 60) / 2,
+    backgroundColor: '#1f1f1f',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  infrastructureTitle: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  infrastructureValue: {
+    color: '#10b981',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  infrastructureDetail: {
+    color: '#9ca3af',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  tasksHeader: {
+    padding: 20,
+  },
+  taskCard: {
+    backgroundColor: '#1f1f1f',
+    marginHorizontal: 20,
+    marginBottom: 12,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  taskHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  taskName: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+    marginRight: 8,
+  },
+  priorityBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  priorityText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  taskDescription: {
+    color: '#9ca3af',
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  taskMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  taskCategory: {
+    color: '#10b981',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  taskDueDate: {
+    color: '#3b82f6',
+    fontSize: 12,
+  },
+  teamHeader: {
+    padding: 20,
+  },
+  workerCard: {
+    backgroundColor: '#1f1f1f',
+    marginHorizontal: 20,
+    marginBottom: 12,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  workerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  workerAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#3b82f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  workerInitials: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  workerInfo: {
+    flex: 1,
+  },
+  workerName: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  workerRole: {
+    color: '#9ca3af',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  workerStatusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  workerStatusText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  workerStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  workerStat: {
+    color: '#9ca3af',
+    fontSize: 12,
+  },
+  complianceHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+  },
+  complianceBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  complianceText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  complianceGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  complianceCard: {
+    flex: 1,
+    minWidth: (width - 60) / 2,
+    backgroundColor: '#1f1f1f',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  complianceCategory: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  complianceStatus: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  complianceStatusText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  complianceDetails: {
+    color: '#9ca3af',
+    fontSize: 12,
+  },
+  inspectionsSection: {
+    padding: 20,
+  },
+  inspectionCard: {
+    backgroundColor: '#1f1f1f',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  inspectionDate: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  inspectionResult: {
+    color: '#10b981',
+    fontSize: 12,
+  },
+  // Collection Schedule Styles
+  noDataContainer: {
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 200,
+  },
+  noDataText: {
+    color: '#9ca3af',
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 8,
+  },
+  noDataSubtext: {
+    color: '#6b7280',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  sectionSubtitle: {
+    color: '#9ca3af',
+    fontSize: 14,
+    marginTop: 4,
+  },
+  scheduleGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 16,
+    gap: 12,
+  },
+  scheduleCard: {
+    flex: 1,
+    minWidth: '45%',
+    backgroundColor: '#1f1f1f',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  scheduleType: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  scheduleDay: {
+    color: '#3b82f6',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  scheduleDate: {
+    color: '#9ca3af',
+    fontSize: 12,
+  },
+  instructionsContainer: {
+    margin: 16,
+    backgroundColor: '#1f1f1f',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  instructionsTitle: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  instructionItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  instructionBullet: {
+    color: '#3b82f6',
+    fontSize: 16,
+    marginRight: 8,
+    marginTop: 2,
+  },
+  instructionText: {
+    color: '#d1d5db',
+    fontSize: 14,
+    flex: 1,
+    lineHeight: 20,
+  },
+  buildingInfoContainer: {
+    margin: 16,
+    backgroundColor: '#1f1f1f',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  buildingInfoTitle: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  buildingInfoText: {
+    color: '#d1d5db',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+});
+
+export default BuildingDetailScreen; + category.outstanding.toLocaleString() + ' outstanding'}
+                  </Text>
+                </View>
+              );
+            });
+          })()}
         </View>
 
         {/* Recent Inspections */}

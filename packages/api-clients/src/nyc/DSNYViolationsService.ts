@@ -243,16 +243,17 @@ export function generateDemoDSNYData(address: NormalizedAddress): DSNYViolations
 
 /**
  * Check if address should show demo data (for sales/testing)
+ * WARNING: Never add real portfolio addresses here - use test addresses only
  */
 export function shouldShowDemoData(address: string): boolean {
-  // Demo mode for specific test addresses
+  // Demo mode ONLY for test/demo addresses that are NOT in the real portfolio
   const demoAddresses = [
-    '123 1st Avenue',
-    '68 Perry Street',
-    '148 Chambers Street'
+    '123 Demo Street',        // Test address only
+    '999 Example Avenue',     // Test address only
+    '555 Test Boulevard'      // Test address only
   ];
-  
-  return demoAddresses.some(demoAddr => 
+
+  return demoAddresses.some(demoAddr =>
     address.toLowerCase().includes(demoAddr.toLowerCase())
   );
 }

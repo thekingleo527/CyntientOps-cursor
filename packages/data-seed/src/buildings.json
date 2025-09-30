@@ -32,7 +32,10 @@
     "perUnitValue": 2000000,
     "valuationMethod": "unit_aggregation",
     "boilerCount": 0,
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": true,
+    "backyardDrains": false,
+    "drainCheckRequired": "seasonal"
   },
   {
     "id": "3",
@@ -68,7 +71,10 @@
     "valuationMethod": "unit_aggregation",
     "boilerCount": 1,
     "boilerLocation": "basement",
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": true,
+    "backyardDrains": true,
+    "drainCheckRequired": "before_and_after_rains"
   },
   {
     "id": "4",
@@ -100,7 +106,10 @@
     "assessmentTrend": "increasing",
     "propertyValueLastUpdated": "2025-09-30T17:37:24.075Z",
     "boilerCount": 0,
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "5",
@@ -136,7 +145,10 @@
     "valuationMethod": "unit_aggregation",
     "boilerCount": 1,
     "boilerLocation": "basement",
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": true,
+    "backyardDrains": true,
+    "drainCheckRequired": "before_and_after_rains"
   },
   {
     "id": "6",
@@ -172,7 +184,10 @@
     "valuationMethod": "unit_aggregation",
     "boilerCount": 1,
     "boilerLocation": "basement",
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "7",
@@ -209,7 +224,10 @@
     "boilerCount": 0,
     "sharedBoilerWith": "117 West 17th Street",
     "sharedBoilerBuildingId": "9",
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": true,
+    "backyardDrains": false,
+    "drainCheckRequired": "seasonal"
   },
   {
     "id": "8",
@@ -241,7 +259,10 @@
     "assessmentTrend": "increasing",
     "propertyValueLastUpdated": "2025-09-30T17:37:24.075Z",
     "boilerCount": 0,
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "9",
@@ -279,7 +300,10 @@
     "boilerLocation": "basement",
     "sharedBoilerProviderFor": ["112 West 18th Street"],
     "sharedBoilerProviderForIds": ["7"],
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": true,
+    "backyardDrains": false,
+    "drainCheckRequired": "seasonal"
   },
   {
     "id": "10",
@@ -315,7 +339,10 @@
     "valuationMethod": "unit_aggregation",
     "boilerCount": 1,
     "boilerLocation": "basement",
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "11",
@@ -350,7 +377,10 @@
     "perUnitValue": 1500000,
     "valuationMethod": "unit_aggregation",
     "boilerCount": 0,
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "13",
@@ -384,7 +414,10 @@
     "perUnitValue": 2000000,
     "valuationMethod": "unit_aggregation",
     "boilerCount": 0,
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": true,
+    "backyardDrains": false,
+    "drainCheckRequired": "seasonal"
   },
   {
     "id": "14",
@@ -420,7 +453,10 @@
     "propertyValueLastUpdated": "2025-09-30T17:37:24.075Z",
     "boilerCount": 2,
     "boilerLocation": "basement",
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": true,
+    "backyardDrains": false,
+    "drainCheckRequired": "seasonal"
   },
   {
     "id": "15",
@@ -455,7 +491,10 @@
     "valuationMethod": "unit_aggregation",
     "boilerCount": 1,
     "boilerLocation": "basement",
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "16",
@@ -487,7 +526,10 @@
     "assessmentTrend": "stable",
     "propertyValueLastUpdated": "2025-09-30T17:37:24.075Z",
     "boilerCount": 0,
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "17",
@@ -522,7 +564,10 @@
     "perUnitValue": 2500000,
     "valuationMethod": "unit_aggregation",
     "boilerCount": 0,
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "18",
@@ -554,7 +599,10 @@
     "assessmentTrend": "increasing",
     "propertyValueLastUpdated": "2025-09-30T17:37:24.075Z",
     "boilerCount": 0,
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "19",
@@ -586,7 +634,10 @@
     "assessmentTrend": "increasing",
     "propertyValueLastUpdated": "2025-09-30T17:37:24.075Z",
     "boilerCount": 0,
-    "garbageBinSetOut": false
+    "garbageBinSetOut": false,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   },
   {
     "id": "21",
@@ -623,6 +674,9 @@
     "perUnitValue": 2800000,
     "valuationMethod": "unit_aggregation",
     "boilerCount": 0,
-    "garbageBinSetOut": true
+    "garbageBinSetOut": true,
+    "roofDrains": false,
+    "backyardDrains": false,
+    "drainCheckRequired": "none"
   }
 ]

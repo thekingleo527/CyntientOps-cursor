@@ -525,6 +525,43 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
                 </View>
               );
             })()}
+
+            {/* Drainage System - Only show if building has drain data */}
+            {(() => {
+              const building = buildingDetails.building as any;
+              const hasDrainData = building.roofDrains !== undefined || building.backyardDrains !== undefined;
+
+              if (!hasDrainData) return null;
+
+              const roofDrains = building.roofDrains || false;
+              const backyardDrains = building.backyardDrains || false;
+              const checkRequired = building.drainCheckRequired || 'none';
+
+              if (!roofDrains && !backyardDrains) return null;
+
+              const drainTypes = [];
+              if (roofDrains) drainTypes.push('Roof');
+              if (backyardDrains) drainTypes.push('Backyard');
+
+              const checkText = {
+                'before_and_after_rains': 'Check before & after rains',
+                'seasonal': 'Seasonal checks',
+                'as_needed': 'As needed',
+                'none': 'No checks required'
+              }[checkRequired] || 'No checks required';
+
+              return (
+                <View style={styles.infrastructureCard}>
+                  <Text style={styles.infrastructureTitle}>Drainage System</Text>
+                  <Text style={styles.infrastructureValue}>
+                    {drainTypes.join(' + ')} Drains
+                  </Text>
+                  <Text style={styles.infrastructureDetail}>
+                    {checkText}
+                  </Text>
+                </View>
+              );
+            })()}
           </View>
         </View>
       </ScrollView>

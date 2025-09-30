@@ -42,6 +42,11 @@ export interface BuildingInfrastructure {
   // Garbage Collection
   garbageBinSetOut: boolean;
 
+  // Drainage Infrastructure
+  roofDrains: boolean;
+  backyardDrains: boolean;
+  drainCheckRequired: 'none' | 'seasonal' | 'before_and_after_rains' | 'as_needed';
+
   // DSNY Collection Details
   dsnyCollection: {
     collectionDay: string; // Monday, Tuesday, etc.
@@ -186,6 +191,10 @@ export class BuildingInfrastructureCatalog {
           sharedBoilerProviderFor: (building as any).sharedBoilerProviderFor,
           sharedBoilerProviderForIds: (building as any).sharedBoilerProviderForIds,
           garbageBinSetOut: (building as any).garbageBinSetOut || false,
+
+          roofDrains: (building as any).roofDrains || false,
+          backyardDrains: (building as any).backyardDrains || false,
+          drainCheckRequired: (building as any).drainCheckRequired || 'none',
 
           dsnyCollection: {
             collectionDay,

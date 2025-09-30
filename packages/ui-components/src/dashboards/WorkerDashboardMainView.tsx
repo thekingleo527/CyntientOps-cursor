@@ -22,6 +22,7 @@ import { NovaAIChatModal } from '../modals/NovaAIChatModal';
 import { WorkerHeroNowNext } from './components/WorkerHeroNowNext';
 import { LegacyAnalyticsDashboard, AnalyticsData } from '../analytics/components/AnalyticsDashboard';
 import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientops/intelligence-services';
+import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
 // import { useAppState } from '@cyntientops/business-core';
 
 export interface WorkerDashboardMainViewProps {
@@ -281,49 +282,15 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   };
 
   const generateUrgentTasks = (workerId: string, count: number): OperationalDataTaskAssignment[] => {
-    const urgentTaskTypes = ['Emergency Cleanup', 'Safety Inspection', 'Equipment Repair', 'Compliance Issue'];
-    // Use real building IDs from worker's assigned buildings
-    const buildings = assignedBuildingIds;
-    
-    return Array.from({ length: count }, (_, index) => ({
-      id: `urgent_${workerId}_${index}`,
-      name: urgentTaskTypes[index % urgentTaskTypes.length],
-      description: `Urgent ${urgentTaskTypes[index % urgentTaskTypes.length].toLowerCase()} required`,
-      category: 'urgent',
-      priority: 'high',
-      status: 'Pending',
-      assigned_worker_id: workerId,
-      assigned_building_id: buildings[index % buildings.length],
-      due_date: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
-      estimated_duration: 60, // Standard 1 hour duration
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }));
+    const taskService = TaskService.getInstance();
+    const schedule = taskService.generateWorkerTasks(workerId);
+    return schedule.urgent.slice(0, count);
   };
 
   const generateTodaysTasks = (workerId: string, totalTasks: number): OperationalDataTaskAssignment[] => {
-    const taskTypes = [
-      'Daily Cleaning', 'Maintenance Check', 'Inventory Count', 'Safety Walk',
-      'Equipment Inspection', 'Waste Management', 'Security Check', 'Compliance Review'
-    ];
-    // Use real building IDs from worker's assigned buildings
-    const buildings = assignedBuildingIds;
-    const statuses = ['Pending', 'In Progress', 'Completed'];
-    
-    return Array.from({ length: Math.min(totalTasks, 12) }, (_, index) => ({
-      id: `task_${workerId}_${index}`,
-      name: taskTypes[index % taskTypes.length],
-      description: `Daily ${taskTypes[index % taskTypes.length].toLowerCase()} task`,
-      category: 'routine',
-      priority: index < 3 ? 'high' : index < 6 ? 'medium' : 'low',
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      assigned_worker_id: workerId,
-      assigned_building_id: buildings[index % buildings.length],
-      due_date: new Date(Date.now() + Math.random() * 8 * 60 * 60 * 1000).toISOString(),
-      estimated_duration: Math.floor(Math.random() * 90) + 15, // 15-105 minutes
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }));
+    const taskService = TaskService.getInstance();
+    const schedule = taskService.generateWorkerTasks(workerId);
+    return schedule.today.slice(0, Math.min(totalTasks, 12));
   };
 
   const generateCurrentBuilding = (buildingId: string): NamedCoordinate => {

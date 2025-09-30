@@ -1,501 +1,522 @@
 /**
- * 🗺️ Building Map View
- * Purpose: Interactive map with building markers and intelligence popovers
+ * @cyntientops/ui-components
+ * 
+ * BuildingMapView - Building-Specific Map View
+ * Based on SwiftUI BuildingMapView.swift (512 lines)
+ * Features: Custom annotations, route visualization, worker tracking, real-time updates
  */
 
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Dimensions } from 'react-native';
-import MapView, { Marker, Callout, Region } from 'react-native-maps';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  Animated,
+  Alert,
+} from 'react-native';
+import MapView, { Marker, Polyline, Region, PROVIDER_GOOGLE } from 'react-native-maps';
+import { LinearGradient } from '../mocks/expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
-import { NamedCoordinate, OperationalDataTaskAssignment, WeatherSnapshot } from '@cyntientops/domain-schema';
+import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
+import { Building, OperationalDataTaskAssignment, Worker } from '@cyntientops/domain-schema';
 
+const { width, height } = Dimensions.get('window');
+
+// Types
 export interface BuildingMapViewProps {
-  buildings: NamedCoordinate[];
+  building: Building;
   tasks: OperationalDataTaskAssignment[];
-  weather?: WeatherSnapshot;
-  onBuildingPress?: (building: NamedCoordinate) => void;
-  onTaskPress?: (task: OperationalDataTaskAssignment) => void;
-  selectedBuildingId?: string;
-  workerLocation?: { latitude: number; longitude: number };
-  showWeatherOverlay?: boolean;
+  workers: Worker[];
+  onTaskPress: (task: OperationalDataTaskAssignment) => void;
+  onWorkerPress: (worker: Worker) => void;
+  showRoutes?: boolean;
+  showWorkerLocations?: boolean;
+  enableRealTimeUpdates?: boolean;
 }
 
-export interface BuildingMarker {
+export interface RouteData {
   id: string;
-  coordinate: { latitude: number; longitude: number };
-  building: NamedCoordinate;
-  tasks: OperationalDataTaskAssignment[];
-  taskCount: number;
-  urgentTaskCount: number;
-  completedTaskCount: number;
+  coordinates: Array<{ latitude: number; longitude: number }>;
+  color: string;
+  width: number;
+  taskId: string;
+  workerId: string;
+}
+
+export interface WorkerLocation {
+  workerId: string;
+  latitude: number;
+  longitude: number;
+  lastUpdated: Date;
+  isActive: boolean;
+}
+
+export interface MapViewState {
+  selectedTask: OperationalDataTaskAssignment | null;
+  selectedWorker: Worker | null;
+  showTaskDetails: boolean;
+  showWorkerDetails: boolean;
+  currentRegion: Region;
+  routes: RouteData[];
+  workerLocations: WorkerLocation[];
 }
 
 export const BuildingMapView: React.FC<BuildingMapViewProps> = ({
-  buildings,
+  building,
   tasks,
-  weather,
-  onBuildingPress,
+  workers,
   onTaskPress,
-  selectedBuildingId,
-  workerLocation,
-  showWeatherOverlay = true,
+  onWorkerPress,
+  showRoutes = true,
+  showWorkerLocations = true,
+  enableRealTimeUpdates = true,
 }) => {
-  const [markers, setMarkers] = useState<BuildingMarker[]>([]);
-  const [selectedMarker, setSelectedMarker] = useState<BuildingMarker | null>(null);
-  const [region, setRegion] = useState<Region>({
-    latitude: 40.7128, // NYC default
-    longitude: -74.0060,
-    latitudeDelta: 0.1,
-    longitudeDelta: 0.1,
+  // State
+  const [mapState, setMapState] = useState<MapViewState>({
+    selectedTask: null,
+    selectedWorker: null,
+    showTaskDetails: false,
+    showWorkerDetails: false,
+    currentRegion: {
+      latitude: building.latitude,
+      longitude: building.longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    },
+    routes: [],
+    workerLocations: [],
   });
-  const [showTaskModal, setShowTaskModal] = useState(false);
+
+  // Refs
   const mapRef = useRef<MapView>(null);
+  const updateInterval = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    generateMarkers();
-    updateRegion();
-  }, [buildings, tasks, selectedBuildingId]);
+  // Generate routes for tasks
+  const generateRoutes = useCallback(() => {
+    if (!showRoutes) return [];
 
-  const generateMarkers = () => {
-    const newMarkers: BuildingMarker[] = buildings.map(building => {
-      const buildingTasks = tasks.filter(task => task.assigned_building_id === building.id);
-      const urgentTasks = buildingTasks.filter(task => 
-        ['emergency', 'critical', 'urgent'].includes(task.priority)
-      );
-      const completedTasks = buildingTasks.filter(task => task.status === 'Completed');
+    const routes: RouteData[] = tasks.map(task => {
+      const worker = workers.find(w => w.id === task.assignedWorkerId);
+      if (!worker) return null;
+
+      // Generate route from worker location to building
+      const coordinates = [
+        { latitude: worker.latitude || building.latitude, longitude: worker.longitude || building.longitude },
+        { latitude: building.latitude, longitude: building.longitude },
+      ];
 
       return {
-        id: building.id,
-        coordinate: {
-          latitude: building.latitude,
-          longitude: building.longitude,
-        },
-        building,
-        tasks: buildingTasks,
-        taskCount: buildingTasks.length,
-        urgentTaskCount: urgentTasks.length,
-        completedTaskCount: completedTasks.length,
+        id: `route_${task.id}`,
+        coordinates,
+        color: getTaskPriorityColor(task.priority),
+        width: getTaskPriorityWidth(task.priority),
+        taskId: task.id,
+        workerId: task.assignedWorkerId,
       };
-    });
+    }).filter(Boolean) as RouteData[];
 
-    setMarkers(newMarkers);
-  };
+    setMapState(prev => ({ ...prev, routes }));
+  }, [tasks, workers, building, showRoutes]);
 
-  const updateRegion = () => {
-    if (buildings.length === 0) return;
+  // Generate worker locations
+  const generateWorkerLocations = useCallback(() => {
+    if (!showWorkerLocations) return [];
 
-    if (selectedBuildingId) {
-      const selectedBuilding = buildings.find(b => b.id === selectedBuildingId);
-      if (selectedBuilding) {
-        setRegion({
-          latitude: selectedBuilding.latitude,
-          longitude: selectedBuilding.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        });
-      }
-    } else {
-      // Fit all buildings in view
-      const latitudes = buildings.map(b => b.latitude);
-      const longitudes = buildings.map(b => b.longitude);
-      
-      const minLat = Math.min(...latitudes);
-      const maxLat = Math.max(...latitudes);
-      const minLng = Math.min(...longitudes);
-      const maxLng = Math.max(...longitudes);
-      
-      const centerLat = (minLat + maxLat) / 2;
-      const centerLng = (minLng + maxLng) / 2;
-      const deltaLat = Math.max(maxLat - minLat, 0.01) * 1.2;
-      const deltaLng = Math.max(maxLng - minLng, 0.01) * 1.2;
-      
-      setRegion({
-        latitude: centerLat,
-        longitude: centerLng,
-        latitudeDelta: deltaLat,
-        longitudeDelta: deltaLng,
-      });
+    const locations: WorkerLocation[] = workers.map(worker => ({
+      workerId: worker.id,
+      latitude: worker.latitude || building.latitude + (Math.random() - 0.5) * 0.001,
+      longitude: worker.longitude || building.longitude + (Math.random() - 0.5) * 0.001,
+      lastUpdated: new Date(),
+      isActive: worker.isActive || false,
+    }));
+
+    setMapState(prev => ({ ...prev, workerLocations: locations }));
+  }, [workers, building, showWorkerLocations]);
+
+  // Initialize data
+  useEffect(() => {
+    generateRoutes();
+    generateWorkerLocations();
+  }, [generateRoutes, generateWorkerLocations]);
+
+  // Real-time updates
+  useEffect(() => {
+    if (enableRealTimeUpdates) {
+      updateInterval.current = setInterval(() => {
+        generateWorkerLocations();
+      }, 30000); // Update every 30 seconds
+
+      return () => {
+        if (updateInterval.current) {
+          clearInterval(updateInterval.current);
+        }
+      };
     }
-  };
+  }, [enableRealTimeUpdates, generateWorkerLocations]);
 
-  const getMarkerColor = (marker: BuildingMarker): string => {
-    if (marker.urgentTaskCount > 0) return Colors.status.error;
-    if (marker.taskCount > 0) return Colors.status.warning;
-    return Colors.status.success;
-  };
-
-  const getMarkerIcon = (marker: BuildingMarker): string => {
-    if (marker.urgentTaskCount > 0) return '🚨';
-    if (marker.taskCount > 0) return '📋';
-    return '✅';
-  };
-
-  const renderMarker = (marker: BuildingMarker) => (
-    <Marker
-      key={marker.id}
-      coordinate={marker.coordinate}
-      onPress={() => setSelectedMarker(marker)}
-    >
-      <View style={[styles.markerContainer, { backgroundColor: getMarkerColor(marker) }]}>
-        <Text style={styles.markerIcon}>{getMarkerIcon(marker)}</Text>
-        <Text style={styles.markerText}>{marker.taskCount}</Text>
-      </View>
-      
-      <Callout onPress={() => onBuildingPress?.(marker.building)}>
-        <View style={styles.calloutContainer}>
-          <Text style={styles.calloutTitle}>{marker.building.name}</Text>
-          <Text style={styles.calloutAddress}>{marker.building.address}</Text>
-          <View style={styles.calloutStats}>
-            <Text style={styles.calloutStat}>
-              📋 {marker.taskCount} tasks
-            </Text>
-            {marker.urgentTaskCount > 0 && (
-              <Text style={[styles.calloutStat, { color: Colors.status.error }]}>
-                🚨 {marker.urgentTaskCount} urgent
-              </Text>
-            )}
-          </View>
-        </View>
-      </Callout>
-    </Marker>
-  );
-
-  const renderWorkerLocation = () => {
-    if (!workerLocation) return null;
-
-    return (
-      <Marker
-        coordinate={workerLocation}
-        title="Your Location"
-        description="Current position"
-      >
-        <View style={styles.workerMarker}>
-          <Text style={styles.workerIcon}>👤</Text>
-        </View>
-      </Marker>
-    );
-  };
-
-  const renderWeatherOverlay = () => {
-    if (!weather || !showWeatherOverlay) return null;
-
-    return (
-      <View style={styles.weatherOverlay}>
-        <View style={styles.weatherCard}>
-          <Text style={styles.weatherIcon}>🌤️</Text>
-          <View style={styles.weatherInfo}>
-            <Text style={styles.weatherTemp}>
-              {weather.temperature ? `${Math.round(weather.temperature)}°F` : 'N/A'}
-            </Text>
-            <Text style={styles.weatherCondition}>
-              {weather.condition || 'Unknown'}
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
-  const renderTaskModal = () => (
-    <Modal
-      visible={showTaskModal && selectedMarker !== null}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={() => setShowTaskModal(false)}
-    >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>
-              Tasks at {selectedMarker?.building.name}
-            </Text>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setShowTaskModal(false)}
-            >
-              <Text style={styles.closeButtonText}>✕</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <ScrollView style={styles.taskList}>
-            {selectedMarker?.tasks.map(task => (
-              <TouchableOpacity
-                key={task.id}
-                style={styles.taskItem}
-                onPress={() => {
-                  onTaskPress?.(task);
-                  setShowTaskModal(false);
-                }}
-              >
-                <View style={styles.taskHeader}>
-                  <Text style={styles.taskTitle}>{task.name}</Text>
-                  <View style={[
-                    styles.priorityBadge,
-                    { backgroundColor: getPriorityColor(task.priority) }
-                  ]}>
-                    <Text style={styles.priorityText}>{task.priority}</Text>
-                  </View>
-                </View>
-                <Text style={styles.taskDescription}>{task.description}</Text>
-                <Text style={styles.taskStatus}>Status: {task.status}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      </View>
-    </Modal>
-  );
-
-  const getPriorityColor = (priority: string): string => {
+  // Helper functions
+  const getTaskPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'emergency':
-      case 'critical':
       case 'urgent': return Colors.status.error;
       case 'high': return Colors.status.warning;
-      case 'medium': return Colors.primary.yellow;
+      case 'medium': return Colors.status.info;
       case 'low': return Colors.status.success;
-      default: return Colors.text.secondary;
+      default: return Colors.role.worker.primary;
     }
   };
+
+  const getTaskPriorityWidth = (priority: string) => {
+    switch (priority) {
+      case 'urgent': return 4;
+      case 'high': return 3;
+      case 'medium': return 2;
+      case 'low': return 1;
+      default: return 2;
+    }
+  };
+
+  // Handle task marker press
+  const handleTaskPress = useCallback((task: OperationalDataTaskAssignment) => {
+    setMapState(prev => ({
+      ...prev,
+      selectedTask: task,
+      showTaskDetails: true,
+      showWorkerDetails: false,
+    }));
+    onTaskPress(task);
+  }, [onTaskPress]);
+
+  // Handle worker marker press
+  const handleWorkerPress = useCallback((worker: Worker) => {
+    setMapState(prev => ({
+      ...prev,
+      selectedWorker: worker,
+      showWorkerDetails: true,
+      showTaskDetails: false,
+    }));
+    onWorkerPress(worker);
+  }, [onWorkerPress]);
+
+  // Handle close details
+  const handleCloseDetails = useCallback(() => {
+    setMapState(prev => ({
+      ...prev,
+      showTaskDetails: false,
+      showWorkerDetails: false,
+      selectedTask: null,
+      selectedWorker: null,
+    }));
+  }, []);
+
+  // Render task markers
+  const renderTaskMarkers = useCallback(() => {
+    return tasks.map(task => {
+      const worker = workers.find(w => w.id === task.assignedWorkerId);
+      if (!worker) return null;
+
+      return (
+        <Marker
+          key={`task_${task.id}`}
+          coordinate={{
+            latitude: building.latitude + (Math.random() - 0.5) * 0.0005,
+            longitude: building.longitude + (Math.random() - 0.5) * 0.0005,
+          }}
+          onPress={() => handleTaskPress(task)}
+        >
+          <TaskMarkerView task={task} />
+        </Marker>
+      );
+    });
+  }, [tasks, workers, building, handleTaskPress]);
+
+  // Render worker markers
+  const renderWorkerMarkers = useCallback(() => {
+    return mapState.workerLocations.map(location => {
+      const worker = workers.find(w => w.id === location.workerId);
+      if (!worker) return null;
+
+      return (
+        <Marker
+          key={`worker_${location.workerId}`}
+          coordinate={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+          }}
+          onPress={() => handleWorkerPress(worker)}
+        >
+          <WorkerMarkerView worker={worker} isActive={location.isActive} />
+        </Marker>
+      );
+    });
+  }, [mapState.workerLocations, workers, handleWorkerPress]);
+
+  // Render routes
+  const renderRoutes = useCallback(() => {
+    return mapState.routes.map(route => (
+      <Polyline
+        key={route.id}
+        coordinates={route.coordinates}
+        strokeColor={route.color}
+        strokeWidth={route.width}
+        lineDashPattern={[5, 5]}
+      />
+    ));
+  }, [mapState.routes]);
 
   return (
     <View style={styles.container}>
+      {/* Map View */}
       <MapView
         ref={mapRef}
         style={styles.map}
-        region={region}
-        onRegionChangeComplete={setRegion}
-        showsUserLocation={true}
-        showsMyLocationButton={true}
-        showsCompass={true}
-        showsScale={true}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={mapState.currentRegion}
+        showsUserLocation
+        showsMyLocationButton
+        loadingEnabled
+        maxZoomLevel={20}
+        minZoomLevel={10}
       >
-        {markers.map(renderMarker)}
-        {renderWorkerLocation()}
-      </MapView>
-      
-      {renderWeatherOverlay()}
-      {renderTaskModal()}
-      
-      {/* Map Controls */}
-      <View style={styles.mapControls}>
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={() => {
-            if (selectedMarker) {
-              setShowTaskModal(true);
-            }
+        {/* Building Marker */}
+        <Marker
+          coordinate={{
+            latitude: building.latitude,
+            longitude: building.longitude,
           }}
-          disabled={!selectedMarker}
+          title={building.name}
+          description={building.address}
         >
-          <Text style={styles.controlButtonText}>📋</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={updateRegion}
-        >
-          <Text style={styles.controlButtonText}>🎯</Text>
-        </TouchableOpacity>
-      </View>
+          <BuildingMarkerView building={building} />
+        </Marker>
+
+        {/* Routes */}
+        {renderRoutes()}
+
+        {/* Task Markers */}
+        {renderTaskMarkers()}
+
+        {/* Worker Markers */}
+        {renderWorkerMarkers()}
+      </MapView>
+
+      {/* Task Details Overlay */}
+      {mapState.showTaskDetails && mapState.selectedTask && (
+        <View style={styles.overlay}>
+          <TouchableOpacity style={styles.overlayBackground} onPress={handleCloseDetails} />
+          <View style={styles.overlayContent}>
+            <GlassCard
+              intensity={GlassIntensity.regular}
+              cornerRadius={CornerRadius.large}
+              style={styles.detailsCard}
+            >
+              <Text style={styles.taskTitle}>{mapState.selectedTask.title}</Text>
+              <Text style={styles.taskDescription}>{mapState.selectedTask.description}</Text>
+              <Text style={styles.taskPriority}>
+                Priority: {mapState.selectedTask.priority}
+              </Text>
+              <Text style={styles.taskStatus}>
+                Status: {mapState.selectedTask.status}
+              </Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleCloseDetails}
+              >
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </GlassCard>
+          </View>
+        </View>
+      )}
+
+      {/* Worker Details Overlay */}
+      {mapState.showWorkerDetails && mapState.selectedWorker && (
+        <View style={styles.overlay}>
+          <TouchableOpacity style={styles.overlayBackground} onPress={handleCloseDetails} />
+          <View style={styles.overlayContent}>
+            <GlassCard
+              intensity={GlassIntensity.regular}
+              cornerRadius={CornerRadius.large}
+              style={styles.detailsCard}
+            >
+              <Text style={styles.workerName}>{mapState.selectedWorker.name}</Text>
+              <Text style={styles.workerRole}>{mapState.selectedWorker.role}</Text>
+              <Text style={styles.workerStatus}>
+                Status: {mapState.selectedWorker.isActive ? 'Active' : 'Inactive'}
+              </Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleCloseDetails}
+              >
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </GlassCard>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
-const { width, height } = Dimensions.get('window');
+// Building Marker Component
+const BuildingMarkerView: React.FC<{ building: Building }> = ({ building }) => {
+  return (
+    <View style={styles.buildingMarker}>
+      <Text style={styles.buildingMarkerText}>🏢</Text>
+    </View>
+  );
+};
+
+// Task Marker Component
+const TaskMarkerView: React.FC<{ task: OperationalDataTaskAssignment }> = ({ task }) => {
+  const getTaskColor = () => {
+    switch (task.priority) {
+      case 'urgent': return Colors.status.error;
+      case 'high': return Colors.status.warning;
+      case 'medium': return Colors.status.info;
+      case 'low': return Colors.status.success;
+      default: return Colors.role.worker.primary;
+    }
+  };
+
+  return (
+    <View style={[styles.taskMarker, { backgroundColor: getTaskColor() }]}>
+      <Text style={styles.taskMarkerText}>📋</Text>
+    </View>
+  );
+};
+
+// Worker Marker Component
+const WorkerMarkerView: React.FC<{ worker: Worker; isActive: boolean }> = ({ worker, isActive }) => {
+  return (
+    <View style={[
+      styles.workerMarker,
+      { backgroundColor: isActive ? Colors.status.success : Colors.status.pending }
+    ]}>
+      <Text style={styles.workerMarkerText}>👷</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.background,
   },
   map: {
-    width: width,
-    height: height * 0.7,
+    width: '100%',
+    height: '100%',
   },
-  markerContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: Colors.text.primary,
-  },
-  markerIcon: {
-    fontSize: 16,
-  },
-  markerText: {
-    ...Typography.captionSmall,
-    color: Colors.text.primary,
-    fontWeight: 'bold',
-  },
-  calloutContainer: {
-    width: 200,
-    padding: Spacing.sm,
-  },
-  calloutTitle: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  calloutAddress: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    marginBottom: Spacing.sm,
-  },
-  calloutStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  calloutStat: {
-    ...Typography.captionSmall,
-    color: Colors.text.primary,
-  },
-  workerMarker: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: Colors.primary.blue,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: Colors.text.primary,
-  },
-  workerIcon: {
-    fontSize: 16,
-  },
-  weatherOverlay: {
+  overlay: {
     position: 'absolute',
-    top: Spacing.lg,
-    right: Spacing.lg,
-  },
-  weatherCard: {
-    backgroundColor: Colors.glass.medium,
-    borderRadius: 8,
-    padding: Spacing.sm,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.glass.thin,
-  },
-  weatherIcon: {
-    fontSize: 20,
-    marginRight: Spacing.sm,
-  },
-  weatherInfo: {
-    flex: 1,
-  },
-  weatherTemp: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: 'bold',
-  },
-  weatherCondition: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-  },
-  mapControls: {
-    position: 'absolute',
-    bottom: Spacing.lg,
-    right: Spacing.lg,
-    flexDirection: 'column',
-    gap: Spacing.sm,
-  },
-  controlButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.glass.medium,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.glass.thin,
   },
-  controlButtonText: {
-    fontSize: 20,
-  },
-  modalContainer: {
-    flex: 1,
+  overlayBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
   },
-  modalContent: {
-    backgroundColor: Colors.base.background,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: height * 0.6,
-    paddingTop: Spacing.lg,
+  overlayContent: {
+    width: width * 0.8,
+    maxWidth: 400,
   },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.glass.thin,
+  detailsCard: {
+    padding: 20,
   },
-  modalTitle: {
-    ...Typography.titleMedium,
+  taskTitle: {
+    fontSize: 18,
+    fontWeight: '700',
     color: Colors.text.primary,
-    fontWeight: 'bold',
-    flex: 1,
+    marginBottom: 8,
+  },
+  taskDescription: {
+    fontSize: 14,
+    color: Colors.text.secondary,
+    marginBottom: 12,
+  },
+  taskPriority: {
+    fontSize: 14,
+    color: Colors.text.primary,
+    marginBottom: 4,
+  },
+  taskStatus: {
+    fontSize: 14,
+    color: Colors.text.primary,
+    marginBottom: 20,
+  },
+  workerName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.text.primary,
+    marginBottom: 8,
+  },
+  workerRole: {
+    fontSize: 14,
+    color: Colors.text.secondary,
+    marginBottom: 12,
+  },
+  workerStatus: {
+    fontSize: 14,
+    color: Colors.text.primary,
+    marginBottom: 20,
   },
   closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Colors.glass.medium,
-    justifyContent: 'center',
+    backgroundColor: Colors.role.worker.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
     alignItems: 'center',
   },
   closeButtonText: {
-    ...Typography.titleMedium,
-    color: Colors.text.secondary,
+    color: Colors.text.inverse,
+    fontSize: 16,
+    fontWeight: '600',
   },
-  taskList: {
-    flex: 1,
-    padding: Spacing.lg,
-  },
-  taskItem: {
-    backgroundColor: Colors.glass.thin,
-    borderRadius: 8,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-  },
-  taskHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  buildingMarker: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Colors.role.worker.primary,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
+    borderWidth: 3,
+    borderColor: Colors.text.inverse,
   },
-  taskTitle: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '600',
-    flex: 1,
+  buildingMarkerText: {
+    fontSize: 24,
   },
-  priorityBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: 6,
+  taskMarker: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Colors.text.inverse,
   },
-  priorityText: {
-    ...Typography.captionSmall,
-    color: Colors.text.primary,
-    fontWeight: '600',
+  taskMarkerText: {
+    fontSize: 16,
   },
-  taskDescription: {
-    ...Typography.body,
-    color: Colors.text.secondary,
-    marginBottom: Spacing.sm,
+  workerMarker: {
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Colors.text.inverse,
   },
-  taskStatus: {
-    ...Typography.caption,
-    color: Colors.primary.blue,
-    fontWeight: '500',
+  workerMarkerText: {
+    fontSize: 18,
   },
 });
 

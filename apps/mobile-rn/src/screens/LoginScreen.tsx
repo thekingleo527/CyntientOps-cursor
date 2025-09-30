@@ -5,19 +5,41 @@
  */
 
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
 import { WorkerProfile } from '@cyntientops/domain-schema';
+import { AuthenticationService, AuthenticatedUser } from '@cyntientops/business-core/src/services/AuthenticationService';
+import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
 
 interface LoginScreenProps {
-  onLoginSuccess: (user: WorkerProfile) => void;
+  onLoginSuccess: (user: AuthenticatedUser) => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [authService, setAuthService] = useState<AuthenticationService | null>(null);
+
+  // Initialize authentication service
+  React.useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        const databaseManager = DatabaseManager.getInstance({
+          path: 'cyntientops.db'
+        });
+        await databaseManager.initialize();
+        const service = AuthenticationService.getInstance(databaseManager);
+        setAuthService(service);
+      } catch (error) {
+        console.error('Failed to initialize authentication service:', error);
+      }
+    };
+    initializeAuth();
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -25,26 +47,20 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       return;
     }
 
+    if (!authService) {
+      Alert.alert('Error', 'Authentication service not initialized');
+      return;
+    }
+
     try {
       setIsLoading(true);
-
-      const databaseManager = DatabaseManager.getInstance({
-        path: 'cyntientops.db'
-      });
-      await databaseManager.initialize();
-
-      // Find user by email
-      const workers = databaseManager.getWorkers();
-      const user = workers.find(worker => worker.email === email);
-
-      if (!user) {
-        Alert.alert('Error', 'User not found');
-        return;
+      const result = await authService.authenticate(email, password);
+      
+      if (result.success && result.user) {
+        onLoginSuccess(result.user);
+      } else {
+        Alert.alert('Error', result.error || 'Login failed');
       }
-
-      // In a real app, you would verify the password here
-      // For demo purposes, we'll accept any password
-      onLoginSuccess(user);
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Error', 'Login failed. Please try again.');
@@ -53,30 +69,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  const handleDemoLogin = (role: 'worker' | 'admin') => {
-    // Demo login with predefined users
-    const demoUsers = {
-      worker: {
-        id: '4',
-        name: 'Kevin Dutan',
-        email: 'kevin@cyntientops.com',
-        phone: '+1-555-0123',
-        role: 'worker',
-        status: 'Available',
-        capabilities: {}
-      } as WorkerProfile,
-      admin: {
-        id: '1',
-        name: 'Greg Hutson',
-        email: 'greg@cyntientops.com',
-        phone: '+1-555-0124',
-        role: 'admin',
-        status: 'Available',
-        capabilities: {}
-      } as WorkerProfile
-    };
+  const handleQuickLogin = async (username: string) => {
+    if (!authService) {
+      Alert.alert('Error', 'Authentication service not initialized');
+      return;
+    }
 
-    onLoginSuccess(demoUsers[role]);
+    try {
+      setIsLoading(true);
+      const result = await authService.quickLogin(username);
+      
+      if (result.success && result.user) {
+        onLoginSuccess(result.user);
+      } else {
+        Alert.alert('Error', result.error || 'Quick login failed');
+      }
+    } catch (error) {
+      console.error('Quick login error:', error);
+      Alert.alert('Error', 'Quick login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -121,22 +134,28 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.demoSection}>
-          <Text style={styles.demoTitle}>Demo Access</Text>
-          <View style={styles.demoButtons}>
-            <TouchableOpacity
-              style={styles.demoButton}
-              onPress={() => handleDemoLogin('worker')}
-            >
-              <Text style={styles.demoButtonText}>Worker Demo</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              style={styles.demoButton}
-              onPress={() => handleDemoLogin('admin')}
-            >
-              <Text style={styles.demoButtonText}>Admin Demo</Text>
-            </TouchableOpacity>
+        {/* Glass Card Quick Login */}
+        <View style={styles.glassCardsSection}>
+          <Text style={styles.sectionTitle}>Quick Access</Text>
+          <View style={styles.glassCardsGrid}>
+            {authService?.getGlassCardUsers().map((user, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.glassCardContainer}
+                onPress={() => handleQuickLogin(user.username)}
+                disabled={isLoading}
+              >
+                <GlassCard
+                  intensity={GlassIntensity.regular}
+                  cornerRadius={CornerRadius.medium}
+                  style={styles.glassCard}
+                >
+                  <Text style={styles.glassCardName}>{user.name}</Text>
+                  <Text style={styles.glassCardRole}>{user.role}</Text>
+                  <Text style={styles.glassCardUsername}>@{user.username}</Text>
+                </GlassCard>
+              </TouchableOpacity>
+            )) || []}
           </View>
         </View>
 
@@ -238,6 +257,42 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     fontSize: 12,
     marginBottom: 4,
+  },
+  glassCardsSection: {
+    marginBottom: 32,
+  },
+  glassCardsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  glassCardContainer: {
+    width: '48%',
+    marginBottom: 12,
+  },
+  glassCard: {
+    padding: 16,
+    alignItems: 'center',
+    minHeight: 100,
+    justifyContent: 'center',
+  },
+  glassCardName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  glassCardRole: {
+    fontSize: 12,
+    color: '#9ca3af',
+    marginBottom: 4,
+  },
+  glassCardUsername: {
+    fontSize: 11,
+    color: '#10b981',
+    fontWeight: '500',
   },
 });
 

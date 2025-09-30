@@ -203,6 +203,13 @@ export enum DOFAssessmentTrend {
   FLUCTUATING = 'fluctuating',
 }
 
+export enum DOFTaxPaymentStatus {
+  CURRENT = 'current',
+  DELINQUENT = 'delinquent',
+  PARTIAL = 'partial',
+  EXEMPT = 'exempt',
+}
+
 export class DOFAPIClient {
   private apiService: NYCAPIService;
   private cache: Map<string, { data: any; timestamp: number }> = new Map();

@@ -237,12 +237,49 @@ export interface LL97Emission {
   nta_name: string;
 }
 
+// DSNY Violations Data Model (Sanitation Tickets)
+export interface DSNYViolation {
+  ticket_number: string;
+  violation_date: string;
+  violation_time: string;
+  respondent_first_name: string;
+  respondent_last_name: string;
+  violation_location_borough: string;
+  violation_location_house: string;
+  violation_location_street_name: string;
+  violation_location_city: string;
+  violation_location_zip_code: string;
+  violation_location_state_name: string;
+  respondent_address_borough: string;
+  respondent_address_house: string;
+  respondent_address_street_name: string;
+  respondent_address_city: string;
+  respondent_address_zip_code: string;
+  respondent_address_state_name: string;
+  hearing_status: string;
+  hearing_result: string;
+  scheduled_hearing_location: string;
+  hearing_date: string;
+  hearing_time: string;
+  decision_location_borough: string;
+  decision_date: string;
+  total_violation_amount: string;
+  violation_details: string;
+  penalty_imposed: string;
+  paid_amount: string;
+  charge_1_code: string;
+  charge_1_code_section: string;
+  charge_1_code_description: string;
+  charge_1_infraction_amount: string;
+}
+
 // Comprehensive NYC Compliance Data
 export interface NYCComplianceData {
   bbl: string;
   violations: HPDViolation[];
   permits: DOBPermit[];
   emissions: LL97Emission[];
+  dsnyViolations: DSNYViolation[];
   lastUpdated: Date;
 }
 
@@ -339,6 +376,19 @@ export interface LL97EmissionFilters {
   buildingClass?: string;
   yearBuiltFrom?: string;
   yearBuiltTo?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export interface DSNYViolationFilters {
+  address?: string;
+  streetName?: string;
+  houseNumber?: string;
+  borough?: string;
+  ticketNumber?: string;
+  hearingStatus?: string;
+  violationDateFrom?: string;
+  violationDateTo?: string;
   limit?: number;
   offset?: number;
 }

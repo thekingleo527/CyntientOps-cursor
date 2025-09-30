@@ -1,11 +1,12 @@
 // packages/api-clients/src/nyc/NYCAPIService.ts
 
-import { 
-  HPDViolation, 
-  DOBPermit, 
-  DSNYRoute, 
+import {
+  HPDViolation,
+  DOBPermit,
+  DSNYRoute,
   LL97Emission,
-  NYCComplianceData 
+  DSNYViolation,
+  NYCComplianceData
 } from './NYCDataModels.js';
 
 export interface APIConfig {
@@ -155,20 +156,51 @@ export class NYCAPIService {
     return this.fetch<LL97Emission[]>(endpoint);
   }
 
+  // DSNY Violations API (Sanitation Tickets)
+  async getDSNYViolations(address: string): Promise<DSNYViolation[]> {
+    const endpoint: APIEndpoint = {
+      url: `${this.API_CONFIG.DSNY.baseURL}/rf9i-y2ch.json?$where=violation_location_street_name like '%${encodeURIComponent(address)}%'&$limit=100&$order=violation_date DESC`,
+      cacheKey: `dsny_violations_${address}`,
+      method: 'GET',
+    };
+
+    return this.fetch<DSNYViolation[]>(endpoint);
+  }
+
+  // Get DSNY violations by house number and street
+  async getDSNYViolationsByAddress(houseNumber: string, streetName: string): Promise<DSNYViolation[]> {
+    const endpoint: APIEndpoint = {
+      url: `${this.API_CONFIG.DSNY.baseURL}/rf9i-y2ch.json?$where=violation_location_house='${houseNumber}' AND violation_location_street_name like '%${encodeURIComponent(streetName)}%'&$limit=100&$order=violation_date DESC`,
+      cacheKey: `dsny_violations_${houseNumber}_${streetName}`,
+      method: 'GET',
+    };
+
+    return this.fetch<DSNYViolation[]>(endpoint);
+  }
+
   // Get comprehensive compliance data for a building
-  async getBuildingComplianceData(bbl: string, bin: string): Promise<NYCComplianceData> {
+  async getBuildingComplianceData(bbl: string, bin: string, address?: string): Promise<NYCComplianceData> {
     try {
-      const [violations, permits, emissions] = await Promise.all([
+      const promises: [
+        Promise<HPDViolation[]>,
+        Promise<DOBPermit[]>,
+        Promise<LL97Emission[]>,
+        Promise<DSNYViolation[]>
+      ] = [
         this.getHPDViolations(bbl),
         this.getDOBPermits(bin),
         this.getLL97Emissions(bbl),
-      ]);
+        address ? this.getDSNYViolations(address) : Promise.resolve([])
+      ];
+
+      const [violations, permits, emissions, dsnyViolations] = await Promise.all(promises);
 
       return {
         bbl,
         violations,
         permits,
         emissions,
+        dsnyViolations,
         lastUpdated: new Date(),
       };
     } catch (error) {

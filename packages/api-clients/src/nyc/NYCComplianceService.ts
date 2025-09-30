@@ -1,11 +1,12 @@
 // packages/api-clients/src/nyc/NYCComplianceService.ts
 
-import { 
-  HPDViolation, 
-  DOBPermit, 
-  LL97Emission, 
+import {
+  HPDViolation,
+  DOBPermit,
+  LL97Emission,
+  DSNYViolation,
   NYCComplianceData,
-  ComplianceSummary 
+  ComplianceSummary
 } from './NYCDataModels';
 import { nycAPIService } from './NYCAPIService';
 
@@ -150,33 +151,99 @@ export class NYCComplianceService {
     };
   }
 
+  // Process DSNY violations into actionable compliance issues
+  processDSNYViolations(violations: DSNYViolation[]): {
+    open: DSNYViolation[];
+    closed: DSNYViolation[];
+    pending: DSNYViolation[];
+    high: DSNYViolation[];
+    summary: {
+      total: number;
+      open: number;
+      closed: number;
+      pending: number;
+      totalFines: number;
+      paidFines: number;
+      outstandingFines: number;
+    };
+  } {
+    const open: DSNYViolation[] = [];
+    const closed: DSNYViolation[] = [];
+    const pending: DSNYViolation[] = [];
+    const high: DSNYViolation[] = [];
+
+    let totalFines = 0;
+    let paidFines = 0;
+
+    violations.forEach(violation => {
+      const fineAmount = parseFloat(violation.total_violation_amount || '0') / 100;
+      const paidAmount = parseFloat(violation.paid_amount || '0') / 100;
+
+      totalFines += fineAmount;
+      paidFines += paidAmount;
+
+      const status = violation.hearing_status?.toUpperCase() || '';
+
+      if (status.includes('PAID') || status.includes('DISMISSED')) {
+        closed.push(violation);
+      } else if (status.includes('OPEN') || status.includes('SCHEDULED')) {
+        open.push(violation);
+      } else {
+        pending.push(violation);
+      }
+
+      // High value violations (over $200)
+      if (fineAmount >= 200) {
+        high.push(violation);
+      }
+    });
+
+    return {
+      open,
+      closed,
+      pending,
+      high,
+      summary: {
+        total: violations.length,
+        open: open.length,
+        closed: closed.length,
+        pending: pending.length,
+        totalFines,
+        paidFines,
+        outstandingFines: totalFines - paidFines,
+      },
+    };
+  }
+
   // Generate comprehensive compliance summary for a building
   async generateComplianceSummary(
-    bbl: string, 
-    buildingId: string, 
-    buildingName: string, 
-    address: string
+    bbl: string,
+    buildingId: string,
+    buildingName: string,
+    address: string,
+    bin?: string
   ): Promise<ComplianceSummary> {
     try {
-      const complianceData = await this.apiService.getBuildingComplianceData(bbl);
-      
+      const complianceData = await this.apiService.getBuildingComplianceData(bbl, bin || '', address);
+
       const violations = this.processHPDViolations(complianceData.violations);
       const permits = this.processDOBPermits(complianceData.permits);
       const emissions = this.processLL97Emissions(complianceData.emissions);
+      const dsnyViolations = this.processDSNYViolations(complianceData.dsnyViolations);
 
-      // Determine overall compliance status
+      // Determine overall compliance status (now includes DSNY violations)
       let complianceStatus: 'compliant' | 'warning' | 'critical' = 'compliant';
-      if (violations.summary.critical > 0 || emissions.summary.nonCompliant > 0) {
+      if (violations.summary.critical > 0 || emissions.summary.nonCompliant > 0 || dsnyViolations.summary.outstandingFines > 500) {
         complianceStatus = 'critical';
-      } else if (violations.summary.warning > 0 || emissions.summary.warning > 0 || violations.summary.open > 5) {
+      } else if (violations.summary.warning > 0 || emissions.summary.warning > 0 || violations.summary.open > 5 || dsnyViolations.summary.open > 3) {
         complianceStatus = 'warning';
       }
 
-      // Determine risk level
+      // Determine risk level (now includes DSNY violations)
       let riskLevel: 'low' | 'medium' | 'high' = 'low';
-      if (violations.summary.critical > 2 || emissions.summary.nonCompliant > 0) {
+      if (violations.summary.critical > 2 || emissions.summary.nonCompliant > 0 || dsnyViolations.summary.outstandingFines > 1000) {
         riskLevel = 'high';
-      } else if (violations.summary.critical > 0 || violations.summary.warning > 3 || emissions.summary.warning > 0) {
+      } else if (violations.summary.critical > 0 || violations.summary.warning > 3 || emissions.summary.warning > 0 || dsnyViolations.summary.open > 2) {
         riskLevel = 'medium';
       }
 

@@ -3,6 +3,10 @@
 ## 📊 **Implementation Status: 100% Complete - Authentication & Task System Fixed**
 
 ### 🔄 **Latest Updates (Current Session)**
+- **🗑️ DSNY Violations API**: Integrated real NYC Open Data DSNY violations/tickets endpoint (rf9i-y2ch)
+- **📊 Compliance Enhancement**: Added DSNY violations processing to compliance scoring and risk assessment
+- **🔧 API Architecture**: Fixed LL97 endpoint confusion - now properly separated LL97 emissions from DSNY violations
+- **📱 UI Integration**: Updated DSNYViolationsSheet to fetch and display real sanitation violation data
 - **🔐 Authentication System**: Complete user credentials mapping for all 15 users with glass card quick login
 - **📋 Task System**: Connected routines.json to real-time task generation with time-based filtering
 - **🗺️ Map Components**: Implemented MapRevealContainer, MapInteractionHint, and BuildingMapView (2,137 lines)
@@ -457,13 +461,47 @@ CyntientOps-MP/
 ### 🔌 **API Integrations**
 
 #### **NYC APIs (packages/api-clients/)**
-- **HPD API**: Housing Preservation and Development
-- **DOB API**: Department of Buildings
+- **HPD API**: Housing Preservation and Development violations (wvxf-dwi5)
+  - Real-time violation data with status tracking
+  - Severity classification (Class A/B/C violations)
+  - Compliance scoring and risk assessment
+- **DOB API**: Department of Buildings permits and inspections (ipu4-2q9a)
+  - Active permits and job status tracking
+  - Recent permit activity monitoring
+  - Building work history
+- **DSNY API**: Department of Sanitation violations and tickets (rf9i-y2ch) **[NEW]**
+  - Sanitation violation tracking with fine amounts
+  - Hearing status and payment tracking
+  - Address-based violation search
+  - Integration with compliance scoring
 - **FDNY API**: Fire Department of New York
 - **DEP API**: Department of Environmental Protection
-- **LL97 API**: Local Law 97 compliance
+- **LL97 API**: Local Law 97 emissions compliance (7x5e-2fxh)
+  - Energy efficiency and emissions tracking
+  - Building carbon footprint monitoring
+  - Compliance threshold alerts
 - **LL11 API**: Local Law 11 facade inspections
 - **Weather API**: Real-time weather data integration
+
+#### **DSNY Violations Integration Details** **[NEW]**
+- **Endpoint**: `https://data.cityofnewyork.us/resource/rf9i-y2ch.json`
+- **Data Model**: Complete DSNYViolation interface with 32 fields
+- **Features**:
+  - Real-time violation fetching by address or street name
+  - Fine amount tracking (total, imposed, paid)
+  - Hearing status and result monitoring
+  - Violation type and code classification
+  - Date-based filtering and sorting
+- **UI Integration**:
+  - DSNYViolationsSheet modal with live data
+  - Severity classification (low/medium/high/critical)
+  - Status filtering (open/closed/pending)
+  - Fine amount summaries and statistics
+- **Compliance Integration**:
+  - DSNY violations factor into building compliance scores
+  - Outstanding fines affect risk level assessment
+  - Open violations trigger compliance warnings
+  - Integration with NYCComplianceService processing
 
 #### **Map Services**
 - **Google Maps**: Map integration with clustering

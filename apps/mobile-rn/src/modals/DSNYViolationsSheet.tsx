@@ -10,6 +10,8 @@ import { View, StyleSheet, ScrollView, Text, TouchableOpacity, ActivityIndicator
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ComplianceService } from '@cyntientops/business-core';
 import { ServiceContainer } from '@cyntientops/business-core';
+import { nycAPIService } from '@cyntientops/api-clients';
+import type { DSNYViolation as APIDSNYViolation } from '@cyntientops/api-clients';
 
 interface DSNYViolation {
   id: string;
@@ -20,11 +22,13 @@ interface DSNYViolation {
   status: 'open' | 'closed' | 'pending';
   fineAmount: number;
   buildingId: string;
+  address: string;
 }
 
 interface DSNYViolationsSheetProps {
   buildingId: string;
   buildingName: string;
+  buildingAddress: string;
   onClose: () => void;
 }
 
@@ -33,6 +37,7 @@ type ViolationFilter = 'ALL' | 'OPEN' | 'CLOSED' | 'PENDING';
 export const DSNYViolationsSheet: React.FC<DSNYViolationsSheetProps> = ({
   buildingId,
   buildingName,
+  buildingAddress,
   onClose
 }) => {
   const [violations, setViolations] = useState<DSNYViolation[]>([]);
@@ -54,45 +59,40 @@ export const DSNYViolationsSheet: React.FC<DSNYViolationsSheetProps> = ({
       setIsLoading(true);
       setError(null);
 
-      const container = ServiceContainer.getInstance();
-      const complianceService = new ComplianceService(container);
+      // Fetch real DSNY violations from NYC Open Data API
+      const apiViolations = await nycAPIService.getDSNYViolations(buildingAddress);
 
-      // TODO: Implement DSNY violations API endpoint when available
-      // For now, generate sample violations based on building
-      const sampleViolations: DSNYViolation[] = [
-        {
-          id: `dsny_${buildingId}_1`,
-          violationType: 'Improper Waste Disposal',
-          description: 'Recyclables placed in regular trash container',
-          severity: 'medium',
-          dateIssued: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-          status: 'open',
-          fineAmount: 100,
-          buildingId
-        },
-        {
-          id: `dsny_${buildingId}_2`,
-          violationType: 'Missed Collection',
-          description: 'Bins not placed at curb by collection time',
-          severity: 'low',
-          dateIssued: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          status: 'closed',
-          fineAmount: 50,
-          buildingId
-        },
-        {
-          id: `dsny_${buildingId}_3`,
-          violationType: 'Overflowing Container',
-          description: 'Trash container overflowing onto sidewalk',
-          severity: 'high',
-          dateIssued: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          status: 'open',
-          fineAmount: 200,
-          buildingId
+      // Transform API violations to UI format
+      const transformedViolations: DSNYViolation[] = apiViolations.map((v: APIDSNYViolation) => {
+        // Determine severity based on fine amount
+        let severity: 'low' | 'medium' | 'high' | 'critical' = 'low';
+        const fineAmount = parseFloat(v.penalty_imposed || v.total_violation_amount || '0');
+        if (fineAmount >= 500) severity = 'critical';
+        else if (fineAmount >= 200) severity = 'high';
+        else if (fineAmount >= 100) severity = 'medium';
+
+        // Determine status from hearing_status
+        let status: 'open' | 'closed' | 'pending' = 'pending';
+        if (v.hearing_status?.includes('PAID') || v.hearing_status?.includes('DISMISSED')) {
+          status = 'closed';
+        } else if (v.hearing_status?.includes('OPEN') || v.hearing_status?.includes('SCHEDULED')) {
+          status = 'open';
         }
-      ];
 
-      setViolations(sampleViolations);
+        return {
+          id: v.ticket_number,
+          violationType: v.charge_1_code_description || 'Unknown Violation',
+          description: `${v.charge_1_code_section || ''} - ${v.charge_1_code_description || 'No description available'}`,
+          severity,
+          dateIssued: new Date(v.violation_date),
+          status,
+          fineAmount: parseFloat(v.penalty_imposed || v.total_violation_amount || '0') / 100, // Convert cents to dollars
+          buildingId,
+          address: `${v.violation_location_house} ${v.violation_location_street_name}`
+        };
+      });
+
+      setViolations(transformedViolations);
     } catch (err) {
       console.error('Failed to load DSNY violations:', err);
       setError('Failed to load violations. Please try again.');

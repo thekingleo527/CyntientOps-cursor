@@ -6,7 +6,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { UserRole, NamedCoordinate } from '@cyntientops/domain-schema';
 import { RouteManager, RouteOptimization } from '@cyntientops/business-core';
 import { GlassStatusBadge } from '../glass/GlassStatusBadge';
@@ -305,7 +306,7 @@ export const AdminWorkerManagementView: React.FC<AdminWorkerManagementViewProps>
 
             <View style={styles.routeOptimization}>
               <Text style={styles.sectionTitle}>Route Optimization</Text>
-              <GlassCard style={styles.routeCard}>
+              <GlassCard style={styles.routeCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
                 <Text style={styles.routeInfo}>
                   {routeOptimization.totalTasks} tasks • {routeOptimization.totalDuration}min • {routeOptimization.distance.toFixed(1)}km
                 </Text>

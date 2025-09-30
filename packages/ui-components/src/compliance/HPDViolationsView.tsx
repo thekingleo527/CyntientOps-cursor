@@ -15,7 +15,8 @@ import {
   Alert,
   RefreshControl
 } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { HPDViolation } from '@cyntientops/api-clients';
 import { ServiceContainer } from '@cyntientops/business-core';
 
@@ -142,17 +143,17 @@ export const HPDViolationsView: React.FC<HPDViolationsViewProps> = ({
 
       {/* Summary Cards */}
       <View style={styles.summaryGrid}>
-        <GlassCard style={styles.summaryCard}>
+        <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.summaryValue}>{totalViolations}</Text>
           <Text style={styles.summaryLabel}>Total Violations</Text>
         </GlassCard>
         
-        <GlassCard style={styles.summaryCard}>
+        <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={[styles.summaryValue, { color: Colors.status.error }]}>{overdueCount}</Text>
           <Text style={styles.summaryLabel}>Overdue</Text>
         </GlassCard>
         
-        <GlassCard style={styles.summaryCard}>
+        <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={[styles.summaryValue, { color: Colors.status.warning }]}>{classCCount}</Text>
           <Text style={styles.summaryLabel}>Class C</Text>
         </GlassCard>

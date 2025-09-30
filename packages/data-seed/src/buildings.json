@@ -10,8 +10,9 @@
     "yearBuilt": 1925,
     "squareFootage": 12000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0001",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "12_west_18th_street",
     "borough": "Manhattan",
@@ -29,8 +30,9 @@
     "yearBuilt": 1920,
     "squareFootage": 24000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0003",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "135_139_west_17th_street",
     "borough": "Manhattan",
@@ -54,7 +56,7 @@
     "normalized_name": "104_franklin_street",
     "borough": "Manhattan",
     "compliance_score": 0.88,
-    "client_id": "WFR"
+    "client_id": "CIT"
   },
   {
     "id": "5",
@@ -67,8 +69,9 @@
     "yearBuilt": 1918,
     "squareFootage": 16000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0005",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "138_west_17th_street",
     "borough": "Manhattan",
@@ -86,13 +89,14 @@
     "yearBuilt": 1845,
     "squareFootage": 6000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0006",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "68_perry_street",
     "borough": "Manhattan",
     "compliance_score": 0.85,
-    "client_id": "PER"
+    "client_id": "JMR"
   },
   {
     "id": "7",
@@ -105,8 +109,9 @@
     "yearBuilt": 1922,
     "squareFootage": 14000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0007",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "112_west_18th_street",
     "borough": "Manhattan",
@@ -130,7 +135,7 @@
     "normalized_name": "41_elizabeth_street",
     "borough": "Manhattan",
     "compliance_score": 0.87,
-    "client_id": "ELI"
+    "client_id": "GEL"
   },
   {
     "id": "9",
@@ -143,8 +148,9 @@
     "yearBuilt": 1915,
     "squareFootage": 18000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0009",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "117_west_17th_street",
     "borough": "Manhattan",
@@ -162,13 +168,14 @@
     "yearBuilt": 1850,
     "squareFootage": 8000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0010",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "131_perry_street",
     "borough": "Manhattan",
     "compliance_score": 0.86,
-    "client_id": "PER"
+    "client_id": "JMR"
   },
   {
     "id": "11",
@@ -181,13 +188,14 @@
     "yearBuilt": 1910,
     "squareFootage": 11000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0011",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "123_1st_avenue",
     "borough": "Manhattan",
     "compliance_score": 0.89,
-    "client_id": "AVE"
+    "client_id": "JMR"
   },
   {
     "id": "13",
@@ -206,7 +214,7 @@
     "normalized_name": "136_west_17th_street",
     "borough": "Manhattan",
     "compliance_score": 0.92,
-    "client_id": "JMR"
+    "client_id": "WFR"
   },
   {
     "id": "14",
@@ -219,14 +227,15 @@
     "yearBuilt": 1896,
     "squareFootage": 45000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Museum Operations",
-    "contactPhone": "+1-212-555-0014",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "rubin_museum_hq",
     "aliases": "Rubin Museum,Rubin Museum (142-148 W 17th),Rubin Museum (142–148 W 17th),CyntientOps HQ,CyntientOps Headquarters",
     "borough": "Manhattan",
     "compliance_score": 0.98,
-    "client_id": "RUB",
+    "client_id": "JMR",
     "specialNotes": "Kevin Dutan's primary location - Museum facility requiring specialized care - Also serves as CyntientOps corporate headquarters"
   },
   {
@@ -246,7 +255,7 @@
     "normalized_name": "133_east_15th_street",
     "borough": "Manhattan",
     "compliance_score": 0.90,
-    "client_id": "EAS"
+    "client_id": "COR"
   },
   {
     "id": "16",
@@ -265,7 +274,7 @@
     "normalized_name": "stuyvesant_cove_park",
     "borough": "Manhattan",
     "compliance_score": 0.94,
-    "client_id": "STU"
+    "client_id": "SOL"
   },
   {
     "id": "17",
@@ -278,13 +287,14 @@
     "yearBuilt": 1875,
     "squareFootage": 7000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0017",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "178_spring_street",
     "borough": "Manhattan",
     "compliance_score": 0.83,
-    "client_id": "SPR"
+    "client_id": "JMR"
   },
   {
     "id": "18",
@@ -303,7 +313,7 @@
     "normalized_name": "36_walker_street",
     "borough": "Manhattan",
     "compliance_score": 0.81,
-    "client_id": "WAL"
+    "client_id": "CIT"
   },
   {
     "id": "19",
@@ -322,7 +332,7 @@
     "normalized_name": "115_7th_avenue",
     "borough": "Manhattan",
     "compliance_score": 0.91,
-    "client_id": "SEV"
+    "client_id": "CHE"
   },
   {
     "id": "21",
@@ -335,8 +345,9 @@
     "yearBuilt": 1840,
     "squareFootage": 4000,
     "managementCompany": "J&M Realty",
-    "primaryContact": "Building Manager",
-    "contactPhone": "+1-212-555-0021",
+    "primaryContact": "Repairs Department",
+    "contactEmail": "Repairs@jmrealty.org",
+    "contactPhone": "+1-212-721-0424",
     "isActive": true,
     "normalized_name": "148_chambers_street",
     "borough": "Manhattan",

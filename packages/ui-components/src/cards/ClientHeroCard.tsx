@@ -6,7 +6,8 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { GlassStatusBadge } from '../glass/GlassStatusBadge';
 
 export interface ClientHeroCardProps {
@@ -91,7 +92,7 @@ export const ClientHeroCard: React.FC<ClientHeroCardProps> = ({
   };
 
   const renderContent = () => (
-    <GlassCard style={[styles.container, { backgroundColor }]}>
+    <GlassCard style={[styles.container, { backgroundColor }]} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <View style={styles.header}>
         <View style={styles.clientInfo}>
           <Text style={styles.clientName}>{clientName}</Text>

@@ -1,246 +1,277 @@
 /**
  * GlassButton Component
- * Mirrors SwiftUI GlassButton with multiple styles and states
+ * 
+ * Complete glass button implementation extracted from SwiftUI source
+ * Mirrors: CyntientOps/Components/Glass/GlassButton.swift
  */
 
-import React from 'react';
-import { Text, ViewStyle, TextStyle, Pressable, Animated, ActivityIndicator } from 'react-native';
-import { BlurView } from '@react-native-community/blur';
-import { GlassIntensity, getGlassConfig } from './GlassIntensity';
-
-export enum GlassButtonStyle {
-  primary = 'primary',
-  secondary = 'secondary',
-  outline = 'outline',
-  ghost = 'ghost',
-  destructive = 'destructive'
-}
-
-export enum GlassButtonSize {
-  small = 'small',
-  medium = 'medium',
-  large = 'large'
-}
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  ActivityIndicator,
+  HapticFeedback
+} from 'react-native';
+import { BlurView } from 'expo-blur';
+import { 
+  GlassIntensity, 
+  GLASS_INTENSITY_CONFIG, 
+  GlassButtonStyle,
+  GLASS_BUTTON_STYLES,
+  GlassButtonSize,
+  GLASS_BUTTON_SIZES,
+  CORNER_RADIUS_VALUES,
+  CornerRadius
+} from '@cyntientops/design-tokens';
 
 export interface GlassButtonProps {
   title: string;
-  onPress?: () => void;
+  onPress: () => void;
   style?: GlassButtonStyle;
   size?: GlassButtonSize;
-  intensity?: GlassIntensity;
   isFullWidth?: boolean;
   isDisabled?: boolean;
   isLoading?: boolean;
+  icon?: string;
+  cornerRadius?: CornerRadius;
+  containerStyle?: ViewStyle;
+  textStyle?: TextStyle;
   testID?: string;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
 export const GlassButton: React.FC<GlassButtonProps> = ({
   title,
   onPress,
-  style = GlassButtonStyle.primary,
-  size = GlassButtonSize.medium,
-  intensity = GlassIntensity.regular,
+  style = GlassButtonStyle.PRIMARY,
+  size = GlassButtonSize.MEDIUM,
   isFullWidth = false,
   isDisabled = false,
   isLoading = false,
-  testID
+  icon,
+  cornerRadius,
+  containerStyle,
+  textStyle,
+  testID,
+  accessibilityLabel,
+  accessibilityHint
 }) => {
-  const [isPressed, setIsPressed] = React.useState(false);
-  const scaleAnim = React.useRef(new Animated.Value(1)).current;
-  const config = getGlassConfig(intensity);
+  const [isPressed, setIsPressed] = useState(false);
+  const [scaleValue] = useState(new Animated.Value(1));
+  const [opacityValue] = useState(new Animated.Value(1));
+  const [loadingRotation] = useState(new Animated.Value(0));
+
+  const styleConfig = GLASS_BUTTON_STYLES[style];
+  const sizeConfig = GLASS_BUTTON_SIZES[size];
+  const intensityConfig = GLASS_INTENSITY_CONFIG[styleConfig.intensity];
+  const radius = cornerRadius ? CORNER_RADIUS_VALUES[cornerRadius] : sizeConfig.cornerRadius;
+
+  React.useEffect(() => {
+    if (isLoading) {
+      Animated.loop(
+        Animated.timing(loadingRotation, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      loadingRotation.setValue(0);
+    }
+  }, [isLoading, loadingRotation]);
 
   const handlePressIn = () => {
     if (isDisabled || isLoading) return;
+    
     setIsPressed(true);
-    Animated.spring(scaleAnim, {
-      toValue: 0.95,
-      useNativeDriver: true,
-      tension: 300,
-      friction: 10
-    }).start();
+    Animated.parallel([
+      Animated.timing(scaleValue, {
+        toValue: 0.96,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityValue, {
+        toValue: 0.8,
+        duration: 100,
+        useNativeDriver: true,
+      })
+    ]).start();
   };
 
   const handlePressOut = () => {
     if (isDisabled || isLoading) return;
+    
     setIsPressed(false);
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      tension: 300,
-      friction: 10
-    }).start();
+    Animated.parallel([
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityValue, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      })
+    ]).start();
   };
 
-  const getButtonStyle = (): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      borderRadius: getCornerRadius(),
-      paddingHorizontal: getHorizontalPadding(),
-      paddingVertical: getVerticalPadding(),
-      borderWidth: 1,
-      overflow: 'hidden',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: config.shadowOpacity,
-      shadowRadius: config.shadowRadius,
-      elevation: 4
-    };
-
-    if (isFullWidth) {
-      baseStyle.width = '100%';
-    }
-
-    switch (style) {
-      case GlassButtonStyle.primary:
-        return {
-          ...baseStyle,
-          borderColor: `rgba(59, 130, 246, ${config.borderOpacity})`,
-          backgroundColor: `rgba(59, 130, 246, ${config.opacity})`
-        };
-      case GlassButtonStyle.secondary:
-        return {
-          ...baseStyle,
-          borderColor: `rgba(107, 114, 128, ${config.borderOpacity})`,
-          backgroundColor: `rgba(107, 114, 128, ${config.opacity})`
-        };
-      case GlassButtonStyle.outline:
-        return {
-          ...baseStyle,
-          borderColor: `rgba(59, 130, 246, ${config.borderOpacity * 2})`,
-          backgroundColor: `rgba(255, 255, 255, ${config.opacity * 0.5})`
-        };
-      case GlassButtonStyle.ghost:
-        return {
-          ...baseStyle,
-          borderColor: `rgba(255, 255, 255, ${config.borderOpacity})`,
-          backgroundColor: `rgba(255, 255, 255, ${config.opacity * 0.3})`
-        };
-      case GlassButtonStyle.destructive:
-        return {
-          ...baseStyle,
-          borderColor: `rgba(239, 68, 68, ${config.borderOpacity})`,
-          backgroundColor: `rgba(239, 68, 68, ${config.opacity})`
-        };
-      default:
-        return baseStyle;
-    }
+  const handlePress = () => {
+    if (isDisabled || isLoading) return;
+    
+    // Haptic feedback
+    HapticFeedback.impact(HapticFeedback.ImpactFeedbackStyle.Medium);
+    onPress();
   };
 
-  const getTextStyle = (): TextStyle => {
-    const baseStyle: TextStyle = {
-      fontWeight: '600',
-      textAlign: 'center'
-    };
+  const buttonStyle = [
+    styles.container,
+    {
+      borderRadius: radius,
+      paddingTop: sizeConfig.padding.top,
+      paddingBottom: sizeConfig.padding.bottom,
+      paddingLeft: sizeConfig.padding.left,
+      paddingRight: sizeConfig.padding.right,
+      backgroundColor: styleConfig.baseColor,
+      shadowColor: styleConfig.baseColor,
+      shadowOffset: { width: 0, height: isPressed ? 4 : 2 },
+      shadowOpacity: isPressed ? 0.4 : 0.2,
+      shadowRadius: isPressed ? 8 : 4,
+      elevation: isPressed ? 8 : 4,
+      width: isFullWidth ? '100%' : undefined,
+    },
+    containerStyle
+  ];
 
-    switch (size) {
-      case GlassButtonSize.small:
-        return { ...baseStyle, fontSize: 12 };
-      case GlassButtonSize.medium:
-        return { ...baseStyle, fontSize: 14 };
-      case GlassButtonSize.large:
-        return { ...baseStyle, fontSize: 16 };
-      default:
-        return baseStyle;
-    }
-  };
+  const textColor = isDisabled 
+    ? `${styleConfig.textColor}80` // 50% opacity
+    : styleConfig.textColor;
 
-  const getTextColor = (): string => {
-    switch (style) {
-      case GlassButtonStyle.primary:
-      case GlassButtonStyle.destructive:
-        return '#FFFFFF';
-      case GlassButtonStyle.secondary:
-        return '#FFFFFF';
-      case GlassButtonStyle.outline:
-        return '#3B82F6';
-      case GlassButtonStyle.ghost:
-        return '#FFFFFF';
-      default:
-        return '#FFFFFF';
-    }
-  };
-
-  const getCornerRadius = (): number => {
-    switch (size) {
-      case GlassButtonSize.small:
-        return 6;
-      case GlassButtonSize.medium:
-        return 8;
-      case GlassButtonSize.large:
-        return 12;
-      default:
-        return 8;
-    }
-  };
-
-  const getHorizontalPadding = (): number => {
-    switch (size) {
-      case GlassButtonSize.small:
-        return 12;
-      case GlassButtonSize.medium:
-        return 16;
-      case GlassButtonSize.large:
-        return 20;
-      default:
-        return 16;
-    }
-  };
-
-  const getVerticalPadding = (): number => {
-    switch (size) {
-      case GlassButtonSize.small:
-        return 8;
-      case GlassButtonSize.medium:
-        return 12;
-      case GlassButtonSize.large:
-        return 16;
-      default:
-        return 12;
-    }
-  };
-
-  const buttonStyle = getButtonStyle();
-  const textStyle = getTextStyle();
-  const textColor = getTextColor();
+  const displayText = isLoading ? 'Loading...' : title;
 
   return (
-    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-      <Pressable
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        disabled={isDisabled || isLoading}
-        style={({ pressed }) => [
-          buttonStyle,
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      disabled={isDisabled || isLoading}
+      testID={testID}
+      accessibilityLabel={accessibilityLabel || title}
+      accessibilityHint={accessibilityHint}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: isDisabled || isLoading }}
+      style={buttonStyle}
+    >
+      <BlurView
+        intensity={intensityConfig.blurRadius}
+        tint="dark"
+        style={[
+          styles.blurView,
           {
-            opacity: (isDisabled || isLoading) ? 0.5 : (pressed ? 0.8 : 1)
+            borderRadius: radius,
           }
         ]}
-        testID={testID}
       >
-        <BlurView
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-          blurType="light"
-          blurAmount={config.blur}
-          reducedTransparencyFallbackColor="rgba(255, 255, 255, 0.1)"
-        />
-        <View style={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          right: 0, 
-          bottom: 0,
-          backgroundColor: `rgba(255, 255, 255, ${config.opacity})`
-        }} />
-        <View style={{ zIndex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-          {isLoading ? (
-            <ActivityIndicator size="small" color={textColor} />
-          ) : (
-            <Text style={[textStyle, { color: textColor }]}>
-              {title}
+        <Animated.View
+          style={[
+            styles.content,
+            {
+              transform: [{ scale: scaleValue }],
+              opacity: opacityValue,
+            }
+          ]}
+        >
+          <View style={styles.contentRow}>
+            {isLoading && (
+              <Animated.View
+                style={[
+                  styles.loadingContainer,
+                  {
+                    transform: [{
+                      rotate: loadingRotation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0deg', '360deg'],
+                      })
+                    }]
+                  }
+                ]}
+              >
+                <ActivityIndicator
+                  size="small"
+                  color={textColor}
+                />
+              </Animated.View>
+            )}
+            
+            {!isLoading && icon && (
+              <Text style={[styles.icon, { color: textColor }]}>
+                {icon}
+              </Text>
+            )}
+            
+            <Text
+              style={[
+                styles.text,
+                {
+                  fontSize: sizeConfig.fontSize,
+                  color: textColor,
+                },
+                textStyle
+              ]}
+              numberOfLines={1}
+            >
+              {displayText}
             </Text>
-          )}
-        </View>
-      </Pressable>
-    </Animated.View>
+            
+            {isFullWidth && <View style={styles.spacer} />}
+          </View>
+        </Animated.View>
+      </BlurView>
+    </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    overflow: 'hidden',
+  },
+  blurView: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingContainer: {
+    marginRight: 8,
+  },
+  icon: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  text: {
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  spacer: {
+    flex: 1,
+  },
+});
+
+export default GlassButton;

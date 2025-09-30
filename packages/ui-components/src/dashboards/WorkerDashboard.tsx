@@ -7,7 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, RefreshControl } from 'react-native';
-import { GlassCard, GlassButton, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassButton, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { WorkerProfile, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '@cyntientops/business-core';
 

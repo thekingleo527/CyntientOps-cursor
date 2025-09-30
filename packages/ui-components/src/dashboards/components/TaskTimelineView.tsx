@@ -7,7 +7,8 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing, TaskCategoryColors } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing, TaskCategoryColors } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 
 export interface TaskTimelineViewProps {
@@ -42,7 +43,7 @@ const TaskTimelineItem: React.FC<TaskTimelineItemProps> = ({ task, onPress }) =>
       style={styles.taskCard}
       onPress={onPress}
       variant="interactive"
-    >
+     intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <View style={styles.taskHeader}>
         <View style={styles.taskInfo}>
           <Text style={styles.taskTitle} numberOfLines={2}>
@@ -93,7 +94,7 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({
 }) => {
   if (tasks.length === 0) {
     return (
-      <GlassCard style={styles.emptyCard}>
+      <GlassCard style={styles.emptyCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.emptyTitle}>No tasks scheduled</Text>
         <Text style={styles.emptySubtitle}>You're all caught up for today!</Text>
       </GlassCard>

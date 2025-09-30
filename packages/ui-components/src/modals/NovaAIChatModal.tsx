@@ -17,7 +17,8 @@ import {
   Platform,
   Animated 
 } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 
 export interface NovaAIChatModalProps {
   visible: boolean;
@@ -196,7 +197,7 @@ export const NovaAIChatModal: React.FC<NovaAIChatModalProps> = ({
           style={styles.container}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <GlassCard style={styles.modal}>
+          <GlassCard style={styles.modal} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             {/* Header */}
             <View style={styles.header}>
               <View style={styles.headerLeft}>

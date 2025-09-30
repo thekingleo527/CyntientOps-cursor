@@ -15,7 +15,8 @@ import {
   Alert,
   RefreshControl
 } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { HPDViolation, DOBPermit, DSNYRoute, LL97Emission } from '@cyntientops/api-clients';
 import { ServiceContainer } from '@cyntientops/business-core';
 import { ComplianceSuiteView } from '../compliance/ComplianceSuiteView';
@@ -215,21 +216,21 @@ export const BuildingComplianceDetailView: React.FC<BuildingComplianceDetailView
       {/* Summary Cards */}
       {complianceSummary && (
         <View style={styles.summaryGrid}>
-          <GlassCard style={styles.summaryCard}>
+          <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={[styles.summaryValue, { color: Colors.status.error }]}>
               {complianceSummary.totalViolations}
             </Text>
             <Text style={styles.summaryLabel}>Total Violations</Text>
           </GlassCard>
           
-          <GlassCard style={styles.summaryCard}>
+          <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={[styles.summaryValue, { color: Colors.status.warning }]}>
               {complianceSummary.openViolations}
             </Text>
             <Text style={styles.summaryLabel}>Open Violations</Text>
           </GlassCard>
           
-          <GlassCard style={styles.summaryCard}>
+          <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={[styles.summaryValue, { color: Colors.status.info }]}>
               {complianceSummary.activePermits}
             </Text>
@@ -326,7 +327,7 @@ const LL97EmissionsView: React.FC<LL97EmissionsViewProps> = ({
         </View>
       ) : (
         emissions.map((emission) => (
-          <GlassCard key={emission.bbl} style={styles.emissionCard}>
+          <GlassCard key={emission.bbl} style={styles.emissionCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.emissionTitle}>
               LL97 Emissions - {emission.year_built}
             </Text>

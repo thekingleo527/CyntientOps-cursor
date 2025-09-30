@@ -7,7 +7,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { NamedCoordinate } from '@cyntientops/domain-schema';
 
 export interface ClockInGlassModalProps {
@@ -111,7 +112,7 @@ export const ClockInGlassModal: React.FC<ClockInGlassModalProps> = ({
 
   const renderContent = () => (
     <View style={styles.modalContainer}>
-      <GlassCard style={styles.modalContent}>
+      <GlassCard style={styles.modalContent} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <View style={styles.header}>
           <Text style={styles.title}>Clock In</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>

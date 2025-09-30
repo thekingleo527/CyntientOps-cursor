@@ -13,7 +13,8 @@ import {
   ScrollView,
   ActivityIndicator 
 } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { 
   IntelligenceInsight, 
   WorkerProfile,
@@ -334,7 +335,7 @@ export const AdminIntelligencePanel: React.FC<AdminIntelligencePanelProps> = ({
   };
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <View style={styles.tabContainer}>
         {Object.values(AdminIntelTab).map(renderTabButton)}
       </View>

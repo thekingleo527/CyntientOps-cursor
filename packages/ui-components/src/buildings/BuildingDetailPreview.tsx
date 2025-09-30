@@ -14,7 +14,8 @@ import {
   Alert
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { 
   Building, 
   ContextualTask,
@@ -104,7 +105,7 @@ export const BuildingDetailPreview: React.FC<BuildingDetailPreviewProps> = ({
   );
 
   const renderQuickStats = () => (
-    <GlassCard style={styles.statsCard}>
+    <GlassCard style={styles.statsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <Text style={styles.sectionTitle}>Quick Stats</Text>
       <View style={styles.statsGrid}>
         <View style={styles.statItem}>
@@ -128,7 +129,7 @@ export const BuildingDetailPreview: React.FC<BuildingDetailPreviewProps> = ({
   );
 
   const renderTodaysRoutines = () => (
-    <GlassCard style={styles.routinesCard}>
+    <GlassCard style={styles.routinesCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <Text style={styles.sectionTitle}>Today's Routines</Text>
       {isLoading ? (
         <Text style={styles.loadingText}>Loading routines...</Text>
@@ -170,7 +171,7 @@ export const BuildingDetailPreview: React.FC<BuildingDetailPreviewProps> = ({
   );
 
   const renderComplianceStatus = () => (
-    <GlassCard style={styles.complianceCard}>
+    <GlassCard style={styles.complianceCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <Text style={styles.sectionTitle}>Compliance Status</Text>
       {isLoading ? (
         <Text style={styles.loadingText}>Loading compliance data...</Text>
@@ -209,7 +210,7 @@ export const BuildingDetailPreview: React.FC<BuildingDetailPreviewProps> = ({
     if (!collectionSchedule) return null;
 
     return (
-      <GlassCard style={styles.collectionCard}>
+      <GlassCard style={styles.collectionCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.sectionTitle}>Collection Schedule</Text>
         <View style={styles.collectionInfo}>
           <View style={styles.collectionItem}>

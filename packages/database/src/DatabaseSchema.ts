@@ -15,6 +15,10 @@ export class DatabaseSchema {
       this.createRoutinesTable(),
       this.createComplianceTable(),
       this.createPhotoEvidenceTable(),
+      this.createSmartPhotoEvidenceTable(),
+      this.createBuildingSpacesTable(),
+      this.createBuildingInspectionsTable(),
+      this.createWorkCompletionRecordsTable(),
       this.createClockInTable(),
       this.createInventoryTable(),
       this.createClientsTable(),
@@ -152,6 +156,103 @@ export class DatabaseSchema {
         uploaded_at TEXT,
         is_synced INTEGER DEFAULT 0,
         FOREIGN KEY (task_id) REFERENCES tasks(id),
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      );
+    `;
+  }
+
+  private createSmartPhotoEvidenceTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS smart_photo_evidence (
+        id TEXT PRIMARY KEY,
+        task_id TEXT NOT NULL,
+        worker_id TEXT NOT NULL,
+        building_id TEXT NOT NULL,
+        image_uri TEXT NOT NULL,
+        thumbnail_uri TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        location TEXT NOT NULL,
+        smart_location TEXT NOT NULL,
+        worker_specified_area TEXT,
+        metadata TEXT NOT NULL,
+        status TEXT DEFAULT 'pending',
+        upload_attempts INTEGER DEFAULT 0,
+        tags TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (task_id) REFERENCES tasks(id),
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      );
+    `;
+  }
+
+  private createBuildingSpacesTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS building_spaces (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        floor INTEGER NOT NULL,
+        coordinates TEXT,
+        description TEXT,
+        access_type TEXT,
+        is_accessible INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createBuildingInspectionsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS building_inspections (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        building_name TEXT NOT NULL,
+        inspector_id TEXT NOT NULL,
+        inspector_name TEXT NOT NULL,
+        inspection_date TEXT NOT NULL,
+        status TEXT DEFAULT 'scheduled',
+        checklist TEXT NOT NULL,
+        issues TEXT DEFAULT '[]',
+        photos TEXT DEFAULT '[]',
+        notes TEXT,
+        completion_date TEXT,
+        next_inspection_date TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (inspector_id) REFERENCES workers(id)
+      );
+    `;
+  }
+
+  private createWorkCompletionRecordsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS work_completion_records (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        building_name TEXT NOT NULL,
+        worker_id TEXT NOT NULL,
+        worker_name TEXT NOT NULL,
+        work_type TEXT NOT NULL,
+        category TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        location TEXT,
+        completed_at TEXT NOT NULL,
+        duration INTEGER,
+        status TEXT DEFAULT 'completed',
+        verification_method TEXT NOT NULL,
+        photos TEXT DEFAULT '[]',
+        notes TEXT,
+        metadata TEXT DEFAULT '{}',
+        verified_by TEXT,
+        verification_notes TEXT,
+        quality_score INTEGER,
+        verified_at TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (building_id) REFERENCES buildings(id),
         FOREIGN KEY (worker_id) REFERENCES workers(id)
       );

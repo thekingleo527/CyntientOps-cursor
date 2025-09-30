@@ -22,7 +22,8 @@ import {
   Linking
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { GlassCard, Colors, Typography, Spacing, DashboardGradients } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing, DashboardGradients } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { ServiceContainer } from '@cyntientops/business-core';
 // import { useBuildingDetailViewModel } from '@cyntientops/context-engines';
 
@@ -503,7 +504,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
     return (
       <View style={styles.tabSection}>
         {/* Building Information */}
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🏢 Building Information</Text>
           <View style={styles.buildingInfo}>
             <View style={styles.infoRow}>
@@ -532,7 +533,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
         </GlassCard>
 
         {/* Today's Snapshot */}
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>📅 Today's Snapshot</Text>
           {viewModel.todaysTasks && (
             <View style={styles.snapshotItem}>
@@ -568,21 +569,21 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
 
         {/* Key Metrics */}
         <View style={styles.metricsGrid}>
-          <GlassCard style={styles.metricCard}>
+          <GlassCard style={styles.metricCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.metricIcon}>⚡</Text>
             <Text style={styles.metricValue}>{viewModel.efficiencyScore}%</Text>
             <Text style={styles.metricLabel}>Efficiency</Text>
             <Text style={styles.metricTrend}>↗️</Text>
           </GlassCard>
           
-          <GlassCard style={styles.metricCard}>
+          <GlassCard style={styles.metricCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.metricIcon}>✅</Text>
             <Text style={styles.metricValue}>{viewModel.complianceScore}</Text>
             <Text style={styles.metricLabel}>Compliance</Text>
             <Text style={styles.metricTrend}>➡️</Text>
           </GlassCard>
           
-          <GlassCard style={styles.metricCard}>
+          <GlassCard style={styles.metricCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.metricIcon}>⚠️</Text>
             <Text style={[styles.metricValue, { color: viewModel.openIssues > 0 ? Colors.warning : Colors.inactive }]}>
               {viewModel.openIssues}
@@ -591,7 +592,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
             <Text style={styles.metricTrend}>{viewModel.openIssues > 0 ? '↘️' : '➡️'}</Text>
           </GlassCard>
           
-          <GlassCard style={styles.metricCard}>
+          <GlassCard style={styles.metricCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.metricIcon}>📦</Text>
             <Text style={[styles.metricValue, { color: viewModel.inventorySummary.cleaningLow > 0 ? Colors.warning : Colors.success }]}>
               {viewModel.inventorySummary.cleaningLow} Low
@@ -602,7 +603,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
         </View>
         
         {/* Recent Activity */}
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🕐 Recent Activity</Text>
           {viewModel.recentActivities.length === 0 ? (
             <Text style={styles.emptyText}>No recent activity</Text>
@@ -625,7 +626,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
       </GlassCard>
 
         {/* Key Contacts */}
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>📞 Key Contacts</Text>
           <View style={styles.contactsList}>
             {viewModel.primaryContact && (
@@ -652,7 +653,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderRoutesTab() {
     return (
       <View style={styles.tabSection}>
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🗺️ Routes</Text>
           <Text style={styles.comingSoonText}>Routes functionality coming soon</Text>
         </GlassCard>
@@ -663,7 +664,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderTasksTab() {
     return (
       <View style={styles.tabSection}>
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>📋 Tasks</Text>
           <Text style={styles.comingSoonText}>Tasks functionality coming soon</Text>
         </GlassCard>
@@ -674,7 +675,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderWorkersTab() {
     return (
       <View style={styles.tabSection}>
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>👥 Workers</Text>
           <Text style={styles.comingSoonText}>Workers functionality coming soon</Text>
         </GlassCard>
@@ -685,7 +686,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderMaintenanceTab() {
     return (
       <View style={styles.tabSection}>
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🔧 Maintenance</Text>
           <Text style={styles.comingSoonText}>Maintenance functionality coming soon</Text>
         </GlassCard>
@@ -696,7 +697,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderSanitationTab() {
     return (
       <View style={styles.tabSection}>
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🗑️ Sanitation</Text>
           <Text style={styles.comingSoonText}>Sanitation functionality coming soon</Text>
         </GlassCard>
@@ -707,7 +708,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderInventoryTab() {
     return (
       <View style={styles.tabSection}>
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>📦 Inventory</Text>
           <Text style={styles.comingSoonText}>Inventory functionality coming soon</Text>
         </GlassCard>
@@ -718,7 +719,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderSpacesTab() {
     return (
       <View style={styles.tabSection}>
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🔑 Spaces</Text>
           <Text style={styles.comingSoonText}>Spaces functionality coming soon</Text>
         </GlassCard>
@@ -729,7 +730,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderEmergencyTab() {
     return (
       <View style={styles.tabSection}>
-        <GlassCard style={styles.card}>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🚨 Emergency</Text>
           <Text style={styles.comingSoonText}>Emergency functionality coming soon</Text>
       </GlassCard>

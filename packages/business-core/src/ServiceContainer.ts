@@ -33,6 +33,10 @@ import { BuildingInfrastructureCatalog } from './services/BuildingInfrastructure
 import { RealTimeSyncService } from './services/RealTimeSyncService';
 import { CommandChainManager } from '@cyntientops/command-chains';
 import { OperationalDataManager, operationalDataManager } from './OperationalDataManager';
+import { DatabaseIntegrationService } from './services/DatabaseIntegrationService';
+import { SessionManager } from './services/SessionManager';
+import { RealTimeCommunicationService } from './services/RealTimeCommunicationService';
+import { NovaAIBrainService } from './services/NovaAIBrainService';
 
 // Types
 import { 
@@ -57,9 +61,11 @@ export class ServiceContainer {
   // MARK: - Layer 0: Database & Data
   public readonly database: DatabaseManager;
   public readonly operationalData: OperationalDataService;
+  public readonly databaseIntegration: DatabaseIntegrationService;
   
   // MARK: - Layer 1: Core Services (LAZY INITIALIZATION)
   public readonly auth: AuthService;
+  public readonly sessionManager: SessionManager;
   
   // Lazy services - initialized when first accessed
   private _workers: WorkerService | null = null;
@@ -70,10 +76,11 @@ export class ServiceContainer {
   // MARK: - Layer 2: Business Logic (LAZY)
   private _realTimeOrchestrator: RealTimeOrchestrator | null = null;
   private _realTimeSync: RealTimeSyncService | null = null;
+  private _realTimeCommunication: RealTimeCommunicationService | null = null;
   private _routeManager: RouteManager | null = null;
-  private _novaAPI: NovaAPIService | null = null;
+  private _novaAIBrain: NovaAIBrainService | null = null;
   private _performanceOptimizer: PerformanceOptimizer | null = null;
-  private _analyticsEngine: AnalyticsEngine | null = null;
+  private _analyticsService: AnalyticsService | null = null;
   private _securityManager: SecurityManager | null = null;
   private _productionManager: ProductionManager | null = null;
   private _buildingInfrastructureCatalog: BuildingInfrastructureCatalog | null = null;
@@ -127,7 +134,9 @@ export class ServiceContainer {
     // Initialize essential services synchronously
     this.database = DatabaseManager.getInstance({ path: config.databasePath });
     this.operationalData = new OperationalDataService(this.database);
+    this.databaseIntegration = DatabaseIntegrationService.getInstance(this.database);
     this.auth = AuthService.getInstance(this.database);
+    this.sessionManager = SessionManager.getInstance(this.database, this.auth);
   }
   
   public static getInstance(config?: ServiceContainerConfig): ServiceContainer {
@@ -267,6 +276,20 @@ export class ServiceContainer {
       this._routeManager = RouteManager.getInstance(this.database);
     }
     return this._routeManager;
+  }
+
+  public get realTimeCommunication(): RealTimeCommunicationService {
+    if (!this._realTimeCommunication) {
+      this._realTimeCommunication = RealTimeCommunicationService.getInstance(this.database, this.webSocketManager);
+    }
+    return this._realTimeCommunication;
+  }
+
+  public get novaAIBrain(): NovaAIBrainService {
+    if (!this._novaAIBrain) {
+      this._novaAIBrain = NovaAIBrainService.getInstance(this.database);
+    }
+    return this._novaAIBrain;
   }
 
   public get novaAPI(): NovaAPIService {

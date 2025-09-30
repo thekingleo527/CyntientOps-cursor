@@ -15,7 +15,8 @@ import {
   Animated,
   Dimensions 
 } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { IntelligenceInsight, UserRole } from '@cyntientops/domain-schema';
 
 export interface IntelligencePreviewPanelProps {
@@ -215,7 +216,7 @@ export const IntelligencePreviewPanel: React.FC<IntelligencePreviewPanelProps> =
   }
 
   return (
-    <GlassCard style={styles.panelContainer}>
+    <GlassCard style={styles.panelContainer} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <View style={styles.panelHeader}>
         <View style={styles.panelTitleContainer}>
           <Text style={styles.panelTitle}>Nova AI Insights</Text>

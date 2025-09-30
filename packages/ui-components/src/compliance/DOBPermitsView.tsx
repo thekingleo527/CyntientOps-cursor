@@ -15,7 +15,8 @@ import {
   Alert,
   RefreshControl
 } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { DOBPermit } from '@cyntientops/api-clients';
 import { ServiceContainer } from '@cyntientops/business-core';
 
@@ -152,17 +153,17 @@ export const DOBPermitsView: React.FC<DOBPermitsViewProps> = ({
 
       {/* Summary Cards */}
       <View style={styles.summaryGrid}>
-        <GlassCard style={styles.summaryCard}>
+        <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.summaryValue}>{totalPermits}</Text>
           <Text style={styles.summaryLabel}>Total Permits</Text>
         </GlassCard>
         
-        <GlassCard style={styles.summaryCard}>
+        <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={[styles.summaryValue, { color: Colors.status.info }]}>{activePermits}</Text>
           <Text style={styles.summaryLabel}>Active</Text>
         </GlassCard>
         
-        <GlassCard style={styles.summaryCard}>
+        <GlassCard style={styles.summaryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={[styles.summaryValue, { color: Colors.status.success }]}>{recentPermits}</Text>
           <Text style={styles.summaryLabel}>Recent</Text>
         </GlassCard>

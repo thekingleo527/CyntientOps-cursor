@@ -1,11 +1,13 @@
 /**
- * 📸 Photo Evidence Manager
+ * 📸 Photo Evidence Manager with Smart Location Tagging
  * Mirrors: CyntientOps/Managers/PhotoEvidenceManager.swift
- * Purpose: Photo capture, storage, and evidence management
+ * Purpose: Photo capture, storage, evidence management, and smart location tagging
+ * Features: Smart location detection, building space mapping, worker area specification
  */
 
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+import * as Location from 'expo-location';
 import { DatabaseManager } from '@cyntientops/database';
 import { OperationalDataTaskAssignment, WorkerProfile } from '@cyntientops/domain-schema';
 
@@ -13,6 +15,7 @@ export interface PhotoEvidence {
   id: string;
   taskId: string;
   workerId: string;
+  buildingId: string;
   imageUri: string;
   thumbnailUri: string;
   timestamp: number;
@@ -20,29 +23,66 @@ export interface PhotoEvidence {
     latitude: number;
     longitude: number;
     accuracy: number;
+    altitude?: number;
+    heading?: number;
+  };
+  smartLocation?: {
+    detectedSpace?: string;
+    detectedFloor?: number;
+    confidence: number;
+    buildingSpaceId?: string;
+  };
+  workerSpecifiedArea?: {
+    spaceId: string;
+    spaceName: string;
+    floor: number;
+    notes?: string;
+    timestamp: number;
   };
   metadata: {
     category: string;
     taskName: string;
     workerName: string;
-    buildingId?: string;
-    buildingName?: string;
+    buildingId: string;
+    buildingName: string;
     source: 'camera' | 'gallery';
     exif?: any;
+    deviceInfo?: {
+      model: string;
+      os: string;
+      appVersion: string;
+    };
   };
-  status: 'pending' | 'uploaded' | 'failed';
+  status: 'pending' | 'uploaded' | 'failed' | 'location_verified';
   uploadAttempts: number;
+  tags: string[];
+}
+
+export interface BuildingSpace {
+  id: string;
+  name: string;
+  category: 'utility' | 'mechanical' | 'storage' | 'electrical' | 'access' | 'office' | 'common' | 'exterior';
+  floor: number;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+    radius: number; // meters
+  };
+  buildingId: string;
+  description?: string;
 }
 
 export class PhotoEvidenceManager {
   private static instance: PhotoEvidenceManager;
   private dbManager: DatabaseManager;
   private photoDirectory: string;
+  private buildingSpaces: Map<string, BuildingSpace[]> = new Map();
 
   private constructor(dbManager: DatabaseManager) {
     this.dbManager = dbManager;
     this.photoDirectory = `${FileSystem.documentDirectory}photos/`;
     this.initializePhotoDirectory();
+    this.loadBuildingSpaces();
   }
 
   public static getInstance(dbManager: DatabaseManager): PhotoEvidenceManager {
@@ -71,6 +111,20 @@ export class PhotoEvidenceManager {
     metadata: any
   ): Promise<PhotoEvidence> {
     try {
+      // Get current location with smart detection
+      const location = await this.getCurrentLocation();
+      
+      // Get building information
+      const building = task.assigned_building_id ? 
+        this.dbManager.getBuildingById(task.assigned_building_id) : null;
+      
+      if (!building) {
+        throw new Error('Building not found for task');
+      }
+
+      // Smart location detection
+      const smartLocation = await this.detectLocation(building.id, location);
+
       const photoId = `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const fileName = `${photoId}.jpg`;
       const thumbnailFileName = `${photoId}_thumb.jpg`;
@@ -87,29 +141,33 @@ export class PhotoEvidenceManager {
       // Create thumbnail
       await this.createThumbnail(destinationUri, thumbnailUri);
 
-      // Get building information if available
-      const building = task.assigned_building_id ? 
-        this.dbManager.getBuildingById(task.assigned_building_id) : null;
-
       const photoEvidence: PhotoEvidence = {
         id: photoId,
         taskId: task.id,
         workerId: worker.id,
+        buildingId: building.id,
         imageUri: destinationUri,
         thumbnailUri: thumbnailUri,
         timestamp: Date.now(),
-        location: metadata.location,
+        location: location,
+        smartLocation: smartLocation,
         metadata: {
           category: task.category,
           taskName: task.name,
           workerName: worker.name,
-          buildingId: building?.id,
-          buildingName: building?.name,
+          buildingId: building.id,
+          buildingName: building.name,
           source: metadata.source || 'camera',
           exif: metadata.exif,
+          deviceInfo: {
+            model: metadata.deviceModel || 'Unknown',
+            os: metadata.osVersion || 'Unknown',
+            appVersion: metadata.appVersion || '1.0.0'
+          }
         },
         status: 'pending',
         uploadAttempts: 0,
+        tags: this.generateTags(task, smartLocation, metadata)
       };
 
       // Save to database
@@ -118,7 +176,7 @@ export class PhotoEvidenceManager {
       // Save to device photo library if permission granted
       await this.saveToPhotoLibrary(destinationUri);
 
-      console.log('Photo captured successfully:', photoId);
+      console.log('Photo captured successfully with smart location:', photoId);
       return photoEvidence;
     } catch (error) {
       console.error('Failed to capture photo:', error);
@@ -137,6 +195,190 @@ export class PhotoEvidenceManager {
     } catch (error) {
       console.error('Failed to create thumbnail:', error);
     }
+  }
+
+  private async loadBuildingSpaces(): Promise<void> {
+    try {
+      // Load building spaces from database
+      const spaces = await this.dbManager.query(`
+        SELECT * FROM building_spaces 
+        ORDER BY building_id, floor, name
+      `);
+      
+      // Group spaces by building ID
+      spaces.forEach((space: any) => {
+        const buildingId = space.building_id;
+        if (!this.buildingSpaces.has(buildingId)) {
+          this.buildingSpaces.set(buildingId, []);
+        }
+        
+        this.buildingSpaces.get(buildingId)!.push({
+          id: space.id,
+          name: space.name,
+          category: space.category,
+          floor: space.floor,
+          coordinates: space.coordinates ? JSON.parse(space.coordinates) : undefined,
+          buildingId: buildingId,
+          description: space.description
+        });
+      });
+    } catch (error) {
+      console.error('Failed to load building spaces:', error);
+    }
+  }
+
+  private async getCurrentLocation(): Promise<{
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+    altitude?: number;
+    heading?: number;
+  }> {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        throw new Error('Location permission not granted');
+      }
+
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+        maximumAge: 10000, // 10 seconds
+        timeout: 15000 // 15 seconds
+      });
+
+      return {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        accuracy: location.coords.accuracy || 0,
+        altitude: location.coords.altitude || undefined,
+        heading: location.coords.heading || undefined
+      };
+    } catch (error) {
+      console.error('Failed to get current location:', error);
+      throw new Error('Unable to determine location');
+    }
+  }
+
+  private async detectLocation(buildingId: string, location: {
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+  }): Promise<{
+    detectedSpace?: string;
+    detectedFloor?: number;
+    confidence: number;
+    buildingSpaceId?: string;
+  }> {
+    try {
+      const buildingSpaces = this.buildingSpaces.get(buildingId) || [];
+      
+      // Find the closest space within accuracy radius
+      let bestMatch: BuildingSpace | null = null;
+      let bestDistance = Infinity;
+      let confidence = 0;
+
+      for (const space of buildingSpaces) {
+        if (space.coordinates) {
+          const distance = this.calculateDistance(
+            location.latitude,
+            location.longitude,
+            space.coordinates.latitude,
+            space.coordinates.longitude
+          );
+
+          // Check if within the space's radius and accuracy
+          if (distance <= space.coordinates.radius && distance < bestDistance) {
+            bestMatch = space;
+            bestDistance = distance;
+            confidence = Math.max(0, 1 - (distance / space.coordinates.radius));
+          }
+        }
+      }
+
+      if (bestMatch) {
+        return {
+          detectedSpace: bestMatch.name,
+          detectedFloor: bestMatch.floor,
+          confidence: Math.round(confidence * 100),
+          buildingSpaceId: bestMatch.id
+        };
+      }
+
+      // If no specific space found, try to determine floor based on altitude
+      const detectedFloor = await this.detectFloorFromAltitude(location.altitude);
+      
+      return {
+        detectedSpace: 'Unknown Area',
+        detectedFloor: detectedFloor,
+        confidence: 30, // Low confidence for general area
+        buildingSpaceId: undefined
+      };
+    } catch (error) {
+      console.error('Failed to detect location:', error);
+      return {
+        detectedSpace: 'Unknown Area',
+        detectedFloor: undefined,
+        confidence: 0,
+        buildingSpaceId: undefined
+      };
+    }
+  }
+
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371e3; // Earth's radius in meters
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c; // Distance in meters
+  }
+
+  private async detectFloorFromAltitude(altitude?: number): Promise<number | undefined> {
+    if (!altitude) return undefined;
+    
+    // Rough estimation: each floor is approximately 3 meters
+    // This is a simplified calculation and should be calibrated per building
+    const floorHeight = 3; // meters per floor
+    const groundLevel = 0; // This should be the building's ground level altitude
+    
+    const floor = Math.round((altitude - groundLevel) / floorHeight);
+    return floor >= 0 ? floor : undefined;
+  }
+
+  private generateTags(
+    task: OperationalDataTaskAssignment,
+    smartLocation: any,
+    metadata: any
+  ): string[] {
+    const tags: string[] = [];
+    
+    // Task-based tags
+    tags.push(task.category);
+    tags.push(task.name.toLowerCase().replace(/\s+/g, '_'));
+    
+    // Location-based tags
+    if (smartLocation.detectedSpace) {
+      tags.push(smartLocation.detectedSpace.toLowerCase().replace(/\s+/g, '_'));
+    }
+    if (smartLocation.detectedFloor !== undefined) {
+      tags.push(`floor_${smartLocation.detectedFloor}`);
+    }
+    
+    // Time-based tags
+    const date = new Date();
+    tags.push(`month_${date.getMonth() + 1}`);
+    tags.push(`year_${date.getFullYear()}`);
+    
+    // Source-based tags
+    tags.push(metadata.source || 'camera');
+    
+    return tags;
   }
 
   private async saveToPhotoLibrary(photoUri: string): Promise<void> {
@@ -305,5 +547,83 @@ export class PhotoEvidenceManager {
       console.error('Failed to get storage info:', error);
       return { totalPhotos: 0, totalSize: 0, pendingUploads: 0 };
     }
+  }
+
+  // Worker area specification methods
+  async specifyWorkerArea(
+    photoId: string,
+    spaceId: string,
+    notes?: string
+  ): Promise<void> {
+    try {
+      const space = await this.getBuildingSpace(spaceId);
+      if (!space) {
+        throw new Error('Building space not found');
+      }
+
+      const workerSpecifiedArea = {
+        spaceId: space.id,
+        spaceName: space.name,
+        floor: space.floor,
+        notes: notes,
+        timestamp: Date.now()
+      };
+
+      // Update photo evidence with worker-specified area
+      await this.dbManager.query(`
+        UPDATE photo_evidence 
+        SET worker_specified_area = ?, status = 'location_verified'
+        WHERE id = ?
+      `, [JSON.stringify(workerSpecifiedArea), photoId]);
+
+      console.log('Worker area specified for photo:', photoId);
+    } catch (error) {
+      console.error('Failed to specify worker area:', error);
+      throw error;
+    }
+  }
+
+  // Photo repository methods for BuildingSpacesTab
+  async getPhotosForBuilding(buildingId: string): Promise<PhotoEvidence[]> {
+    try {
+      const photos = await this.dbManager.query(`
+        SELECT * FROM photo_evidence 
+        WHERE building_id = ? 
+        ORDER BY timestamp DESC
+      `, [buildingId]);
+
+      return photos.map(this.mapDatabaseToPhotoEvidence);
+    } catch (error) {
+      console.error('Failed to get photos for building:', error);
+      return [];
+    }
+  }
+
+  async getPhotosForSpace(spaceId: string): Promise<PhotoEvidence[]> {
+    try {
+      const photos = await this.dbManager.query(`
+        SELECT * FROM photo_evidence 
+        WHERE JSON_EXTRACT(worker_specified_area, '$.spaceId') = ?
+           OR JSON_EXTRACT(smart_location, '$.buildingSpaceId') = ?
+        ORDER BY timestamp DESC
+      `, [spaceId, spaceId]);
+
+      return photos.map(this.mapDatabaseToPhotoEvidence);
+    } catch (error) {
+      console.error('Failed to get photos for space:', error);
+      return [];
+    }
+  }
+
+  async getBuildingSpaces(buildingId: string): Promise<BuildingSpace[]> {
+    return this.buildingSpaces.get(buildingId) || [];
+  }
+
+  private async getBuildingSpace(spaceId: string): Promise<BuildingSpace | null> {
+    for (const spaces of this.buildingSpaces.values()) {
+      const space = spaces.find(s => s.id === spaceId);
+      if (space) return space;
+    }
+    return null;
   }
 }

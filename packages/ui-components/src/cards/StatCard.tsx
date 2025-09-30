@@ -6,7 +6,8 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 
 export interface StatCardProps {
   title: string;
@@ -133,7 +134,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       styles.container,
       { backgroundColor },
       { padding: sizeConfig.padding },
-    ]}>
+    ]} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <View style={styles.header}>
         <View style={styles.titleContainer}>
           <Text style={[

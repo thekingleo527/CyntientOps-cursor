@@ -7,7 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { ServiceContainer } from '@cyntientops/business-core';
 
 export interface ComplianceAlert {
@@ -97,7 +98,7 @@ export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({
 
   if (loading) {
     return (
-      <GlassCard style={styles.container}>
+      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.loadingText}>Loading compliance alerts...</Text>
       </GlassCard>
     );
@@ -105,7 +106,7 @@ export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({
 
   if (alerts.length === 0) {
     return (
-      <GlassCard style={styles.container}>
+      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.sectionTitle}>Compliance Alerts</Text>
         <View style={styles.emptyState}>
           <Text style={styles.emptyTitle}>All Clear! 🎉</Text>
@@ -118,7 +119,7 @@ export const ComplianceAlerts: React.FC<ComplianceAlertsProps> = ({
   }
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <Text style={styles.sectionTitle}>Compliance Alerts</Text>
       
       {alerts.map((alert) => (

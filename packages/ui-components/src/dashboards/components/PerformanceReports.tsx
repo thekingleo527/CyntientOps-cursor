@@ -7,7 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { ServiceContainer } from '@cyntientops/business-core';
 
 export const PerformanceReports: React.FC = () => {
@@ -66,7 +67,7 @@ export const PerformanceReports: React.FC = () => {
   };
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <Text style={styles.sectionTitle}>Performance Reports</Text>
       
       {/* System Overview */}

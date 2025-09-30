@@ -6,7 +6,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { OperationalDataTaskAssignment, TaskUrgency, TaskStatus } from '@cyntientops/domain-schema';
 import { TaskTimelineRow } from './TaskTimelineRow';
 
@@ -221,7 +222,7 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({
   );
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>

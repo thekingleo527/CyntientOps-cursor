@@ -9011,6 +9011,16 @@
         "source": "intelligence-services",
         "target": "npm:typescript",
         "type": "static"
+      },
+      {
+        "source": "intelligence-services",
+        "target": "npm:react-native",
+        "type": "static"
+      },
+      {
+        "source": "intelligence-services",
+        "target": "npm:events",
+        "type": "static"
       }
     ],
     "context-engines": [
@@ -9134,6 +9144,11 @@
         "source": "business-core",
         "target": "domain-schema",
         "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "npm:events",
+        "type": "static"
       }
     ],
     "design-tokens": [
@@ -9185,6 +9200,11 @@
         "source": "realtime-sync",
         "target": "npm:typescript",
         "type": "static"
+      },
+      {
+        "source": "realtime-sync",
+        "target": "npm:events",
+        "type": "static"
       }
     ],
     "ui-components": [
@@ -9225,7 +9245,22 @@
       },
       {
         "source": "ui-components",
+        "target": "data-seed",
+        "type": "dynamic"
+      },
+      {
+        "source": "ui-components",
         "target": "api-clients",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
+        "target": "managers",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
+        "target": "intelligence-services",
         "type": "static"
       }
     ],
@@ -9291,6 +9326,11 @@
       {
         "source": "managers",
         "target": "api-clients",
+        "type": "static"
+      },
+      {
+        "source": "managers",
+        "target": "business-core",
         "type": "static"
       }
     ],

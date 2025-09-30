@@ -7,7 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { WeatherSnapshot, OutdoorWorkRisk } from '@cyntientops/domain-schema';
 import { APIClientManager } from '@cyntientops/api-clients';
 
@@ -72,7 +73,7 @@ export const WeatherRibbon: React.FC = () => {
 
   if (loading) {
     return (
-      <GlassCard style={styles.container}>
+      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.loadingText}>Loading weather...</Text>
       </GlassCard>
     );
@@ -80,14 +81,14 @@ export const WeatherRibbon: React.FC = () => {
 
   if (!weather) {
     return (
-      <GlassCard style={styles.container}>
+      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.errorText}>Weather data unavailable</Text>
       </GlassCard>
     );
   }
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <View style={styles.weatherContent}>
         <View style={styles.weatherMain}>
           <Text style={styles.weatherIcon}>

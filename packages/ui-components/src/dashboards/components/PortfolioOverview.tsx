@@ -7,7 +7,8 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { ClientPortfolio } from '@cyntientops/domain-schema';
 
 export interface PortfolioOverviewProps {
@@ -44,7 +45,7 @@ export const PortfolioOverview: React.FC<PortfolioOverviewProps> = ({
   };
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <Text style={styles.sectionTitle}>Portfolio Overview</Text>
       
       {/* Key Metrics */}

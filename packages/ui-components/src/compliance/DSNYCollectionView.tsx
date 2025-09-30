@@ -15,7 +15,8 @@ import {
   Alert,
   RefreshControl
 } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { DSNYRoute } from '@cyntientops/api-clients';
 import { ServiceContainer } from '@cyntientops/business-core';
 
@@ -258,7 +259,7 @@ export const DSNYCollectionView: React.FC<DSNYCollectionViewProps> = ({
         )}
 
         {/* District Information */}
-        <GlassCard style={styles.districtInfo}>
+        <GlassCard style={styles.districtInfo} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.districtTitle}>District Information</Text>
           <View style={styles.districtDetails}>
             <View style={styles.districtItem}>

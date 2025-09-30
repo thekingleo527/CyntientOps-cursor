@@ -7,7 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { WorkerProfile } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '@cyntientops/business-core';
 
@@ -81,7 +82,7 @@ export const WorkerAssignments: React.FC<WorkerAssignmentsProps> = ({
 
   if (loading) {
     return (
-      <GlassCard style={styles.container}>
+      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.loadingText}>Loading worker assignments...</Text>
       </GlassCard>
     );
@@ -89,7 +90,7 @@ export const WorkerAssignments: React.FC<WorkerAssignmentsProps> = ({
 
   if (workers.length === 0) {
     return (
-      <GlassCard style={styles.container}>
+      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.sectionTitle}>Worker Assignments</Text>
         <View style={styles.emptyState}>
           <Text style={styles.emptyTitle}>No Workers Assigned</Text>
@@ -102,7 +103,7 @@ export const WorkerAssignments: React.FC<WorkerAssignmentsProps> = ({
   }
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <Text style={styles.sectionTitle}>Worker Assignments</Text>
       
       {workers.map((worker) => (

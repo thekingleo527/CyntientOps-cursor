@@ -1,112 +1,197 @@
 /**
  * GlassCard Component
- * Mirrors SwiftUI GlassCard with proper glass morphism effects
+ * 
+ * Complete glass card implementation extracted from SwiftUI source
+ * Mirrors: CyntientOps/Components/Glass/GlassCard.swift
  */
 
-import React from 'react';
-import { View, ViewStyle, StyleSheet, Pressable, Animated } from 'react-native';
-import { BlurView } from '@react-native-community/blur';
-import { GlassIntensity, getGlassConfig } from './GlassIntensity';
+import React, { useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  ViewStyle,
+  TextStyle,
+  GestureResponderEvent
+} from 'react-native';
+import { BlurView } from 'expo-blur';
+import { 
+  GlassIntensity, 
+  GLASS_INTENSITY_CONFIG, 
+  CORNER_RADIUS_VALUES, 
+  CornerRadius,
+  GLASS_OVERLAYS 
+} from '@cyntientops/design-tokens';
 
 export interface GlassCardProps {
   children: React.ReactNode;
   intensity?: GlassIntensity;
-  cornerRadius?: number;
+  cornerRadius?: CornerRadius;
   padding?: number;
   onPress?: () => void;
-  style?: ViewStyle;
+  onLongPress?: () => void;
   disabled?: boolean;
+  style?: ViewStyle;
+  contentStyle?: ViewStyle;
   testID?: string;
 }
 
 export const GlassCard: React.FC<GlassCardProps> = ({
   children,
-  intensity = GlassIntensity.regular,
-  cornerRadius = 12,
+  intensity = GlassIntensity.REGULAR,
+  cornerRadius = CornerRadius.MEDIUM,
   padding = 16,
   onPress,
-  style,
+  onLongPress,
   disabled = false,
+  style,
+  contentStyle,
   testID
 }) => {
-  const [isPressed, setIsPressed] = React.useState(false);
-  const scaleAnim = React.useRef(new Animated.Value(1)).current;
-  const config = getGlassConfig(intensity);
+  const [isPressed, setIsPressed] = useState(false);
+  const [scaleValue] = useState(new Animated.Value(1));
+  const [opacityValue] = useState(new Animated.Value(1));
+
+  const intensityConfig = GLASS_INTENSITY_CONFIG[intensity];
+  const radius = CORNER_RADIUS_VALUES[cornerRadius];
+  const overlay = GLASS_OVERLAYS.regular;
 
   const handlePressIn = () => {
     if (disabled) return;
+    
     setIsPressed(true);
-    Animated.spring(scaleAnim, {
-      toValue: 0.98,
-      useNativeDriver: true,
-      tension: 300,
-      friction: 10
-    }).start();
+    Animated.parallel([
+      Animated.timing(scaleValue, {
+        toValue: 0.98,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityValue, {
+        toValue: 0.8,
+        duration: 100,
+        useNativeDriver: true,
+      })
+    ]).start();
   };
 
   const handlePressOut = () => {
     if (disabled) return;
+    
     setIsPressed(false);
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      tension: 300,
-      friction: 10
-    }).start();
+    Animated.parallel([
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityValue, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      })
+    ]).start();
   };
 
-  const cardStyle: ViewStyle = {
-    borderRadius: cornerRadius,
-    padding,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: `rgba(255, 255, 255, ${config.borderOpacity})`,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: config.shadowOpacity,
-    shadowRadius: config.shadowRadius,
-    elevation: 4,
-    ...style
+  const handlePress = () => {
+    if (disabled || !onPress) return;
+    onPress();
   };
+
+  const handleLongPress = () => {
+    if (disabled || !onLongPress) return;
+    onLongPress();
+  };
+
+  const cardStyle = [
+    styles.container,
+    {
+      borderRadius: radius,
+      padding,
+      backgroundColor: overlay.background,
+      borderColor: overlay.stroke,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.15,
+      shadowRadius: intensityConfig.shadowRadius,
+      elevation: 8,
+    },
+    style
+  ];
 
   const content = (
-    <View style={cardStyle} testID={testID}>
-      <BlurView
-        style={StyleSheet.absoluteFillObject}
-        blurType="light"
-        blurAmount={config.blur}
-        reducedTransparencyFallbackColor="rgba(255, 255, 255, 0.1)"
-      />
-      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: `rgba(255, 255, 255, ${config.opacity})` }]} />
-      <View style={{ zIndex: 1 }}>
-        {children}
-      </View>
+    <View style={[styles.content, contentStyle]}>
+      {children}
     </View>
   );
 
-  if (onPress) {
+  if (onPress || onLongPress) {
     return (
-      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-        <Pressable
-          onPress={onPress}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          disabled={disabled}
-          style={({ pressed }) => [
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={handlePress}
+        onLongPress={handleLongPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={disabled}
+        testID={testID}
+        style={cardStyle}
+      >
+        <BlurView
+          intensity={intensityConfig.blurRadius}
+          tint="dark"
+          style={[
+            styles.blurView,
             {
-              opacity: pressed ? 0.8 : 1
+              borderRadius: radius,
             }
           ]}
         >
           {content}
-        </Pressable>
-      </Animated.View>
+        </BlurView>
+      </TouchableOpacity>
     );
   }
 
   return (
-    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-      {content}
+    <Animated.View
+      style={[
+        cardStyle,
+        {
+          transform: [{ scale: scaleValue }],
+          opacity: opacityValue,
+        }
+      ]}
+      testID={testID}
+    >
+      <BlurView
+        intensity={intensityConfig.blurRadius}
+        tint="dark"
+        style={[
+          styles.blurView,
+          {
+            borderRadius: radius,
+          }
+        ]}
+      >
+        {content}
+      </BlurView>
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  blurView: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  content: {
+    flex: 1,
+  },
+});
+
+export default GlassCard;

@@ -1,21 +1,48 @@
 /**
  * GlassModal Component
- * Mirrors SwiftUI GlassModal with proper glass morphism effects
+ * 
+ * Complete glass modal implementation extracted from SwiftUI source
+ * Mirrors: CyntientOps/Components/Glass/GlassModal.swift
  */
 
-import React from 'react';
-import { Modal, View, StyleSheet, Pressable, Animated, Dimensions } from 'react-native';
-import { BlurView } from '@react-native-community/blur';
-import { GlassIntensity, getGlassConfig } from './GlassIntensity';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Animated,
+  PanGestureHandler,
+  State,
+  StyleSheet,
+  ViewStyle,
+  Dimensions,
+  SafeAreaView
+} from 'react-native';
+import { BlurView } from 'expo-blur';
+import { 
+  GlassIntensity, 
+  GLASS_INTENSITY_CONFIG, 
+  CORNER_RADIUS_VALUES, 
+  CornerRadius,
+  GLASS_OVERLAYS,
+  GlassModalSize,
+  GLASS_MODAL_SIZES
+} from '@cyntientops/design-tokens';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export interface GlassModalProps {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
   intensity?: GlassIntensity;
-  cornerRadius?: number;
-  animationType?: 'slide' | 'fade' | 'none';
-  presentationStyle?: 'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen';
+  cornerRadius?: CornerRadius;
+  showCloseButton?: boolean;
+  size?: GlassModalSize;
+  title?: string;
+  style?: ViewStyle;
+  contentStyle?: ViewStyle;
   testID?: string;
 }
 
@@ -23,146 +50,294 @@ export const GlassModal: React.FC<GlassModalProps> = ({
   visible,
   onClose,
   children,
-  intensity = GlassIntensity.regular,
-  cornerRadius = 16,
-  animationType = 'slide',
-  presentationStyle = 'overFullScreen',
+  intensity = GlassIntensity.REGULAR,
+  cornerRadius = CornerRadius.LARGE,
+  showCloseButton = true,
+  size = GlassModalSize.MEDIUM,
+  title,
+  style,
+  contentStyle,
   testID
 }) => {
-  const [isVisible, setIsVisible] = React.useState(visible);
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const slideAnim = React.useRef(new Animated.Value(300)).current;
-  const config = getGlassConfig(intensity);
+  const [scaleValue] = useState(new Animated.Value(0.9));
+  const [opacityValue] = useState(new Animated.Value(0));
+  const [backgroundOpacity] = useState(new Animated.Value(0));
+  const [offsetValue] = useState(new Animated.ValueXY({ x: 0, y: 50 }));
 
-  React.useEffect(() => {
+  const intensityConfig = GLASS_INTENSITY_CONFIG[intensity];
+  const radius = CORNER_RADIUS_VALUES[cornerRadius];
+  const overlay = GLASS_OVERLAYS.regular;
+  const sizeConfig = GLASS_MODAL_SIZES[size];
+
+  useEffect(() => {
     if (visible) {
-      setIsVisible(true);
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true
-        }),
-        Animated.spring(slideAnim, {
-          toValue: 0,
-          useNativeDriver: true,
-          tension: 100,
-          friction: 8
-        })
-      ]).start();
+      presentModal();
     } else {
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 300,
-          duration: 200,
-          useNativeDriver: true
-        })
-      ]).start(() => {
-        setIsVisible(false);
-      });
+      dismissModal();
     }
   }, [visible]);
 
-  const handleBackdropPress = () => {
-    onClose();
+  const presentModal = () => {
+    Animated.parallel([
+      Animated.spring(scaleValue, {
+        toValue: 1,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 8,
+      }),
+      Animated.timing(opacityValue, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(backgroundOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.spring(offsetValue, {
+        toValue: { x: 0, y: 0 },
+        useNativeDriver: true,
+        tension: 100,
+        friction: 8,
+      })
+    ]).start();
   };
 
-  if (!isVisible) {
-    return null;
-  }
+  const dismissModal = () => {
+    Animated.parallel([
+      Animated.timing(scaleValue, {
+        toValue: 0.9,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityValue, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(backgroundOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(offsetValue, {
+        toValue: { x: 0, y: 50 },
+        duration: 300,
+        useNativeDriver: true,
+      })
+    ]).start(() => {
+      onClose();
+    });
+  };
+
+  const handleBackgroundPress = () => {
+    dismissModal();
+  };
+
+  const handleGestureEvent = (event: any) => {
+    const { translationY, velocityY } = event.nativeEvent;
+    
+    if (translationY > 0) {
+      const dragAmount = Math.abs(translationY);
+      const scale = Math.max(0.85, 1.0 - (dragAmount / 1000));
+      const opacity = Math.max(0.3, 1.0 - (dragAmount / 500));
+      
+      scaleValue.setValue(scale);
+      opacityValue.setValue(opacity);
+      offsetValue.setValue({ x: 0, y: translationY });
+    }
+  };
+
+  const handleGestureStateChange = (event: any) => {
+    const { state, translationY } = event.nativeEvent;
+    
+    if (state === State.END) {
+      const dismissThreshold = 100;
+      
+      if (Math.abs(translationY) > dismissThreshold) {
+        dismissModal();
+      } else {
+        // Snap back to original position
+        Animated.parallel([
+          Animated.spring(scaleValue, {
+            toValue: 1,
+            useNativeDriver: true,
+            tension: 100,
+            friction: 8,
+          }),
+          Animated.spring(opacityValue, {
+            toValue: 1,
+            useNativeDriver: true,
+            tension: 100,
+            friction: 8,
+          }),
+          Animated.spring(offsetValue, {
+            toValue: { x: 0, y: 0 },
+            useNativeDriver: true,
+            tension: 100,
+            friction: 8,
+          })
+        ]).start();
+      }
+    }
+  };
+
+  const modalStyle = [
+    styles.modal,
+    {
+      maxWidth: sizeConfig.width,
+      maxHeight: sizeConfig.height,
+      borderRadius: radius,
+      backgroundColor: overlay.background,
+      borderColor: overlay.stroke,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.15,
+      shadowRadius: intensityConfig.shadowRadius,
+      elevation: 20,
+    },
+    style
+  ];
 
   return (
     <Modal
-      visible={isVisible}
+      visible={visible}
       transparent
       animationType="none"
-      presentationStyle={presentationStyle}
-      onRequestClose={onClose}
+      onRequestClose={dismissModal}
       testID={testID}
     >
-      <View style={styles.container}>
-        {/* Backdrop */}
-        <Animated.View 
-          style={[
-            styles.backdrop,
-            { opacity: fadeAnim }
-          ]}
-        >
-          <BlurView
-            style={StyleSheet.absoluteFillObject}
-            blurType="dark"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.5)"
-          />
-        </Animated.View>
-
-        {/* Backdrop Pressable */}
-        <Pressable
-          style={StyleSheet.absoluteFillObject}
-          onPress={handleBackdropPress}
-        />
-
-        {/* Modal Content */}
+      <SafeAreaView style={styles.container}>
         <Animated.View
           style={[
-            styles.modalContent,
+            styles.background,
             {
-              borderRadius: cornerRadius,
-              borderWidth: 1,
-              borderColor: `rgba(255, 255, 255, ${config.borderOpacity})`,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: config.shadowOpacity * 2,
-              shadowRadius: config.shadowRadius * 2,
-              elevation: 8,
-              transform: [{ translateY: slideAnim }]
+              opacity: backgroundOpacity,
             }
           ]}
         >
-          <BlurView
-            style={StyleSheet.absoluteFillObject}
-            blurType="light"
-            blurAmount={config.blur}
-            reducedTransparencyFallbackColor="rgba(255, 255, 255, 0.1)"
+          <TouchableOpacity
+            style={styles.backgroundTouchable}
+            activeOpacity={1}
+            onPress={handleBackgroundPress}
           />
-          <View style={[
-            StyleSheet.absoluteFillObject,
-            { backgroundColor: `rgba(255, 255, 255, ${config.opacity})` }
-          ]} />
-          <View style={{ zIndex: 1 }}>
-            {children}
-          </View>
         </Animated.View>
-      </View>
+
+        <View style={styles.modalContainer}>
+          <PanGestureHandler
+            onGestureEvent={handleGestureEvent}
+            onHandlerStateChange={handleGestureStateChange}
+          >
+            <Animated.View
+              style={[
+                modalStyle,
+                {
+                  transform: [
+                    { scale: scaleValue },
+                    { translateX: offsetValue.x },
+                    { translateY: offsetValue.y }
+                  ],
+                  opacity: opacityValue,
+                }
+              ]}
+            >
+              <BlurView
+                intensity={intensityConfig.blurRadius}
+                tint="dark"
+                style={[
+                  styles.blurView,
+                  {
+                    borderRadius: radius,
+                  }
+                ]}
+              >
+                {showCloseButton && (
+                  <View style={styles.closeButtonContainer}>
+                    <TouchableOpacity
+                      style={styles.closeButton}
+                      onPress={dismissModal}
+                      testID={`${testID}-close`}
+                    >
+                      <Text style={styles.closeButtonText}>✕</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+
+                <View style={[styles.content, contentStyle]}>
+                  {title && (
+                    <Text style={styles.title}>{title}</Text>
+                  )}
+                  {children}
+                </View>
+              </BlurView>
+            </Animated.View>
+          </PanGestureHandler>
+        </View>
+      </SafeAreaView>
     </Modal>
   );
 };
 
-const { width, height } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent'
   },
-  backdrop: {
+  background: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
-  modalContent: {
-    width: width * 0.9,
-    maxHeight: height * 0.8,
-    overflow: 'hidden'
-  }
+  backgroundTouchable: {
+    flex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  modal: {
+    borderWidth: 1,
+    overflow: 'hidden',
+    width: '100%',
+  },
+  blurView: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  closeButtonContainer: {
+    alignItems: 'flex-end',
+    paddingTop: 20,
+    paddingRight: 20,
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  content: {
+    flex: 1,
+    padding: 24,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 20,
+    textAlign: 'left',
+  },
 });
+
+export default GlassModal;

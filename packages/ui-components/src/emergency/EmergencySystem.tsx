@@ -5,7 +5,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Alert, Linking, ScrollView, ActivityIndicator } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { UserRole, NamedCoordinate } from '@cyntientops/domain-schema';
 import { EmergencyMessagingSystem, EmergencyMessage, EmergencyAlert } from '../messaging/EmergencyMessagingSystem';
 

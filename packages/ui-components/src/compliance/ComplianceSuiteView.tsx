@@ -15,7 +15,8 @@ import {
   Dimensions,
   Alert
 } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { 
   ComplianceIssue, 
   ComplianceSeverity, 
@@ -374,7 +375,7 @@ const ComplianceMetricCard: React.FC<ComplianceMetricCardProps> = ({
   color,
   icon,
 }) => (
-  <GlassCard style={styles.metricCard}>
+  <GlassCard style={styles.metricCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
     <View style={styles.metricHeader}>
       <Text style={styles.metricIcon}>{icon}</Text>
       <Text style={[styles.trendIcon, { color: trend > 0 ? Colors.status.success : Colors.status.error }]}>
@@ -471,7 +472,7 @@ interface PredictiveInsightCardProps {
 }
 
 const PredictiveInsightCard: React.FC<PredictiveInsightCardProps> = ({ insight }) => (
-  <GlassCard style={styles.insightCard}>
+  <GlassCard style={styles.insightCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
     <View style={styles.insightHeader}>
       <Text style={styles.insightIcon}>🧠</Text>
       <Text style={styles.insightTitle}>{insight.title}</Text>

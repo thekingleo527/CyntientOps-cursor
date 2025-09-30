@@ -7,7 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { ClientBillingSummary } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '@cyntientops/business-core';
 
@@ -65,7 +66,7 @@ export const CostAnalysis: React.FC<CostAnalysisProps> = ({
 
   if (loading) {
     return (
-      <GlassCard style={styles.container}>
+      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.loadingText}>Loading cost analysis...</Text>
       </GlassCard>
     );
@@ -73,14 +74,14 @@ export const CostAnalysis: React.FC<CostAnalysisProps> = ({
 
   if (!billingSummary) {
     return (
-      <GlassCard style={styles.container}>
+      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
         <Text style={styles.errorText}>Unable to load cost data</Text>
       </GlassCard>
     );
   }
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <Text style={styles.sectionTitle}>Cost Analysis</Text>
       
       {/* Summary Overview */}

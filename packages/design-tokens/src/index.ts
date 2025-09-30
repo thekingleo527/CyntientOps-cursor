@@ -12,6 +12,7 @@ export * from './tokens/spacing';
 export * from './tokens/shadows';
 export * from './tokens/animations';
 export * from './tokens/gradients';
+export * from './tokens/glassmorphism';
 
 // Export all components
 export * from './components/GlassCard';

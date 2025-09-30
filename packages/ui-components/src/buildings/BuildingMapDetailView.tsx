@@ -8,7 +8,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { NamedCoordinate, OperationalDataTaskAssignment, UserRole } from '@cyntientops/domain-schema';
 import { TaskTimelineView } from '../timeline/TaskTimelineView';
 import { GlassStatusBadge } from '../glass/GlassStatusBadge';
@@ -273,19 +274,19 @@ export const BuildingMapDetailView: React.FC<BuildingMapDetailViewProps> = ({
         <Text style={styles.tabTitle}>Building Overview</Text>
         
         <View style={styles.statsGrid}>
-          <GlassCard style={styles.statCard}>
+          <GlassCard style={styles.statCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.statValue}>{stats.totalTasks}</Text>
             <Text style={styles.statLabel}>Total Tasks</Text>
           </GlassCard>
-          <GlassCard style={styles.statCard}>
+          <GlassCard style={styles.statCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.statValue}>{stats.completedTasks}</Text>
             <Text style={styles.statLabel}>Completed</Text>
           </GlassCard>
-          <GlassCard style={styles.statCard}>
+          <GlassCard style={styles.statCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.statValue}>{stats.activeTasks}</Text>
             <Text style={styles.statLabel}>Active</Text>
           </GlassCard>
-          <GlassCard style={styles.statCard}>
+          <GlassCard style={styles.statCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.statValue}>{stats.overdueTasks}</Text>
             <Text style={styles.statLabel}>Overdue</Text>
           </GlassCard>
@@ -370,7 +371,7 @@ export const BuildingMapDetailView: React.FC<BuildingMapDetailViewProps> = ({
       <View style={styles.tabContent}>
         <Text style={styles.tabTitle}>Compliance Status</Text>
         
-        <GlassCard style={styles.complianceCard}>
+        <GlassCard style={styles.complianceCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.complianceTitle}>Overall Status</Text>
           <View style={styles.complianceBreakdown}>
             <View style={styles.complianceItem}>
@@ -401,17 +402,17 @@ export const BuildingMapDetailView: React.FC<BuildingMapDetailViewProps> = ({
         </GlassCard>
 
         <View style={styles.complianceStats}>
-          <GlassCard style={styles.complianceStatCard}>
+          <GlassCard style={styles.complianceStatCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.complianceStatValue}>{compliance.violations}</Text>
             <Text style={styles.complianceStatLabel}>Violations</Text>
           </GlassCard>
-          <GlassCard style={styles.complianceStatCard}>
+          <GlassCard style={styles.complianceStatCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.complianceStatValue}>{compliance.warnings}</Text>
             <Text style={styles.complianceStatLabel}>Warnings</Text>
           </GlassCard>
         </View>
 
-        <GlassCard style={styles.inspectionCard}>
+        <GlassCard style={styles.inspectionCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.inspectionTitle}>Inspection History</Text>
           <Text style={styles.inspectionText}>
             Last Inspection: {compliance.lastInspection.toLocaleDateString()}

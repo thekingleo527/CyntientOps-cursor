@@ -5,7 +5,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { UserRole, OperationalDataTaskAssignment, NamedCoordinate } from '@cyntientops/domain-schema';
 
 export interface ReportingDashboardProps {
@@ -785,7 +786,7 @@ export const ReportingDashboard: React.FC<ReportingDashboardProps> = ({
 
       {reportData && (
         <>
-          <GlassCard style={styles.reportCard}>
+          <GlassCard style={styles.reportCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <View style={styles.reportHeader}>
               <Text style={styles.reportTitle}>{reportData.title}</Text>
               <Text style={styles.reportDescription}>{reportData.description}</Text>

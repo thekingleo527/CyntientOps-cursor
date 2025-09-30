@@ -16,7 +16,8 @@ import {
   RefreshControl
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { 
   WorkerProfile, 
   TimeOffRequest, 
@@ -108,7 +109,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
     return (
       <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
         {/* Profile Header */}
-        <GlassCard style={styles.profileHeader}>
+        <GlassCard style={styles.profileHeader} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <View style={styles.profileInfo}>
             {worker.profile.avatar ? (
               <Image source={{ uri: worker.profile.avatar }} style={styles.avatar} />
@@ -132,7 +133,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
         </GlassCard>
 
         {/* Quick Stats */}
-        <GlassCard style={styles.statsCard}>
+        <GlassCard style={styles.statsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Quick Stats</Text>
           <View style={styles.statsGrid}>
             <View style={styles.statItem}>
@@ -155,7 +156,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
         </GlassCard>
 
         {/* Recent Activity */}
-        <GlassCard style={styles.activityCard}>
+        <GlassCard style={styles.activityCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Recent Activity</Text>
           <View style={styles.activityList}>
             {worker.calendar.upcomingEvents.slice(0, 3).map(event => (
@@ -179,7 +180,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
         </GlassCard>
 
         {/* Quick Actions */}
-        <GlassCard style={styles.actionsCard}>
+        <GlassCard style={styles.actionsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionsGrid}>
             <TouchableOpacity style={styles.actionButton} onPress={onRequestTimeOff}>
@@ -209,7 +210,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
 
     return (
       <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
-        <GlassCard style={styles.calendarCard}>
+        <GlassCard style={styles.calendarCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <View style={styles.calendarHeader}>
             <Text style={styles.sectionTitle}>Upcoming Events</Text>
             <TouchableOpacity style={styles.addButton} onPress={onViewCalendar}>
@@ -242,7 +243,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
         </GlassCard>
 
         {/* Working Hours */}
-        <GlassCard style={styles.hoursCard}>
+        <GlassCard style={styles.hoursCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Working Hours</Text>
           <View style={styles.hoursList}>
             {Object.entries(worker.calendar.workingHours).map(([day, slots]) => (
@@ -268,7 +269,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
     return (
       <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
         {/* Time Off Summary */}
-        <GlassCard style={styles.timeOffSummary}>
+        <GlassCard style={styles.timeOffSummary} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Time Off Balance</Text>
           <View style={styles.balanceGrid}>
             <View style={styles.balanceItem}>
@@ -288,7 +289,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
 
         {/* Pending Requests */}
         {worker.timeOff.pendingRequests.length > 0 && (
-          <GlassCard style={styles.requestsCard}>
+          <GlassCard style={styles.requestsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.sectionTitle}>Pending Requests</Text>
             {worker.timeOff.pendingRequests.map(request => (
               <View key={request.id} style={styles.requestItem}>
@@ -308,7 +309,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
         )}
 
         {/* Recent Requests */}
-        <GlassCard style={styles.requestsCard}>
+        <GlassCard style={styles.requestsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Recent Requests</Text>
           {[...worker.timeOff.approvedRequests, ...worker.timeOff.rejectedRequests]
             .sort((a, b) => b.requestedAt.getTime() - a.requestedAt.getTime())
@@ -349,7 +350,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
     return (
       <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
         {/* Timesheet Summary */}
-        <GlassCard style={styles.timesheetSummary}>
+        <GlassCard style={styles.timesheetSummary} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>This Week</Text>
           <View style={styles.timesheetStats}>
             <View style={styles.timesheetStat}>
@@ -368,7 +369,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
         </GlassCard>
 
         {/* Recent Entries */}
-        <GlassCard style={styles.entriesCard}>
+        <GlassCard style={styles.entriesCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Recent Entries</Text>
           {recentEntries.map(entry => (
             <View key={entry.id} style={styles.entryItem}>
@@ -412,7 +413,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
     return (
       <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
         {/* Performance Metrics */}
-        <GlassCard style={styles.metricsCard}>
+        <GlassCard style={styles.metricsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Performance Metrics</Text>
           <View style={styles.metricsGrid}>
             <View style={styles.metricItem}>
@@ -435,7 +436,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
         </GlassCard>
 
         {/* Current Goals */}
-        <GlassCard style={styles.goalsCard}>
+        <GlassCard style={styles.goalsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Current Goals</Text>
           {worker.performance.goals
             .filter(goal => goal.status === 'in_progress')
@@ -463,7 +464,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
         </GlassCard>
 
         {/* Recent Achievements */}
-        <GlassCard style={styles.achievementsCard}>
+        <GlassCard style={styles.achievementsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.sectionTitle}>Recent Achievements</Text>
           {worker.performance.achievements
             .sort((a, b) => b.earnedDate.getTime() - a.earnedDate.getTime())

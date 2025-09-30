@@ -6,7 +6,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Dimensions } from 'react-native';
 import MapView, { Marker, Callout, Region } from 'react-native-maps';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
 import { NamedCoordinate, OperationalDataTaskAssignment, WeatherSnapshot } from '@cyntientops/domain-schema';
 
 export interface BuildingMapViewProps {

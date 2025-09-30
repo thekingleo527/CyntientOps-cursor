@@ -267,7 +267,7 @@ export class RealTimeSyncService {
     });
 
     for (const task of completedTasks) {
-      await this.webSocketManager.emit('task_completed', {
+      this.webSocketManager.broadcast('task_completed', {
         taskId: task.buildingId + '_' + task.taskName,
         workerId: task.workerId,
         buildingId: task.buildingId,
@@ -283,7 +283,7 @@ export class RealTimeSyncService {
     const workers = this.operationalData.getAllWorkers();
     
     for (const worker of workers) {
-      await this.webSocketManager.emit('worker_status', {
+      this.webSocketManager.broadcast('worker_status', {
         workerId: worker.id,
         name: worker.name,
         status: 'active', // This would be determined by current tasks
@@ -298,7 +298,7 @@ export class RealTimeSyncService {
     const buildings = this.operationalData.getAllBuildings();
     
     for (const building of buildings) {
-      await this.webSocketManager.emit('building_update', {
+      this.webSocketManager.broadcast('building_update', {
         buildingId: building.id,
         name: building.name,
         lastUpdate: new Date().toISOString(),
@@ -310,7 +310,7 @@ export class RealTimeSyncService {
   private async syncInventoryChanges(): Promise<void> {
     // This would sync inventory changes in a real implementation
     // For now, we'll just emit a placeholder event
-    await this.webSocketManager.emit('inventory_change', {
+    this.webSocketManager.broadcast('inventory_change', {
       buildingId: '1',
       timestamp: new Date().toISOString(),
       changes: []
@@ -322,7 +322,7 @@ export class RealTimeSyncService {
   public async broadcastTaskCompletion(taskId: string, workerId: string, buildingId: string): Promise<void> {
     if (!this.isConnected) return;
 
-    await this.webSocketManager.emit('task_completed', {
+    this.webSocketManager.broadcast('task_completed', {
       taskId,
       workerId,
       buildingId,
@@ -333,7 +333,7 @@ export class RealTimeSyncService {
   public async broadcastWorkerStatus(workerId: string, status: string, buildingId?: string): Promise<void> {
     if (!this.isConnected) return;
 
-    await this.webSocketManager.emit('worker_status', {
+    this.webSocketManager.broadcast('worker_status', {
       workerId,
       status,
       buildingId,
@@ -344,7 +344,7 @@ export class RealTimeSyncService {
   public async broadcastBuildingUpdate(buildingId: string, updates: any): Promise<void> {
     if (!this.isConnected) return;
 
-    await this.webSocketManager.emit('building_update', {
+    this.webSocketManager.broadcast('building_update', {
       buildingId,
       updates,
       timestamp: new Date().toISOString()

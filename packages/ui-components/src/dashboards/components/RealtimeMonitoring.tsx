@@ -7,7 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { WorkerLocation } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '@cyntientops/business-core';
 
@@ -74,7 +75,7 @@ export const RealtimeMonitoring: React.FC<RealtimeMonitoringProps> = ({
   };
 
   return (
-    <GlassCard style={styles.container}>
+    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <View style={styles.header}>
         <Text style={styles.sectionTitle}>Realtime Monitoring</Text>
         <View style={styles.lastUpdated}>

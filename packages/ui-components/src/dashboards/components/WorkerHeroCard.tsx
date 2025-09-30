@@ -7,7 +7,8 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { GlassCard, Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
 import { WorkerProfile } from '@cyntientops/domain-schema';
 
 export interface WorkerHeroCardProps {
@@ -36,7 +37,7 @@ export const WorkerHeroCard: React.FC<WorkerHeroCardProps> = ({
   };
 
   return (
-    <GlassCard style={styles.card} variant="elevated">
+    <GlassCard style={styles.card} variant="elevated" intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
       <View style={styles.header}>
         <View style={styles.workerInfo}>
           <Text style={styles.workerName}>{worker.name}</Text>

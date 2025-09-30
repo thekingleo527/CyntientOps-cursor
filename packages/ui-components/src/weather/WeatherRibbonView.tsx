@@ -1,591 +1,557 @@
 /**
- * 🌤️ Weather Ribbon View
- * Mirrors: CyntientOps/Components/Weather/WeatherRibbonView.swift
- * Purpose: Weather display with task recommendations and outdoor work adjustments
+ * 🌤️ Weather Ribbon View Component
+ * Purpose: Compact weather information display with real-time updates
+ * Features: Current conditions, forecast, alerts, location-based data
  */
 
-import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  ScrollView,
-  ActivityIndicator 
-} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
-import { WeatherSnapshot, OutdoorWorkRisk } from '@cyntientops/domain-schema';
+import { GlassCard } from '../glass';
+import { WeatherSnapshot } from '@cyntientops/domain-schema';
 
-export interface WeatherRibbonViewProps {
-  weather?: WeatherSnapshot;
-  onWeatherPress?: () => void;
-  onTaskRecommendationPress?: (recommendation: WeatherRecommendation) => void;
-  isLoading?: boolean;
-  showRecommendations?: boolean;
-  compact?: boolean;
-}
-
-export interface WeatherRecommendation {
-  id: string;
-  type: 'indoor' | 'outdoor' | 'postpone' | 'equipment';
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high';
-  taskIds?: string[];
-}
+const { width } = Dimensions.get('window');
 
 export interface WeatherForecast {
-  date: Date;
-  temperature: {
-    min: number;
-    max: number;
-    average: number;
-  };
-  weatherCode: number;
-  description: string;
+  date: string;
+  high: number;
+  low: number;
+  condition: string;
+  icon: string;
+  precipitation: number;
   windSpeed: number;
-  humidity: number;
-  precipitation: {
-    probability: number;
-    amount: number;
-  };
-  outdoorWorkRisk: OutdoorWorkRisk;
-  recommendations: string[];
 }
 
-const WeatherRibbonView: React.FC<WeatherRibbonViewProps> = ({
-  weather,
-  onWeatherPress,
-  onTaskRecommendationPress,
-  isLoading = false,
-  showRecommendations = true,
-  compact = false
+export interface WeatherAlert {
+  id: string;
+  type: 'warning' | 'watch' | 'advisory' | 'emergency';
+  title: string;
+  description: string;
+  severity: 'low' | 'moderate' | 'high' | 'extreme';
+  startTime: Date;
+  endTime: Date;
+  affectedAreas: string[];
+}
+
+export interface WeatherRibbonViewProps {
+  currentWeather: WeatherSnapshot;
+  forecast?: WeatherForecast[];
+  alerts?: WeatherAlert[];
+  location?: string;
+  onLocationPress?: () => void;
+  onForecastPress?: (forecast: WeatherForecast) => void;
+  onAlertPress?: (alert: WeatherAlert) => void;
+  showForecast?: boolean;
+  showAlerts?: boolean;
+  compact?: boolean;
+  style?: any;
+}
+
+export const WeatherRibbonView: React.FC<WeatherRibbonViewProps> = ({
+  currentWeather,
+  forecast = [],
+  alerts = [],
+  location,
+  onLocationPress,
+  onForecastPress,
+  onAlertPress,
+  showForecast = true,
+  showAlerts = true,
+  compact = false,
+  style,
 }) => {
-  const [recommendations, setRecommendations] = useState<WeatherRecommendation[]>([]);
-  const [forecast, setForecast] = useState<WeatherForecast[]>([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedTab, setSelectedTab] = useState<'current' | 'forecast' | 'alerts'>('current');
+  const scrollAnim = useRef(new Animated.Value(0)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    if (weather) {
-      generateWeatherRecommendations();
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    // Pulse animation for alerts
+    if (alerts.length > 0) {
+      const pulseAnimation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+      pulseAnimation.start();
+
+      return () => pulseAnimation.stop();
     }
-  }, [weather]);
+  }, [alerts.length]);
 
-  const generateWeatherRecommendations = () => {
-    if (!weather) return;
+  const getWeatherIcon = (condition: string) => {
+    const iconMap: { [key: string]: string } = {
+      'sunny': '☀️',
+      'clear': '☀️',
+      'cloudy': '☁️',
+      'overcast': '☁️',
+      'rainy': '🌧️',
+      'rain': '🌧️',
+      'stormy': '⛈️',
+      'thunderstorm': '⛈️',
+      'snowy': '❄️',
+      'snow': '❄️',
+      'partly_cloudy': '⛅',
+      'partly cloudy': '⛅',
+      'foggy': '🌫️',
+      'fog': '🌫️',
+      'windy': '💨',
+      'wind': '💨',
+    };
 
-    const newRecommendations: WeatherRecommendation[] = [];
-
-    // Generate recommendations based on weather conditions
-    if (weather.outdoorWorkRisk === 'high') {
-      newRecommendations.push({
-        id: 'postpone_outdoor',
-        type: 'postpone',
-        title: 'Postpone Outdoor Tasks',
-        description: 'High risk conditions detected. Consider rescheduling outdoor work.',
-        priority: 'high',
-        taskIds: [] // TODO: Get actual outdoor task IDs
-      });
-    }
-
-    if (weather.temperature < 32 || weather.temperature > 95) {
-      newRecommendations.push({
-        id: 'temperature_equipment',
-        type: 'equipment',
-        title: 'Special Equipment Needed',
-        description: 'Extreme temperatures require additional safety equipment.',
-        priority: 'medium',
-        taskIds: []
-      });
-    }
-
-    if (weather.windSpeed > 25) {
-      newRecommendations.push({
-        id: 'wind_safety',
-        type: 'equipment',
-        title: 'High Wind Safety',
-        description: 'Strong winds detected. Secure equipment and use extra caution.',
-        priority: 'medium',
-        taskIds: []
-      });
-    }
-
-    if (weather.outdoorWorkRisk === 'low' && weather.temperature >= 50 && weather.temperature <= 85) {
-      newRecommendations.push({
-        id: 'ideal_outdoor',
-        type: 'outdoor',
-        title: 'Ideal Outdoor Conditions',
-        description: 'Perfect weather for outdoor tasks. Consider prioritizing outdoor work.',
-        priority: 'low',
-        taskIds: []
-      });
-    }
-
-    setRecommendations(newRecommendations);
+    return iconMap[condition.toLowerCase()] || '❓';
   };
 
-  const getWeatherIcon = (weatherCode: number) => {
-    // OpenMeteo weather code mapping
-    if (weatherCode === 0) return '☀️'; // Clear sky
-    if (weatherCode <= 3) return '⛅'; // Partly cloudy
-    if (weatherCode <= 48) return '☁️'; // Cloudy
-    if (weatherCode <= 67) return '🌧️'; // Rain
-    if (weatherCode <= 77) return '🌨️'; // Snow
-    if (weatherCode <= 82) return '🌧️'; // Rain showers
-    if (weatherCode <= 86) return '🌨️'; // Snow showers
-    if (weatherCode <= 99) return '⛈️'; // Thunderstorm
-    return '🌤️'; // Default
+  const getWeatherColor = (condition: string) => {
+    const colorMap: { [key: string]: string } = {
+      'sunny': Colors.warning,
+      'clear': Colors.warning,
+      'cloudy': Colors.secondaryText,
+      'overcast': Colors.secondaryText,
+      'rainy': Colors.info,
+      'rain': Colors.info,
+      'stormy': Colors.error,
+      'thunderstorm': Colors.error,
+      'snowy': Colors.info,
+      'snow': Colors.info,
+      'partly_cloudy': Colors.info,
+      'partly cloudy': Colors.info,
+      'foggy': Colors.tertiaryText,
+      'fog': Colors.tertiaryText,
+      'windy': Colors.info,
+      'wind': Colors.info,
+    };
+
+    return colorMap[condition.toLowerCase()] || Colors.info;
   };
 
-  const getRiskColor = (risk: OutdoorWorkRisk) => {
-    switch (risk) {
-      case 'low': return Colors.status.success;
-      case 'medium': return Colors.status.warning;
-      case 'high': return Colors.status.error;
-      default: return Colors.text.tertiary;
-    }
-  };
-
-  const getRiskText = (risk: OutdoorWorkRisk) => {
-    switch (risk) {
-      case 'low': return 'Low Risk';
-      case 'medium': return 'Medium Risk';
-      case 'high': return 'High Risk';
-      default: return 'Unknown';
-    }
-  };
-
-  const getRecommendationIcon = (type: string) => {
+  const getAlertColor = (type: string) => {
     switch (type) {
-      case 'indoor': return '🏠';
-      case 'outdoor': return '🌳';
-      case 'postpone': return '⏰';
-      case 'equipment': return '🛡️';
-      default: return '💡';
+      case 'emergency': return Colors.error;
+      case 'warning': return Colors.warning;
+      case 'watch': return Colors.info;
+      case 'advisory': return Colors.success;
+      default: return Colors.secondaryText;
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return Colors.status.error;
-      case 'medium': return Colors.status.warning;
-      case 'low': return Colors.status.info;
-      default: return Colors.text.tertiary;
+  const getAlertIcon = (type: string) => {
+    switch (type) {
+      case 'emergency': return '🚨';
+      case 'warning': return '⚠️';
+      case 'watch': return '👁️';
+      case 'advisory': return 'ℹ️';
+      default: return '📢';
     }
   };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  };
+
+  const renderCurrentWeather = () => (
+    <View style={styles.currentWeatherContainer}>
+      <View style={styles.mainWeatherInfo}>
+        <Text style={styles.weatherIcon}>{getWeatherIcon(currentWeather.condition)}</Text>
+        <View style={styles.temperatureContainer}>
+          <Text style={styles.temperature}>{currentWeather.temperature}°</Text>
+          <Text style={styles.condition}>{currentWeather.description}</Text>
+        </View>
+      </View>
+
+      <View style={styles.weatherDetails}>
+        <View style={styles.detailItem}>
+          <Text style={styles.detailLabel}>Humidity</Text>
+          <Text style={styles.detailValue}>{currentWeather.humidity}%</Text>
+        </View>
+        <View style={styles.detailItem}>
+          <Text style={styles.detailLabel}>Wind</Text>
+          <Text style={styles.detailValue}>{currentWeather.windSpeed} mph</Text>
+        </View>
+        <View style={styles.detailItem}>
+          <Text style={styles.detailLabel}>Time</Text>
+          <Text style={styles.detailValue}>{formatTime(currentTime)}</Text>
+        </View>
+      </View>
+
+      {location && (
+        <TouchableOpacity style={styles.locationContainer} onPress={onLocationPress}>
+          <Text style={styles.locationIcon}>📍</Text>
+          <Text style={styles.locationText}>{location}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  const renderForecast = () => (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.forecastContainer}>
+      {forecast.map((day, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.forecastItem}
+          onPress={() => onForecastPress?.(day)}
+        >
+          <Text style={styles.forecastDate}>{formatDate(new Date(day.date))}</Text>
+          <Text style={styles.forecastIcon}>{getWeatherIcon(day.condition)}</Text>
+          <View style={styles.forecastTemps}>
+            <Text style={styles.forecastHigh}>{day.high}°</Text>
+            <Text style={styles.forecastLow}>{day.low}°</Text>
+          </View>
+          <Text style={styles.forecastPrecip}>
+            {day.precipitation > 0 ? `${day.precipitation}%` : '0%'}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+
+  const renderAlerts = () => (
+    <View style={styles.alertsContainer}>
+      {alerts.length === 0 ? (
+        <Text style={styles.noAlertsText}>No weather alerts</Text>
+      ) : (
+        alerts.map((alert) => (
+          <Animated.View
+            key={alert.id}
+            style={[
+              styles.alertItem,
+              { transform: [{ scale: pulseAnim }] },
+            ]}
+          >
+            <TouchableOpacity
+              style={[styles.alertContent, { borderLeftColor: getAlertColor(alert.type) }]}
+              onPress={() => onAlertPress?.(alert)}
+            >
+              <View style={styles.alertHeader}>
+                <Text style={styles.alertIcon}>{getAlertIcon(alert.type)}</Text>
+                <Text style={styles.alertTitle}>{alert.title}</Text>
+                <Text style={[styles.alertSeverity, { color: getAlertColor(alert.type) }]}>
+                  {alert.severity.toUpperCase()}
+                </Text>
+              </View>
+              <Text style={styles.alertDescription} numberOfLines={2}>
+                {alert.description}
+              </Text>
+              <Text style={styles.alertTime}>
+                Until {formatTime(alert.endTime)}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+        ))
+      )}
+    </View>
+  );
 
   if (compact) {
     return (
-      <TouchableOpacity
-        style={styles.compactContainer}
-        onPress={onWeatherPress}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator size="small" color={Colors.text.primary} />
-        ) : weather ? (
+      <GlassCard style={[styles.compactContainer, style]} intensity="regular" cornerRadius="card">
+        <LinearGradient
+          colors={[Colors.glassOverlayLight, Colors.glassOverlayDark]}
+          style={styles.compactGradient}
+        >
           <View style={styles.compactContent}>
-            <Text style={styles.compactIcon}>
-              {getWeatherIcon(weather.weatherCode)}
-            </Text>
-            <View style={styles.compactTextContainer}>
-              <Text style={styles.compactTemperature}>
-                {weather.temperature}°F
-              </Text>
-              <Text style={styles.compactDescription}>
-                {weather.description}
-              </Text>
+            <Text style={styles.compactIcon}>{getWeatherIcon(currentWeather.condition)}</Text>
+            <View style={styles.compactInfo}>
+              <Text style={styles.compactTemperature}>{currentWeather.temperature}°</Text>
+              <Text style={styles.compactCondition}>{currentWeather.description}</Text>
             </View>
-            <View style={[
-              styles.compactRiskBadge,
-              { backgroundColor: getRiskColor(weather.outdoorWorkRisk) }
-            ]}>
-              <Text style={styles.compactRiskText}>
-                {getRiskText(weather.outdoorWorkRisk)}
-              </Text>
-            </View>
+            {alerts.length > 0 && (
+              <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                <Text style={styles.compactAlertIcon}>⚠️</Text>
+              </Animated.View>
+            )}
           </View>
-        ) : (
-          <Text style={styles.compactNoData}>No weather data</Text>
-        )}
-      </TouchableOpacity>
+        </LinearGradient>
+      </GlassCard>
     );
   }
 
   return (
-    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-      <TouchableOpacity
-        style={styles.weatherHeader}
-        onPress={onWeatherPress}
-        disabled={isLoading}
+    <GlassCard style={[styles.container, style]} intensity="regular" cornerRadius="card">
+      <LinearGradient
+        colors={[Colors.glassOverlayLight, Colors.glassOverlayDark]}
+        style={styles.gradientBackground}
       >
-        {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color={Colors.primary.blue} />
-            <Text style={styles.loadingText}>Loading weather...</Text>
-          </View>
-        ) : weather ? (
-          <View style={styles.weatherContent}>
-            <View style={styles.weatherMain}>
-              <Text style={styles.weatherIcon}>
-                {getWeatherIcon(weather.weatherCode)}
+        {/* Header with Tabs */}
+        <View style={styles.header}>
+          <View style={styles.tabs}>
+            <TouchableOpacity
+              style={[styles.tab, selectedTab === 'current' && styles.activeTab]}
+              onPress={() => setSelectedTab('current')}
+            >
+              <Text style={[styles.tabText, selectedTab === 'current' && styles.activeTabText]}>
+                Current
               </Text>
-              <View style={styles.weatherInfo}>
-                <Text style={styles.temperature}>
-                  {weather.temperature}°F
-                </Text>
-                <Text style={styles.description}>
-                  {weather.description}
-                </Text>
-                <Text style={styles.timestamp}>
-                  Updated {weather.timestamp.toLocaleTimeString()}
-                </Text>
-              </View>
-            </View>
-            
-            <View style={styles.weatherDetails}>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Wind</Text>
-                <Text style={styles.detailValue}>{weather.windSpeed} mph</Text>
-              </View>
-              <View style={styles.detailItem}>
-                <Text style={styles.detailLabel}>Risk</Text>
-                <View style={[
-                  styles.riskBadge,
-                  { backgroundColor: getRiskColor(weather.outdoorWorkRisk) }
-                ]}>
-                  <Text style={styles.riskText}>
-                    {getRiskText(weather.outdoorWorkRisk)}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.noDataContainer}>
-            <Text style={styles.noDataIcon}>🌤️</Text>
-            <Text style={styles.noDataText}>Weather data unavailable</Text>
-          </View>
-        )}
-      </TouchableOpacity>
-
-      {showRecommendations && recommendations.length > 0 && (
-        <View style={styles.recommendationsContainer}>
-          <Text style={styles.recommendationsTitle}>Weather Recommendations</Text>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            style={styles.recommendationsScroll}
-          >
-            {recommendations.map((recommendation) => (
+            </TouchableOpacity>
+            {showForecast && (
               <TouchableOpacity
-                key={recommendation.id}
-                style={[
-                  styles.recommendationCard,
-                  { borderLeftColor: getPriorityColor(recommendation.priority) }
-                ]}
-                onPress={() => onTaskRecommendationPress?.(recommendation)}
+                style={[styles.tab, selectedTab === 'forecast' && styles.activeTab]}
+                onPress={() => setSelectedTab('forecast')}
               >
-                <View style={styles.recommendationHeader}>
-                  <Text style={styles.recommendationIcon}>
-                    {getRecommendationIcon(recommendation.type)}
-                  </Text>
-                  <View style={[
-                    styles.priorityIndicator,
-                    { backgroundColor: getPriorityColor(recommendation.priority) }
-                  ]} />
-                </View>
-                <Text style={styles.recommendationTitle} numberOfLines={1}>
-                  {recommendation.title}
-                </Text>
-                <Text style={styles.recommendationDescription} numberOfLines={2}>
-                  {recommendation.description}
+                <Text style={[styles.tabText, selectedTab === 'forecast' && styles.activeTabText]}>
+                  Forecast
                 </Text>
               </TouchableOpacity>
-            ))}
-          </ScrollView>
+            )}
+            {showAlerts && (
+              <TouchableOpacity
+                style={[styles.tab, selectedTab === 'alerts' && styles.activeTab]}
+                onPress={() => setSelectedTab('alerts')}
+              >
+                <Text style={[styles.tabText, selectedTab === 'alerts' && styles.activeTabText]}>
+                  Alerts {alerts.length > 0 && `(${alerts.length})`}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      )}
 
-      {weather && (
-        <View style={styles.forecastContainer}>
-          <Text style={styles.forecastTitle}>3-Day Forecast</Text>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            style={styles.forecastScroll}
-          >
-            {forecast.slice(0, 3).map((day, index) => (
-              <View key={index} style={styles.forecastDay}>
-                <Text style={styles.forecastDate}>
-                  {day.date.toLocaleDateString('en-US', { weekday: 'short' })}
-                </Text>
-                <Text style={styles.forecastIcon}>
-                  {getWeatherIcon(day.weatherCode)}
-                </Text>
-                <Text style={styles.forecastTemp}>
-                  {day.temperature.max}°/{day.temperature.min}°
-                </Text>
-                <View style={[
-                  styles.forecastRisk,
-                  { backgroundColor: getRiskColor(day.outdoorWorkRisk) }
-                ]}>
-                  <Text style={styles.forecastRiskText}>
-                    {getRiskText(day.outdoorWorkRisk)}
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
+        {/* Content */}
+        <View style={styles.content}>
+          {selectedTab === 'current' && renderCurrentWeather()}
+          {selectedTab === 'forecast' && renderForecast()}
+          {selectedTab === 'alerts' && renderAlerts()}
         </View>
-      )}
+      </LinearGradient>
     </GlassCard>
   );
 };
 
 const styles = StyleSheet.create({
-  // Main Container Styles
   container: {
-    margin: Spacing.sm,
-    padding: Spacing.md,
-    borderRadius: 16,
+    margin: Spacing.md,
+    overflow: 'hidden',
   },
-  
-  // Weather Header Styles
-  weatherHeader: {
+  compactContainer: {
+    margin: Spacing.sm,
+    overflow: 'hidden',
+  },
+  gradientBackground: {
+    padding: Spacing.md,
+  },
+  compactGradient: {
+    padding: Spacing.sm,
+  },
+  header: {
     marginBottom: Spacing.md,
   },
-  loadingContainer: {
+  tabs: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.lg,
+    backgroundColor: Colors.thin,
+    borderRadius: 8,
+    padding: 2,
   },
-  loadingText: {
-    ...Typography.body,
-    color: Colors.text.secondary,
-    marginLeft: Spacing.sm,
-  },
-  weatherContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  weatherMain: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  tab: {
     flex: 1,
+    paddingVertical: Spacing.sm,
+    alignItems: 'center',
+    borderRadius: 6,
+  },
+  activeTab: {
+    backgroundColor: Colors.primaryAction,
+  },
+  tabText: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: Colors.primaryText,
+    fontWeight: 'bold',
+  },
+  content: {
+    minHeight: 120,
+  },
+  currentWeatherContainer: {
+    alignItems: 'center',
+  },
+  mainWeatherInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
   },
   weatherIcon: {
     fontSize: 48,
     marginRight: Spacing.md,
   },
-  weatherInfo: {
-    flex: 1,
+  temperatureContainer: {
+    alignItems: 'center',
   },
   temperature: {
-    ...Typography.largeTitle,
-    color: Colors.text.primary,
-    fontWeight: '700',
+    ...Typography.titleLarge,
+    color: Colors.primaryText,
+    fontWeight: 'bold',
+    fontSize: 36,
   },
-  description: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    textTransform: 'capitalize',
-    marginTop: 2,
-  },
-  timestamp: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    marginTop: 4,
+  condition: {
+    ...Typography.body,
+    color: Colors.secondaryText,
+    textAlign: 'center',
   },
   weatherDetails: {
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginBottom: Spacing.md,
   },
   detailItem: {
     alignItems: 'center',
-    marginBottom: Spacing.sm,
   },
   detailLabel: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: Colors.tertiaryText,
     marginBottom: 2,
   },
   detailValue: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '500',
+    ...Typography.body,
+    color: Colors.primaryText,
+    fontWeight: '600',
   },
-  riskBadge: {
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.thin,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 12,
   },
-  riskText: {
+  locationIcon: {
+    fontSize: 12,
+    marginRight: Spacing.xs,
+  },
+  locationText: {
     ...Typography.caption,
-    color: Colors.text.primary,
-    fontWeight: '600',
-    fontSize: 10,
+    color: Colors.secondaryText,
   },
-
-  // No Data Styles
-  noDataContainer: {
-    alignItems: 'center',
-    padding: Spacing.lg,
-  },
-  noDataIcon: {
-    fontSize: 32,
-    marginBottom: Spacing.sm,
-  },
-  noDataText: {
-    ...Typography.body,
-    color: Colors.text.secondary,
-  },
-
-  // Recommendations Styles
-  recommendationsContainer: {
-    marginTop: Spacing.md,
-    paddingTop: Spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: Colors.glass.medium,
-  },
-  recommendationsTitle: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '600',
-    marginBottom: Spacing.sm,
-  },
-  recommendationsScroll: {
-    marginHorizontal: -Spacing.sm,
-  },
-  recommendationCard: {
-    width: 160,
-    padding: Spacing.md,
-    marginHorizontal: Spacing.sm,
-    backgroundColor: Colors.glass.thin,
-    borderRadius: 12,
-    borderLeftWidth: 4,
-  },
-  recommendationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-  },
-  recommendationIcon: {
-    fontSize: 20,
-  },
-  priorityIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  recommendationTitle: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '500',
-    marginBottom: Spacing.xs,
-  },
-  recommendationDescription: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    lineHeight: 16,
-  },
-
-  // Forecast Styles
   forecastContainer: {
-    marginTop: Spacing.md,
-    paddingTop: Spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: Colors.glass.medium,
+    flexDirection: 'row',
   },
-  forecastTitle: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '600',
-    marginBottom: Spacing.sm,
-  },
-  forecastScroll: {
-    marginHorizontal: -Spacing.sm,
-  },
-  forecastDay: {
-    width: 80,
+  forecastItem: {
     alignItems: 'center',
-    padding: Spacing.sm,
-    marginHorizontal: Spacing.sm,
-    backgroundColor: Colors.glass.thin,
-    borderRadius: 12,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.md,
+    backgroundColor: Colors.thin,
+    borderRadius: 8,
+    marginRight: Spacing.sm,
+    minWidth: 80,
   },
   forecastDate: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: Colors.secondaryText,
     marginBottom: Spacing.xs,
   },
   forecastIcon: {
     fontSize: 24,
     marginBottom: Spacing.xs,
   },
-  forecastTemp: {
-    ...Typography.caption,
-    color: Colors.text.primary,
-    fontWeight: '500',
+  forecastTemps: {
+    alignItems: 'center',
     marginBottom: Spacing.xs,
   },
-  forecastRisk: {
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
-    borderRadius: 8,
+  forecastHigh: {
+    ...Typography.body,
+    color: Colors.primaryText,
+    fontWeight: 'bold',
   },
-  forecastRiskText: {
+  forecastLow: {
     ...Typography.caption,
-    color: Colors.text.primary,
-    fontWeight: '600',
-    fontSize: 8,
+    color: Colors.secondaryText,
   },
-
-  // Compact Mode Styles
-  compactContainer: {
-    padding: Spacing.sm,
-    backgroundColor: Colors.glass.thin,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.glass.medium,
+  forecastPrecip: {
+    ...Typography.captionSmall,
+    color: Colors.info,
+  },
+  alertsContainer: {
+    flex: 1,
+  },
+  noAlertsText: {
+    ...Typography.body,
+    color: Colors.tertiaryText,
+    textAlign: 'center',
+    paddingVertical: Spacing.lg,
+  },
+  alertItem: {
+    marginBottom: Spacing.sm,
+  },
+  alertContent: {
+    backgroundColor: Colors.thin,
+    borderRadius: 8,
+    padding: Spacing.md,
+    borderLeftWidth: 4,
+  },
+  alertHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
+  alertIcon: {
+    fontSize: 16,
+    marginRight: Spacing.xs,
+  },
+  alertTitle: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  alertSeverity: {
+    ...Typography.caption,
+    fontWeight: 'bold',
+  },
+  alertDescription: {
+    ...Typography.body,
+    color: Colors.secondaryText,
+    marginBottom: Spacing.xs,
+  },
+  alertTime: {
+    ...Typography.caption,
+    color: Colors.tertiaryText,
   },
   compactContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   compactIcon: {
     fontSize: 24,
-    marginRight: Spacing.sm,
   },
-  compactTextContainer: {
+  compactInfo: {
     flex: 1,
+    alignItems: 'center',
   },
   compactTemperature: {
-    ...Typography.subheadline,
-    color: Colors.text.primary,
-    fontWeight: '600',
+    ...Typography.titleMedium,
+    color: Colors.primaryText,
+    fontWeight: 'bold',
   },
-  compactDescription: {
+  compactCondition: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: Colors.secondaryText,
   },
-  compactRiskBadge: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: 8,
-  },
-  compactRiskText: {
-    ...Typography.caption,
-    color: Colors.text.primary,
-    fontWeight: '600',
-    fontSize: 10,
-  },
-  compactNoData: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    textAlign: 'center',
+  compactAlertIcon: {
+    fontSize: 16,
   },
 });
 

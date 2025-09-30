@@ -31,10 +31,40 @@ export { default as SecurityManager, useSecurityManager } from './security/Secur
 export { default as DSNYTaskManager, useDSNYTaskManager } from './dsny/DSNYTaskManager';
 
 // Dashboard Components
-export { default as AdminDashboard } from './dashboards/AdminDashboard';
 export { default as AdminDashboardMainView } from './dashboards/AdminDashboardMainView';
-export { default as ClientDashboard } from './dashboards/ClientDashboard';
 export { default as ClientDashboardMainView } from './dashboards/ClientDashboardMainView';
+export { default as WorkerDashboardMainView } from './dashboards/WorkerDashboardMainView';
+
+// Weather Components
+export { default as WeatherBasedHybridCard } from './weather/WeatherBasedHybridCard';
+export { default as WeatherRibbonView } from './weather/WeatherRibbonView';
+
+// Effects Components
+export { default as AdvancedGlassmorphism } from './effects/AdvancedGlassmorphism';
+export { default as HolographicOverlay } from './effects/HolographicOverlay';
+
+// Interaction Components
+export { default as MapInteractionHint } from './interactions/MapInteractionHint';
+
+// Map Clustering Components
+export { default as MapClusteringService } from './maps/services/MapClusteringService';
+export { ClusterMarker } from './maps/components/ClusterMarker';
+export { ClusterListView } from './maps/components/ClusterListView';
+export { useMapClustering } from './maps/hooks/useMapClustering';
+
+// Conflict Resolution Components
+export { ConflictResolutionModal } from './sync/ConflictResolutionModal';
+
+// Reporting Components
+export { default as AdvancedReportingDashboard } from './reporting/AdvancedReportingDashboard';
+
+// Animation Components
+export { 
+  PageTransition,
+  MicroInteraction,
+  LoadingAnimation,
+  GestureAnimation,
+} from './animations/AdvancedAnimationSystem';
 
 // Building Components
 export { default as BuildingDetailOverview } from './buildings/BuildingDetailOverview';
@@ -43,22 +73,22 @@ export { default as BuildingDetailOverview } from './buildings/BuildingDetailOve
 export { default as RoutinePriority } from './routines/RoutinePriority';
 
 // Types
-export type {
-  // Nova AI Types
-  NovaState,
-  NovaInsight,
-  PriorityTask,
-  NovaAction,
-  NovaPrompt,
-  NovaResponse,
-  NovaProcessingState,
-  NovaChatMessage,
-  QuickAction,
-  NavigationTarget,
-  WorkspaceTab,
-  AdvancedParticle,
-  HolographicGridProps,
-} from './nova/NovaAIManager';
+// Nova AI Types - Commented out until NovaAIManager is properly implemented
+// export type {
+//   NovaState,
+//   NovaInsight,
+//   PriorityTask,
+//   NovaAction,
+//   NovaPrompt,
+//   NovaResponse,
+//   NovaProcessingState,
+//   NovaChatMessage,
+//   QuickAction,
+//   NavigationTarget,
+//   WorkspaceTab,
+//   AdvancedParticle,
+//   HolographicGridProps,
+// } from './nova/NovaAIManager';
 
 export type {
   // Security Types
@@ -78,9 +108,7 @@ export type {
 } from './dsny/DSNYTaskManager';
 
 // Re-export existing components
-export * from './dashboards/AdminDashboard';
 export * from './dashboards/AdminDashboardMainView';
-export * from './dashboards/ClientDashboard';
 export * from './dashboards/ClientDashboardMainView';
 export * from './buildings/BuildingDetailOverview';
 export * from './routines/RoutinePriority';
@@ -181,28 +209,28 @@ export const DEV_UTILITIES = {
 
 // Export all components as default
 export default {
-  // Nova AI System
-  NovaAIManager,
-  NovaInteractionView,
-  NovaHolographicView,
+  // Nova AI System - Commented out until properly implemented
+  // NovaAIManager,
+  // NovaInteractionView,
+  // NovaHolographicView,
   
   // Security Management
-  SecurityManager,
+  // SecurityManager,
   
   // DSNY Integration
-  DSNYTaskManager,
+  // DSNYTaskManager,
   
   // Dashboard Components
-  AdminDashboard,
-  AdminDashboardMainView,
-  ClientDashboard,
-  ClientDashboardMainView,
+  // AdminDashboard,
+  // AdminDashboardMainView,
+  // ClientDashboard,
+  // ClientDashboardMainView,
   
   // Building Components
-  BuildingDetailOverview,
+  // BuildingDetailOverview,
   
   // Routine Components
-  RoutinePriority,
+  // RoutinePriority,
   
   // Utilities
   VERSION,

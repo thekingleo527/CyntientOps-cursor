@@ -22,7 +22,11 @@ export class DatabaseSchema {
       this.createClockInTable(),
       this.createInventoryTable(),
       this.createClientsTable(),
-      this.createSyncQueueTable()
+      this.createSyncQueueTable(),
+      this.createTimeTheftAlertsTable(),
+      this.createMLModelsTable(),
+      this.createVersionHistoryTable(),
+      this.createConflictResolutionTable()
     ];
   }
 
@@ -349,7 +353,78 @@ export class DatabaseSchema {
       'CREATE INDEX IF NOT EXISTS idx_clock_in_building ON clock_in(building_id);',
       'CREATE INDEX IF NOT EXISTS idx_inventory_building ON inventory(building_id);',
       'CREATE INDEX IF NOT EXISTS idx_sync_queue_status ON sync_queue(status);',
-      'CREATE INDEX IF NOT EXISTS idx_sync_queue_next_attempt ON sync_queue(next_attempt);'
+      'CREATE INDEX IF NOT EXISTS idx_sync_queue_next_attempt ON sync_queue(next_attempt);',
+      'CREATE INDEX IF NOT EXISTS idx_time_theft_alerts_worker ON time_theft_alerts(worker_id);',
+      'CREATE INDEX IF NOT EXISTS idx_time_theft_alerts_status ON time_theft_alerts(status);',
+      'CREATE INDEX IF NOT EXISTS idx_ml_models_name ON ml_models(name);',
+      'CREATE INDEX IF NOT EXISTS idx_version_history_record ON version_history(record_id, table_name);',
+      'CREATE INDEX IF NOT EXISTS idx_conflict_resolution_status ON conflict_resolution(status);'
     ];
+  }
+
+  private createTimeTheftAlertsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS time_theft_alerts (
+        id TEXT PRIMARY KEY,
+        worker_id TEXT NOT NULL,
+        type TEXT NOT NULL,
+        severity TEXT NOT NULL,
+        description TEXT NOT NULL,
+        evidence TEXT,
+        detected_at INTEGER NOT NULL,
+        status TEXT DEFAULT 'open',
+        resolved_at INTEGER,
+        resolved_by TEXT,
+        notes TEXT,
+        created_at INTEGER DEFAULT (strftime('%s', 'now')),
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      )
+    `;
+  }
+
+  private createMLModelsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS ml_models (
+        id TEXT PRIMARY KEY,
+        name TEXT UNIQUE NOT NULL,
+        features INTEGER NOT NULL,
+        accuracy REAL NOT NULL,
+        trained_at INTEGER NOT NULL,
+        metadata TEXT,
+        created_at INTEGER DEFAULT (strftime('%s', 'now'))
+      )
+    `;
+  }
+
+  private createVersionHistoryTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS version_history (
+        id TEXT PRIMARY KEY,
+        record_id TEXT NOT NULL,
+        table_name TEXT NOT NULL,
+        version INTEGER NOT NULL,
+        data TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        modified_by TEXT NOT NULL,
+        hash TEXT NOT NULL,
+        created_at INTEGER DEFAULT (strftime('%s', 'now'))
+      )
+    `;
+  }
+
+  private createConflictResolutionTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS conflict_resolution (
+        id TEXT PRIMARY KEY,
+        conflict_id TEXT NOT NULL,
+        strategy TEXT NOT NULL,
+        resolution_data TEXT,
+        resolved_by TEXT,
+        resolved_at INTEGER NOT NULL,
+        status TEXT DEFAULT 'pending',
+        notes TEXT,
+        created_at INTEGER DEFAULT (strftime('%s', 'now'))
+      )
+    `;
   }
 }

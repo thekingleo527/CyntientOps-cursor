@@ -1,29 +1,27 @@
 /**
  * @cyntientops/realtime-sync
  * 
- * Real-time synchronization for CyntientOps
- * WebSocket and live updates
+ * Realtime Sync Package
+ * Purpose: Advanced conflict resolution and delta sync for offline-first architecture
+ * Features: 3-way merge, delta sync, CRDT-based conflict resolution
  */
 
-export { WebSocketManager } from './WebSocketManager';
-
+// Conflict Detection
+export { ConflictDetector } from './conflicts/ConflictDetector';
 export type { 
-  WebSocketMessage,
-  WebSocketConnection,
-  RealtimeEvent,
-  RealtimeConfig
-} from './WebSocketManager';
+  DataRecord, 
+  Conflict, 
+  ConflictResolution 
+} from './conflicts/ConflictDetector';
 
-// WebSocket manager initialization helper
-export async function initializeWebSocketManager(
-  databaseManager: any,
-  offlineManager: any
-): Promise<WebSocketManager> {
-  return WebSocketManager.getInstance(
-    databaseManager,
-    offlineManager
-  );
-}
+// Three-Way Merge
+export { ThreeWayMergeService } from './conflicts/ThreeWayMerge';
+export type { MergeResult } from './conflicts/ThreeWayMerge';
 
-// Default export
-export default WebSocketManager;
+// Conflict Resolution
+export { ConflictResolver } from './conflicts/ConflictResolver';
+export type { ResolutionStrategy } from './conflicts/ConflictResolver';
+
+// Delta Sync
+export { DeltaSyncService } from './delta/DeltaSyncService';
+export type { Delta, SyncResult } from './delta/DeltaSyncService';

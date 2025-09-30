@@ -23,6 +23,9 @@ export { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 export { SystemDateTimeService, systemDateTime } from './services/SystemDateTimeService';
 export { SmartPhotoRequirementService, smartPhotoRequirement, PhotoCategory, TaskCategory } from './services/SmartPhotoRequirementService';
 export { IntelligentPhotoStorageService, intelligentPhotoStorage } from './services/IntelligentPhotoStorageService';
+export { WeatherTriggeredTaskManager } from './services/WeatherTriggeredTaskManager';
+export { RouteOptimizationService } from './services/RouteOptimizationService';
+export { AdvancedVoiceProcessingService } from './services/AdvancedVoiceProcessingService';
 
 // Managers
 export { ClockInManager } from './managers/ClockInManager';

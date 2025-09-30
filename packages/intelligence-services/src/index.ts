@@ -1,41 +1,27 @@
 /**
  * @cyntientops/intelligence-services
  * 
- * Intelligence services for CyntientOps
- * AI-powered analytics, insights, and predictive features
+ * Intelligence Services Package
+ * Purpose: ML/AI services for predictive analytics and optimization
+ * Features: Predictive maintenance, violation risk prediction, route optimization
  */
 
-export { IntelligenceService } from './IntelligenceService';
-export { PerformanceMonitor } from './PerformanceMonitor';
+// ML Engine
+export { MLEngine } from './ml/MLEngine';
+export type { TrainingData, Prediction } from './ml/MLEngine';
 
+// Predictive Maintenance
+export { PredictiveMaintenanceService } from './ml/PredictiveMaintenanceService';
+export type { MaintenancePrediction } from './ml/PredictiveMaintenanceService';
+
+// Violation Risk Prediction
+export { ViolationRiskPredictor } from './ml/ViolationRiskPredictor';
+export type { ViolationRisk } from './ml/ViolationRiskPredictor';
+
+// Route Optimization
+export { RouteOptimizationService } from './ml/RouteOptimizationService';
 export type { 
-  PerformanceInsight,
-  PredictiveAnalytics,
-  AnomalyDetection,
-  OptimizationRecommendation,
-  IntelligenceReport
-} from './IntelligenceService';
-
-export type {
-  PerformanceMetrics,
-  PerformanceAlert,
-  SystemPerformanceMetrics,
-  BottleneckAnalysis,
-  OptimizationOpportunity
-} from './PerformanceMonitor';
-
-// Intelligence service initialization helper
-export async function initializeIntelligenceService(
-  databaseManager: any,
-  serviceContainer: any,
-  apiClientManager: any
-): Promise<IntelligenceService> {
-  return IntelligenceService.getInstance(
-    databaseManager,
-    serviceContainer,
-    apiClientManager
-  );
-}
-
-// Default export
-export default IntelligenceService;
+  Location, 
+  OptimizedRoute, 
+  RouteOptimizationOptions 
+} from './ml/RouteOptimizationService';

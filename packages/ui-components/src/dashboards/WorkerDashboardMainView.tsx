@@ -21,6 +21,7 @@ import { MapRevealContainer } from '../containers/MapRevealContainer';
 import { NovaAIChatModal } from '../modals/NovaAIChatModal';
 import { WorkerHeroNowNext } from './components/WorkerHeroNowNext';
 import { LegacyAnalyticsDashboard, AnalyticsData } from '../analytics/components/AnalyticsDashboard';
+import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientops/intelligence-services';
 // import { useAppState } from '@cyntientops/business-core';
 
 export interface WorkerDashboardMainViewProps {
@@ -114,6 +115,8 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   const [intelligencePanelExpanded, setIntelligencePanelExpanded] = React.useState(false);
   const [selectedNovaTab, setSelectedNovaTab] = React.useState<'routines' | 'insights' | 'alerts' | 'predictions'>('routines');
   const [selectedAnalyticsTab, setSelectedAnalyticsTab] = React.useState<'overview' | 'performance' | 'compliance' | 'workers'>('overview');
+  const [maintenancePredictions, setMaintenancePredictions] = React.useState<MaintenancePrediction[]>([]);
+  const [predictiveMaintenanceService] = React.useState(() => new PredictiveMaintenanceService(null as any));
 
   // Real-time analytics data for worker performance
   const analyticsData: AnalyticsData = {
@@ -137,6 +140,21 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     }
   };
   const scrollViewRef = React.useRef<ScrollView>(null);
+
+  // Load maintenance predictions
+  React.useEffect(() => {
+    const loadMaintenancePredictions = async () => {
+      try {
+        await predictiveMaintenanceService.initialize();
+        const predictions = await predictiveMaintenanceService.predictAllBuildings();
+        setMaintenancePredictions(predictions.slice(0, 3)); // Show top 3 predictions
+      } catch (error) {
+        console.error('Failed to load maintenance predictions:', error);
+      }
+    };
+
+    loadMaintenancePredictions();
+  }, [workerId]);
 
   // Get data from state management
   const dashboardData: WorkerDashboardData = {
@@ -287,7 +305,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
       todaysTasks,
       currentBuilding,
       assignedBuildings,
-      weather: generateWeatherData(),
+      weather: generateWeatherData(workerId),
       performance: workerInfo.performance,
       novaInsights: generateNovaInsights(workerId, workerInfo)
     };
@@ -388,19 +406,34 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     return assignedBuildingIds.map(id => generateCurrentBuilding(id));
   };
 
-  const generateWeatherData = (): WeatherSnapshot => {
-    const conditions = ['sunny', 'cloudy', 'rainy', 'partly_cloudy'];
-    const condition = conditions[Math.floor(Math.random() * conditions.length)];
+  const generateWeatherData = (workerId?: string): WeatherSnapshot => {
+    // Generate weather conditions that will trigger meaningful suggestions
+    const weatherScenarios = [
+      { condition: 'rainy', description: 'Light Rain', temperature: 45, humidity: 85, windSpeed: 12 },
+      { condition: 'stormy', description: 'Heavy Rain', temperature: 42, humidity: 90, windSpeed: 25 },
+      { condition: 'snowy', description: 'Light Snow', temperature: 28, humidity: 75, windSpeed: 8 },
+      { condition: 'sunny', description: 'Clear Sky', temperature: 68, humidity: 45, windSpeed: 6 },
+      { condition: 'cloudy', description: 'Overcast', temperature: 55, humidity: 60, windSpeed: 10 },
+      { condition: 'partly_cloudy', description: 'Partly Cloudy', temperature: 62, humidity: 50, windSpeed: 8 },
+    ];
+    
+    // Use worker ID to create consistent weather per worker (for demo purposes)
+    const scenarioIndex = workerId ? parseInt(workerId) % weatherScenarios.length : Math.floor(Math.random() * weatherScenarios.length);
+    const scenario = weatherScenarios[scenarioIndex];
     
     return {
-      temperature: Math.floor(Math.random() * 20) + 10, // 10-30°C
-      condition,
-      description: condition.charAt(0).toUpperCase() + condition.slice(1),
-      icon: condition === 'sunny' ? '☀️' : condition === 'cloudy' ? '☁️' : condition === 'rainy' ? '🌧️' : '⛅',
+      temperature: scenario.temperature,
+      condition: scenario.condition,
+      description: scenario.description,
+      icon: scenario.condition === 'sunny' ? '☀️' : 
+            scenario.condition === 'cloudy' ? '☁️' : 
+            scenario.condition === 'rainy' ? '🌧️' : 
+            scenario.condition === 'stormy' ? '⛈️' :
+            scenario.condition === 'snowy' ? '❄️' : '⛅',
       location: 'New York, NY',
       timestamp: new Date().toISOString(),
-      humidity: Math.floor(Math.random() * 40) + 40, // 40-80%
-      windSpeed: Math.floor(Math.random() * 15) + 5, // 5-20 mph
+      humidity: scenario.humidity,
+      windSpeed: scenario.windSpeed,
     };
   };
 
@@ -588,6 +621,25 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
                   {novaInsights.predictions.map((prediction, index) => (
                     <Text key={index} style={styles.novaPanelText}>🔮 {prediction}</Text>
                   ))}
+                  
+                  {/* Predictive Maintenance */}
+                  {maintenancePredictions.length > 0 && (
+                    <View style={styles.maintenancePredictions}>
+                      <Text style={styles.maintenanceTitle}>🔧 Maintenance Predictions</Text>
+                      {maintenancePredictions.map((prediction, index) => (
+                        <View key={index} style={styles.maintenanceItem}>
+                          <Text style={styles.maintenanceBuilding}>{prediction.buildingName}</Text>
+                          <Text style={styles.maintenanceIssue}>{prediction.predictedIssue}</Text>
+                          <Text style={styles.maintenanceTimeframe}>
+                            Expected in {prediction.estimatedDays} days
+                          </Text>
+                          <Text style={styles.maintenanceLikelihood}>
+                            Likelihood: {Math.round(prediction.likelihood * 100)}%
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
                 </View>
               )}
             </View>
@@ -616,24 +668,52 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
 
   return (
     <View style={styles.container}>
+      {/* Header */}
+      <WorkerHeaderV3B
+        workerName={workerName}
+        workerId={workerId}
+        isClockedIn={dashboardData.worker.clockedIn}
+        currentBuilding={dashboardData.currentBuilding}
+        clockInTime={dashboardData.worker.clockInTime}
+        onRoute={handleHeaderRoute}
+        onClockAction={() => {
+          if (dashboardData.worker.clockedIn) {
+            onClockOut?.();
+          } else {
+            dashboardData.currentBuilding && onClockIn?.(dashboardData.currentBuilding.id);
+          }
+        }}
+      />
+
       <ScrollView
         ref={scrollViewRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
+        {/* Hero Cards */}
         {renderHeroCard()}
-        {renderUrgentTasks()}
-        {renderCurrentBuilding()}
-        {renderTodaysTasks()}
         
+        {/* Weather Hybrid Card */}
         {dashboardData.weather && (
           <WeatherBasedHybridCard
             weather={dashboardData.weather}
             building={dashboardData.currentBuilding}
             suggestedTasks={dashboardData.urgentTasks}
             onTaskPress={onTaskPress}
+            currentLocation={dashboardData.currentBuilding ? {
+              latitude: dashboardData.currentBuilding.latitude,
+              longitude: dashboardData.currentBuilding.longitude
+            } : undefined}
           />
         )}
+        
+        {/* Intelligence Panel */}
+        {renderNovaIntelligence()}
+        
+        {/* Additional Sections (Collapsible/Secondary) */}
+        {renderUrgentTasks()}
+        {renderCurrentBuilding()}
+        {renderTodaysTasks()}
         
         {/* Analytics Dashboard Integration */}
         <View style={styles.analyticsSection}>
@@ -644,8 +724,6 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
             onTabChange={setSelectedAnalyticsTab}
           />
         </View>
-        
-        {renderNovaIntelligence()}
       </ScrollView>
 
       <EmergencySystem
@@ -896,6 +974,44 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.primaryText,
     marginBottom: Spacing.xs,
+  },
+  maintenancePredictions: {
+    marginTop: Spacing.md,
+    padding: Spacing.sm,
+    backgroundColor: Colors.surface,
+    borderRadius: 8,
+  },
+  maintenanceTitle: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+  },
+  maintenanceItem: {
+    padding: Spacing.sm,
+    backgroundColor: Colors.background,
+    borderRadius: 6,
+    marginBottom: Spacing.xs,
+  },
+  maintenanceBuilding: {
+    ...Typography.body,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  maintenanceIssue: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+    marginTop: 2,
+  },
+  maintenanceTimeframe: {
+    ...Typography.caption,
+    color: Colors.warning,
+    marginTop: 2,
+  },
+  maintenanceLikelihood: {
+    ...Typography.caption,
+    color: Colors.info,
+    marginTop: 2,
   },
   loadingContainer: {
     flex: 1,

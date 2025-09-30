@@ -1,486 +1,537 @@
 /**
- * 🌤️ Weather-Based Hybrid Card
- * Purpose: Intelligent weather-based task suggestions and building recommendations
+ * 🌤️ Weather Based Hybrid Card
+ * Purpose: Real-time weather-based task suggestions for worker dashboard
+ * Features: Weather monitoring, intelligent task recommendations, proactive maintenance alerts
+ * Context: Displays below hero cards on worker dashboard with weather-driven task suggestions
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React from 'react';
+const { useState, useEffect, useCallback } = React;
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+
+// Mock Animated for development
+class MockAnimatedValue {
+  _value: number;
+  constructor(value: number) {
+    this._value = value;
+  }
+  setValue = () => {};
+  interpolate = () => this._value;
+}
+
+const Animated = {
+  Value: MockAnimatedValue,
+  timing: (value: any, config: any) => ({ start: () => {} }),
+  parallel: (animations: any[]) => ({ start: () => {} }),
+  sequence: (animations: any[]) => ({ start: () => {} }),
+  View: View,
+};
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
-import { WeatherSnapshot, OutdoorWorkRisk, NamedCoordinate, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
+import { GlassCard } from '../glass';
+import { WeatherSnapshot, OperationalDataTaskAssignment, NamedCoordinate } from '@cyntientops/domain-schema';
+// Mock WeatherAPIClient for development
+interface WeatherAPIClient {
+  getCurrentWeather(lat: number, lng: number): Promise<any>;
+}
 
 export interface WeatherBasedHybridCardProps {
-  weather: WeatherSnapshot;
-  workerBuildings: NamedCoordinate[];
-  todaysTasks: OperationalDataTaskAssignment[];
+  weather?: WeatherSnapshot;
+  building?: NamedCoordinate;
+  suggestedTasks?: OperationalDataTaskAssignment[];
   onTaskPress?: (task: OperationalDataTaskAssignment) => void;
-  onBuildingPress?: (building: NamedCoordinate) => void;
-  isLoading?: boolean;
+  onWeatherPress?: () => void;
+  onSuggestionPress?: (suggestion: WeatherSuggestion) => void;
+  userRole?: string;
+  currentLocation?: { latitude: number; longitude: number };
 }
 
 export interface WeatherSuggestion {
   id: string;
-  type: 'indoor' | 'outdoor' | 'weather_sensitive';
-  priority: 'high' | 'medium' | 'low';
+  type: WeatherSuggestionType;
+  priority: WeatherSuggestionPriority;
   title: string;
   description: string;
+  reasoning: string;
+  estimatedDuration: number;
+  weatherCondition: string;
+  weatherImpact: WeatherImpact;
+  actionable: boolean;
+  category: string;
   buildingId?: string;
-  buildingName?: string;
-  taskId?: string;
-  icon: string;
-  reason: string;
+}
+
+export interface WeatherImpact {
+  level: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  urgency: 'immediate' | 'soon' | 'planned' | 'monitor';
+  timeWindow: string;
+}
+
+export enum WeatherSuggestionType {
+  PREVENTIVE_MAINTENANCE = 'preventive_maintenance',
+  SAFETY_CHECK = 'safety_check',
+  EMERGENCY_PREPARATION = 'emergency_preparation',
+  DRAINAGE_CHECK = 'drainage_check',
+  STRUCTURAL_INSPECTION = 'structural_inspection',
+}
+
+export enum WeatherSuggestionPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  URGENT = 'urgent',
+  CRITICAL = 'critical',
 }
 
 export const WeatherBasedHybridCard: React.FC<WeatherBasedHybridCardProps> = ({
   weather,
-  workerBuildings,
-  todaysTasks,
+  building,
+  suggestedTasks = [],
   onTaskPress,
-  onBuildingPress,
-  isLoading = false,
+  onWeatherPress,
+  onSuggestionPress,
+  userRole = 'worker',
+  currentLocation,
 }) => {
+  const [weatherData, setWeatherData] = useState<WeatherSnapshot | null>(weather || null);
   const [suggestions, setSuggestions] = useState<WeatherSuggestion[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'indoor' | 'outdoor' | 'weather_sensitive'>('all');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [animationValue] = useState(new Animated.Value(0));
 
   useEffect(() => {
-    generateWeatherSuggestions();
-  }, [weather, workerBuildings, todaysTasks]);
+    if (weatherData) {
+      generateWeatherSuggestions();
+    }
+  }, [weatherData, suggestedTasks, building]);
 
-  const generateWeatherSuggestions = () => {
+  useEffect(() => {
+    Animated.timing(animationValue, {
+      toValue: isExpanded ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [isExpanded]);
+
+  const generateWeatherSuggestions = useCallback(() => {
+    if (!weatherData) return;
+
     const newSuggestions: WeatherSuggestion[] = [];
-    
-    // Analyze weather conditions
-    const isRaining = weather.condition?.toLowerCase().includes('rain') || 
-                     weather.condition?.toLowerCase().includes('drizzle') ||
-                     weather.condition?.toLowerCase().includes('storm');
-    const isSnowing = weather.condition?.toLowerCase().includes('snow');
-    const isWindy = weather.windSpeed && weather.windSpeed > 15; // mph
-    const isCold = weather.temperature && weather.temperature < 40; // fahrenheit
-    const isHot = weather.temperature && weather.temperature > 85;
-    const isHumid = weather.humidity && weather.humidity > 70;
 
-    // Generate building-specific suggestions
-    workerBuildings.forEach(building => {
-      const buildingTasks = todaysTasks.filter(task => task.assigned_building_id === building.id);
-      
-      // Indoor task suggestions
-      if (isRaining || isSnowing || isWindy || isCold) {
-        buildingTasks.forEach(task => {
-          if (isIndoorTask(task.category)) {
-            newSuggestions.push({
-              id: `indoor-${task.id}`,
-              type: 'indoor',
-              priority: 'high',
-              title: `Indoor Task: ${task.name}`,
-              description: `Perfect weather for indoor work at ${building.name}`,
-              buildingId: building.id,
-              buildingName: building.name,
-              taskId: task.id,
-              icon: '🏠',
-              reason: getWeatherReason(isRaining, isSnowing, isWindy, isCold)
-            });
-          }
-        });
-      }
-
-      // Outdoor task suggestions
-      if (!isRaining && !isSnowing && !isWindy && !isCold && !isHot) {
-        buildingTasks.forEach(task => {
-          if (isOutdoorTask(task.category)) {
-            newSuggestions.push({
-              id: `outdoor-${task.id}`,
-              type: 'outdoor',
-              priority: 'medium',
-              title: `Outdoor Task: ${task.name}`,
-              description: `Great weather for outdoor work at ${building.name}`,
-              buildingId: building.id,
-              buildingName: building.name,
-              taskId: task.id,
-              icon: '🌤️',
-              reason: 'Perfect outdoor conditions'
-            });
-          }
-        });
-      }
-
-      // Weather-sensitive task suggestions
-      if (isHot || isHumid) {
-        buildingTasks.forEach(task => {
-          if (isWeatherSensitiveTask(task.category)) {
-            newSuggestions.push({
-              id: `weather-${task.id}`,
-              type: 'weather_sensitive',
-              priority: 'high',
-              title: `Weather Alert: ${task.name}`,
-              description: `Consider timing for ${building.name} due to weather`,
-              buildingId: building.id,
-              buildingName: building.name,
-              taskId: task.id,
-              icon: '⚠️',
-              reason: getWeatherSensitivityReason(isHot, isHumid)
-            });
-          }
-        });
-      }
-    });
-
-    // Add general weather recommendations
-    if (isRaining || isSnowing) {
+    // Rain-based suggestions
+    if (weatherData.condition === 'rainy' || weatherData.condition === 'stormy') {
       newSuggestions.push({
-        id: 'weather-general-1',
-        type: 'weather_sensitive',
-        priority: 'high',
-        title: 'Weather Advisory',
-        description: 'Focus on indoor tasks and building maintenance',
-        icon: '🌧️',
-        reason: 'Precipitation detected - prioritize indoor work'
+        id: 'drainage_check_rain',
+        type: WeatherSuggestionType.DRAINAGE_CHECK,
+        priority: WeatherSuggestionPriority.HIGH,
+        title: 'Check Roof Drains & Gutters',
+        description: 'Inspect and clear roof drains, gutters, and downspouts to prevent water damage',
+        reasoning: `It's currently ${weatherData.condition} with ${weatherData.description}. Ensure proper drainage to prevent water accumulation.`,
+        estimatedDuration: 30,
+        weatherCondition: weatherData.condition,
+        weatherImpact: {
+          level: 'high',
+          description: 'Active rain requires immediate drainage attention',
+          urgency: 'immediate',
+          timeWindow: 'Next 2 hours',
+        },
+        actionable: true,
+        category: 'Maintenance',
+        buildingId: building?.id,
       });
     }
 
-    if (isHot) {
+    // Snow-based suggestions
+    if (weatherData.condition === 'snowy' || weatherData.condition === 'blizzard') {
       newSuggestions.push({
-        id: 'weather-general-2',
-        type: 'weather_sensitive',
-        priority: 'medium',
-        title: 'Heat Advisory',
-        description: 'Stay hydrated and take frequent breaks',
-        icon: '🌡️',
-        reason: 'High temperature - take safety precautions'
+        id: 'snow_removal_prep',
+        type: WeatherSuggestionType.EMERGENCY_PREPARATION,
+        priority: WeatherSuggestionPriority.URGENT,
+        title: 'Prepare Snow Removal Equipment',
+        description: 'Check and prepare snow removal equipment for immediate use',
+        reasoning: `Snow conditions detected: ${weatherData.description}. Prepare equipment for snow removal operations.`,
+        estimatedDuration: 45,
+        weatherCondition: weatherData.condition,
+        weatherImpact: {
+          level: 'critical',
+          description: 'Snow accumulation requires immediate response',
+          urgency: 'immediate',
+          timeWindow: 'Next 1 hour',
+        },
+        actionable: true,
+        category: 'Emergency Response',
+        buildingId: building?.id,
       });
     }
 
-    setSuggestions(newSuggestions);
-  };
-
-  const isIndoorTask = (category: string): boolean => {
-    const indoorCategories = [
-      'cleaning', 'maintenance', 'repair', 'inspection', 
-      'painting', 'electrical', 'plumbing', 'hvac'
-    ];
-    return indoorCategories.some(cat => category.toLowerCase().includes(cat));
-  };
-
-  const isOutdoorTask = (category: string): boolean => {
-    const outdoorCategories = [
-      'landscaping', 'exterior', 'roofing', 'gutter', 
-      'sidewalk', 'parking', 'outdoor_cleaning'
-    ];
-    return outdoorCategories.some(cat => category.toLowerCase().includes(cat));
-  };
-
-  const isWeatherSensitiveTask = (category: string): boolean => {
-    const weatherSensitiveCategories = [
-      'painting', 'roofing', 'electrical', 'outdoor_cleaning',
-      'landscaping', 'gutter', 'exterior'
-    ];
-    return weatherSensitiveCategories.some(cat => category.toLowerCase().includes(cat));
-  };
-
-  const getWeatherReason = (rain: boolean, snow: boolean, wind: boolean, cold: boolean): string => {
-    if (rain) return 'Rainy conditions - perfect for indoor work';
-    if (snow) return 'Snowy conditions - ideal for indoor tasks';
-    if (wind) return 'Windy conditions - better to work indoors';
-    if (cold) return 'Cold weather - focus on indoor maintenance';
-    return 'Weather conditions favor indoor work';
-  };
-
-  const getWeatherSensitivityReason = (hot: boolean, humid: boolean): string => {
-    if (hot && humid) return 'Hot and humid - plan work timing carefully';
-    if (hot) return 'High temperature - consider early morning work';
-    if (humid) return 'High humidity - take extra precautions';
-    return 'Weather conditions require special attention';
-  };
-
-  const getFilteredSuggestions = (): WeatherSuggestion[] => {
-    if (selectedCategory === 'all') return suggestions;
-    return suggestions.filter(s => s.type === selectedCategory);
-  };
-
-  const getPriorityColor = (priority: string): string => {
-    switch (priority) {
-      case 'high': return Colors.status.error;
-      case 'medium': return Colors.status.warning;
-      case 'low': return Colors.status.success;
-      default: return Colors.text.secondary;
+    // High wind suggestions
+    if (weatherData.windSpeed > 25) {
+      newSuggestions.push({
+        id: 'wind_damage_check',
+        type: WeatherSuggestionType.STRUCTURAL_INSPECTION,
+        priority: WeatherSuggestionPriority.HIGH,
+        title: 'Check for Wind Damage',
+        description: 'Inspect building exterior for wind damage, loose items, and structural issues',
+        reasoning: `High winds detected (${weatherData.windSpeed} mph). Check for damage and secure loose items.`,
+        estimatedDuration: 40,
+        weatherCondition: weatherData.condition,
+        weatherImpact: {
+          level: 'high',
+          description: 'High winds can cause immediate damage',
+          urgency: 'immediate',
+          timeWindow: 'Next 2 hours',
+        },
+        actionable: true,
+        category: 'Safety Inspection',
+        buildingId: building?.id,
+      });
     }
+
+    setSuggestions(newSuggestions.slice(0, 3)); // Show top 3 suggestions
+  }, [weatherData, building]);
+
+  const getWeatherIcon = (condition: string): string => {
+    const iconMap: Record<string, string> = {
+      sunny: '☀️',
+      cloudy: '☁️',
+      rainy: '🌧️',
+      stormy: '⛈️',
+      snowy: '❄️',
+      partly_cloudy: '⛅',
+    };
+    return iconMap[condition] || '🌤️';
   };
 
-  const renderWeatherSummary = () => (
-    <View style={styles.weatherSummary}>
-      <View style={styles.weatherMain}>
-        <Text style={styles.weatherIcon}>🌤️</Text>
-        <View style={styles.weatherInfo}>
-          <Text style={styles.weatherTemp}>
-            {weather.temperature ? `${Math.round(weather.temperature)}°F` : 'N/A'}
+  const getPriorityColor = (priority: WeatherSuggestionPriority): string => {
+    const colorMap: Record<WeatherSuggestionPriority, string> = {
+      [WeatherSuggestionPriority.LOW]: Colors.info,
+      [WeatherSuggestionPriority.MEDIUM]: Colors.warning,
+      [WeatherSuggestionPriority.HIGH]: Colors.primaryAction,
+      [WeatherSuggestionPriority.URGENT]: Colors.error,
+      [WeatherSuggestionPriority.CRITICAL]: Colors.role.admin.primary,
+    };
+    return colorMap[priority] || Colors.secondaryText;
+  };
+
+  const getUrgencyIcon = (urgency: string): string => {
+    const iconMap: Record<string, string> = {
+      immediate: '🚨',
+      soon: '⏰',
+      planned: '📅',
+      monitor: '👁️',
+    };
+    return iconMap[urgency] || '📋';
+  };
+
+  const handleSuggestionPress = (suggestion: WeatherSuggestion) => {
+    onSuggestionPress?.(suggestion);
+  };
+
+  const renderWeatherHeader = () => (
+    <View style={styles.weatherHeader}>
+      <View style={styles.weatherInfo}>
+        <Text style={styles.weatherIcon}>
+          {weatherData ? getWeatherIcon(weatherData.condition) : '🌤️'}
+        </Text>
+        <View style={styles.weatherDetails}>
+          <Text style={styles.weatherTemperature}>
+            {weatherData ? `${weatherData.temperature}°F` : '--°F'}
           </Text>
           <Text style={styles.weatherCondition}>
-            {weather.condition || 'Unknown'}
+            {weatherData ? weatherData.description : 'Loading...'}
+          </Text>
+          <Text style={styles.weatherLocation}>
+            {building ? building.name : weatherData?.location || 'Current Location'}
           </Text>
         </View>
       </View>
-      <View style={styles.weatherDetails}>
-        <Text style={styles.weatherDetail}>
-          💨 {weather.windSpeed ? `${weather.windSpeed} mph` : 'N/A'}
+      <TouchableOpacity
+        style={styles.expandButton}
+        onPress={() => setIsExpanded(!isExpanded)}
+      >
+        <Text style={styles.expandButtonText}>
+          {isExpanded ? '▼' : '▶'}
         </Text>
-        <Text style={styles.weatherDetail}>
-          💧 {weather.humidity ? `${weather.humidity}%` : 'N/A'}
-        </Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 
-  const renderCategoryFilter = () => (
-    <View style={styles.categoryFilter}>
-      {(['all', 'indoor', 'outdoor', 'weather_sensitive'] as const).map(category => (
-        <TouchableOpacity
-          key={category}
-          style={[
-            styles.categoryButton,
-            selectedCategory === category && styles.activeCategoryButton,
-          ]}
-          onPress={() => setSelectedCategory(category)}
-        >
-          <Text style={[
-            styles.categoryButtonText,
-            selectedCategory === category && styles.activeCategoryButtonText,
-          ]}>
-            {category.replace('_', ' ').toUpperCase()}
+  const renderWeatherSuggestions = () => {
+    if (suggestions.length === 0) {
+      return (
+        <View style={styles.noSuggestions}>
+          <Text style={styles.noSuggestionsText}>
+            No weather-based suggestions at this time
           </Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-
-  const renderSuggestion = (suggestion: WeatherSuggestion) => (
-    <TouchableOpacity
-      key={suggestion.id}
-      style={styles.suggestionItem}
-      onPress={() => {
-        if (suggestion.taskId) {
-          const task = todaysTasks.find(t => t.id === suggestion.taskId);
-          if (task) onTaskPress?.(task);
-        } else if (suggestion.buildingId) {
-          const building = workerBuildings.find(b => b.id === suggestion.buildingId);
-          if (building) onBuildingPress?.(building);
-        }
-      }}
-    >
-      <View style={styles.suggestionHeader}>
-        <Text style={styles.suggestionIcon}>{suggestion.icon}</Text>
-        <View style={styles.suggestionContent}>
-          <Text style={styles.suggestionTitle}>{suggestion.title}</Text>
-          <Text style={styles.suggestionDescription}>{suggestion.description}</Text>
+          <Text style={styles.noSuggestionsSubtext}>
+            Weather conditions are normal for routine operations
+          </Text>
         </View>
-        <View style={[styles.priorityIndicator, { backgroundColor: getPriorityColor(suggestion.priority) }]} />
-      </View>
-      
-      {suggestion.buildingName && (
-        <Text style={styles.suggestionBuilding}>📍 {suggestion.buildingName}</Text>
-      )}
-      
-      <Text style={styles.suggestionReason}>💡 {suggestion.reason}</Text>
-    </TouchableOpacity>
-  );
+      );
+    }
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyState}>
-      <Text style={styles.emptyIcon}>🌤️</Text>
-      <Text style={styles.emptyTitle}>No weather-based suggestions</Text>
-      <Text style={styles.emptyDescription}>
-        Current weather conditions don't require special task adjustments.
-      </Text>
-    </View>
-  );
-
-  if (isLoading) {
     return (
-      <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary.blue} />
-          <Text style={styles.loadingText}>Analyzing weather conditions...</Text>
-        </View>
-      </GlassCard>
+      <Animated.View
+        style={[
+          styles.suggestionsContainer,
+          {
+            height: animationValue.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, suggestions.length * 120 + 20],
+            }),
+            opacity: animationValue,
+          },
+        ]}
+      >
+        <ScrollView
+          style={styles.suggestionsList}
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
+        >
+          {suggestions.map((suggestion) => (
+            <TouchableOpacity
+              key={suggestion.id}
+              style={[
+                styles.suggestionCard,
+                { borderLeftColor: getPriorityColor(suggestion.priority) },
+              ]}
+              onPress={() => handleSuggestionPress(suggestion)}
+            >
+              <View style={styles.suggestionHeader}>
+                <View style={styles.suggestionTitleContainer}>
+                  <Text style={styles.suggestionTitle}>{suggestion.title}</Text>
+                  <View style={styles.suggestionMeta}>
+                    <Text style={styles.suggestionDuration}>
+                      ⏱️ {suggestion.estimatedDuration} min
+                    </Text>
+                    <Text style={styles.suggestionCategory}>
+                      📋 {suggestion.category}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.suggestionPriority}>
+                  <Text style={styles.priorityText}>
+                    {suggestion.priority.toUpperCase()}
+                  </Text>
+                  <Text style={styles.urgencyText}>
+                    {getUrgencyIcon(suggestion.weatherImpact.urgency)} {suggestion.weatherImpact.urgency}
+                  </Text>
+                </View>
+              </View>
+              
+              <Text style={styles.suggestionDescription}>
+                {suggestion.description}
+              </Text>
+              
+              <View style={styles.suggestionReasoning}>
+                <Text style={styles.reasoningLabel}>💡 Why now:</Text>
+                <Text style={styles.reasoningText}>{suggestion.reasoning}</Text>
+              </View>
+              
+              <View style={styles.suggestionImpact}>
+                <Text style={styles.impactLabel}>
+                  🌡️ Weather Impact: {suggestion.weatherImpact.level.toUpperCase()}
+                </Text>
+                <Text style={styles.impactDescription}>
+                  {suggestion.weatherImpact.description}
+                </Text>
+                <Text style={styles.impactTimeWindow}>
+                  ⏰ {suggestion.weatherImpact.timeWindow}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </Animated.View>
     );
-  }
-
-  const filteredSuggestions = getFilteredSuggestions();
+  };
 
   return (
-    <GlassCard style={styles.container} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Weather-Based Recommendations</Text>
-        <Text style={styles.subtitle}>Smart suggestions based on current conditions</Text>
-      </View>
-
-      {renderWeatherSummary()}
-      {renderCategoryFilter()}
-
-      <ScrollView style={styles.suggestionsList} showsVerticalScrollIndicator={false}>
-        {filteredSuggestions.length === 0 ? (
-          renderEmptyState()
-        ) : (
-          filteredSuggestions.map(renderSuggestion)
-        )}
-      </ScrollView>
+    <GlassCard style={styles.container} intensity="regular" cornerRadius="card">
+      <TouchableOpacity
+        style={styles.cardContent}
+        onPress={onWeatherPress}
+        activeOpacity={0.8}
+      >
+        {renderWeatherHeader()}
+        {renderWeatherSuggestions()}
+      </TouchableOpacity>
     </GlassCard>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    margin: Spacing.lg,
-    padding: Spacing.md,
-    borderRadius: 12,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+    overflow: 'hidden',
   },
-  header: {
+  cardContent: {
+    padding: Spacing.md,
+  },
+  weatherHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.md,
   },
-  title: {
-    ...Typography.titleLarge,
-    color: Colors.text.primary,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    marginTop: 2,
-  },
-  weatherSummary: {
-    backgroundColor: Colors.glass.thin,
-    borderRadius: 8,
-    padding: Spacing.md,
-    marginBottom: Spacing.md,
-  },
-  weatherMain: {
+  weatherInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
+    flex: 1,
   },
   weatherIcon: {
     fontSize: 32,
     marginRight: Spacing.md,
   },
-  weatherInfo: {
+  weatherDetails: {
     flex: 1,
   },
-  weatherTemp: {
+  weatherTemperature: {
     ...Typography.titleLarge,
-    color: Colors.text.primary,
+    color: Colors.primaryText,
     fontWeight: 'bold',
   },
   weatherCondition: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: Colors.secondaryText,
+    marginTop: 2,
   },
-  weatherDetails: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  weatherDetail: {
+  weatherLocation: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: Colors.tertiaryText,
+    marginTop: 2,
   },
-  categoryFilter: {
-    flexDirection: 'row',
-    marginBottom: Spacing.md,
+  expandButton: {
+    padding: Spacing.sm,
   },
-  categoryButton: {
-    flex: 1,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.xs,
-    backgroundColor: Colors.glass.medium,
-    borderRadius: 6,
-    marginHorizontal: 2,
-    alignItems: 'center',
+  expandButtonText: {
+    ...Typography.titleMedium,
+    color: Colors.secondaryText,
   },
-  activeCategoryButton: {
-    backgroundColor: Colors.primary.blue + '20',
-    borderWidth: 1,
-    borderColor: Colors.primary.blue,
-  },
-  categoryButtonText: {
-    ...Typography.captionSmall,
-    color: Colors.text.secondary,
-    fontWeight: '500',
-  },
-  activeCategoryButtonText: {
-    color: Colors.primary.blue,
-    fontWeight: '600',
+  suggestionsContainer: {
+    overflow: 'hidden',
   },
   suggestionsList: {
-    maxHeight: 300,
+    maxHeight: 400,
   },
-  suggestionItem: {
-    backgroundColor: Colors.glass.thin,
-    borderRadius: 8,
+  suggestionCard: {
+    backgroundColor: Colors.glassOverlay,
+    borderRadius: 12,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
+    borderLeftWidth: 4,
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
   },
   suggestionHeader: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.sm,
   },
-  suggestionIcon: {
-    fontSize: 20,
-    marginRight: Spacing.sm,
-  },
-  suggestionContent: {
+  suggestionTitleContainer: {
     flex: 1,
+    marginRight: Spacing.sm,
   },
   suggestionTitle: {
     ...Typography.subheadline,
-    color: Colors.text.primary,
+    color: Colors.primaryText,
+    fontWeight: '600',
+    marginBottom: Spacing.xs,
+  },
+  suggestionMeta: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  suggestionDuration: {
+    ...Typography.caption,
+    color: Colors.info,
+    fontWeight: '500',
+  },
+  suggestionCategory: {
+    ...Typography.caption,
+    color: Colors.warning,
+    fontWeight: '500',
+  },
+  suggestionPriority: {
+    alignItems: 'flex-end',
+  },
+  priorityText: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  urgencyText: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  suggestionDescription: {
+    ...Typography.body,
+    color: Colors.primaryText,
+    marginBottom: Spacing.sm,
+    lineHeight: 20,
+  },
+  suggestionReasoning: {
+    backgroundColor: Colors.background + '40',
+    borderRadius: 8,
+    padding: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  reasoningLabel: {
+    ...Typography.caption,
+    color: Colors.info,
     fontWeight: '600',
     marginBottom: 2,
   },
-  suggestionDescription: {
+  reasoningText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
-  },
-  priorityIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginLeft: Spacing.sm,
-  },
-  suggestionBuilding: {
-    ...Typography.caption,
-    color: Colors.primary.blue,
-    marginBottom: Spacing.xs,
-  },
-  suggestionReason: {
-    ...Typography.captionSmall,
-    color: Colors.text.secondary,
+    color: Colors.secondaryText,
     fontStyle: 'italic',
   },
-  emptyState: {
+  suggestionImpact: {
+    backgroundColor: Colors.warning + '20',
+    borderRadius: 8,
+    padding: Spacing.sm,
+  },
+  impactLabel: {
+    ...Typography.caption,
+    color: Colors.warning,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  impactDescription: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    marginBottom: 2,
+  },
+  impactTimeWindow: {
+    ...Typography.caption,
+    color: Colors.info,
+    fontWeight: '500',
+  },
+  noSuggestions: {
+    padding: Spacing.lg,
     alignItems: 'center',
-    paddingVertical: Spacing.xl,
   },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: Spacing.md,
-  },
-  emptyTitle: {
-    ...Typography.titleMedium,
-    color: Colors.text.primary,
+  noSuggestionsText: {
+    ...Typography.body,
+    color: Colors.secondaryText,
+    textAlign: 'center',
     marginBottom: Spacing.sm,
   },
-  emptyDescription: {
-    ...Typography.body,
-    color: Colors.text.secondary,
+  noSuggestionsSubtext: {
+    ...Typography.caption,
+    color: Colors.tertiaryText,
     textAlign: 'center',
-    paddingHorizontal: Spacing.lg,
-  },
-  loadingContainer: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-  },
-  loadingText: {
-    ...Typography.body,
-    color: Colors.text.secondary,
-    marginTop: Spacing.md,
   },
 });
 

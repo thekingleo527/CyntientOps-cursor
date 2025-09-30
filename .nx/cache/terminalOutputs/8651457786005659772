@@ -1,0 +1,8 @@
+
+Linting "context-engines"...
+
+ NX   Failed to load config "@react-native" to extend from.
+
+Referenced from: /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/.eslintrc.js
+Pass --verbose to see the stacktrace.
+

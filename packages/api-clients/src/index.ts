@@ -19,6 +19,9 @@ export { WeatherAPIClient } from './weather/WeatherAPIClient';
 // QuickBooks API Client
 export { QuickBooksAPIClient, DEFAULT_QUICKBOOKS_CREDENTIALS } from './quickbooks/QuickBooksAPIClient';
 
+// Property Value Service
+export { PropertyValueService, propertyValueService } from './property/PropertyValueService';
+
 // NYC API Types
 export type { 
   HPDViolation, 
@@ -30,8 +33,23 @@ export type {
   CollectionScheduleSummary,
   // BuildingNYCData - commented out until implemented
 } from './nyc/NYCDataModels';
+
+// DSNY Violations Service
+export { 
+  DSNYViolationsService, 
+  dsnyViolationsService,
+  normalizeNYCAddress,
+  fetchDSNYSummonsByAddress,
+  generateDemoDSNYData
+} from './nyc/DSNYViolationsService';
+export type { 
+  NormalizedAddress, 
+  DSNYSummons, 
+  DSNYViolationsResult 
+} from './nyc/DSNYViolationsService';
 export type { WeatherForecast, WeatherAlert, TaskWeatherAdjustment } from './weather/WeatherAPIClient';
 export type { QuickBooksCredentials, QuickBooksEmployee, QuickBooksTimeEntry, QuickBooksPayrollData } from './quickbooks/QuickBooksAPIClient';
+export type { BuildingPropertyValue, PropertyValueUpdateResult } from './property/PropertyValueService';
 
 // API Configuration
 export interface APIConfiguration {

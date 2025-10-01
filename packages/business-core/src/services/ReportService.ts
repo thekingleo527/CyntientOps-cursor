@@ -3,11 +3,26 @@
  * Mirrors: CyntientOps/Services/ReportService.swift
  * Purpose: Generate comprehensive reports with PDF export
  * Features: Portfolio reports, compliance reports, performance analytics, tax history
+ *
+ * ENHANCED: October 1, 2025 - Real data integration
+ * - Integrated with PropertyDataService for real property values
+ * - Integrated with ViolationDataService for real NYC violation data
+ * - Organization branding support for client reports
  */
 
 import { ServiceContainer } from '../ServiceContainer';
 import { BuildingMetrics, ComplianceIssue } from '@cyntientops/domain-schema';
 import { Logger } from './LoggingService';
+import { PropertyDataService } from './PropertyDataService';
+import { ViolationDataService } from '../services/ViolationDataService';
+
+export interface ReportBranding {
+  organizationName: string;
+  managerName?: string;
+  logo?: string; // URL or base64
+  primaryColor?: string;
+  footer?: string;
+}
 
 export interface ReportConfig {
   includeCharts: boolean;
@@ -20,7 +35,9 @@ export interface ReportConfig {
     end: Date;
   };
   buildingIds?: string[];
+  organizationId?: string; // NEW: Filter by organization
   format: 'pdf' | 'excel' | 'csv';
+  branding?: ReportBranding; // NEW: Organization branding
 }
 
 export interface ReportData {
@@ -493,8 +510,31 @@ export class ReportService {
   // Private helper methods
 
   private async getBuildingsData(buildingIds?: string[]): Promise<any[]> {
-    // This would fetch building data from the database
-    return [];
+    // ENHANCED: Use real PropertyDataService
+    const allProperties = PropertyDataService.getAllProperties();
+
+    // Filter by buildingIds if provided
+    const filteredProperties = buildingIds
+      ? allProperties.filter(p => buildingIds.includes(p.id))
+      : allProperties;
+
+    // Map to building data with compliance metrics
+    return filteredProperties.map(property => {
+      const violations = ViolationDataService.getViolationData(property.id);
+
+      return {
+        id: property.id,
+        name: property.name,
+        address: property.address,
+        metrics: {
+          efficiency: 0.85,
+          costPerSqFt: property.marketValuePerSqFt / 1000, // Rough estimate
+        },
+        complianceScore: violations.score,
+        criticalIssues: violations.score < 50 ? 1 : 0,
+        lastInspection: new Date(),
+      };
+    });
   }
 
   private async getWorkersData(): Promise<any[]> {
@@ -508,11 +548,39 @@ export class ReportService {
   }
 
   private async getComplianceData(buildingIds?: string[]): Promise<any> {
-    // This would fetch compliance data from the database
+    // ENHANCED: Use real ViolationDataService to aggregate compliance data
+    const allProperties = PropertyDataService.getAllProperties();
+    const properties = buildingIds
+      ? allProperties.filter(p => buildingIds.includes(p.id))
+      : allProperties;
+
+    let totalScore = 0;
+    let criticalIssues = 0;
+    const issuesByCategory: Record<string, number> = {
+      HPD: 0,
+      DOB: 0,
+      DSNY: 0,
+    };
+
+    properties.forEach(property => {
+      const violations = ViolationDataService.getViolationData(property.id);
+      totalScore += violations.score;
+
+      if (violations.score < 50) {
+        criticalIssues++;
+      }
+
+      issuesByCategory.HPD += violations.hpd;
+      issuesByCategory.DOB += violations.dob;
+      issuesByCategory.DSNY += violations.dsny;
+    });
+
+    const overallScore = properties.length > 0 ? totalScore / properties.length : 100;
+
     return {
-      overallScore: 88,
-      criticalIssues: 0,
-      issuesByCategory: {},
+      overallScore: Math.round(overallScore),
+      criticalIssues,
+      issuesByCategory,
       recentViolations: [],
     };
   }
@@ -530,21 +598,87 @@ export class ReportService {
   }
 
   private async getBuildingData(buildingId: string): Promise<any> {
-    // This would fetch specific building data
+    // ENHANCED: Use real PropertyDataService
+    const property = PropertyDataService.getPropertyDetails(buildingId);
+
+    if (!property) {
+      Logger.error(`Building ${buildingId} not found`, undefined, 'ReportService');
+      throw new Error(`Building ${buildingId} not found`);
+    }
+
     return {
-      id: buildingId,
-      name: 'Sample Building',
-      address: '123 Main St, New York, NY',
+      id: property.id,
+      name: property.name,
+      address: property.address,
+      marketValue: property.marketValue,
+      assessedValue: property.assessedValue,
+      marketValuePerSqFt: property.marketValuePerSqFt,
+      yearBuilt: property.yearBuilt,
+      yearRenovated: property.yearRenovated,
+      numFloors: property.numFloors,
+      buildingClass: property.buildingClass,
+      lotArea: property.lotArea,
+      buildingArea: property.buildingArea,
+      residentialArea: property.residentialArea,
+      commercialArea: property.commercialArea,
+      unitsResidential: property.unitsResidential,
+      unitsCommercial: property.unitsCommercial,
+      unitsTotal: property.unitsTotal,
+      zoning: property.zoning,
+      builtFAR: property.builtFAR,
+      maxFAR: property.maxFAR,
+      unusedFARPercent: property.unusedFARPercent,
+      neighborhood: property.neighborhood,
+      historicDistrict: property.historicDistrict,
+      ownershipType: property.ownershipType,
+      ownerName: property.ownerName,
     };
   }
 
   private async getBuildingComplianceData(buildingId: string): Promise<any> {
-    // This would fetch building-specific compliance data
+    // ENHANCED: Use real ViolationDataService
+    const violations = ViolationDataService.getViolationData(buildingId);
+
+    // Convert violations to compliance issues
+    const issues: any[] = [];
+
+    if (violations.hpd > 0) {
+      issues.push({
+        category: 'HPD',
+        description: `${violations.hpd} Housing Preservation & Development violations`,
+        severity: violations.hpd > 10 ? 'critical' : violations.hpd > 5 ? 'high' : 'medium',
+        estimatedCost: violations.hpd * 100, // Rough estimate
+      });
+    }
+
+    if (violations.dob > 0) {
+      issues.push({
+        category: 'DOB',
+        description: `${violations.dob} Department of Buildings violations`,
+        severity: 'critical',
+        estimatedCost: violations.outstanding, // DOB fines are typically the highest
+      });
+    }
+
+    if (violations.dsny > 0) {
+      issues.push({
+        category: 'DSNY',
+        description: `${violations.dsny} Sanitation violations`,
+        severity: violations.dsny > 10 ? 'high' : 'medium',
+        estimatedCost: violations.dsny * 300, // Average DSNY fine
+      });
+    }
+
     return {
-      score: 88,
-      lastInspection: new Date(),
-      nextInspection: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      issues: [],
+      score: violations.score,
+      hpdViolations: violations.hpd,
+      dobViolations: violations.dob,
+      dsnyViolations: violations.dsny,
+      totalViolations: violations.hpd + violations.dob + violations.dsny,
+      outstanding: violations.outstanding,
+      issues,
+      lastInspection: new Date(), // Would come from NYC API if available
+      nextInspection: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days out
     };
   }
 
@@ -607,9 +741,50 @@ export class ReportService {
     }, {} as Record<string, ComplianceIssue[]>);
   }
 
-  private async generateComplianceRecommendations(issues: ComplianceIssue[]): Promise<any[]> {
-    // This would generate AI-powered recommendations
-    return [];
+  private async generateComplianceRecommendations(issues: any[]): Promise<any[]> {
+    // ENHANCED: Generate real recommendations based on violation types
+    const recommendations: any[] = [];
+
+    issues.forEach(issue => {
+      if (issue.category === 'HPD') {
+        recommendations.push({
+          priority: issue.severity === 'critical' ? 'high' : 'medium',
+          description: 'Schedule HPD violation remediation with licensed contractors',
+          estimatedCost: issue.estimatedCost,
+          timeline: issue.severity === 'critical' ? '1-2 weeks' : '2-4 weeks',
+        });
+      }
+
+      if (issue.category === 'DOB') {
+        recommendations.push({
+          priority: 'high',
+          description: 'Contact DOB violations division to schedule inspection and remediation',
+          estimatedCost: issue.estimatedCost,
+          timeline: '2-4 weeks',
+        });
+      }
+
+      if (issue.category === 'DSNY') {
+        recommendations.push({
+          priority: issue.severity === 'high' ? 'high' : 'medium',
+          description: 'Implement sanitation monitoring system and train building staff',
+          estimatedCost: issue.estimatedCost,
+          timeline: '1-2 weeks',
+        });
+      }
+    });
+
+    // Add preventive recommendations if no issues
+    if (issues.length === 0) {
+      recommendations.push({
+        priority: 'low',
+        description: 'Continue current maintenance protocols to maintain excellent compliance',
+        estimatedCost: 0,
+        timeline: 'Ongoing',
+      });
+    }
+
+    return recommendations;
   }
 
   private calculateComplianceCosts(issues: ComplianceIssue[]): any {

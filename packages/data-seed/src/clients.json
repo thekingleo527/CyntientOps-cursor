@@ -85,7 +85,7 @@
     "contact_phone": "+1 (212) 555-0206",
     "address": "115 7th Avenue, New York, NY 10011",
     "is_active": true,
-    "manager_name": "TBD",
+    "manager_name": "Jack",
     "manager_title": "Property Manager",
     "building_count": 1,
     "building_ids": ["19"]

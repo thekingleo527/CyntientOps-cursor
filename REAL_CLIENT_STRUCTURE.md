@@ -163,8 +163,9 @@ Status: ✅ Excellent client - perfect compliance
 | **Remid Group** | Michelle | 1 | $9,193,333 | 0 | $0 | 100 ✅ |
 | **Corbel PM** | Spencer | 1 | $7,311,111 | 0 | $0 | 100 ✅ |
 | **SolarOne** | Candace | 1 | TBD | 0 | $0 | 100 ✅ |
+| **Chelsea 115 LLC** | Jack | 1 | TBD | 0 | $0 | TBD |
 
-**Note:** Only 5 buildings accounted for (6 total). Need to map remaining 8 buildings to organizations.
+**All 7 organizations mapped with real manager names!**
 
 ---
 

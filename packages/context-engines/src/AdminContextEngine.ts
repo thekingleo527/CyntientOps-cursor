@@ -394,7 +394,7 @@ export class AdminContextEngine {
         description: row.description,
         buildingId: row.buildingId,
         buildingName: row.buildingName,
-        buildingAddress: '', // TODO: Get from building data
+        buildingAddress: building?.address || 'Address not available',
         assignedWorkerId: row.assignedWorkerId,
         scheduledDate: new Date(row.scheduledDate),
         dueDate: row.dueDate ? new Date(row.dueDate) : undefined,

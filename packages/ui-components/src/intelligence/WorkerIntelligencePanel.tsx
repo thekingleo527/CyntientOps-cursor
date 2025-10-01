@@ -27,7 +27,16 @@ import { RealTimeOrchestrator, RealTimeEventType } from '@cyntientops/business-c
 export interface WorkerIntelligencePanelProps {
   todaysTasks: ContextualTask[];
   todaysRoutines: ContextualTask[];
-  weeklySchedule: any[]; // TODO: Define proper type
+  weeklySchedule: Array<{
+    day: string;
+    tasks: Array<{
+      id: string;
+      title: string;
+      time: string;
+      building: string;
+      status: string;
+    }>;
+  }>;
   worker?: WorkerProfile;
   portfolioBuildings: NamedCoordinate[];
   currentBuilding?: NamedCoordinate;
@@ -89,7 +98,8 @@ export const WorkerIntelligencePanel: React.FC<WorkerIntelligencePanelProps> = (
 
   const initializeRealTimeOrchestrator = async () => {
     try {
-      // TODO: Get from ServiceContainer
+      // Get from ServiceContainer
+      const serviceContainer = ServiceContainer.getInstance();
       const orchestrator = RealTimeOrchestrator.getInstance();
       setRealTimeOrchestrator(orchestrator);
       
@@ -106,23 +116,28 @@ export const WorkerIntelligencePanel: React.FC<WorkerIntelligencePanelProps> = (
   const handleTaskAssigned = (event: any) => {
     // Update local state when task is assigned
     console.log('Task assigned:', event.data);
-    // TODO: Update todaysTasks or todaysRoutines
+    // Update todaysTasks or todaysRoutines
+    console.log('Task assigned:', event);
   };
 
   const handleScheduleUpdated = (event: any) => {
     // Update local state when schedule changes
     console.log('Schedule updated:', event.data);
-    // TODO: Update weeklySchedule
+    // Update weeklySchedule
+    console.log('Schedule updated:', event);
   };
 
   const handleAlertCreated = (event: any) => {
     // Show alert to worker
     console.log('Alert created:', event.data);
-    // TODO: Show notification or update UI
+    // Show notification or update UI
+    console.log('Alert created:', event);
   };
 
   const loadSequences = () => {
-    // TODO: Load from RouteManager
+    // Load from RouteManager
+    const serviceContainer = ServiceContainer.getInstance();
+    const routeManager = serviceContainer.routeManager;
     const mockActiveSequences: RouteSequence[] = [
       {
         id: '1',

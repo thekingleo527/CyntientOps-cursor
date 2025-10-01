@@ -19,6 +19,10 @@ import { BuildingMetricsService } from './services/BuildingMetricsService';
 import { ComplianceService } from './services/ComplianceService';
 import { NYCService } from './services/NYCService';
 import { AnalyticsService } from './services/AnalyticsService';
+import { NotesService } from './services/NotesService';
+import { InventoryService } from './services/InventoryService';
+import { VendorAccessService } from './services/VendorAccessService';
+import { SystemService } from './services/SystemService';
 
 // Services
 import { TaskService } from './services/TaskService';
@@ -93,12 +97,12 @@ export class ServiceContainer {
   private _metrics: BuildingMetricsService | null = null;
   private _compliance: ComplianceService | null = null;
   private _webSocket: WebSocketManager | null = null;
-  private _notes: any | null = null; // TODO: Implement NotesService
-  private _inventory: any | null = null; // TODO: Implement InventoryService
-  private _weather: any | null = null; // TODO: Implement WeatherService
-  private _vendorAccess: any | null = null; // TODO: Implement VendorAccessService
+  private _notes: NotesService | null = null;
+  private _inventory: InventoryService | null = null;
+  private _weather: any | null = null; // Weather via WeatherAPIClient in api-clients
+  private _vendorAccess: VendorAccessService | null = null;
   private _alerts: AlertsService | null = null;
-  private _system: any | null = null; // TODO: Implement SystemService
+  private _system: SystemService | null = null;
   
   // Building Detail Services
   private _buildingDetailsCatalog: any | null = null;
@@ -112,7 +116,7 @@ export class ServiceContainer {
   private _supplyRequestCatalog: any | null = null;
   private _photoCatalog: any | null = null;
   private _nyc: NYCService | null = null;
-  private _photos: any | null = null; // TODO: Implement PhotosService
+  // Photos delegated to PhotoEvidenceManager (no separate PhotosService needed)
   private _analytics: AnalyticsService | null = null;
   
   // MARK: - Layer 3: Intelligence (ASYNC INIT)
@@ -722,47 +726,32 @@ export class ServiceContainer {
 
   // MARK: - Additional Services for Enhanced ViewModels
 
-  public get notes(): any {
+  public get notes(): NotesService {
     if (!this._notes) {
-      // TODO: Implement NotesService
-      this._notes = {
-        addDailyNote: async (note: any) => console.log('Adding daily note:', note),
-        getDailyNotes: async (buildingId: string) => []
-      };
+      this._notes = NotesService.getInstance(this.database);
     }
     return this._notes;
   }
 
-  public get inventory(): any {
+  public get inventory(): InventoryService {
     if (!this._inventory) {
-      // TODO: Implement InventoryService
-      this._inventory = {
-        createSupplyRequest: async (request: any) => console.log('Creating supply request:', request),
-        getInventoryUsage: async (buildingId: string) => [],
-        getLowStockAlerts: async (buildingId: string) => []
-      };
+      this._inventory = InventoryService.getInstance(this.database);
     }
     return this._inventory;
   }
 
   public get weather(): any {
     if (!this._weather) {
-      // TODO: Implement WeatherService
-      this._weather = {
-        getWeatherForBuilding: async (buildingId: string) => ({ outdoorWorkRisk: 'low' }),
-        getBuildingWeatherGuidance: async (buildingId: string) => []
-      };
+      // Weather functionality is provided by WeatherAPIClient in api-clients package
+      // Access via this.apiClients.weather or this.weatherTasks
+      this._weather = this.weatherTasks;
     }
     return this._weather;
   }
 
-  public get vendorAccess(): any {
+  public get vendorAccess(): VendorAccessService {
     if (!this._vendorAccess) {
-      // TODO: Implement VendorAccessService
-      this._vendorAccess = {
-        logAccess: async (entry: any) => console.log('Logging vendor access:', entry),
-        getRecentAccess: async (workerId: string, limit: number) => []
-      };
+      this._vendorAccess = VendorAccessService.getInstance(this.database);
     }
     return this._vendorAccess;
   }
@@ -788,12 +777,9 @@ export class ServiceContainer {
     return this._compliance;
   }
 
-  public get system(): any {
+  public get system(): SystemService {
     if (!this._system) {
-      // TODO: Implement SystemService
-      this._system = {
-        getSystemHealth: async () => ({ status: 'healthy' })
-      };
+      this._system = SystemService.getInstance(this.database);
     }
     return this._system;
   }
@@ -805,14 +791,9 @@ export class ServiceContainer {
     return this._nyc;
   }
 
-  public get photos(): any {
-    if (!this._photos) {
-      // TODO: Implement PhotosService
-      this._photos = {
-        getRecentPhotos: async (buildingId: string, limit: number) => []
-      };
-    }
-    return this._photos;
+  public get photos(): PhotoEvidenceManager {
+    // Photos are handled by PhotoEvidenceManager, not a separate service
+    return this.photoEvidence;
   }
 
   public get analytics(): AnalyticsService {

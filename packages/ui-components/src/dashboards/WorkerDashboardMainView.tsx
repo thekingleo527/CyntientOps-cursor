@@ -98,9 +98,10 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   // } = useAppState();
 
   // Import real data from data-seed
-  const buildingsData = [] as any[]; // TODO: Import from data-seed package
-  const workersData = [] as any[]; // TODO: Import from data-seed package  
-  const routinesData = [] as any[]; // TODO: Import from data-seed package
+  // Import data from data-seed package
+  const buildingsData = require('@cyntientops/data-seed/buildings.json');
+  const workersData = require('@cyntientops/data-seed/workers.json');
+  const routinesData = require('@cyntientops/data-seed/routines.json');
 
   // Calculate real worker assignments from routines
   const workerRoutines = routinesData.filter((r: any) => r.workerId.toString() === workerId);

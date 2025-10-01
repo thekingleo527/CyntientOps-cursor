@@ -18,6 +18,7 @@ import {
   View,
   Text,
   TextInput,
+  Platform,
   TouchableOpacity,
   ScrollView,
   Animated,
@@ -244,7 +245,11 @@ export const NovaInteractionView: React.FC<{
     }
 
     setRepairMessage('Repair complete! Assignment data synchronized.');
-    // TODO: Implement haptic feedback
+    // Implement haptic feedback
+    if (Platform.OS === 'ios') {
+      const { HapticFeedback } = require('expo-haptics');
+      HapticFeedback.impactAsync(HapticFeedback.ImpactFeedbackStyle.Medium);
+    }
     console.log('📳 Haptic feedback: Success notification');
   }, []);
 

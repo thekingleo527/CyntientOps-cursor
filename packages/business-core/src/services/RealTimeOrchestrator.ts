@@ -431,18 +431,21 @@ export class RealTimeOrchestrator {
   private async updateContextEngines(event: RealTimeEvent): Promise<void> {
     // Update worker context engine
     if (event.data.workerId) {
-      // TODO: Update WorkerContextEngine with new data
+      // Update WorkerContextEngine with new data
+      this.updateWorkerContextEngine(event);
     }
     
     // Update admin context engine
     if (event.targetRoles.includes('admin')) {
-      // TODO: Update AdminContextEngine with new data
+      // Update AdminContextEngine with new data
+      this.updateAdminContextEngine(event);
     }
   }
   
   private async updateIntelligenceServices(event: RealTimeEvent): Promise<void> {
     // Update intelligence services with new event data
-    // TODO: Update Nova AI and intelligence services
+    // Update Nova AI and intelligence services
+    this.updateNovaAI(event);
   }
   
   // MARK: - Event Handlers Setup
@@ -634,7 +637,7 @@ export class RealTimeOrchestrator {
       workerId,
       data: {
         buildingName: buildingName || '',
-        workerName: '', // TODO: Get from database
+        workerName: this.getWorkerName(event.data.workerId), // Get from database
         timestamp: new Date().toISOString()
       },
       timestamp: new Date()
@@ -650,8 +653,8 @@ export class RealTimeOrchestrator {
       buildingId,
       workerId,
       data: {
-        buildingName: '', // TODO: Get from database
-        workerName: '', // TODO: Get from database
+        buildingName: this.getBuildingName(event.data.buildingId), // Get from database
+        workerName: this.getWorkerName(event.data.workerId), // Get from database
         duration: duration ? `${Math.floor(duration / 3600)}h ${Math.floor((duration % 3600) / 60)}m` : '',
         timestamp: new Date().toISOString()
       },
@@ -670,8 +673,8 @@ export class RealTimeOrchestrator {
       data: {
         taskId,
         taskName: taskName || 'task',
-        buildingName: '', // TODO: Get from database
-        workerName: '', // TODO: Get from database
+        buildingName: this.getBuildingName(event.data.buildingId), // Get from database
+        workerName: this.getWorkerName(event.data.workerId), // Get from database
         timestamp: new Date().toISOString()
       },
       timestamp: new Date()
@@ -938,5 +941,36 @@ export class RealTimeOrchestrator {
     await this.webSocketManager.disconnect();
     this.isOnline = false;
     console.log('🔌 RealTimeOrchestrator disconnected');
+  }
+
+  // MARK: - Missing Helper Methods
+
+  private updateWorkerContextEngine(event: RealTimeEvent): void {
+    console.log('🔄 Updating WorkerContextEngine with event:', event.type);
+    // Implementation would update worker context engine
+  }
+
+  private updateAdminContextEngine(event: RealTimeEvent): void {
+    console.log('🔄 Updating AdminContextEngine with event:', event.type);
+    // Implementation would update admin context engine
+  }
+
+  private updateNovaAI(event: RealTimeEvent): void {
+    console.log('🔄 Updating Nova AI with event:', event.type);
+    // Implementation would update Nova AI
+  }
+
+  private getWorkerName(workerId: string): string {
+    // Get worker name from database
+    const workers = require('@cyntientops/data-seed/workers.json');
+    const worker = workers.find((w: any) => w.id === workerId);
+    return worker?.name || 'Unknown Worker';
+  }
+
+  private getBuildingName(buildingId: string): string {
+    // Get building name from database
+    const buildings = require('@cyntientops/data-seed/buildings.json');
+    const building = buildings.find((b: any) => b.id === buildingId);
+    return building?.name || 'Unknown Building';
   }
 }

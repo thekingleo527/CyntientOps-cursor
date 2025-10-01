@@ -299,7 +299,7 @@ export class WorkerContextEngine {
           building: {
             id: clockSession.buildingId,
             name: clockSession.buildingName,
-            address: '', // TODO: Get from building data
+            address: building?.address || 'Address not available',
             latitude: clockSession.latitude,
             longitude: clockSession.longitude
           }
@@ -460,8 +460,17 @@ export class WorkerContextEngine {
   }
   
   private setupNotificationObservers(): void {
-    // TODO: Setup notification observers for real-time updates
+    // Setup notification observers for real-time updates
     console.log('📡 Setting up notification observers');
+    
+    // Subscribe to real-time updates
+    if (this.serviceContainer?.realTimeOrchestrator) {
+      this.serviceContainer.realTimeOrchestrator.subscribe('worker-updates', (update: any) => {
+        if (update.workerId === this.workerId) {
+          this.refreshData();
+        }
+      });
+    }
   }
   
   // MARK: - Public Methods

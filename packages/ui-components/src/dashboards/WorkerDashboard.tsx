@@ -171,7 +171,8 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({
         currentBuilding={currentBuilding}
         onTaskPress={onTaskPress}
         onBuildingPress={(building) => {
-          // TODO: Handle building press
+          // Handle building press
+          onBuildingPress?.(building.id);
         }}
         onPortfolioMapPress={onPortfolioMapPress}
         onSiteDeparturePress={onSiteDeparturePress}

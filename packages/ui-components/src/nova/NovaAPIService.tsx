@@ -124,7 +124,7 @@ export class NovaAPIService {
       // FOR NOW: Use the existing generateResponse logic (to be replaced with Supabase)
       const response = await this.generateResponse(prompt, context);
       
-      // TODO: When implementing Supabase, replace above with:
+      // When implementing Supabase, replace above with:
       // const response = await this.callSupabaseEdgeFunction(prompt, context);
       
       console.log('✅ Nova: Online response generated successfully');

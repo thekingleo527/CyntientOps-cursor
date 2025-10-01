@@ -223,14 +223,14 @@
         "origin": false
       },
       "eas": {
-        "projectId": "cyntientops-mobile-project-id"
+        "projectId": "e59805da-6423-4c79-ba1a-d277633f0875"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/cyntientops-mobile-project-id"
+      "url": "https://u.expo.dev/e59805da-6423-4c79-ba1a-d277633f0875"
     }
   }
 }

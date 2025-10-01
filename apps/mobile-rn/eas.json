@@ -7,54 +7,27 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "simulator": true,
-        "bundler": "metro"
+        "simulator": true
       },
       "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleDebug"
-      },
-      "env": {
-        "NODE_ENV": "development"
+        "buildType": "apk"
       }
     },
     "preview": {
       "distribution": "internal",
       "ios": {
-        "simulator": false,
-        "bundler": "metro"
+        "simulator": false
       },
       "android": {
         "buildType": "apk"
-      },
-      "env": {
-        "NODE_ENV": "production"
       }
     },
     "production": {
       "ios": {
-        "bundler": "metro",
-        "image": "latest"
-      },
-      "android": {
-        "buildType": "app-bundle",
-        "gradleCommand": ":app:bundleRelease"
-      },
-      "env": {
-        "NODE_ENV": "production"
-      }
-    },
-    "production-ios": {
-      "extends": "production",
-      "ios": {
-        "bundleIdentifier": "com.cyntientops.mobile",
         "buildConfiguration": "Release"
-      }
-    },
-    "production-android": {
-      "extends": "production",
+      },
       "android": {
-        "package": "com.cyntientops.mobile"
+        "buildType": "app-bundle"
       }
     }
   },

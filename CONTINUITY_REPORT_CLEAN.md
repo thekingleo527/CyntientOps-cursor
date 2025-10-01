@@ -4,27 +4,58 @@
 
 ### 🔄 **Latest Updates (2025-10-01)**
 
-#### **🚨 Violation Data Audit - COMPLETE & CORRECTED**
-- **Previous Audit Error Identified**: Initial audit used incorrect filter logic (currentstatus vs violationstatus)
-- **Real Data Retrieved**: Successfully queried NYC HPD, DOB, and ECB APIs with correct filters
-- **ECB Logic Corrected**: DSNY violations are handled through ECB system, not separate API
+#### **🚨 Violation Data Audit - COMPLETE & CORRECTED (OATH Integration)**
+- **Previous Audit Error Identified**: Used wrong API - ECB instead of OATH Hearings Division
+- **Real Data Retrieved**: Successfully queried NYC HPD and OATH APIs with correct filters
+- **OATH API Integration**: DSNY and DOB violations are in OATH Hearings Division API (jz4z-kudi)
 - **Application Updated**: BuildingDetailScreen.tsx and ViolationDataService.ts updated with real violation data
-- **Compliance Status**: 28 active HPD violations found across 5 buildings
+- **Compliance Status**: 28 HPD violations + 50 DSNY violations + 11 DOB violations across portfolio
 
 **Key Findings from Live NYC API Verification**:
-- **Building 1** (12 West 18th St): 6 HPD violations (Score: 82)
-- **Building 3** (135-139 West 17th St): 2 HPD violations (Score: 94)
-- **Building 4** (104 Franklin St): 4 HPD violations (Score: 88)
-- **Building 6** (68 Perry St): 12 HPD violations (Score: 64)
-- **Building 11** (123 1st Ave): 4 HPD violations (Score: 88)
-- **9 buildings**: Clean records (Score: 100)
-- **Total Portfolio**: 28 active HPD violations
-- **DOB/DSNY/ECB**: 0 active violations found
+- **Building 1** (12 West 18th St): 6 HPD (Score: 82)
+- **Building 3** (135-139 West 17th St): 2 HPD (Score: 94)
+- **Building 4** (104 Franklin St): 4 HPD, 13 DSNY, $1,327 outstanding (Score: 75)
+- **Building 6** (68 Perry St): 12 HPD, 11 DSNY, $2,100 outstanding (Score: 45)
+- **Building 10** (131 Perry St): 1 DSNY, $2,550 outstanding (Score: 70)
+- **Building 11** (123 1st Ave): 4 HPD (Score: 88)
+- **Building 17** (178 Spring St): 3 DOB, 1 DSNY, **$14,687 outstanding** (Score: 30) ⚠️
+- **Building 18** (36 Walker St): 2 DOB, 8 DSNY, $7,150 outstanding (Score: 40)
+- **Building 21** (148 Chambers St): 3 DOB, 13 DSNY, $12,000 outstanding (Score: 35)
+- **Total Portfolio Outstanding**: **$39,814**
 
-**Data Sources**:
-- HPD API: `https://data.cityofnewyork.us/resource/wvxf-dwi5.json`
-- DOB API: `https://data.cityofnewyork.us/resource/3h2n-5cm9.json`
-- ECB API: `https://data.cityofnewyork.us/resource/6bgk-3dad.json`
+**Critical Findings**:
+- **Building 17** has scaffolding violation with $10,000 penalty (DOCKETED)
+- Multiple buildings have recurring DSNY violations (dirty sidewalk, improper receptacles)
+- DOB violations primarily related to building code compliance and permits
+
+**Data Sources & Methods for Ongoing Monitoring**:
+
+**HPD Violations (Housing Preservation & Development)**
+- API: `https://data.cityofnewyork.us/resource/wvxf-dwi5.json`
+- Filter: `?$where=bbl='[BBL]' and violationstatus='Open'`
+- Returns: Housing maintenance violations, building condition issues
+- Update Frequency: Weekly recommended
+
+**OATH Hearings Division (DSNY & DOB Violations)**
+- API: `https://data.cityofnewyork.us/resource/jz4z-kudi.json`
+- Filter: `?$where=violation_location_house='[NUM]' and upper(violation_location_street_name) like '%[STREET]%'`
+- DSNY Agencies: SANITATION OTHERS, SANITATION DEPT, DOS - ENFORCEMENT AGENTS, etc.
+- DOB Agencies: DEPT. OF BUILDINGS
+- Returns: Sanitation tickets, DOB violations, outstanding penalties
+- Update Frequency: Weekly recommended
+
+**Property Values (PLUTO Dataset)**
+- API: `https://data.cityofnewyork.us/resource/64uk-42ks.json`
+- Filter: `?$where=bbl='[BBL]'`
+- Returns: Assessed values, building characteristics, tax information
+- Update Frequency: Annually (PLUTO updates once per year)
+
+**Implementation Notes**:
+- Always use BBL for HPD searches (most accurate)
+- Use house number + street name for OATH searches
+- Filter OATH by agency to separate DSNY from DOB violations
+- Check `hearing_status` for active vs resolved violations
+- Sum `balance_due` or `penalty_imposed` for outstanding amounts
 
 #### **🗄️ Supabase Integration - COMPLETE**
 - **Security Hardening**: Removed hardcoded credentials, environment-only configuration

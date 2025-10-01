@@ -138,7 +138,7 @@ export class ServiceContainer {
     
     // Initialize essential services synchronously
     this.database = DatabaseManager.getInstance({ path: config.databasePath });
-    this.operationalData = new OperationalDataService(this.database);
+    this.operationalData = OperationalDataService.getInstance();
     this.databaseIntegration = DatabaseIntegrationService.getInstance(this.database);
     this.auth = AuthService.getInstance(this.database);
     this.sessionManager = SessionManager.getInstance(this.database, this.auth);
@@ -172,7 +172,7 @@ export class ServiceContainer {
       console.log('✅ Layer 0: Database connected');
       
       // Initialize operational data
-      await this.operationalData.loadOperationalData();
+      await this.operationalData.initialize();
       console.log('✅ Layer 0: Operational data loaded');
       
       // Initialize essential services
@@ -783,7 +783,7 @@ export class ServiceContainer {
 
   public get compliance(): ComplianceService {
     if (!this._compliance) {
-      this._compliance = ComplianceService.getInstance();
+      this._compliance = ComplianceService.getInstance(this);
     }
     return this._compliance;
   }

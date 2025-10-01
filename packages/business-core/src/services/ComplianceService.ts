@@ -24,14 +24,16 @@ export class ComplianceService {
   private complianceCache: Map<string, any> = new Map();
   private updateSubscribers: Set<(update: ComplianceIssue) => void> = new Set();
 
-  constructor(container?: ServiceContainer) {
-    this.container = container || ServiceContainer.getInstance();
+  private constructor(container: ServiceContainer) {
+    this.container = container;
     this.nycAPI = new NYCAPIService();
   }
 
-  public static getInstance(): ComplianceService {
+  public static getInstance(container: ServiceContainer): ComplianceService {
     if (!ComplianceService.instance) {
-      ComplianceService.instance = new ComplianceService();
+      ComplianceService.instance = new ComplianceService(container);
+    } else {
+      ComplianceService.instance.container = container;
     }
     return ComplianceService.instance;
   }

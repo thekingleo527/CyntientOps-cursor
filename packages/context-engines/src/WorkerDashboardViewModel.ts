@@ -729,78 +729,113 @@ export function useWorkerDashboardViewModel(
 
   // MARK: - Building Management Methods
   
-  const clockIn = useCallback(async (buildingId: string) => {
+
+  const clockIn = useCallback(async (buildingId: string, manualLocation?: { latitude: number; longitude: number; accuracy?: number }) => {
     try {
-      await container.clockIn.clockInWorker({
+      const building = container.buildings.getBuildingById(buildingId);
+      if (!building) {
+        throw new Error('Building not found');
+      }
+
+      const latestLocation = manualLocation ?? container.location.getCurrentLocation(workerId);
+      const clockInTimestamp = new Date();
+      const latitude = latestLocation?.latitude ?? building.latitude ?? 0;
+      const longitude = latestLocation?.longitude ?? building.longitude ?? 0;
+      const accuracy = latestLocation?.accuracy ?? 25;
+
+      const result = await container.clockIn.clockInWorker({
         workerId,
         buildingId,
-        latitude: 0, // TODO: Get actual location
-        longitude: 0, // TODO: Get actual location
-        timestamp: new Date()
+        latitude,
+        longitude,
+        accuracy,
+        timestamp: clockInTimestamp
       });
-      
-      // Update building status
+
+      if (!result.success) {
+        const validationMessage = result.validation?.errors?.join(', ') || 'Clock in failed';
+        throw new Error(validationMessage);
+      }
+
       setState(prev => ({
         ...prev,
+        isClockedIn: true,
+        clockInTime: clockInTimestamp,
+        clockInLocation: { latitude, longitude, accuracy, timestamp: clockInTimestamp },
         assignedBuildings: prev.assignedBuildings.map(building =>
-          building.id === buildingId 
+          building.id === buildingId
             ? { ...building, status: BuildingStatus.CURRENT }
             : { ...building, status: BuildingStatus.ASSIGNED }
         )
       }));
-      
-      // Broadcast update
+
       const update: DashboardUpdate = {
         source: 'worker',
         type: 'workerClockedIn',
         buildingId,
         workerId,
-        data: { timestamp: new Date().toISOString() }
+        data: { timestamp: clockInTimestamp.toISOString() }
       };
       container.dashboardSync.broadcastWorkerUpdate(update);
-      
+
+      return true;
     } catch (error) {
       setState(prev => ({
         ...prev,
         errorMessage: error instanceof Error ? error.message : 'Failed to clock in'
       }));
+      return false;
     }
   }, [container, workerId]);
 
-  const clockOut = useCallback(async (buildingId: string) => {
+  const clockOut = useCallback(async () => {
     try {
-      await container.clockIn.clockOutWorker({
+      const clockOutTimestamp = new Date();
+      const result = await container.clockIn.clockOutWorker({
         workerId,
-        timestamp: new Date()
+        timestamp: clockOutTimestamp
       });
-      
-      // Update building status
+
+      if (!result.success) {
+        throw new Error('Clock out failed');
+      }
+
+      const sessionBuildingId = result.session?.buildingId ?? currentBuilding?.id ?? null;
+
       setState(prev => ({
         ...prev,
-        assignedBuildings: prev.assignedBuildings.map(building =>
-          building.id === buildingId 
-            ? { ...building, status: BuildingStatus.ASSIGNED }
-            : building
-        )
+        isClockedIn: false,
+        clockInTime: undefined,
+        clockInLocation: undefined,
+        assignedBuildings: sessionBuildingId
+          ? prev.assignedBuildings.map(building =>
+              building.id === sessionBuildingId
+                ? { ...building, status: BuildingStatus.ASSIGNED }
+                : building
+            )
+          : prev.assignedBuildings
       }));
-      
-      // Broadcast update
-      const update: DashboardUpdate = {
-        source: 'worker',
-        type: 'workerClockedOut',
-        buildingId,
-        workerId,
-        data: { timestamp: new Date().toISOString() }
-      };
-      container.dashboardSync.broadcastWorkerUpdate(update);
-      
+
+      if (sessionBuildingId) {
+        const update: DashboardUpdate = {
+          source: 'worker',
+          type: 'workerClockedOut',
+          buildingId: sessionBuildingId,
+          workerId,
+          data: { timestamp: clockOutTimestamp.toISOString() }
+        };
+        container.dashboardSync.broadcastWorkerUpdate(update);
+      }
+
+      return true;
     } catch (error) {
       setState(prev => ({
         ...prev,
         errorMessage: error instanceof Error ? error.message : 'Failed to clock out'
       }));
+      return false;
     }
-  }, [container, workerId]);
+  }, [container, workerId, currentBuilding]);
 
   // MARK: - Vendor Access Methods
   

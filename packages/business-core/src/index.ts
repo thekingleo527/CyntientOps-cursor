@@ -32,6 +32,10 @@ export { BuildingMetricsService } from './services/BuildingMetricsService';
 export { ComplianceService } from './services/ComplianceService';
 export { NYCService } from './services/NYCService';
 export { AnalyticsService } from './services/AnalyticsService';
+export { NotesService } from './services/NotesService';
+export { InventoryService } from './services/InventoryService';
+export { VendorAccessService } from './services/VendorAccessService';
+export { SystemService } from './services/SystemService';
 
 // Managers
 export { ClockInManager } from './managers/ClockInManager';

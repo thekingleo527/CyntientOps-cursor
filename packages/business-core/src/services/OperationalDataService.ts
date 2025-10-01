@@ -41,6 +41,17 @@ export class OperationalDataService {
   }
 
   /**
+   * Ensure operational data is loaded before use
+   */
+  public async initialize(): Promise<void> {
+    if (this.state.isLoaded) {
+      return;
+    }
+
+    await this.loadOperationalData();
+  }
+
+  /**
    * Initialize operational data - mirrors Swift loadOperationalData()
    */
   public async loadOperationalData(): Promise<void> {

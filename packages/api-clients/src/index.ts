@@ -62,25 +62,42 @@ export interface APIConfiguration {
   quickBooksCredentials?: any; // QuickBooksCredentials
 }
 
+// Import actual API clients
+import { HPDAPIClient } from './nyc/HPDAPIClient';
+import { DOBAPIClient } from './nyc/DOBAPIClient';
+import { DSNYAPIClient } from './nyc/DSNYAPIClient';
+import { WeatherAPIClient } from './weather/WeatherAPIClient';
+import { QuickBooksAPIClient } from './quickbooks/QuickBooksAPIClient';
+
 // API Client Manager
 export class APIClientManager {
   private static instance: APIClientManager;
-  
-  public readonly nyc: any; // NYCAPIService
-  public readonly nycCompliance: any; // NYCComplianceService
-  public readonly nycCoordinator: any; // NYCDataCoordinator
-  public readonly weather: any; // WeatherAPIClient
-  public readonly quickBooks?: any; // QuickBooksAPIClient
+
+  public readonly nyc: NYCAPIService;
+  public readonly nycCompliance: NYCComplianceService;
+  public readonly nycCoordinator: NYCDataCoordinator;
+  public readonly hpd: HPDAPIClient;
+  public readonly dob: DOBAPIClient;
+  public readonly dsny: DSNYAPIClient;
+  public readonly weather: WeatherAPIClient;
+  public readonly quickBooks?: QuickBooksAPIClient;
 
   private constructor(config: APIConfiguration) {
-    // Mock implementations for development
-    this.nyc = { name: 'NYCAPIService' };
-    this.nycCompliance = { name: 'NYCComplianceService' };
-    this.nycCoordinator = { name: 'NYCDataCoordinator' };
-    this.weather = { name: 'WeatherAPIClient' };
-    
+    // Initialize real API clients
+    this.nyc = nycAPIService;
+    this.nycCompliance = nycComplianceService;
+    this.nycCoordinator = nycDataCoordinator;
+    this.hpd = new HPDAPIClient(config.hpdApiKey);
+    this.dob = new DOBAPIClient(config.dobApiKey);
+    this.dsny = new DSNYAPIClient(config.dsnyApiKey);
+    this.weather = new WeatherAPIClient(
+      config.weatherApiKey,
+      config.weatherLatitude,
+      config.weatherLongitude
+    );
+
     if (config.quickBooksCredentials) {
-      this.quickBooks = { name: 'QuickBooksAPIClient' };
+      this.quickBooks = new QuickBooksAPIClient(config.quickBooksCredentials);
     }
   }
 

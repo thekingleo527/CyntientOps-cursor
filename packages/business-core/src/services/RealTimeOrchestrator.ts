@@ -414,16 +414,16 @@ export class RealTimeOrchestrator {
       timestamp: event.timestamp
     };
     
-    // Broadcast to appropriate dashboards
+    // Broadcast to appropriate dashboards using the orchestrator itself as the sync layer
     switch (event.source) {
       case 'worker':
-        this.dashboardSync.broadcastWorkerUpdate(dashboardUpdate);
+        this.broadcastWorkerUpdate(dashboardUpdate);
         break;
       case 'admin':
-        this.dashboardSync.broadcastAdminUpdate(dashboardUpdate);
+        this.broadcastAdminUpdate(dashboardUpdate);
         break;
       case 'client':
-        this.dashboardSync.broadcastClientUpdate(dashboardUpdate);
+        this.broadcastClientUpdate(dashboardUpdate);
         break;
     }
   }
@@ -629,6 +629,8 @@ export class RealTimeOrchestrator {
   // MARK: - Convenience Broadcasting Methods
   
   public onWorkerClockedIn(workerId: string, buildingId: string, buildingName?: string): void {
+    const resolvedBuildingName = buildingName ?? this.getBuildingName(buildingId);
+
     const update: DashboardUpdate = {
       id: this.generateUpdateId(),
       source: 'worker' as DashboardUpdateSource,
@@ -636,8 +638,8 @@ export class RealTimeOrchestrator {
       buildingId,
       workerId,
       data: {
-        buildingName: buildingName || '',
-        workerName: this.getWorkerName(event.data.workerId), // Get from database
+        buildingName: resolvedBuildingName,
+        workerName: this.getWorkerName(workerId), // Get from database
         timestamp: new Date().toISOString()
       },
       timestamp: new Date()
@@ -653,8 +655,8 @@ export class RealTimeOrchestrator {
       buildingId,
       workerId,
       data: {
-        buildingName: this.getBuildingName(event.data.buildingId), // Get from database
-        workerName: this.getWorkerName(event.data.workerId), // Get from database
+        buildingName: this.getBuildingName(buildingId), // Get from database
+        workerName: this.getWorkerName(workerId), // Get from database
         duration: duration ? `${Math.floor(duration / 3600)}h ${Math.floor((duration % 3600) / 60)}m` : '',
         timestamp: new Date().toISOString()
       },
@@ -673,8 +675,8 @@ export class RealTimeOrchestrator {
       data: {
         taskId,
         taskName: taskName || 'task',
-        buildingName: this.getBuildingName(event.data.buildingId), // Get from database
-        workerName: this.getWorkerName(event.data.workerId), // Get from database
+        buildingName: this.getBuildingName(buildingId), // Get from database
+        workerName: this.getWorkerName(workerId), // Get from database
         timestamp: new Date().toISOString()
       },
       timestamp: new Date()

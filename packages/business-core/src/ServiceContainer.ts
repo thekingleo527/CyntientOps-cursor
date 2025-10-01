@@ -992,7 +992,7 @@ export class ServiceContainer {
     let count = 0;
     if (this._webSocket?.isConnected()) count++;
     if (this._realTimeSync) count++;
-    if (this._weatherTaskManager) count++;
+    if (this._weatherTasks) count++;
     return count;
   }
   

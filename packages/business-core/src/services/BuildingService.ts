@@ -34,14 +34,18 @@ export interface BuildingMaintenanceSchedule {
   upcomingTasks: number;
 }
 
+import { APIClientManager } from '@cyntientops/api-clients';
+
 export class BuildingService {
   private operationalDataService: OperationalDataService;
   private workerService: WorkerService;
   private buildingMetrics: Map<string, BuildingMetrics> = new Map();
+  private apiClients?: APIClientManager;
 
-  constructor() {
+  constructor(apiClients?: APIClientManager) {
     this.operationalDataService = OperationalDataService.getInstance();
     this.workerService = new WorkerService();
+    this.apiClients = apiClients;
   }
 
   /**
@@ -406,23 +410,53 @@ export class BuildingService {
    * Get HPD violations for a building
    */
   private async getHPDViolations(buildingId: string): Promise<number> {
-    // Placeholder implementation - integrate with HPD API
-    return Math.floor(Math.random() * 5); // 0-4 violations
+    if (!this.apiClients) {
+      console.warn('API clients not initialized, returning 0 violations');
+      return 0;
+    }
+
+    try {
+      const violations = await this.apiClients.hpd.getViolationsForBuilding(buildingId, '');
+      return violations.filter(v => v.isActive).length;
+    } catch (error) {
+      console.error('Failed to get HPD violations:', error);
+      return 0;
+    }
   }
 
   /**
    * Get DOB permits for a building
    */
   private async getDOBPermits(buildingId: string): Promise<number> {
-    // Placeholder implementation - integrate with DOB API
-    return Math.floor(Math.random() * 3); // 0-2 permits
+    if (!this.apiClients) {
+      console.warn('API clients not initialized, returning 0 permits');
+      return 0;
+    }
+
+    try {
+      const permits = await this.apiClients.dob.getPermitsForBuilding(buildingId);
+      return permits.length;
+    } catch (error) {
+      console.error('Failed to get DOB permits:', error);
+      return 0;
+    }
   }
 
   /**
    * Get DSNY compliance status for a building
    */
   private async getDSNYCompliance(buildingId: string): Promise<boolean> {
-    // Placeholder implementation - integrate with DSNY API
-    return Math.random() > 0.2; // 80% compliance rate
+    if (!this.apiClients) {
+      console.warn('API clients not initialized, returning false');
+      return false;
+    }
+
+    try {
+      const violations = await this.apiClients.dsny.getViolationsForBuilding(buildingId);
+      return violations.length === 0;
+    } catch (error) {
+      console.error('Failed to get DSNY compliance:', error);
+      return false;
+    }
   }
 }

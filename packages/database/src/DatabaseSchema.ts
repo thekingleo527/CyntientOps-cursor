@@ -26,7 +26,13 @@ export class DatabaseSchema {
       this.createTimeTheftAlertsTable(),
       this.createMLModelsTable(),
       this.createVersionHistoryTable(),
-      this.createConflictResolutionTable()
+      this.createConflictResolutionTable(),
+      this.createOfflineQueueTable(),
+      this.createIssuesTable(),
+      this.createSupplyRequestsTable(),
+      this.createBuildingActivityTable(),
+      this.createDashboardUpdatesTable(),
+      this.createCacheEntriesTable()
     ];
   }
 
@@ -358,7 +364,21 @@ export class DatabaseSchema {
       'CREATE INDEX IF NOT EXISTS idx_time_theft_alerts_status ON time_theft_alerts(status);',
       'CREATE INDEX IF NOT EXISTS idx_ml_models_name ON ml_models(name);',
       'CREATE INDEX IF NOT EXISTS idx_version_history_record ON version_history(record_id, table_name);',
-      'CREATE INDEX IF NOT EXISTS idx_conflict_resolution_status ON conflict_resolution(status);'
+      'CREATE INDEX IF NOT EXISTS idx_conflict_resolution_status ON conflict_resolution(status);',
+      'CREATE INDEX IF NOT EXISTS idx_offline_queue_priority ON offline_queue(priority, created_at);',
+      'CREATE INDEX IF NOT EXISTS idx_issues_building ON issues(building_id);',
+      'CREATE INDEX IF NOT EXISTS idx_issues_worker ON issues(worker_id);',
+      'CREATE INDEX IF NOT EXISTS idx_issues_status ON issues(status);',
+      'CREATE INDEX IF NOT EXISTS idx_supply_requests_building ON supply_requests(building_id);',
+      'CREATE INDEX IF NOT EXISTS idx_supply_requests_worker ON supply_requests(worker_id);',
+      'CREATE INDEX IF NOT EXISTS idx_supply_requests_status ON supply_requests(status);',
+      'CREATE INDEX IF NOT EXISTS idx_building_activity_building ON building_activity(building_id);',
+      'CREATE INDEX IF NOT EXISTS idx_building_activity_timestamp ON building_activity(timestamp);',
+      'CREATE INDEX IF NOT EXISTS idx_dashboard_updates_building ON dashboard_updates(building_id);',
+      'CREATE INDEX IF NOT EXISTS idx_dashboard_updates_worker ON dashboard_updates(worker_id);',
+      'CREATE INDEX IF NOT EXISTS idx_dashboard_updates_timestamp ON dashboard_updates(timestamp);',
+      'CREATE INDEX IF NOT EXISTS idx_cache_entries_key ON cache_entries(cache_key);',
+      'CREATE INDEX IF NOT EXISTS idx_cache_entries_expires ON cache_entries(expires_at);'
     ];
   }
 
@@ -424,6 +444,114 @@ export class DatabaseSchema {
         status TEXT DEFAULT 'pending',
         notes TEXT,
         created_at INTEGER DEFAULT (strftime('%s', 'now'))
+      )
+    `;
+  }
+
+  private createOfflineQueueTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS offline_queue (
+        id TEXT PRIMARY KEY,
+        update_type TEXT NOT NULL,
+        update_data TEXT NOT NULL,
+        priority TEXT DEFAULT 'normal',
+        retry_count INTEGER DEFAULT 0,
+        max_retries INTEGER DEFAULT 3,
+        last_attempt TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+  }
+
+  private createIssuesTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS issues (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        worker_id TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        priority TEXT DEFAULT 'medium',
+        status TEXT DEFAULT 'open',
+        category TEXT,
+        assigned_to TEXT,
+        due_date TEXT,
+        resolved_at TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      )
+    `;
+  }
+
+  private createSupplyRequestsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS supply_requests (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        worker_id TEXT NOT NULL,
+        item_name TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        urgency TEXT DEFAULT 'normal',
+        status TEXT DEFAULT 'pending',
+        category TEXT,
+        requested_for TEXT,
+        fulfilled_at TEXT,
+        fulfilled_by TEXT,
+        notes TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      )
+    `;
+  }
+
+  private createBuildingActivityTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS building_activity (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        worker_id TEXT,
+        type TEXT NOT NULL,
+        description TEXT NOT NULL,
+        metadata TEXT,
+        timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      )
+    `;
+  }
+
+  private createDashboardUpdatesTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS dashboard_updates (
+        id TEXT PRIMARY KEY,
+        building_id TEXT,
+        worker_id TEXT,
+        type TEXT NOT NULL,
+        data TEXT NOT NULL,
+        version INTEGER DEFAULT 1,
+        timestamp TEXT NOT NULL,
+        hash TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      )
+    `;
+  }
+
+  private createCacheEntriesTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS cache_entries (
+        id TEXT PRIMARY KEY,
+        cache_key TEXT UNIQUE NOT NULL,
+        cache_value TEXT NOT NULL,
+        expires_at TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `;
   }

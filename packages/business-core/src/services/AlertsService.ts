@@ -3,7 +3,7 @@
  * Manages critical alerts and notifications
  */
 
-import { OperationalDataService } from '../data/OperationalDataService';
+import { OperationalDataService } from './OperationalDataService';
 import { BuildingService } from './BuildingService';
 import { WorkerService } from './WorkerService';
 import { TaskService } from './TaskService';
@@ -166,19 +166,23 @@ export class AlertsService {
     const now = new Date();
     
     tasks.forEach(task => {
-      if (!task.isCompleted && task.due_date) {
-        const dueDate = new Date(task.due_date);
-        const hoursOverdue = (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60);
+      // Check if task is overdue based on estimated duration and start time
+      if (!task.isCompleted && task.estimatedDuration) {
+        // For routine tasks, check if they should have been completed by now
+        const startTime = new Date();
+        startTime.setHours(task.startHour || 6, 0, 0, 0);
+        const estimatedEndTime = new Date(startTime.getTime() + (task.estimatedDuration * 60 * 1000));
+        const hoursOverdue = (now.getTime() - estimatedEndTime.getTime()) / (1000 * 60 * 60);
         
         if (hoursOverdue > 0) {
           this.alerts.push({
             id: `overdue-${task.id}`,
             type: 'task_overdue',
             severity: hoursOverdue > 24 ? 'high' : 'medium',
-            title: `Overdue Task - ${task.name}`,
-            description: `Task "${task.name}" is ${Math.round(hoursOverdue)} hours overdue.`,
-            buildingId: task.assigned_building_id,
-            workerId: task.assigned_worker_id,
+            title: `Overdue Task - ${task.title}`,
+            description: `Task "${task.title}" is ${Math.round(hoursOverdue)} hours overdue.`,
+            buildingId: task.buildingId,
+            workerId: task.workerId,
             taskId: task.id,
             createdAt: new Date(),
             acknowledged: false,

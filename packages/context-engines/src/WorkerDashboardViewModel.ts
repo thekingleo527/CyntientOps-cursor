@@ -731,7 +731,7 @@ export function useWorkerDashboardViewModel(
   
   const clockIn = useCallback(async (buildingId: string) => {
     try {
-      await container.clockIn.clockIn(buildingId, workerId);
+      await container.clockIn.clockInWorker(buildingId, workerId);
       
       // Update building status
       setState(prev => ({
@@ -763,7 +763,7 @@ export function useWorkerDashboardViewModel(
 
   const clockOut = useCallback(async (buildingId: string) => {
     try {
-      await container.clockIn.clockOut(buildingId, workerId);
+      await container.clockIn.clockOutWorker(buildingId, workerId);
       
       // Update building status
       setState(prev => ({

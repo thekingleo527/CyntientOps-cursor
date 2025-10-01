@@ -39,8 +39,14 @@ export interface TaskSchedule {
 export class TaskService {
   private static instance: TaskService;
   private routines: RoutineTask[] = [];
+  private database: any;
+  private dashboardSync: any;
+  private operationalDataService: OperationalDataService;
 
-  constructor() {
+  constructor(database?: any, dashboardSync?: any) {
+    this.database = database;
+    this.dashboardSync = dashboardSync;
+    this.operationalDataService = OperationalDataService.getInstance();
     this.initializeRoutines();
   }
 

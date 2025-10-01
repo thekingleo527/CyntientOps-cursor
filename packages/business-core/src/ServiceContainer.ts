@@ -15,6 +15,10 @@ import { WebSocketManager } from '@cyntientops/realtime-sync';
 import { OfflineManager } from '@cyntientops/offline-support';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
 import { AlertsService } from './services/AlertsService';
+import { BuildingMetricsService } from './services/BuildingMetricsService';
+import { ComplianceService } from './services/ComplianceService';
+import { NYCService } from './services/NYCService';
+import { AnalyticsService } from './services/AnalyticsService';
 
 // Services
 import { TaskService } from './services/TaskService';
@@ -86,8 +90,8 @@ export class ServiceContainer {
   private _productionManager: ProductionManager | null = null;
   private _buildingInfrastructureCatalog: BuildingInfrastructureCatalog | null = null;
   private _commandChainManager: CommandChainManager | null = null;
-  private _metrics: any | null = null; // TODO: Implement BuildingMetricsService
-  private _compliance: any | null = null; // TODO: Implement ComplianceService
+  private _metrics: BuildingMetricsService | null = null;
+  private _compliance: ComplianceService | null = null;
   private _webSocket: WebSocketManager | null = null;
   private _notes: any | null = null; // TODO: Implement NotesService
   private _inventory: any | null = null; // TODO: Implement InventoryService
@@ -107,9 +111,9 @@ export class ServiceContainer {
   private _issueReportingCatalog: any | null = null;
   private _supplyRequestCatalog: any | null = null;
   private _photoCatalog: any | null = null;
-  private _nyc: any | null = null; // TODO: Implement NYCService
+  private _nyc: NYCService | null = null;
   private _photos: any | null = null; // TODO: Implement PhotosService
-  private _analytics: any | null = null; // TODO: Implement AnalyticsService
+  private _analytics: AnalyticsService | null = null;
   
   // MARK: - Layer 3: Intelligence (ASYNC INIT)
   private _intelligence: IntelligenceService | null = null;
@@ -260,7 +264,7 @@ export class ServiceContainer {
     if (!this._realTimeSync) {
       this._realTimeSync = RealTimeSyncService.getInstance(
         operationalDataManager,
-        this.webSocketManager,
+        this.webSocket,
         {
           enableRealTimeSync: this.config.enableRealTimeSync,
           syncInterval: 30000,
@@ -529,15 +533,10 @@ export class ServiceContainer {
 
   public get buildingMetricsCatalog(): any {
     if (!this._buildingMetricsCatalog) {
-      // TODO: Implement BuildingMetricsCatalog
       this._buildingMetricsCatalog = {
-        getBuildingMetrics: (buildingId: string) => ({
-          efficiencyScore: 85,
-          complianceScore: 'A',
-          complianceStatus: 'compliant',
-          openIssues: 2,
-          violations: 0,
-        }),
+        getBuildingMetrics: async (buildingId: string) => {
+          return await this.metrics.getBuildingMetrics(buildingId);
+        },
       };
     }
     return this._buildingMetricsCatalog;
@@ -775,6 +774,20 @@ export class ServiceContainer {
     return this._alerts;
   }
 
+  public get metrics(): BuildingMetricsService {
+    if (!this._metrics) {
+      this._metrics = BuildingMetricsService.getInstance();
+    }
+    return this._metrics;
+  }
+
+  public get compliance(): ComplianceService {
+    if (!this._compliance) {
+      this._compliance = ComplianceService.getInstance();
+    }
+    return this._compliance;
+  }
+
   public get system(): any {
     if (!this._system) {
       // TODO: Implement SystemService
@@ -785,16 +798,9 @@ export class ServiceContainer {
     return this._system;
   }
 
-  public get nyc(): any {
+  public get nyc(): NYCService {
     if (!this._nyc) {
-      // TODO: Implement NYCService
-      this._nyc = {
-        getHPDViolations: async (buildingId: string) => [],
-        getDOBPermits: async (buildingId: string) => [],
-        getDSNYSchedule: async (buildingId: string) => [],
-        getDSNYViolations: async (buildingId: string) => [],
-        getLL97Emissions: async (buildingId: string) => []
-      };
+      this._nyc = NYCService.getInstance();
     }
     return this._nyc;
   }
@@ -809,13 +815,9 @@ export class ServiceContainer {
     return this._photos;
   }
 
-  public get analytics(): any {
+  public get analytics(): AnalyticsService {
     if (!this._analytics) {
-      // TODO: Implement AnalyticsService
-      this._analytics = {
-        generatePortfolioReport: async (clientId: string) => ({}),
-        exportBuildingData: async (buildingId: string) => ({})
-      };
+      this._analytics = AnalyticsService.getInstance();
     }
     return this._analytics;
   }
@@ -910,7 +912,7 @@ export class ServiceContainer {
       authInitialized: this.auth !== null,
       tasksLoaded: this._tasks !== null,
       intelligenceActive: this._intelligence !== null,
-      syncActive: this._dashboardSync !== null,
+      syncActive: this._realTimeSync !== null,
       offlineQueueSize: 0, // TODO: Get from offline manager
       cacheSize: 0, // TODO: Get from cache manager
       backgroundTasksActive: 0 // TODO: Track background tasks

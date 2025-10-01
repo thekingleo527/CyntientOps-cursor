@@ -28,6 +28,10 @@ export { RouteOptimizationService } from './services/RouteOptimizationService';
 export { AdvancedVoiceProcessingService } from './services/AdvancedVoiceProcessingService';
 export { IntelligenceService } from './services/IntelligenceService';
 export { AlertsService } from './services/AlertsService';
+export { BuildingMetricsService } from './services/BuildingMetricsService';
+export { ComplianceService } from './services/ComplianceService';
+export { NYCService } from './services/NYCService';
+export { AnalyticsService } from './services/AnalyticsService';
 
 // Managers
 export { ClockInManager } from './managers/ClockInManager';

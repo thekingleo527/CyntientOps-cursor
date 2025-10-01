@@ -37,8 +37,12 @@ export class WorkerService {
   private operationalDataService: OperationalDataService;
   private workerLocations: Map<string, WorkerLocation> = new Map();
   private clockedInWorkers: Map<string, ClockInData> = new Map();
+  private database: any;
+  private dashboardSync: any;
 
-  constructor() {
+  constructor(database?: any, dashboardSync?: any) {
+    this.database = database;
+    this.dashboardSync = dashboardSync;
     this.operationalDataService = OperationalDataService.getInstance();
   }
 

@@ -14,6 +14,7 @@ import { ClockInManager, LocationManager, NotificationManager } from '@cyntiento
 import { IntelligenceService } from '@cyntientops/intelligence-services';
 import { ServiceContainer } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
+import { ErrorBoundary } from '@cyntientops/ui-components';
 
 interface WorkerDashboardScreenProps {
   workerId: string;
@@ -155,19 +156,21 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <WorkerDashboardMainView
-          state={viewModel.getState()}
-          onClockIn={handleClockIn}
-          onClockOut={handleClockOut}
-          onTaskUpdate={handleTaskUpdate}
-          onNotificationRead={handleNotificationRead}
-          onNavigateToTask={onNavigateToTask}
-          onNavigateToBuilding={onNavigateToBuilding}
-        />
-      </ScrollView>
-    </SafeAreaView>
+    <ErrorBoundary context="WorkerDashboardScreen">
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <WorkerDashboardMainView
+            state={viewModel.getState()}
+            onClockIn={handleClockIn}
+            onClockOut={handleClockOut}
+            onTaskUpdate={handleTaskUpdate}
+            onNotificationRead={handleNotificationRead}
+            onNavigateToTask={onNavigateToTask}
+            onNavigateToBuilding={onNavigateToBuilding}
+          />
+        </ScrollView>
+      </SafeAreaView>
+    </ErrorBoundary>
   );
 };
 

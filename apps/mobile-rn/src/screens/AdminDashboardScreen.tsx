@@ -14,6 +14,7 @@ import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
 import { ServiceContainer } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
+import { ErrorBoundary } from '@cyntientops/ui-components';
 
 interface AdminDashboardScreenProps {
   onNavigateToWorker?: (workerId: string) => void;
@@ -133,19 +134,21 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <AdminDashboard
-          state={viewModel.getState()}
-          onWorkerStatusUpdate={handleWorkerStatusUpdate}
-          onAlertResolve={handleAlertResolve}
-          onNotificationRead={handleNotificationRead}
-          onNavigateToWorker={onNavigateToWorker}
-          onNavigateToBuilding={onNavigateToBuilding}
-          onNavigateToClient={onNavigateToClient}
-        />
-      </ScrollView>
-    </SafeAreaView>
+    <ErrorBoundary context="AdminDashboardScreen">
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <AdminDashboard
+            state={viewModel.getState()}
+            onWorkerStatusUpdate={handleWorkerStatusUpdate}
+            onAlertResolve={handleAlertResolve}
+            onNotificationRead={handleNotificationRead}
+            onNavigateToWorker={onNavigateToWorker}
+            onNavigateToBuilding={onNavigateToBuilding}
+            onNavigateToClient={onNavigateToClient}
+          />
+        </ScrollView>
+      </SafeAreaView>
+    </ErrorBoundary>
   );
 };
 

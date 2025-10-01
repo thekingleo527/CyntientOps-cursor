@@ -14,6 +14,7 @@ import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
 import { ServiceContainer } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
+import { ErrorBoundary } from '@cyntientops/ui-components';
 
 interface ClientDashboardScreenProps {
   clientId: string;
@@ -123,17 +124,19 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <ClientDashboard
-          state={viewModel.getState()}
-          onBuildingUpdate={handleBuildingUpdate}
-          onNotificationRead={handleNotificationRead}
-          onNavigateToBuilding={onNavigateToBuilding}
-          onNavigateToWorker={onNavigateToWorker}
-        />
-      </ScrollView>
-    </SafeAreaView>
+    <ErrorBoundary context="ClientDashboardScreen">
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <ClientDashboard
+            state={viewModel.getState()}
+            onBuildingUpdate={handleBuildingUpdate}
+            onNotificationRead={handleNotificationRead}
+            onNavigateToBuilding={onNavigateToBuilding}
+            onNavigateToWorker={onNavigateToWorker}
+          />
+        </ScrollView>
+      </SafeAreaView>
+    </ErrorBoundary>
   );
 };
 

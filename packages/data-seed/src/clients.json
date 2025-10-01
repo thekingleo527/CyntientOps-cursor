@@ -6,7 +6,11 @@
     "contact_email": "David@jmrealty.org",
     "contact_phone": "+1 (212) 555-0200",
     "address": "350 Fifth Avenue, New York, NY 10118",
-    "is_active": true
+    "is_active": true,
+    "manager_name": "David & Jerry",
+    "manager_title": "Property Managers",
+    "building_count": 10,
+    "building_ids": ["1", "3", "5", "6", "7", "9", "10", "11", "14", "17"]
   },
   {
     "id": "WFR",
@@ -15,7 +19,11 @@
     "contact_email": "mfarhat@farhatrealtymanagement.com",
     "contact_phone": "+1 (212) 555-0201",
     "address": "136 West 17th Street, New York, NY 10011",
-    "is_active": true
+    "is_active": true,
+    "manager_name": "Moises",
+    "manager_title": "Property Manager",
+    "building_count": 1,
+    "building_ids": ["13"]
   },
   {
     "id": "SOL",
@@ -24,16 +32,24 @@
     "contact_email": "facilities@solarone.org",
     "contact_phone": "+1 (212) 555-0202",
     "address": "Stuyvesant Cove Park, New York, NY 10009",
-    "is_active": true
+    "is_active": true,
+    "manager_name": "Candace",
+    "manager_title": "Facilities Manager",
+    "building_count": 1,
+    "building_ids": ["16"]
   },
   {
     "id": "GEL",
-    "name": "Grand Elizabeth LLC",
-    "short_name": "GEL",
-    "contact_email": "management@grandelizabeth.com",
+    "name": "Remid Group",
+    "short_name": "RMD",
+    "contact_email": "management@remidgroup.com",
     "contact_phone": "+1 (212) 555-0203",
     "address": "41 Elizabeth Street, New York, NY 10013",
-    "is_active": true
+    "is_active": true,
+    "manager_name": "Michelle",
+    "manager_title": "Property Manager",
+    "building_count": 1,
+    "building_ids": ["8"]
   },
   {
     "id": "CIT",
@@ -42,16 +58,24 @@
     "contact_email": "property@citadelrealty.com",
     "contact_phone": "+1 (212) 555-0204",
     "address": "104 Franklin Street, New York, NY 10013",
-    "is_active": true
+    "is_active": true,
+    "manager_name": "Stephen",
+    "manager_title": "Property Manager",
+    "building_count": 2,
+    "building_ids": ["4", "18"]
   },
   {
     "id": "COR",
-    "name": "Corbel Property",
+    "name": "Corbel Property Management",
     "short_name": "COR",
     "contact_email": "admin@corbelproperty.com",
     "contact_phone": "+1 (212) 555-0205",
     "address": "133 East 15th Street, New York, NY 10003",
-    "is_active": true
+    "is_active": true,
+    "manager_name": "Spencer",
+    "manager_title": "Property Manager",
+    "building_count": 1,
+    "building_ids": ["15"]
   },
   {
     "id": "CHE",
@@ -60,6 +84,10 @@
     "contact_email": "management@chelsea115.com",
     "contact_phone": "+1 (212) 555-0206",
     "address": "115 7th Avenue, New York, NY 10011",
-    "is_active": true
+    "is_active": true,
+    "manager_name": "TBD",
+    "manager_title": "Property Manager",
+    "building_count": 1,
+    "building_ids": ["19"]
   }
 ]

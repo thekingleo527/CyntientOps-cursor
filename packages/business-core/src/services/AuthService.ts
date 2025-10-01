@@ -5,6 +5,7 @@
 
 import { UserRole, WorkerProfile, ClientProfile } from '@cyntientops/domain-schema';
 import { DatabaseManager } from '@cyntientops/database';
+import { OperationalDataService } from './OperationalDataService';
 
 export interface AuthUser {
   id: string;
@@ -160,46 +161,48 @@ export class AuthService {
    * Validate user credentials
    */
   private async validateCredentials(credentials: LoginCredentials): Promise<AuthUser | null> {
-    // Demo credentials for testing
-    const demoUsers = [
-      {
-        id: 'worker-1',
-        email: 'worker@cyntientops.com',
-        password: 'worker123',
-        role: 'worker' as UserRole,
-        name: 'John Worker',
-      },
-      {
-        id: 'admin-1',
-        email: 'admin@cyntientops.com',
-        password: 'admin123',
-        role: 'admin' as UserRole,
-        name: 'Admin User',
-      },
-      {
-        id: 'client-1',
-        email: 'client@cyntientops.com',
-        password: 'client123',
-        role: 'client' as UserRole,
-        name: 'Client User',
-      },
-    ];
+    const normalizedEmail = credentials.email.trim().toLowerCase();
+    const operationalData = OperationalDataService.getInstance();
 
-    const demoUser = demoUsers.find(
-      user => user.email === credentials.email && user.password === credentials.password
+    // Ensure operational data is ready for profile hydration
+    await operationalData.initialize();
+
+    // 1. Check workers (includes admins/managers)
+    const workers = await this.database.getWorkers();
+    const worker = workers.find(
+      (row: any) => (row.email || '').toLowerCase() === normalizedEmail
     );
 
-    if (demoUser) {
-      // Load profile from database
-      const profile = await this.loadUserProfile(demoUser.id, demoUser.role);
-      
+    if (worker && this.passwordMatches(credentials.password, worker.password)) {
+      const profile = operationalData.getWorkerById(worker.id);
+
       return {
-        id: demoUser.id,
-        email: demoUser.email,
-        role: demoUser.role,
-        name: demoUser.name,
+        id: worker.id,
+        email: worker.email,
+        role: (worker.role as UserRole) || 'worker',
+        name: worker.name,
         profile,
-        isAuthenticated: false, // Will be set to true after session creation
+        isAuthenticated: false,
+      };
+    }
+
+    // 2. Check client contact emails (shared portal password)
+    const clients = await this.database.getClients();
+    const client = clients.find((row: any) => {
+      const email = (row.email || row.contact_email || '').toLowerCase();
+      return email === normalizedEmail;
+    });
+
+    if (client && this.passwordMatches(credentials.password, 'client123')) {
+      const profile = operationalData.getClientById(client.id);
+
+      return {
+        id: client.id,
+        email: normalizedEmail,
+        role: 'client',
+        name: client.name,
+        profile,
+        isAuthenticated: false,
       };
     }
 
@@ -211,17 +214,20 @@ export class AuthService {
    */
   private async loadUserProfile(userId: string, role: UserRole): Promise<WorkerProfile | ClientProfile | undefined> {
     try {
-      if (role === 'worker') {
-        const workers = await this.database.getWorkers();
-        const worker = workers.find(w => w.id === userId);
-        return worker;
-      } else if (role === 'client') {
-        // In a real implementation, this would load client profile
-        return undefined;
+      const operationalData = OperationalDataService.getInstance();
+      await operationalData.initialize();
+
+      if (role === 'worker' || role === 'admin') {
+        return operationalData.getWorkerById(userId);
+      }
+
+      if (role === 'client') {
+        return operationalData.getClientById(userId);
       }
     } catch (error) {
       console.error('Failed to load user profile:', error);
     }
+
     return undefined;
   }
 
@@ -309,10 +315,19 @@ export class AuthService {
    */
   getDemoCredentials(): LoginCredentials[] {
     return [
-      { email: 'worker@cyntientops.com', password: 'worker123' },
-      { email: 'admin@cyntientops.com', password: 'admin123' },
-      { email: 'client@cyntientops.com', password: 'client123' },
+      { email: 'shawn.magloire@francomanagement.com', password: 'password' },
+      { email: 'greg.hutson@francomanagement.com', password: 'password' },
+      { email: 'david@jmrealty.org', password: 'client123' },
     ];
+  }
+
+  private passwordMatches(input: string, stored?: string | null): boolean {
+    if (!stored) {
+      return false;
+    }
+
+    // Future enhancement: plug in hashing/pepper logic
+    return stored === input;
   }
 
   /**

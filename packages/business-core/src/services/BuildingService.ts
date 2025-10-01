@@ -108,7 +108,7 @@ export class BuildingService {
   /**
    * Get building compliance status
    */
-  public getBuildingComplianceStatus(buildingId: string): BuildingComplianceStatus {
+  public async getBuildingComplianceStatus(buildingId: string): Promise<BuildingComplianceStatus> {
     if (!CanonicalIDs.Buildings.isValidBuildingId(buildingId)) {
       throw new Error(`Invalid building ID: ${buildingId}`);
     }
@@ -125,12 +125,32 @@ export class BuildingService {
       return new Date() > new Date(task.dueDate) && task.status !== 'Completed';
     });
 
+    let hpdViolations = 0;
+    let dobPermits = 0;
+    let dsnyCompliance = false;
+
+    if (this.apiClients) {
+      try {
+        const [violations, permits, dsny] = await Promise.all([
+          this.getHPDViolations(buildingId),
+          this.getDOBPermits(buildingId),
+          this.getDSNYCompliance(buildingId)
+        ]);
+
+        hpdViolations = violations;
+        dobPermits = permits;
+        dsnyCompliance = dsny;
+      } catch (error) {
+        console.error('Failed to load compliance data for building:', buildingId, error);
+      }
+    }
+
     return {
       buildingId,
       overallScore: building.compliance_score || 0.85,
-      hpdViolations: await this.getHPDViolations(buildingId), // Integrate with HPD API
-      dobPermits: await this.getDOBPermits(buildingId), // Integrate with DOB API
-      dsnyCompliance: await this.getDSNYCompliance(buildingId), // Integrate with DSNY API
+      hpdViolations,
+      dobPermits,
+      dsnyCompliance,
       lastInspection: building.lastInspection ? new Date(building.lastInspection) : null,
       nextInspection: building.nextInspection ? new Date(building.nextInspection) : null,
       criticalIssues: overdueTasks.filter(task => task.priority === 'high' || task.priority === 'urgent').length
@@ -224,7 +244,7 @@ export class BuildingService {
   /**
    * Get building performance summary
    */
-  public getBuildingPerformanceSummary(buildingId: string): {
+  public async getBuildingPerformanceSummary(buildingId: string): Promise<{
     totalTasks: number;
     completedTasks: number;
     overdueTasks: number;
@@ -233,12 +253,13 @@ export class BuildingService {
     averageTaskTime: number;
     activeWorkers: number;
     complianceScore: number;
-  } {
+  }> {
     const tasks = this.getBuildingTasks(buildingId);
     const metrics = this.getBuildingMetrics(buildingId);
     const overdueTasks = this.getOverdueTasks(buildingId);
     const urgentTasks = this.getUrgentTasks(buildingId);
     const activeWorkers = this.getActiveWorkersAtBuilding(buildingId).length;
+    const compliance = await this.getBuildingComplianceStatus(buildingId);
 
     return {
       totalTasks: tasks.length,
@@ -248,7 +269,7 @@ export class BuildingService {
       completionRate: metrics.completionRate,
       averageTaskTime: metrics.averageTaskTime,
       activeWorkers,
-      complianceScore: metrics.overallScore
+      complianceScore: compliance.overallScore
     };
   }
 
@@ -265,11 +286,11 @@ export class BuildingService {
   /**
    * Get buildings needing attention (low compliance or many overdue tasks)
    */
-  public getBuildingsNeedingAttention(): Array<{
+  public async getBuildingsNeedingAttention(): Promise<Array<{
     building: any;
     issues: string[];
     priority: 'low' | 'medium' | 'high';
-  }> {
+  }>> {
     const buildings = this.getBuildings();
     const buildingsWithIssues: Array<{
       building: any;
@@ -277,9 +298,9 @@ export class BuildingService {
       priority: 'low' | 'medium' | 'high';
     }> = [];
 
-    buildings.forEach(building => {
+    for (const building of buildings) {
       const issues: string[] = [];
-      const compliance = this.getBuildingComplianceStatus(building.id);
+      const compliance = await this.getBuildingComplianceStatus(building.id);
       const overdueTasks = this.getOverdueTasks(building.id);
       const urgentTasks = this.getUrgentTasks(building.id);
 
@@ -314,7 +335,7 @@ export class BuildingService {
           priority
         });
       }
-    });
+    }
 
     // Sort by priority (high first)
     return buildingsWithIssues.sort((a, b) => {

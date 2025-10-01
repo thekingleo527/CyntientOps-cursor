@@ -141,6 +141,13 @@ export class DatabaseManager {
     return result;
   }
 
+  async getClients(): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const result = await this.db.getAllAsync('SELECT * FROM clients WHERE is_active = 1');
+    return result;
+  }
+
   async getTasks(): Promise<any[]> {
     if (!this.db) throw new Error('Database not initialized');
     
@@ -431,4 +438,22 @@ export class DatabaseManager {
       return false;
     }
   }
+
+  // MARK: - Generic helpers for higher-level services
+
+  async query(sql: string, params: any[] = []): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+    return await this.db.getAllAsync(sql, params);
+  }
+
+  async execute(sql: string, params: any[] = []): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    await this.db.runAsync(sql, params);
+  }
+
+  async getFirst(sql: string, params: any[] = []): Promise<any | null> {
+    const rows = await this.query(sql, params);
+    return rows.length > 0 ? rows[0] : null;
+  }
 }
+

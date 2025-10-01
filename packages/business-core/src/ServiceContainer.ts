@@ -38,6 +38,7 @@ import { PerformanceOptimizer } from './services/PerformanceOptimizer';
 import { AnalyticsEngine } from './services/AnalyticsEngine';
 import { SecurityManager } from './services/SecurityManager';
 import { ProductionManager } from './services/ProductionManager';
+import { SentryService } from './services/SentryService';
 import { BuildingInfrastructureCatalog } from './services/BuildingInfrastructureCatalog';
 import { RealTimeSyncService } from './services/RealTimeSyncService';
 import { CommandChainManager } from '@cyntientops/command-chains';
@@ -92,6 +93,7 @@ export class ServiceContainer {
   private _analyticsService: AnalyticsService | null = null;
   private _securityManager: SecurityManager | null = null;
   private _productionManager: ProductionManager | null = null;
+  private _sentryService: SentryService | null = null;
   private _buildingInfrastructureCatalog: BuildingInfrastructureCatalog | null = null;
   private _commandChainManager: CommandChainManager | null = null;
   private _metrics: BuildingMetricsService | null = null;
@@ -171,12 +173,19 @@ export class ServiceContainer {
     console.log('⚡ Fast ServiceContainer initialization...');
     
     try {
+      // Initialize Sentry first for error tracking
+      await this.sentryService.initialize();
+      this.sentryService.addBreadcrumb('ServiceContainer initialization started', 'system');
+      console.log('✅ Sentry initialized');
+      
       // Initialize database
       await this.database.initialize();
+      this.sentryService.addBreadcrumb('Database initialized', 'system');
       console.log('✅ Layer 0: Database connected');
       
       // Initialize operational data
       await this.operationalData.initialize();
+      this.sentryService.addBreadcrumb('Operational data loaded', 'system');
       console.log('✅ Layer 0: Operational data loaded');
       
       // Initialize essential services
@@ -186,9 +195,14 @@ export class ServiceContainer {
       this.initializeDataInBackground();
       
       this.isInitialized = true;
+      this.sentryService.addBreadcrumb('ServiceContainer initialization complete', 'system');
       console.log('✅ ServiceContainer initialization complete!');
       
     } catch (error) {
+      this.sentryService.captureException(error instanceof Error ? error : new Error('ServiceContainer initialization failed'), {
+        tags: { component: 'ServiceContainer', operation: 'initialize' },
+        level: 'error'
+      });
       console.error('❌ ServiceContainer initialization failed:', error);
       throw error;
     }
@@ -334,6 +348,13 @@ export class ServiceContainer {
       this._productionManager = ProductionManager.getInstance(this.database);
     }
     return this._productionManager;
+  }
+
+  public get sentryService(): SentryService {
+    if (!this._sentryService) {
+      this._sentryService = SentryService.getInstance();
+    }
+    return this._sentryService;
   }
 
   public get buildingInfrastructureCatalog(): BuildingInfrastructureCatalog {

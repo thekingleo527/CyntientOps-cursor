@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole } from '@cyntientops/domain-schema';
+import { SentryService } from './SentryService';
 
 export interface ProductionConfig {
   environment: 'development' | 'staging' | 'production';
@@ -79,6 +80,7 @@ export class ProductionManager {
   private static instance: ProductionManager;
   private database: DatabaseManager;
   private config: ProductionConfig;
+  private sentryService: SentryService;
   private healthChecks: HealthCheck[] = [];
   private metrics: ProductionMetrics;
   private deploymentInfo: DeploymentInfo | null = null;
@@ -86,6 +88,7 @@ export class ProductionManager {
 
   private constructor(database: DatabaseManager) {
     this.database = database;
+    this.sentryService = SentryService.getInstance();
     this.config = this.getDefaultConfig();
     this.metrics = this.initializeMetrics();
     console.log('ProductionManager initialized');
@@ -214,29 +217,59 @@ export class ProductionManager {
 
   public async performProductionReadinessCheck(): Promise<boolean> {
     console.log('Performing production readiness check...');
+    this.sentryService.addBreadcrumb('Production readiness check started', 'system');
     
     try {
       // Check data integrity
       const dataIntegrity = await this.checkDataIntegrity();
+      this.sentryService.addBreadcrumb(`Data integrity check: ${dataIntegrity ? 'PASSED' : 'FAILED'}`, 'system');
       
       // Check system health
       const systemHealth = await this.checkSystemHealth();
+      this.sentryService.addBreadcrumb(`System health check: ${systemHealth ? 'PASSED' : 'FAILED'}`, 'system');
       
       // Check performance
       const performance = await this.checkPerformance();
+      this.sentryService.addBreadcrumb(`Performance check: ${performance ? 'PASSED' : 'FAILED'}`, 'system');
       
       // Check security
       const security = await this.checkSecurity();
+      this.sentryService.addBreadcrumb(`Security check: ${security ? 'PASSED' : 'FAILED'}`, 'system');
       
       // Check compliance
       const compliance = await this.checkCompliance();
+      this.sentryService.addBreadcrumb(`Compliance check: ${compliance ? 'PASSED' : 'FAILED'}`, 'system');
       
       const allChecksPassed = dataIntegrity && systemHealth && performance && security && compliance;
       
       console.log(`Production readiness check: ${allChecksPassed ? 'PASSED' : 'FAILED'}`);
       
+      // Log result to Sentry
+      this.sentryService.captureMessage(
+        `Production readiness check ${allChecksPassed ? 'PASSED' : 'FAILED'}`,
+        allChecksPassed ? 'info' : 'warning',
+        {
+          tags: {
+            component: 'ProductionManager',
+            operation: 'readiness_check',
+            result: allChecksPassed ? 'passed' : 'failed'
+          },
+          extra: {
+            dataIntegrity,
+            systemHealth,
+            performance,
+            security,
+            compliance
+          }
+        }
+      );
+      
       return allChecksPassed;
     } catch (error) {
+      this.sentryService.captureException(error instanceof Error ? error : new Error('Production readiness check failed'), {
+        tags: { component: 'ProductionManager', operation: 'readiness_check' },
+        level: 'error'
+      });
       console.error('Production readiness check failed:', error);
       return false;
     }

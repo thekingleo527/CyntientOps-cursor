@@ -21,7 +21,7 @@ import {
   Alert,
   Linking
 } from 'react-native';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing, DashboardGradients } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { ServiceContainer } from '@cyntientops/business-core';

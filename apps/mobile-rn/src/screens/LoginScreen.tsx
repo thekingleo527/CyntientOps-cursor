@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
 import { WorkerProfile } from '@cyntientops/domain-schema';
 import { AuthenticationService, AuthenticatedUser } from '@cyntientops/business-core/src/services/AuthenticationService';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
 

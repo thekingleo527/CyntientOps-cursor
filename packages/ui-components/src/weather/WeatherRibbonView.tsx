@@ -16,7 +16,7 @@ import {
   Animated,
   ScrollView,
 } from 'react-native';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { WeatherSnapshot, WeatherForecast } from '@cyntientops/domain-schema';

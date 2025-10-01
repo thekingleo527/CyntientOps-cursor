@@ -16,7 +16,7 @@ import {
   Dimensions,
   Animated,
 } from 'react-native';
-import { LinearGradient } from '@cyntientops/ui-components/src/mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
 

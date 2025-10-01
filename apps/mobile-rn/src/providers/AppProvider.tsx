@@ -5,7 +5,7 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
-import { ServiceContainer } from '@cyntientops/business-core';
+import { ServiceContainer, Logger } from '@cyntientops/business-core';
 import config from '../config/app.config';
 
 interface AppContextValue {
@@ -31,7 +31,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const initializeApp = async () => {
     try {
-      console.log('🚀 Initializing CyntientOps Mobile App...');
+      Logger.info('Initializing CyntientOps Mobile App', undefined, 'AppProvider');
 
       // Initialize ServiceContainer with configuration
       const serviceContainer = ServiceContainer.getInstance({
@@ -47,22 +47,22 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
       // Connect WebSocket if real-time sync is enabled
       if (config.enableRealTimeSync) {
-        console.log('🔌 Connecting to WebSocket...');
+        Logger.info('Connecting to WebSocket', undefined, 'AppProvider');
         try {
           await serviceContainer.webSocket.connect();
-          console.log('✅ WebSocket connected');
+          Logger.info('WebSocket connected successfully', undefined, 'AppProvider');
         } catch (wsError) {
-          console.warn('⚠️ WebSocket connection failed (will retry):', wsError);
+          Logger.warn('WebSocket connection failed (will retry)', wsError, 'AppProvider');
           // Don't fail the whole app if WebSocket fails
         }
       }
 
       setServices(serviceContainer);
       setIsReady(true);
-      console.log('✅ App initialized successfully');
+      Logger.info('App initialized successfully', undefined, 'AppProvider');
 
     } catch (err) {
-      console.error('❌ App initialization failed:', err);
+      Logger.error('App initialization failed', err, 'AppProvider');
       setError(err instanceof Error ? err : new Error('Unknown error'));
     }
   };

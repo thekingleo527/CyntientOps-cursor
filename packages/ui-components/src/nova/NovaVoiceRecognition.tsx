@@ -28,7 +28,7 @@ import {
 import { Audio } from '../mocks/expo-av';
 import * as Speech from '../mocks/expo-speech';
 import * as Haptics from '../mocks/expo-haptics';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // Types
 export interface VoiceRecognitionState {

@@ -13,12 +13,12 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
-// Mock RefreshControl for development
-const RefreshControl = ({ refreshing, onRefresh, tintColor }: any) => null;
+
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { AdminHeaderV3B } from '../headers/AdminHeaderV3B';
 import { WorkerProfile } from '@cyntientops/domain-schema';
 // Import REAL data from data-seed package - NO MOCK DATA ANYWHERE

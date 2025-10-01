@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../../glass';
-import { LinearGradient } from '../../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export interface ClientOverviewOverlayContentProps {
   clientId: string;

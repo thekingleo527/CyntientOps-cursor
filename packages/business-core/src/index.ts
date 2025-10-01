@@ -5,6 +5,8 @@
  */
 
 // Services
+export { Logger, LogLevel } from './services/LoggingService';
+export type { LogEntry } from './services/LoggingService';
 export { TaskService } from './services/TaskService';
 export { WorkerService } from './services/WorkerService';
 export { BuildingService } from './services/BuildingService';
@@ -14,6 +16,15 @@ export { ComplianceService } from './services/ComplianceService';
 export { AuthService } from './services/AuthService';
 export { RouteManager } from './services/RouteManager';
 export { NovaAPIService } from './services/NovaAPIService';
+export { NovaAIBrainService } from './services/NovaAIBrainService';
+export type {
+  NovaInsight,
+  NovaAnalysis,
+  NovaContext,
+  NovaPrompt,
+  NovaResponse,
+  NovaAction
+} from './services/NovaAIBrainService';
 export { PerformanceOptimizer } from './services/PerformanceOptimizer';
 export { AnalyticsEngine } from './services/AnalyticsEngine';
 export { SecurityManager } from './services/SecurityManager';
@@ -51,6 +62,11 @@ export { PerformanceEngine } from './engines/PerformanceEngine';
 
 // Service Container
 export { ServiceContainer } from './ServiceContainer';
+
+// Supabase Configuration
+export { SUPABASE_CONFIG, getSupabaseConfig } from './config/supabase.config';
+export type { SupabaseConfig } from './config/supabase.config';
+export { getSupabaseClient, resetSupabaseClient, isSupabaseConfigured } from './config/supabase.client';
 
 // Types
 export type {

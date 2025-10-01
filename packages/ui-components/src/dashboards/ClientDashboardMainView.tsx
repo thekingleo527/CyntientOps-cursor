@@ -13,13 +13,12 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 
-// Mock RefreshControl for development
-const RefreshControl = ({ refreshing, onRefresh, tintColor }: any) => null;
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ClientHeaderV3B } from '../headers/ClientHeaderV3B';
 // Mock components for development
 const BuildingDetailOverview = ({ building }: any) => (

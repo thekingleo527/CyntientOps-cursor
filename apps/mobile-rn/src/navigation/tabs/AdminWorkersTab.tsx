@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
-import { LinearGradient } from '@cyntientops/ui-components/src/mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { WorkerProfile } from '@cyntientops/domain-schema';
 import workersData from '@cyntientops/data-seed/workers.json';
 

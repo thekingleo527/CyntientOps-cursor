@@ -24,7 +24,7 @@ import {
   PanResponder,
   GestureResponderEvent,
 } from 'react-native';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // Types
 export interface Particle {

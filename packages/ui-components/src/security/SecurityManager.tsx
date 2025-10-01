@@ -27,7 +27,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from '../mocks/expo-blur';
 import * as LocalAuthentication from '../mocks/expo-local-authentication';
 import * as SecureStore from '../mocks/expo-secure-store';

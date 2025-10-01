@@ -17,7 +17,7 @@ import {
   Alert,
 } from 'react-native';
 import MapView, { Marker, Polyline, Region, PROVIDER_GOOGLE } from 'react-native-maps';
-import { LinearGradient } from '../mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { Building, OperationalDataTaskAssignment, Worker } from '@cyntientops/domain-schema';

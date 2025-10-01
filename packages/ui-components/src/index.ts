@@ -13,7 +13,8 @@
  * Based on comprehensive SwiftUI analysis (356+ files, 50,000+ lines)
  */
 
-// Nova AI System
+// Nova AI System - Unified
+export { default as UnifiedNovaAI, useUnifiedNovaAI } from './nova/UnifiedNovaAISystem';
 export { default as NovaAIManager, useNovaAIManager } from './nova/NovaAIManager';
 export { default as NovaAvatar } from './nova/NovaAvatar';
 export { default as NovaHeader } from './nova/NovaHeader';

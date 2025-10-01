@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
-import { LinearGradient } from '@cyntientops/ui-components/src/mocks/expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { LegacyAnalyticsDashboard, AnalyticsData } from '@cyntientops/ui-components/src/analytics/components/AnalyticsDashboard';
 import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientops/intelligence-services';
 

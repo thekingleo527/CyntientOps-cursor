@@ -10,22 +10,24 @@
 ### Organization 1: J&M Realty (LARGEST CLIENT)
 ```yaml
 Managers: David & Jerry
-Buildings: 14 (11 building IDs = 14 physical buildings)
-  - Building 14: Rubin Museum (comprises 4 physical buildings)
-  - Building 1: 12 West 18th Street
-  - Building 3: 135-139 West 17th Street
-  - Building 5: 138 West 17th Street
-  - Building 6: 68 Perry Street
-  - Building 7: 112 West 18th Street
-  - Building 9: 117 West 17th Street
-  - Building 10: 131 Perry Street
-  - Building 11: 123 1st Avenue
-  - Building 17: 178 Spring Street
-  - Building 21: 148 Chambers Street
+Buildings: 14 physical buildings (11 building IDs)
+
+Physical Buildings:
+  - Building 1: 12 West 18th Street → $13.1M
+  - Building 3: 135-139 West 17th Street → $9.3M
+  - Building 5: 138 West 17th Street → $21.5M (highest value)
+  - Building 6: 68 Perry Street → $5.8M
+  - Buildings 7+9: Brooks-Van Horn (112 W 18th + 117 W 17th, NYC: 113 W 17th) → $23.5M combined
+  - Building 10: 131 Perry Street → $8.0M
+  - Building 11: 123 1st Avenue → $3.0M
+  - Building 14: Rubin Museum - 4 buildings (142, 144, 146, 148 W 17th) → $13.3M
+  - Building 17: 178 Spring Street → $4.9M
+  - Building 21: 148 Chambers Street → $10.6M
+
 Service Provider: Franco Management Enterprises
 
-Total Portfolio Value: ~$82M
-Average Compliance Score: 74
+Total Portfolio Value: $112,919,949 (verified with NYC PLUTO data)
+Average Compliance Score: 74.2
 Status: Mixed portfolio - some critical buildings need attention
 ```
 
@@ -182,7 +184,7 @@ Status: ✅ Excellent client - perfect compliance
 
 | Organization | Manager | Buildings | Total Value | Violations | Outstanding | Score |
 |--------------|---------|-----------|-------------|------------|-------------|-------|
-| **J&M Realty** | David & Jerry | 14 | ~$82M | 61 | $31,343 | 74 🟡 |
+| **J&M Realty** | David & Jerry | 14 | **$112,919,949** | 61 | $31,343 | 74 🟡 |
 | **Citadel Realty** | Stephen | 2 | $18,709,000 | 27 | $8,477 | 57.5 🟡 |
 | **WeberFarhat Realty** | Moises | 1 | $10,867,002 | 0 | $0 | 100 ✅ |
 | **Remid Group** | Michelle | 1 | $9,193,333 | 0 | $0 | 100 ✅ |
@@ -192,7 +194,10 @@ Status: ✅ Excellent client - perfect compliance
 
 **All 7 organizations mapped with real manager names!**
 
-**J&M Realty is the LARGEST client** with 14 buildings (11 building IDs, with Rubin Museum counting as 4 physical buildings)
+**J&M Realty is the LARGEST client:**
+- 14 physical buildings (11 building IDs)
+- $113M portfolio (6.0x bigger than #2)
+- Key corrections: Rubin Museum = $13.3M (4 buildings: 142, 144, 146, 148 W 17th), Brooks-Van Horn = $23.5M (NYC official: 113 W 17th)
 
 ---
 

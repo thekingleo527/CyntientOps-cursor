@@ -213,8 +213,8 @@
     "borough": "Manhattan",
     "compliance_score": 0.93,
     "client_id": "JMR",
-    "marketValue": 9800000,
-    "assessedValue": 4900000,
+    "marketValue": 10340000,
+    "assessedValue": 4653000,
     "taxableValue": 4410000,
     "taxClass": "class_2",
     "propertyType": "residential",
@@ -234,7 +234,9 @@
     "garbageBinSetOut": false,
     "roofDrains": true,
     "backyardDrains": false,
-    "drainCheckRequired": "seasonal"
+    "drainCheckRequired": "seasonal",
+    "bbl": "1007937501",
+    "notes": "Part of Brooks-Van Horn complex. NYC official address: 113 W 17th St. Combined with Building 9"
   },
   {
     "id": "8",
@@ -291,8 +293,8 @@
     "borough": "Manhattan",
     "compliance_score": 0.9,
     "client_id": "JMR",
-    "marketValue": 12600000,
-    "assessedValue": 6300000,
+    "marketValue": 13188964,
+    "assessedValue": 5935034,
     "taxableValue": 5670000,
     "taxClass": "class_2",
     "propertyType": "residential",
@@ -317,7 +319,9 @@
     "garbageBinSetOut": false,
     "roofDrains": true,
     "backyardDrains": false,
-    "drainCheckRequired": "seasonal"
+    "drainCheckRequired": "seasonal",
+    "bbl": "1007937501",
+    "notes": "Part of Brooks-Van Horn complex. NYC official address: 113 W 17th St. Combined with Building 7"
   },
   {
     "id": "10",
@@ -439,7 +443,7 @@
   },
   {
     "id": "14",
-    "name": "Rubin Museum (142–148 W 17th) - CyntientOps HQ",
+    "name": "Rubin Museum (142-148 W 17th)",
     "address": "150 West 17th Street, New York, NY 10011",
     "latitude": 40.738012,
     "longitude": -73.995123,
@@ -458,8 +462,8 @@
     "compliance_score": 0.98,
     "client_id": "JMR",
     "specialNotes": "Kevin Dutan's primary location - Museum facility requiring specialized care - Also serves as CyntientOps corporate headquarters",
-    "marketValue": 45000000,
-    "assessedValue": 22500000,
+    "marketValue": 13255000,
+    "assessedValue": 5964750,
     "taxableValue": 20250000,
     "taxClass": "class_4",
     "propertyType": "commercial",
@@ -475,7 +479,8 @@
     "garbageBinSetOut": false,
     "roofDrains": true,
     "backyardDrains": false,
-    "drainCheckRequired": "seasonal"
+    "drainCheckRequired": "seasonal",
+    "notes": "Comprises 4 physical buildings: 142 W 17th (BBL 1007920060), 144 W 17th (BBL 1007920061), 146 W 17th (BBL 1007920062), 148 W 17th (BBL 1007920063)"
   },
   {
     "id": "15",

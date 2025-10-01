@@ -27,7 +27,7 @@ import { WorkerProfile } from '@cyntientops/domain-schema';
 export type RootStackParamList = {
   Login: undefined;
   Main: { userRole: 'worker' | 'client' | 'admin'; userId: string; userName: string };
-  BuildingDetail: { buildingId: string };
+  BuildingDetail: { buildingId: string; userRole?: 'worker' | 'client' | 'admin' };
   TaskTimeline: { taskId: string };
   ClockInModal: { buildingId: string };
   PhotoCaptureModal: { taskId: string };

@@ -144,7 +144,7 @@ type BuildingDetailRoute = RouteProp<RootStackParamList, 'BuildingDetail'>;
 
 export const BuildingDetailScreen: React.FC = () => {
   const route = useRoute<BuildingDetailRoute>();
-  const { buildingId } = route.params;
+  const { buildingId, userRole } = route.params;
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -225,12 +225,15 @@ export const BuildingDetailScreen: React.FC = () => {
 
   const complianceScore = Math.round((building.compliance_score ?? violationSummary.score / 100) * 100);
 
+  // Only show property/financial details to admins and clients, not workers
+  const canViewPropertyDetails = userRole === 'admin' || userRole === 'client';
+
               return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {renderHero(building, complianceScore)}
 
-        {propertyDetails && (
+        {canViewPropertyDetails && propertyDetails && (
           <View style={styles.sectionGroup}>
             {renderSectionHeader('Property Information')}
             {renderPropertyDetailsCard(propertyDetails)}

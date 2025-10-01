@@ -4,18 +4,27 @@
 
 ### 🔄 **Latest Updates (2025-10-01)**
 
-#### **🚨 Violation Data Audit - COMPLETE**
-- **Mock Data Identified**: Confirmed violation data was placeholder/mock data
-- **Real Data Retrieved**: Successfully queried NYC HPD, DOB, and ECB APIs
+#### **🚨 Violation Data Audit - COMPLETE & CORRECTED**
+- **Previous Audit Error Identified**: Initial audit used incorrect filter logic (currentstatus vs violationstatus)
+- **Real Data Retrieved**: Successfully queried NYC HPD, DOB, and ECB APIs with correct filters
 - **ECB Logic Corrected**: DSNY violations are handled through ECB system, not separate API
-- **Application Updated**: BuildingDetailScreen.tsx updated with real violation data
-- **Compliance Verified**: All 14 buildings have clean violation records (100% compliance)
+- **Application Updated**: BuildingDetailScreen.tsx and ViolationDataService.ts updated with real violation data
+- **Compliance Status**: 28 active HPD violations found across 5 buildings
 
-**Key Findings**:
-- 14 buildings with clean violation records
-- 0 active violations across portfolio
-- 100% compliance score
-- $0 outstanding violation amounts
+**Key Findings from Live NYC API Verification**:
+- **Building 1** (12 West 18th St): 6 HPD violations (Score: 82)
+- **Building 3** (135-139 West 17th St): 2 HPD violations (Score: 94)
+- **Building 4** (104 Franklin St): 4 HPD violations (Score: 88)
+- **Building 6** (68 Perry St): 12 HPD violations (Score: 64)
+- **Building 11** (123 1st Ave): 4 HPD violations (Score: 88)
+- **9 buildings**: Clean records (Score: 100)
+- **Total Portfolio**: 28 active HPD violations
+- **DOB/DSNY/ECB**: 0 active violations found
+
+**Data Sources**:
+- HPD API: `https://data.cityofnewyork.us/resource/wvxf-dwi5.json`
+- DOB API: `https://data.cityofnewyork.us/resource/3h2n-5cm9.json`
+- ECB API: `https://data.cityofnewyork.us/resource/6bgk-3dad.json`
 
 #### **🗄️ Supabase Integration - COMPLETE**
 - **Security Hardening**: Removed hardcoded credentials, environment-only configuration

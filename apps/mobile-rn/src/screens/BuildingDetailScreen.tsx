@@ -20,6 +20,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
 import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
+import { ViolationDataService } from '../services/ViolationDataService';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
 interface CollectionScheduleSummary {
@@ -50,26 +51,7 @@ interface ViolationSummary {
 // ✅ REAL NYC VIOLATION DATA - Updated from NYC APIs on 2025-10-01
 // Source: HPD, DOB, and ECB violation APIs (DSNY violations are in ECB system)
 // Note: DSNY violations are handled through the ECB system, not a separate DSNY API
-const realViolationData: Record<string, ViolationSummary> = {
-  '1': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 12 West 18th Street
-  '3': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 135-139 West 17th Street
-  '4': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 104 Franklin Street
-  '5': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 138 West 17th Street
-  '6': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 68 Perry Street
-  '7': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 112 West 18th Street (not found in PLUTO)
-  '8': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 41 Elizabeth Street
-  '9': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 117 West 17th Street (not found in PLUTO)
-  '10': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 131 Perry Street
-  '11': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 123 1st Avenue
-  '13': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 136 West 17th Street
-  '14': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // Rubin Museum (150 West 17th)
-  '15': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 133 East 15th Street
-  '16': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // Stuyvesant Cove Park (not in PLUTO)
-  '17': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 178 Spring Street
-  '18': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 36 Walker Street
-  '19': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 115 7th Avenue (not found in PLUTO)
-  '21': { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 }, // 148 Chambers Street
-};
+// Data now sourced from ViolationDataService which uses live NYC API data
 
 class InlineNYCAPIService {
   // ✅ REAL BBL NUMBERS - Updated from NYC PLUTO dataset on 2025-10-01
@@ -194,13 +176,8 @@ export const BuildingDetailScreen: React.FC = () => {
     [routines],
   );
 
-  const violationSummary = realViolationData[buildingId] ?? {
-    hpd: 0,
-    dob: 0,
-    dsny: 0,
-    outstanding: 0,
-    score: (building?.compliance_score ?? 1) * 100,
-  };
+  // Get real violation data from ViolationDataService
+  const violationSummary = ViolationDataService.getViolationData(buildingId);
 
   useEffect(() => {
     const loadSchedule = async () => {

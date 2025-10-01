@@ -1,0 +1,152 @@
+{
+  "searchDate": "2025-10-01T21:14:56.984Z",
+  "buildings": [
+    {
+      "id": "1",
+      "name": "12 West 18th St",
+      "hpd": 6,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 6,
+      "score": 82
+    },
+    {
+      "id": "3",
+      "name": "135-139 West 17th St",
+      "hpd": 2,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 2,
+      "score": 94
+    },
+    {
+      "id": "4",
+      "name": "104 Franklin St",
+      "hpd": 4,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 4,
+      "score": 88
+    },
+    {
+      "id": "5",
+      "name": "138 West 17th St",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    },
+    {
+      "id": "6",
+      "name": "68 Perry St",
+      "hpd": 12,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 12,
+      "score": 64
+    },
+    {
+      "id": "8",
+      "name": "41 Elizabeth St",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    },
+    {
+      "id": "10",
+      "name": "131 Perry St",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    },
+    {
+      "id": "11",
+      "name": "123 1st Ave",
+      "hpd": 4,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 4,
+      "score": 88
+    },
+    {
+      "id": "13",
+      "name": "136 West 17th St",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    },
+    {
+      "id": "14",
+      "name": "Rubin Museum",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    },
+    {
+      "id": "15",
+      "name": "133 East 15th St",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    },
+    {
+      "id": "17",
+      "name": "178 Spring St",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    },
+    {
+      "id": "18",
+      "name": "36 Walker St",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    },
+    {
+      "id": "21",
+      "name": "148 Chambers St",
+      "hpd": 0,
+      "dob": 0,
+      "dsny": 0,
+      "ecb": 0,
+      "outstanding": 0,
+      "score": 100
+    }
+  ],
+  "summary": {
+    "totalHPD": 28,
+    "totalDOB": 0,
+    "totalDSNY": 0,
+    "totalECB": 0,
+    "buildingsWithViolations": 5
+  }
+}

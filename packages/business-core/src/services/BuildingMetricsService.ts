@@ -3,7 +3,7 @@
  * Provides comprehensive building performance metrics and analytics
  */
 
-import { OperationalDataService } from '../data/OperationalDataService';
+import { OperationalDataService } from './OperationalDataService';
 import { BuildingService } from './BuildingService';
 import { TaskService } from './TaskService';
 import { NYCAPIService } from '@cyntientops/api-clients';

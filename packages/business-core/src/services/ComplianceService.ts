@@ -18,14 +18,22 @@ import { ServiceContainer } from '../ServiceContainer';
 import { NYCAPIService, HPDViolation, DOBPermit, DSNYRoute, LL97Emission } from '@cyntientops/api-clients';
 
 export class ComplianceService {
+  private static instance: ComplianceService;
   private container: ServiceContainer;
   private nycAPI: NYCAPIService;
   private complianceCache: Map<string, any> = new Map();
   private updateSubscribers: Set<(update: ComplianceIssue) => void> = new Set();
 
-  constructor(container: ServiceContainer) {
-    this.container = container;
+  constructor(container?: ServiceContainer) {
+    this.container = container || ServiceContainer.getInstance();
     this.nycAPI = new NYCAPIService();
+  }
+
+  public static getInstance(): ComplianceService {
+    if (!ComplianceService.instance) {
+      ComplianceService.instance = new ComplianceService();
+    }
+    return ComplianceService.instance;
   }
 
   // MARK: - Data Loading

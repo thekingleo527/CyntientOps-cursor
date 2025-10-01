@@ -731,7 +731,13 @@ export function useWorkerDashboardViewModel(
   
   const clockIn = useCallback(async (buildingId: string) => {
     try {
-      await container.clockIn.clockInWorker(buildingId, workerId);
+      await container.clockIn.clockInWorker({
+        workerId,
+        buildingId,
+        latitude: 0, // TODO: Get actual location
+        longitude: 0, // TODO: Get actual location
+        timestamp: new Date()
+      });
       
       // Update building status
       setState(prev => ({
@@ -763,7 +769,10 @@ export function useWorkerDashboardViewModel(
 
   const clockOut = useCallback(async (buildingId: string) => {
     try {
-      await container.clockIn.clockOutWorker(buildingId, workerId);
+      await container.clockIn.clockOutWorker({
+        workerId,
+        timestamp: new Date()
+      });
       
       // Update building status
       setState(prev => ({

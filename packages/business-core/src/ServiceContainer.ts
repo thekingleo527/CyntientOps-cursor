@@ -172,7 +172,7 @@ export class ServiceContainer {
       console.log('✅ Layer 0: Database connected');
       
       // Initialize operational data
-      await this.operationalData.initialize();
+      await this.operationalData.loadOperationalData();
       console.log('✅ Layer 0: Operational data loaded');
       
       // Initialize essential services
@@ -285,7 +285,7 @@ export class ServiceContainer {
 
   public get realTimeCommunication(): RealTimeCommunicationService {
     if (!this._realTimeCommunication) {
-      this._realTimeCommunication = RealTimeCommunicationService.getInstance(this.database, this.webSocketManager);
+      this._realTimeCommunication = RealTimeCommunicationService.getInstance(this.database, this.webSocket);
     }
     return this._realTimeCommunication;
   }
@@ -845,7 +845,7 @@ export class ServiceContainer {
   
   public get clockIn(): ClockInManager {
     if (!this._clockIn) {
-      this._clockIn = ClockInManager.getInstance();
+      this._clockIn = ClockInManager.getInstance(this.database);
     }
     return this._clockIn;
   }

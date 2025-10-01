@@ -8,6 +8,7 @@ import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import routinesData from '@cyntientops/data-seed/routines.json';
 import workersData from '@cyntientops/data-seed/workers.json';
 import buildingsData from '@cyntientops/data-seed/buildings.json';
+import { OperationalDataService } from './OperationalDataService';
 
 // Types
 export interface RoutineTask {

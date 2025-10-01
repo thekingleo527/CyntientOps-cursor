@@ -617,24 +617,29 @@ export class ServiceContainer {
 
   public get buildingActivityCatalog(): any {
     if (!this._buildingActivityCatalog) {
-      // TODO: Implement BuildingActivityCatalog
       this._buildingActivityCatalog = {
-        getBuildingActivity: (buildingId: string) => [
-          {
-            id: '1',
-            type: 'taskCompleted',
-            description: 'Daily cleaning completed',
-            workerName: 'Jane Doe',
-            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: '2',
-            type: 'photoAdded',
-            description: 'Photo evidence added for maintenance task',
-            workerName: 'Bob Johnson',
-            timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-          },
-        ],
+        getBuildingActivity: async (buildingId: string) => {
+          try {
+            const activities = await this.database.query(
+              `SELECT
+                a.id,
+                a.type,
+                a.description,
+                w.name as workerName,
+                a.timestamp
+               FROM building_activity a
+               LEFT JOIN workers w ON a.worker_id = w.id
+               WHERE a.building_id = ?
+               ORDER BY a.timestamp DESC
+               LIMIT 50`,
+              [buildingId]
+            );
+            return activities;
+          } catch (error) {
+            console.error('Failed to get building activity:', error);
+            return [];
+          }
+        },
       };
     }
     return this._buildingActivityCatalog;
@@ -642,24 +647,16 @@ export class ServiceContainer {
 
   public get buildingInventoryCatalog(): any {
     if (!this._buildingInventoryCatalog) {
-      // TODO: Implement BuildingInventoryCatalog
       this._buildingInventoryCatalog = {
-        getBuildingInventory: (buildingId: string) => [
-          {
-            id: '1',
-            name: 'Cleaning Supplies',
-            category: 'cleaning',
-            quantity: 5,
-            minThreshold: 10,
-          },
-          {
-            id: '2',
-            name: 'Maintenance Tools',
-            category: 'maintenance',
-            quantity: 15,
-            minThreshold: 5,
-          },
-        ],
+        getBuildingInventory: async (buildingId: string) => {
+          return await this.inventory.getInventoryForBuilding(buildingId);
+        },
+        updateInventoryItem: async (itemId: string, quantity: number) => {
+          return await this.inventory.updateInventoryItem(itemId, quantity);
+        },
+        addInventoryItem: async (buildingId: string, item: any) => {
+          return await this.inventory.addInventoryItem(buildingId, item);
+        },
       };
     }
     return this._buildingInventoryCatalog;
@@ -667,22 +664,27 @@ export class ServiceContainer {
 
   public get buildingWorkersCatalog(): any {
     if (!this._buildingWorkersCatalog) {
-      // TODO: Implement BuildingWorkersCatalog
       this._buildingWorkersCatalog = {
-        getBuildingWorkers: (buildingId: string) => [
-          {
-            id: '1',
-            name: 'Jane Doe',
-            isOnSite: true,
-            role: 'Cleaning Specialist',
-          },
-          {
-            id: '2',
-            name: 'Bob Johnson',
-            isOnSite: false,
-            role: 'Maintenance Technician',
-          },
-        ],
+        getBuildingWorkers: async (buildingId: string) => {
+          try {
+            const workers = await this.database.query(
+              `SELECT
+                w.id,
+                w.name,
+                w.role,
+                CASE WHEN t.status = 'in_progress' THEN 1 ELSE 0 END as isOnSite
+               FROM workers w
+               LEFT JOIN tasks t ON w.id = t.worker_id AND t.building_id = ?
+               WHERE w.assigned_buildings LIKE '%' || ? || '%'
+               GROUP BY w.id`,
+              [buildingId, buildingId]
+            );
+            return workers;
+          } catch (error) {
+            console.error('Failed to get building workers:', error);
+            return [];
+          }
+        },
       };
     }
     return this._buildingWorkersCatalog;
@@ -690,10 +692,39 @@ export class ServiceContainer {
 
   public get issueReportingCatalog(): any {
     if (!this._issueReportingCatalog) {
-      // TODO: Implement IssueReportingCatalog
       this._issueReportingCatalog = {
         reportIssue: async (issue: any) => {
-          console.log('Reporting issue:', issue);
+          try {
+            await this.database.execute(
+              `INSERT INTO issues (id, building_id, worker_id, title, description, priority, status, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              [
+                issue.id || `issue_${Date.now()}`,
+                issue.buildingId,
+                issue.workerId,
+                issue.title,
+                issue.description,
+                issue.priority || 'medium',
+                'open',
+                new Date().toISOString()
+              ]
+            );
+            console.log('Issue reported successfully');
+          } catch (error) {
+            console.error('Failed to report issue:', error);
+            throw error;
+          }
+        },
+        getIssues: async (buildingId: string) => {
+          try {
+            return await this.database.query(
+              `SELECT * FROM issues WHERE building_id = ? ORDER BY created_at DESC`,
+              [buildingId]
+            );
+          } catch (error) {
+            console.error('Failed to get issues:', error);
+            return [];
+          }
         },
       };
     }
@@ -702,10 +733,39 @@ export class ServiceContainer {
 
   public get supplyRequestCatalog(): any {
     if (!this._supplyRequestCatalog) {
-      // TODO: Implement SupplyRequestCatalog
       this._supplyRequestCatalog = {
-        requestSupplies: async (supplies: any) => {
-          console.log('Requesting supplies:', supplies);
+        requestSupplies: async (request: any) => {
+          try {
+            await this.database.execute(
+              `INSERT INTO supply_requests (id, building_id, worker_id, item_name, quantity, urgency, status, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              [
+                request.id || `req_${Date.now()}`,
+                request.buildingId,
+                request.workerId,
+                request.itemName,
+                request.quantity,
+                request.urgency || 'normal',
+                'pending',
+                new Date().toISOString()
+              ]
+            );
+            console.log('Supply request submitted successfully');
+          } catch (error) {
+            console.error('Failed to submit supply request:', error);
+            throw error;
+          }
+        },
+        getSupplyRequests: async (buildingId: string) => {
+          try {
+            return await this.database.query(
+              `SELECT * FROM supply_requests WHERE building_id = ? ORDER BY created_at DESC`,
+              [buildingId]
+            );
+          } catch (error) {
+            console.error('Failed to get supply requests:', error);
+            return [];
+          }
         },
       };
     }
@@ -714,10 +774,15 @@ export class ServiceContainer {
 
   public get photoCatalog(): any {
     if (!this._photoCatalog) {
-      // TODO: Implement PhotoCatalog
       this._photoCatalog = {
         addPhoto: async (photo: any) => {
-          console.log('Adding photo:', photo);
+          return await this.photoEvidenceManager.addPhoto(photo);
+        },
+        getPhotos: async (buildingId: string) => {
+          return await this.photoEvidenceManager.getPhotosForBuilding(buildingId);
+        },
+        deletePhoto: async (photoId: string) => {
+          return await this.photoEvidenceManager.deletePhoto(photoId);
         },
       };
     }
@@ -887,17 +952,48 @@ export class ServiceContainer {
     return ready;
   }
   
-  public getServiceHealth(): ServiceHealth {
+  public async getServiceHealth(): Promise<ServiceHealth> {
+    let offlineQueueSize = 0;
+    let cacheSize = 0;
+
+    try {
+      // Get offline queue size from database
+      const queueCount = await this.database.query(
+        `SELECT COUNT(*) as count FROM offline_queue`
+      );
+      offlineQueueSize = (queueCount[0]?.count as number) || 0;
+    } catch (error) {
+      console.warn('Failed to get offline queue size:', error);
+    }
+
+    try {
+      // Get cache size from database
+      const cacheCount = await this.database.query(
+        `SELECT COUNT(*) as count FROM cache_entries`
+      );
+      cacheSize = (cacheCount[0]?.count as number) || 0;
+    } catch (error) {
+      console.warn('Failed to get cache size:', error);
+    }
+
     return {
       databaseConnected: this.database.isConnected,
       authInitialized: this.auth !== null,
       tasksLoaded: this._tasks !== null,
       intelligenceActive: this._intelligence !== null,
       syncActive: this._realTimeSync !== null,
-      offlineQueueSize: 0, // TODO: Get from offline manager
-      cacheSize: 0, // TODO: Get from cache manager
-      backgroundTasksActive: 0 // TODO: Track background tasks
+      offlineQueueSize,
+      cacheSize,
+      backgroundTasksActive: this.getBackgroundTasksCount()
     };
+  }
+
+  private getBackgroundTasksCount(): number {
+    let count = 0;
+    if (this._webSocket?.isConnected()) count++;
+    if (this._realTimeSync) count++;
+    if (this._weatherTaskManager) count++;
+    return count;
   }
   
   public async stopBackgroundServices(): Promise<void> {

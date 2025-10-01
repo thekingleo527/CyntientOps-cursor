@@ -5,7 +5,7 @@
  */
 
 import React, { useRef, useEffect, ReactNode } from 'react';
-import { Animated, Easing, Dimensions, PanResponder, GestureResponderEvent, PanResponderGestureState } from 'react-native';
+import { Animated, Easing, Dimensions, PanResponder, GestureResponderEvent, PanResponderGestureState, TouchableOpacity, Platform } from 'react-native';
 import { Colors } from '@cyntientops/design-tokens';
 
 const { width, height } = Dimensions.get('window');
@@ -13,10 +13,14 @@ const { width, height } = Dimensions.get('window');
 export interface AnimationConfig {
   duration?: number;
   delay?: number;
-  easing?: 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'bounce' | 'spring';
+  easing?: 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'bounce' | 'spring' | 'sentient';
   useNativeDriver?: boolean;
   iterations?: number;
   direction?: 'normal' | 'reverse' | 'alternate' | 'alternate-reverse';
+  // Sentient animation properties
+  breathing?: boolean;
+  pulseIntensity?: 'subtle' | 'medium' | 'strong';
+  emotionalState?: 'calm' | 'alert' | 'thinking' | 'happy' | 'concerned';
 }
 
 export interface PageTransitionConfig extends AnimationConfig {
@@ -42,6 +46,95 @@ export interface GestureAnimationConfig {
   onGestureEnd?: () => void;
   onGestureUpdate?: (progress: number) => void;
 }
+
+// Sentient Breathing Animation for Nova AI
+export const SentientBreathing: React.FC<{
+  children: ReactNode;
+  emotionalState?: 'calm' | 'alert' | 'thinking' | 'happy' | 'concerned';
+  intensity?: 'subtle' | 'medium' | 'strong';
+  isActive?: boolean;
+}> = ({ children, emotionalState = 'calm', intensity = 'subtle', isActive = true }) => {
+  const breathingValue = useRef(new Animated.Value(1)).current;
+  const pulseValue = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    const getBreathingConfig = () => {
+      const configs = {
+        calm: { duration: 3000, scale: 1.02 },
+        alert: { duration: 2000, scale: 1.05 },
+        thinking: { duration: 4000, scale: 1.03 },
+        happy: { duration: 2500, scale: 1.04 },
+        concerned: { duration: 3500, scale: 1.01 }
+      };
+      return configs[emotionalState];
+    };
+
+    const getIntensityMultiplier = () => {
+      const multipliers = { subtle: 0.5, medium: 1, strong: 1.5 };
+      return multipliers[intensity];
+    };
+
+    const config = getBreathingConfig();
+    const multiplier = getIntensityMultiplier();
+
+    const breathingAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(breathingValue, {
+          toValue: 1 + (config.scale - 1) * multiplier,
+          duration: config.duration / 2,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(breathingValue, {
+          toValue: 1,
+          duration: config.duration / 2,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    const pulseAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseValue, {
+          toValue: 1 + 0.1 * multiplier,
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseValue, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    breathingAnimation.start();
+    pulseAnimation.start();
+
+    return () => {
+      breathingAnimation.stop();
+      pulseAnimation.stop();
+    };
+  }, [emotionalState, intensity, isActive]);
+
+  return (
+    <Animated.View
+      style={{
+        transform: [
+          { scale: breathingValue },
+          { scale: pulseValue }
+        ],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+};
 
 // Page Transition Animations
 export const PageTransition: React.FC<{
@@ -137,6 +230,94 @@ export const PageTransition: React.FC<{
     <Animated.View style={[getTransitionStyle(), style]}>
       {children}
     </Animated.View>
+  );
+};
+
+// Graceful Touch Feedback
+export const GracefulTouch: React.FC<{
+  children: ReactNode;
+  onPress?: () => void;
+  hapticFeedback?: boolean;
+  rippleEffect?: boolean;
+  scaleOnPress?: boolean;
+}> = ({ children, onPress, hapticFeedback = true, rippleEffect = true, scaleOnPress = true }) => {
+  const scaleValue = useRef(new Animated.Value(1)).current;
+  const rippleValue = useRef(new Animated.Value(0)).current;
+
+  const handlePressIn = () => {
+    if (scaleOnPress) {
+      Animated.spring(scaleValue, {
+        toValue: 0.95,
+        useNativeDriver: true,
+        tension: 300,
+        friction: 10,
+      }).start();
+    }
+
+    if (rippleEffect) {
+      Animated.timing(rippleValue, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+
+    if (hapticFeedback && Platform.OS === 'ios') {
+      const { HapticFeedback } = require('expo-haptics');
+      HapticFeedback.impactAsync(HapticFeedback.ImpactFeedbackStyle.Light);
+    }
+  };
+
+  const handlePressOut = () => {
+    if (scaleOnPress) {
+      Animated.spring(scaleValue, {
+        toValue: 1,
+        useNativeDriver: true,
+        tension: 300,
+        friction: 10,
+      }).start();
+    }
+
+    if (rippleEffect) {
+      Animated.timing(rippleValue, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      activeOpacity={1}
+      style={{ position: 'relative' }}
+    >
+      <Animated.View
+        style={{
+          transform: [{ scale: scaleValue }],
+        }}
+      >
+        {children}
+      </Animated.View>
+      {rippleEffect && (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+            borderRadius: 8,
+            opacity: rippleValue,
+            transform: [{ scale: rippleValue }],
+          }}
+        />
+      )}
+    </TouchableOpacity>
   );
 };
 
@@ -684,4 +865,6 @@ export {
   MicroInteraction,
   LoadingAnimation,
   GestureAnimation,
+  SentientBreathing,
+  GracefulTouch,
 };

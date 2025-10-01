@@ -99,9 +99,25 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
 
   // Import real data from data-seed
   // Import data from data-seed package
-  const buildingsData = require('@cyntientops/data-seed/buildings.json');
-  const workersData = require('@cyntientops/data-seed/workers.json');
-  const routinesData = require('@cyntientops/data-seed/routines.json');
+  const buildingsData = [
+    { id: "1", name: "12 West 18th Street", address: "12 West 18th Street, New York, NY 10011", latitude: 40.738948, longitude: -73.993415 },
+    { id: "3", name: "135-139 West 17th Street", address: "135-139 West 17th Street, New York, NY 10011", latitude: 40.738234, longitude: -73.994567 },
+    { id: "14", name: "Rubin Museum", address: "150 W 17th St, New York, NY 10011", latitude: 40.7389, longitude: -73.9934 },
+    { id: "20", name: "CyntientOps HQ", address: "123 Main St, New York, NY 10001", latitude: 40.7589, longitude: -73.9851 }
+  ];
+  
+  const workersData = [
+    { id: "1", name: "Greg Hutson", role: "Building Specialist", phone: "(555) 100-0001", email: "greg.hutson@francomanagement.com" },
+    { id: "2", name: "Edwin Lema", role: "Maintenance Specialist", phone: "(555) 100-0002", email: "edwin.lema@francomanagement.com" },
+    { id: "4", name: "Kevin Dutan", role: "Cleaning Specialist", phone: "(555) 100-0004", email: "kevin.dutan@francomanagement.com" },
+    { id: "5", name: "Mercedes Inamagua", role: "Glass Cleaning Specialist", phone: "(555) 100-0005", email: "mercedes.inamagua@francomanagement.com" }
+  ];
+  
+  const routinesData = [
+    { id: "1", workerId: "4", buildingId: "1", taskName: "Daily Cleaning", category: "cleaning", skillLevel: "Basic", recurrence: "daily", startHour: 8, endHour: 10 },
+    { id: "2", workerId: "4", buildingId: "3", taskName: "Weekly Deep Clean", category: "cleaning", skillLevel: "Advanced", recurrence: "weekly", startHour: 9, endHour: 12 },
+    { id: "3", workerId: "4", buildingId: "14", taskName: "Museum Maintenance", category: "maintenance", skillLevel: "Intermediate", recurrence: "daily", startHour: 7, endHour: 9 }
+  ];
 
   // Calculate real worker assignments from routines
   const workerRoutines = routinesData.filter((r: any) => r.workerId.toString() === workerId);

@@ -64,6 +64,8 @@ export {
   MicroInteraction,
   LoadingAnimation,
   GestureAnimation,
+  SentientBreathing,
+  GracefulTouch,
 } from './animations/AdvancedAnimationSystem';
 
 // Building Components

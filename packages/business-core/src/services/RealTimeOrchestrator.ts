@@ -750,7 +750,7 @@ export class RealTimeOrchestrator {
       id: this.generateUpdateId(),
       name: this.getMetricName(update.type),
       value: this.getMetricValue(update.data),
-      trend: 'stable', // TODO: Calculate from historical data
+      trend: this.calculateTrend(update.data),
       timestamp: update.timestamp
     };
     
@@ -776,12 +776,22 @@ export class RealTimeOrchestrator {
   
   private async setupWebSocketConnection(): Promise<void> {
     try {
-      // TODO: Get auth token from auth service
-      const token = 'placeholder-token';
-      await this.webSocketManager.connect(token);
-      console.log('🔌 WebSocket connected');
+      // Get auth token from ServiceContainer's session manager
+      const authToken = await this.getAuthToken();
+      await this.webSocketManager.connect(authToken);
+      console.log('🔌 WebSocket connected with auth token');
     } catch (error) {
       console.error('❌ WebSocket connection failed:', error);
+    }
+  }
+
+  private async getAuthToken(): Promise<string> {
+    try {
+      const session = this.serviceContainer.sessionManager.getCurrentSession();
+      return session?.token || 'anonymous-token';
+    } catch (error) {
+      console.warn('⚠️ Failed to get auth token, using anonymous:', error);
+      return 'anonymous-token';
     }
   }
   
@@ -815,14 +825,26 @@ export class RealTimeOrchestrator {
   
   private async enqueueUpdate(update: DashboardUpdate): Promise<void> {
     try {
-      // TODO: Store in database for offline processing
+      // Store in database for offline processing
+      await this.database.execute(
+        `INSERT INTO offline_queue (id, update_type, update_data, priority, created_at)
+         VALUES (?, ?, ?, ?, ?)`,
+        [
+          update.id,
+          update.type,
+          JSON.stringify(update),
+          this.getUpdatePriority(update.type),
+          update.timestamp.toISOString()
+        ]
+      );
+
       console.log('📥 Queued update for offline processing:', update.type);
       this.pendingUpdatesCount++;
-      
+
       if (this.getUpdatePriority(update.type) === 'urgent') {
         this.urgentPendingCount++;
       }
-      
+
     } catch (error) {
       console.error('❌ Failed to queue update:', error);
     }
@@ -830,16 +852,49 @@ export class RealTimeOrchestrator {
   
   public async processPendingUpdatesBatch(): Promise<void> {
     if (!this.isOnline) return;
-    
+
     console.log('🔄 Processing pending updates...');
-    
+
     try {
-      // TODO: Process queued updates from database
-      this.pendingUpdatesCount = 0;
-      this.urgentPendingCount = 0;
+      // Retrieve queued updates from database, ordered by priority and creation time
+      const queuedUpdates = await this.database.query(
+        `SELECT * FROM offline_queue ORDER BY priority DESC, created_at ASC LIMIT 100`
+      );
+
+      let processed = 0;
+      let failed = 0;
+
+      for (const row of queuedUpdates) {
+        try {
+          const update: DashboardUpdate = JSON.parse(row.update_data as string);
+          await this.sendToServer(update);
+
+          // Delete successfully processed update from queue
+          await this.database.execute(
+            `DELETE FROM offline_queue WHERE id = ?`,
+            [row.id]
+          );
+          processed++;
+        } catch (error) {
+          console.error('❌ Failed to process queued update:', error);
+          failed++;
+        }
+      }
+
+      // Update counts from database
+      const remainingCount = await this.database.query(
+        `SELECT COUNT(*) as count FROM offline_queue`
+      );
+      this.pendingUpdatesCount = (remainingCount[0]?.count as number) || 0;
+
+      const urgentCount = await this.database.query(
+        `SELECT COUNT(*) as count FROM offline_queue WHERE priority = 'urgent'`
+      );
+      this.urgentPendingCount = (urgentCount[0]?.count as number) || 0;
+
       this.lastSyncTime = new Date();
-      
-      console.log('✅ Pending updates processed');
+
+      console.log(`✅ Processed ${processed} updates, ${failed} failed, ${this.pendingUpdatesCount} remaining`);
     } catch (error) {
       console.error('❌ Failed to process pending updates:', error);
     }
@@ -902,21 +957,132 @@ export class RealTimeOrchestrator {
     }
   }
   
+  private calculateTrend(data: any): 'up' | 'down' | 'stable' {
+    // Calculate trend based on data changes
+    if (!data || typeof data !== 'object') return 'stable';
+
+    if (data.previousValue !== undefined && data.currentValue !== undefined) {
+      const prev = Number(data.previousValue);
+      const curr = Number(data.currentValue);
+
+      if (!isNaN(prev) && !isNaN(curr)) {
+        if (curr > prev) return 'up';
+        if (curr < prev) return 'down';
+      }
+    }
+
+    // Check for percentage change
+    if (data.percentageChange !== undefined) {
+      const change = Number(data.percentageChange);
+      if (!isNaN(change)) {
+        if (change > 0) return 'up';
+        if (change < 0) return 'down';
+      }
+    }
+
+    return 'stable';
+  }
+
   private async detectAndResolveConflicts(update: DashboardUpdate): Promise<void> {
-    // TODO: Implement conflict detection and resolution
-    console.log('🔍 Checking for conflicts in update:', update.id);
+    try {
+      // Get local version of the data
+      const localVersion = await this.getLocalVersion(update);
+
+      if (!localVersion) {
+        // No local version, no conflict
+        return;
+      }
+
+      // Check for conflicts based on timestamps and versions
+      const hasConflict =
+        localVersion.timestamp > update.timestamp ||
+        (localVersion.version && update.data.version &&
+         localVersion.version !== update.data.version);
+
+      if (hasConflict) {
+        console.log('⚠️ Conflict detected for update:', update.id);
+
+        // Use last-write-wins strategy
+        if (localVersion.timestamp > update.timestamp) {
+          console.log('📌 Local version is newer, keeping local');
+          return;
+        } else {
+          console.log('📥 Remote version is newer, using remote');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Conflict detection failed:', error);
+    }
+  }
+
+  private async getLocalVersion(update: DashboardUpdate): Promise<any> {
+    try {
+      const result = await this.database.query(
+        `SELECT * FROM dashboard_updates WHERE id = ? OR
+         (building_id = ? AND worker_id = ? AND type = ?)
+         ORDER BY timestamp DESC LIMIT 1`,
+        [update.id, update.buildingId, update.workerId, update.type]
+      );
+      return result[0];
+    } catch (error) {
+      return null;
+    }
   }
   
   // MARK: - Network Monitoring
-  
+
   private setupNetworkMonitoring(): void {
-    // TODO: Implement network status monitoring
-    console.log('📡 Network monitoring setup');
+    // Set initial online status
+    this.isOnline = true;
+    console.log('📡 Network monitoring setup (online mode)');
+
+    // Periodically check network status
+    setInterval(() => {
+      this.checkNetworkStatus();
+    }, 30000); // Check every 30 seconds
   }
-  
+
+  private async checkNetworkStatus(): Promise<void> {
+    try {
+      const wasOnline = this.isOnline;
+      // Use WebSocket connection status as network health indicator
+      this.isOnline = this.webSocketManager.isConnected();
+
+      if (!wasOnline && this.isOnline) {
+        console.log('🌐 Network restored, processing pending updates...');
+        await this.processPendingUpdatesBatch();
+      } else if (wasOnline && !this.isOnline) {
+        console.log('📴 Network lost, queuing updates for offline processing');
+      }
+    } catch (error) {
+      console.error('❌ Network status check failed:', error);
+    }
+  }
+
   private setupAuthenticationMonitoring(): void {
-    // TODO: Implement authentication state monitoring
-    console.log('🔐 Authentication monitoring setup');
+    try {
+      // Periodically check authentication status
+      setInterval(async () => {
+        await this.checkAuthenticationStatus();
+      }, 60000); // Check every minute
+
+      console.log('🔐 Authentication monitoring setup');
+    } catch (error) {
+      console.error('❌ Authentication monitoring setup failed:', error);
+    }
+  }
+
+  private async checkAuthenticationStatus(): Promise<void> {
+    try {
+      const session = this.serviceContainer.sessionManager.getCurrentSession();
+
+      if (!session || !session.isValid) {
+        console.warn('⚠️ Session invalid or expired, disconnecting real-time services');
+        await this.disconnect();
+      }
+    } catch (error) {
+      console.error('❌ Authentication status check failed:', error);
+    }
   }
   
   // MARK: - Public Control Methods

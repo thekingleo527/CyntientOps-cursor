@@ -267,15 +267,6 @@ const realViolationData = {
 
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-// TODO: Replace with proper imports once packages are built
-// import { DatabaseManager } from '@cyntientops/database';
-// import { Building, OperationalDataTaskAssignment, WorkerProfile } from '@cyntientops/domain-schema';
-// import { MapContainer } from '@cyntientops/ui-components';
-// import { nycAPIService, CollectionScheduleSummary } from '@cyntientops/api-clients';
-
-// Real NYC API Service - using actual implementation
-// TODO: Replace with proper package import once packages are built
-// import { nycAPIService } from '@cyntientops/api-clients';
 
 // Temporary inline NYC API service for development
 class NYCAPIService {

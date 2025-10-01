@@ -70,6 +70,31 @@ export interface NovaManagerState {
   
   // Real-time Properties
   urgentAlerts: any[]; // ClientAlert[]
+  
+  // Weather Intelligence Properties
+  weatherContext: {
+    currentWeather: any;
+    upcomingWeather: any[];
+    weatherSuggestions: any[];
+    isWeatherAware: boolean;
+  };
+  
+  // Sentient Behavior Properties
+  userPreferences: {
+    preferredTaskOrder: string[];
+    workingHours: { start: number; end: number };
+    communicationStyle: 'brief' | 'detailed' | 'conversational';
+    notificationFrequency: 'minimal' | 'moderate' | 'frequent';
+  };
+  
+  // Contextual Awareness
+  currentContext: {
+    screen: string;
+    timeOfDay: 'morning' | 'afternoon' | 'evening' | 'night';
+    userMood: 'focused' | 'stressed' | 'relaxed' | 'busy';
+    taskProgress: number;
+    buildingContext: any;
+  };
 }
 
 export interface Particle {

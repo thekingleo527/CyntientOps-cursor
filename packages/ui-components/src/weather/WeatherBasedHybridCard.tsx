@@ -80,6 +80,14 @@ export enum WeatherSuggestionType {
   EMERGENCY_PREPARATION = 'emergency_preparation',
   DRAINAGE_CHECK = 'drainage_check',
   STRUCTURAL_INSPECTION = 'structural_inspection',
+  // Weather-specific augmentation types
+  PRE_RAIN_PREPARATION = 'pre_rain_preparation',
+  POST_RAIN_CLEANUP = 'post_rain_cleanup',
+  PRE_SNOW_PREPARATION = 'pre_snow_preparation',
+  POST_SNOW_CLEANUP = 'post_snow_cleanup',
+  WIND_SAFETY_CHECK = 'wind_safety_check',
+  HEAT_WAVE_PREPARATION = 'heat_wave_preparation',
+  COLD_SNAP_PREPARATION = 'cold_snap_preparation',
 }
 
 export enum WeatherSuggestionPriority {
@@ -124,51 +132,164 @@ export const WeatherBasedHybridCard: React.FC<WeatherBasedHybridCardProps> = ({
     if (!weatherData) return;
 
     const newSuggestions: WeatherSuggestion[] = [];
+    const currentHour = new Date().getHours();
+    const isBusinessHours = currentHour >= 6 && currentHour <= 18;
 
-    // Rain-based suggestions
+    // Enhanced Rain Intelligence - Pre/During/Post Rain Tasks
     if (weatherData.condition === 'rainy' || weatherData.condition === 'stormy') {
-      newSuggestions.push({
-        id: 'drainage_check_rain',
-        type: WeatherSuggestionType.DRAINAGE_CHECK,
-        priority: WeatherSuggestionPriority.HIGH,
-        title: 'Check Roof Drains & Gutters',
-        description: 'Inspect and clear roof drains, gutters, and downspouts to prevent water damage',
-        reasoning: `It's currently ${weatherData.condition} with ${weatherData.description}. Ensure proper drainage to prevent water accumulation.`,
-        estimatedDuration: 30,
-        weatherCondition: weatherData.condition,
-        weatherImpact: {
-          level: 'high',
-          description: 'Active rain requires immediate drainage attention',
+      // Pre-rain preparation (if rain is coming)
+      if (weatherData.outdoorWorkRisk === 'medium' || weatherData.outdoorWorkRisk === 'high') {
+        newSuggestions.push({
+          id: 'pre-rain-mats',
+          type: WeatherSuggestionType.PRE_RAIN_PREPARATION,
+          priority: WeatherSuggestionPriority.HIGH,
+          title: 'Put Out Rain Mats',
+          description: 'Place rain mats at all building entrances before rain starts',
+          reasoning: `Rain expected with ${weatherData.description}. Prevent water damage and slip hazards.`,
+          estimatedDuration: 15,
+          weatherCondition: weatherData.condition,
+          weatherImpact: {
+            level: 'high',
+            description: 'Prevents water damage and slip hazards',
           urgency: 'immediate',
           timeWindow: 'Next 2 hours',
         },
         actionable: true,
-        category: 'Maintenance',
-        buildingId: building?.id,
+          category: 'Maintenance',
+          buildingId: building?.id,
       });
+
+      // Post-rain cleanup (if rain just ended)
+      if (weatherData.outdoorWorkRisk === 'low' && weatherData.condition === 'rainy') {
+        newSuggestions.push({
+          id: 'post-rain-cleanup',
+          type: WeatherSuggestionType.POST_RAIN_CLEANUP,
+          priority: WeatherSuggestionPriority.MEDIUM,
+          title: 'Collect & Clean Rain Mats',
+          description: 'Collect rain mats and clean them for next use',
+          reasoning: 'Rain has ended, time to clean up and prepare for next weather event',
+          estimatedDuration: 20,
+          weatherCondition: weatherData.condition,
+          weatherImpact: {
+            level: 'medium',
+            description: 'Maintains cleanliness and prepares for next rain',
+            urgency: 'planned',
+            timeWindow: 'Next 4 hours',
+          },
+          actionable: true,
+          category: 'Cleanup',
+          buildingId: building?.id,
+        });
+
+        newSuggestions.push({
+          id: 'check-water-damage',
+          type: WeatherSuggestionType.STRUCTURAL_INSPECTION,
+          priority: WeatherSuggestionPriority.HIGH,
+          title: 'Check for Water Damage',
+          description: 'Inspect building for any water damage or leaks',
+          reasoning: 'Post-rain inspection to catch any issues early',
+          estimatedDuration: 30,
+          weatherCondition: weatherData.condition,
+          weatherImpact: {
+            level: 'high',
+            description: 'Early detection prevents costly repairs',
+            urgency: 'soon',
+            timeWindow: 'Next 2 hours',
+          },
+          actionable: true,
+          category: 'Inspection',
+          buildingId: building?.id,
+        });
+      }
     }
 
-    // Snow-based suggestions
+    // Enhanced Snow Intelligence - Pre/During/Post Snow Tasks
     if (weatherData.condition === 'snowy' || weatherData.condition === 'blizzard') {
-      newSuggestions.push({
-        id: 'snow_removal_prep',
-        type: WeatherSuggestionType.EMERGENCY_PREPARATION,
-        priority: WeatherSuggestionPriority.URGENT,
-        title: 'Prepare Snow Removal Equipment',
-        description: 'Check and prepare snow removal equipment for immediate use',
-        reasoning: `Snow conditions detected: ${weatherData.description}. Prepare equipment for snow removal operations.`,
-        estimatedDuration: 45,
-        weatherCondition: weatherData.condition,
-        weatherImpact: {
-          level: 'critical',
-          description: 'Snow accumulation requires immediate response',
-          urgency: 'immediate',
-          timeWindow: 'Next 1 hour',
-        },
-        actionable: true,
-        category: 'Emergency Response',
-        buildingId: building?.id,
-      });
+      // Pre-snow preparation
+      if (weatherData.outdoorWorkRisk === 'medium' || weatherData.outdoorWorkRisk === 'high') {
+        newSuggestions.push({
+          id: 'pre-snow-salt',
+          type: WeatherSuggestionType.PRE_SNOW_PREPARATION,
+          priority: WeatherSuggestionPriority.HIGH,
+          title: 'Salt Sidewalks & Entrances',
+          description: 'Apply salt to sidewalks and building entrances before snow starts',
+          reasoning: `Snow expected with ${weatherData.description}. Prevent ice formation and slip hazards.`,
+          estimatedDuration: 25,
+          weatherCondition: weatherData.condition,
+          weatherImpact: {
+            level: 'high',
+            description: 'Prevents ice formation and slip hazards',
+            urgency: 'soon',
+            timeWindow: 'Next 2 hours',
+          },
+          actionable: true,
+          category: 'Safety Preparation',
+          buildingId: building?.id,
+        });
+
+        newSuggestions.push({
+          id: 'check-snow-equipment',
+          type: WeatherSuggestionType.PRE_SNOW_PREPARATION,
+          priority: WeatherSuggestionPriority.MEDIUM,
+          title: 'Check Snow Removal Equipment',
+          description: 'Ensure shovels and snow removal equipment are ready',
+          reasoning: 'Prepare equipment before snow starts for efficient cleanup',
+          estimatedDuration: 10,
+          weatherCondition: weatherData.condition,
+          weatherImpact: {
+            level: 'medium',
+            description: 'Ensures efficient snow removal',
+            urgency: 'soon',
+            timeWindow: 'Next 2 hours',
+          },
+          actionable: true,
+          category: 'Equipment Check',
+          buildingId: building?.id,
+        });
+      }
+
+      // Post-snow cleanup (if snow just ended)
+      if (weatherData.outdoorWorkRisk === 'low' && weatherData.condition === 'snowy') {
+        newSuggestions.push({
+          id: 'post-snow-shovel',
+          type: WeatherSuggestionType.POST_SNOW_CLEANUP,
+          priority: WeatherSuggestionPriority.HIGH,
+          title: 'Shovel Sidewalks',
+          description: 'Clear snow from sidewalks and building entrances',
+          reasoning: 'Snow has ended, time to clear walkways for safety',
+          estimatedDuration: 45,
+          weatherCondition: weatherData.condition,
+          weatherImpact: {
+            level: 'high',
+            description: 'Ensures safe pedestrian access',
+            urgency: 'immediate',
+            timeWindow: 'Next 2 hours',
+          },
+          actionable: true,
+          category: 'Snow Removal',
+          buildingId: building?.id,
+        });
+
+        newSuggestions.push({
+          id: 'post-snow-re-salt',
+          type: WeatherSuggestionType.POST_SNOW_CLEANUP,
+          priority: WeatherSuggestionPriority.MEDIUM,
+          title: 'Re-salt if Needed',
+          description: 'Apply additional salt if ice formation is detected',
+          reasoning: 'Prevent ice formation after snow removal',
+          estimatedDuration: 15,
+          weatherCondition: weatherData.condition,
+          weatherImpact: {
+            level: 'medium',
+            description: 'Prevents ice formation and slip hazards',
+            urgency: 'soon',
+            timeWindow: 'Next 4 hours',
+          },
+          actionable: true,
+          category: 'Safety Maintenance',
+          buildingId: building?.id,
+        });
+      }
     }
 
     // High wind suggestions

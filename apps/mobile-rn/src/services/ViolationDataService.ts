@@ -2,12 +2,11 @@
  * 🏛️ Violation Data Service
  * Real violation data from NYC APIs
  * Last Updated: October 1, 2025
- * Source: NYC HPD, DOB, and ECB APIs
+ * Source: NYC HPD and OATH Hearings Division APIs
  *
  * Data verified against live NYC Open Data APIs:
  * - HPD Violations: https://data.cityofnewyork.us/resource/wvxf-dwi5.json
- * - DOB Violations: https://data.cityofnewyork.us/resource/3h2n-5cm9.json
- * - ECB Violations: https://data.cityofnewyork.us/resource/6bgk-3dad.json
+ * - OATH Hearings (DSNY/DOB): https://data.cityofnewyork.us/resource/jz4z-kudi.json
  */
 
 export const realViolationData = {
@@ -28,9 +27,9 @@ export const realViolationData = {
   "4": {
     "hpd": 4,
     "dob": 0,
-    "dsny": 0,
-    "outstanding": 4,
-    "score": 88
+    "dsny": 13,
+    "outstanding": 1327,
+    "score": 75
   },
   "5": {
     "hpd": 0,
@@ -42,9 +41,9 @@ export const realViolationData = {
   "6": {
     "hpd": 12,
     "dob": 0,
-    "dsny": 0,
-    "outstanding": 12,
-    "score": 64
+    "dsny": 11,
+    "outstanding": 2100,
+    "score": 45
   },
   "7": {
     "hpd": 0,
@@ -70,9 +69,9 @@ export const realViolationData = {
   "10": {
     "hpd": 0,
     "dob": 0,
-    "dsny": 0,
-    "outstanding": 0,
-    "score": 100
+    "dsny": 1,
+    "outstanding": 2550,
+    "score": 70
   },
   "11": {
     "hpd": 4,
@@ -111,17 +110,17 @@ export const realViolationData = {
   },
   "17": {
     "hpd": 0,
-    "dob": 0,
-    "dsny": 0,
-    "outstanding": 0,
-    "score": 100
+    "dob": 3,
+    "dsny": 1,
+    "outstanding": 14687,
+    "score": 30
   },
   "18": {
     "hpd": 0,
-    "dob": 0,
-    "dsny": 0,
-    "outstanding": 0,
-    "score": 100
+    "dob": 2,
+    "dsny": 8,
+    "outstanding": 7150,
+    "score": 40
   },
   "19": {
     "hpd": 0,
@@ -132,10 +131,10 @@ export const realViolationData = {
   },
   "21": {
     "hpd": 0,
-    "dob": 0,
-    "dsny": 0,
-    "outstanding": 0,
-    "score": 100
+    "dob": 3,
+    "dsny": 13,
+    "outstanding": 12000,
+    "score": 35
   }
 };
 

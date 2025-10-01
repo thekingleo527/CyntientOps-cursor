@@ -44,7 +44,7 @@ export const DOBPermitsSheet: React.FC<DOBPermitsSheetProps> = ({
       setError(null);
 
       const container = ServiceContainer.getInstance();
-      const complianceService = new ComplianceService(container);
+      const complianceService = ComplianceService.getInstance(container);
 
       // Fetch real DOB permits from NYC Open Data API
       const dobPermits = await complianceService.getDOBPermitsForBuilding(buildingId);

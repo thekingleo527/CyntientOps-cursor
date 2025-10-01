@@ -44,7 +44,7 @@ export const HPDViolationsSheet: React.FC<HPDViolationsSheetProps> = ({
       setError(null);
 
       const container = ServiceContainer.getInstance();
-      const complianceService = new ComplianceService(container);
+      const complianceService = ComplianceService.getInstance(container);
 
       // Fetch real HPD violations from NYC Open Data API
       const hpdViolations = await complianceService.getHPDViolationsForBuilding(buildingId);

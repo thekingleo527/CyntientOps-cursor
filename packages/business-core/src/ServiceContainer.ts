@@ -776,13 +776,32 @@ export class ServiceContainer {
     if (!this._photoCatalog) {
       this._photoCatalog = {
         addPhoto: async (photo: any) => {
-          return await this.photoEvidenceManager.addPhoto(photo);
+          const imageUri = photo.imageUri || photo.uri || photo.photoUri;
+
+          if (!imageUri) {
+            throw new Error('Photo requires an imageUri or uri field');
+          }
+
+          return await this.photoEvidence.addPhoto({
+            id: photo.id,
+            buildingId: photo.buildingId,
+            workerId: photo.workerId,
+            taskId: photo.taskId,
+            imageUri,
+            thumbnailUri: photo.thumbnailUri || photo.previewUri,
+            category: photo.category,
+            notes: photo.notes,
+            source: photo.source,
+            metadata: photo.metadata,
+            tags: photo.tags,
+            status: photo.status,
+          });
         },
         getPhotos: async (buildingId: string) => {
-          return await this.photoEvidenceManager.getPhotosForBuilding(buildingId);
+          return await this.photoEvidence.getPhotosForBuilding(buildingId);
         },
         deletePhoto: async (photoId: string) => {
-          return await this.photoEvidenceManager.deletePhoto(photoId);
+          return await this.photoEvidence.deletePhoto(photoId);
         },
       };
     }
@@ -912,7 +931,7 @@ export class ServiceContainer {
   
   public get photoEvidence(): PhotoEvidenceManager {
     if (!this._photoEvidence) {
-      this._photoEvidence = PhotoEvidenceManager.getInstance();
+      this._photoEvidence = PhotoEvidenceManager.getInstance(this.database);
     }
     return this._photoEvidence;
   }

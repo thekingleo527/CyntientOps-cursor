@@ -52,6 +52,7 @@ export interface PhotoEvidence {
       os: string;
       appVersion: string;
     };
+    notes?: string;
   };
   status: 'pending' | 'uploaded' | 'failed' | 'location_verified';
   uploadAttempts: number;
@@ -180,6 +181,68 @@ export class PhotoEvidenceManager {
       return photoEvidence;
     } catch (error) {
       console.error('Failed to capture photo:', error);
+      throw error;
+    }
+  }
+
+  async addPhoto(photo: {
+    id?: string;
+    buildingId: string;
+    workerId?: string;
+    taskId?: string;
+    imageUri: string;
+    thumbnailUri?: string;
+    category?: string;
+    notes?: string;
+    source?: 'camera' | 'gallery';
+    metadata?: Record<string, any>;
+    tags?: string[];
+    status?: 'pending' | 'uploaded' | 'failed' | 'location_verified';
+  }): Promise<PhotoEvidence> {
+    try {
+      const photoId = photo.id || `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const timestamp = Date.now();
+      const metadata = photo.metadata || {};
+      const imageUri = photo.imageUri || (metadata.uri as string) || (photo as any).uri;
+
+      if (!imageUri) {
+        throw new Error('Photo imageUri is required to add photo evidence');
+      }
+
+      const tagsSource = photo.tags || metadata.tags || [];
+      const tags = Array.isArray(tagsSource) ? tagsSource : [tagsSource];
+
+      const photoEvidence: PhotoEvidence = {
+        id: photoId,
+        taskId: photo.taskId || 'manual_upload',
+        workerId: photo.workerId || 'unknown_worker',
+        buildingId: photo.buildingId,
+        imageUri,
+        thumbnailUri: photo.thumbnailUri || metadata.thumbnailUri || imageUri,
+        timestamp,
+        location: metadata.location,
+        smartLocation: metadata.smartLocation,
+        workerSpecifiedArea: metadata.workerSpecifiedArea,
+        metadata: {
+          category: photo.category || metadata.category || 'general',
+          taskName: metadata.taskName || 'Building Photo',
+          workerName: metadata.workerName || this.getWorkerName(photo.workerId),
+          buildingId: photo.buildingId,
+          buildingName: metadata.buildingName || this.getBuildingName(photo.buildingId),
+          source: photo.source || metadata.source || 'gallery',
+          exif: metadata.exif,
+          deviceInfo: metadata.deviceInfo,
+          notes: photo.notes || metadata.notes,
+        },
+        status: photo.status || 'pending',
+        uploadAttempts: 0,
+        tags,
+      };
+
+      await this.savePhotoEvidence(photoEvidence);
+      return photoEvidence;
+    } catch (error) {
+      console.error('Failed to add photo evidence:', error);
       throw error;
     }
   }
@@ -511,14 +574,18 @@ export class PhotoEvidenceManager {
       id: dbPhoto.id,
       taskId: dbPhoto.task_id,
       workerId: dbPhoto.worker_id,
+      buildingId: dbPhoto.building_id,
       imageUri: dbPhoto.image_uri,
       thumbnailUri: dbPhoto.thumbnail_uri,
       timestamp: dbPhoto.timestamp,
       location: dbPhoto.location ? JSON.parse(dbPhoto.location) : undefined,
+      smartLocation: dbPhoto.smart_location ? JSON.parse(dbPhoto.smart_location) : undefined,
+      workerSpecifiedArea: dbPhoto.worker_specified_area ? JSON.parse(dbPhoto.worker_specified_area) : undefined,
       metadata: JSON.parse(dbPhoto.metadata),
       status: dbPhoto.status,
       uploadAttempts: dbPhoto.upload_attempts,
-    };
+      tags: dbPhoto.tags ? JSON.parse(dbPhoto.tags) : [],
+    } as PhotoEvidence;
   }
 
   async getStorageInfo(): Promise<{ totalPhotos: number; totalSize: number; pendingUploads: number }> {
@@ -612,5 +679,33 @@ export class PhotoEvidenceManager {
       if (space) return space;
     }
     return null;
+  }
+
+  private getWorkerName(workerId?: string): string {
+    if (!workerId) {
+      return 'Unknown Worker';
+    }
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const workers = require('@cyntientops/data-seed/workers.json');
+      const worker = workers.find((w: any) => w.id === workerId);
+      return worker?.name || 'Unknown Worker';
+    } catch (error) {
+      console.warn('Failed to resolve worker name for photo evidence:', error);
+      return 'Unknown Worker';
+    }
+  }
+
+  private getBuildingName(buildingId: string): string {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const buildings = require('@cyntientops/data-seed/buildings.json');
+      const building = buildings.find((b: any) => b.id === buildingId);
+      return building?.name || 'Unknown Building';
+    } catch (error) {
+      console.warn('Failed to resolve building name for photo evidence:', error);
+      return 'Unknown Building';
+    }
   }
 }

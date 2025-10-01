@@ -7,7 +7,31 @@
 
 ## 👥 ACTUAL CLIENT ORGANIZATIONS (5 Orgs)
 
-### Organization 1: SolarOne
+### Organization 1: J&M Realty (LARGEST CLIENT)
+```yaml
+Managers: David & Jerry
+Buildings: 14 (11 building IDs = 14 physical buildings)
+  - Building 14: Rubin Museum (comprises 4 physical buildings)
+  - Building 1: 12 West 18th Street
+  - Building 3: 135-139 West 17th Street
+  - Building 5: 138 West 17th Street
+  - Building 6: 68 Perry Street
+  - Building 7: 112 West 18th Street
+  - Building 9: 117 West 17th Street
+  - Building 10: 131 Perry Street
+  - Building 11: 123 1st Avenue
+  - Building 17: 178 Spring Street
+  - Building 21: 148 Chambers Street
+Service Provider: Franco Management Enterprises
+
+Total Portfolio Value: ~$82M
+Average Compliance Score: 74
+Status: Mixed portfolio - some critical buildings need attention
+```
+
+---
+
+### Organization 2: SolarOne
 ```yaml
 Manager: Candace
 Buildings: 1
@@ -158,6 +182,7 @@ Status: ✅ Excellent client - perfect compliance
 
 | Organization | Manager | Buildings | Total Value | Violations | Outstanding | Score |
 |--------------|---------|-----------|-------------|------------|-------------|-------|
+| **J&M Realty** | David & Jerry | 14 | ~$82M | 61 | $31,343 | 74 🟡 |
 | **Citadel Realty** | Stephen | 2 | $18,709,000 | 27 | $8,477 | 57.5 🟡 |
 | **WeberFarhat Realty** | Moises | 1 | $10,867,002 | 0 | $0 | 100 ✅ |
 | **Remid Group** | Michelle | 1 | $9,193,333 | 0 | $0 | 100 ✅ |
@@ -167,11 +192,11 @@ Status: ✅ Excellent client - perfect compliance
 
 **All 7 organizations mapped with real manager names!**
 
+**J&M Realty is the LARGEST client** with 14 buildings (11 building IDs, with Rubin Museum counting as 4 physical buildings)
+
 ---
 
-## 🔍 REMAINING BUILDINGS TO MAP
-
-### Unassigned Buildings (9 buildings):
+## 🔍 J&M REALTY BUILDINGS (Complete List)
 
 **Building 1:** 12 West 18th Street
 - Market Value: $13,058,987

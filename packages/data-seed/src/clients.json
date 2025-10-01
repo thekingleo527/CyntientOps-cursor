@@ -1,7 +1,7 @@
 [
   {
     "id": "JMR",
-    "name": "JM Realty",
+    "name": "J&M Realty",
     "short_name": "JMR",
     "contact_email": "David@jmrealty.org",
     "contact_phone": "+1 (212) 555-0200",
@@ -9,8 +9,9 @@
     "is_active": true,
     "manager_name": "David & Jerry",
     "manager_title": "Property Managers",
-    "building_count": 10,
-    "building_ids": ["1", "3", "5", "6", "7", "9", "10", "11", "14", "17"]
+    "building_count": 14,
+    "building_ids": ["1", "3", "5", "6", "7", "9", "10", "11", "14", "17", "21"],
+    "notes": "Rubin Museum (building 14) comprises 4 physical buildings: 138 W 17th, 135-139 W 17th, 112 W 18th, 117 W 17th, plus standalone buildings at 12 W 18th, 178 Spring, 148 Chambers, 68 Perry, 123 1st Ave, 131 Perry"
   },
   {
     "id": "WFR",

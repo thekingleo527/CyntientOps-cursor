@@ -7,14 +7,21 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AdminDashboard } from '@cyntientops/ui-components';
+import {
+  AdminDashboard,
+  ErrorBoundary,
+  PortfolioValueCard,
+  ComplianceSummaryCard,
+  TopPropertiesCard,
+  DevelopmentOpportunitiesCard,
+} from '@cyntientops/ui-components';
 import { AdminViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { ServiceContainer } from '@cyntientops/business-core';
+import { ServiceContainer, PropertyDataService, ViolationDataService } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
-import { ErrorBoundary } from '@cyntientops/ui-components';
+import { Logger } from '@cyntientops/business-core';
 
 interface AdminDashboardScreenProps {
   onNavigateToWorker?: (workerId: string) => void;
@@ -133,10 +140,84 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
     return null;
   }
 
+  // Get portfolio and compliance data
+  const portfolioStats = PropertyDataService.getPortfolioStats();
+  const topProperties = PropertyDataService.getTopPropertiesByValue(5);
+  const developmentOpportunities = PropertyDataService.getPropertiesWithDevelopmentPotential().slice(0, 6);
+
+  // Calculate compliance summary
+  const allProperties = PropertyDataService.getAllProperties();
+  const violationsByType = { hpd: 0, dob: 0, dsny: 0 };
+  let totalOutstanding = 0;
+  let totalScore = 0;
+
+  allProperties.forEach(property => {
+    const violations = ViolationDataService.getViolationData(property.id);
+    if (violations) {
+      violationsByType.hpd += violations.hpd;
+      violationsByType.dob += violations.dob;
+      violationsByType.dsny += violations.dsny;
+      totalOutstanding += violations.outstanding;
+      totalScore += violations.score;
+    }
+  });
+
+  const totalViolations = violationsByType.hpd + violationsByType.dob + violationsByType.dsny;
+  const portfolioScore = allProperties.length > 0 ? totalScore / allProperties.length : 100;
+  const criticalBuildings = allProperties.filter(property => {
+    const violations = ViolationDataService.getViolationData(property.id);
+    return violations && violations.score < 50;
+  }).length;
+
   return (
     <ErrorBoundary context="AdminDashboardScreen">
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Portfolio Overview Cards */}
+          <PortfolioValueCard
+            marketValue={portfolioStats.totalMarketValue}
+            assessedValue={portfolioStats.totalAssessedValue}
+            unitsResidential={portfolioStats.totalResidentialUnits}
+            unitsCommercial={portfolioStats.totalCommercialUnits}
+            totalSquareFeet={portfolioStats.totalBuildingArea}
+            buildingCount={portfolioStats.buildingCount}
+          />
+
+          <ComplianceSummaryCard
+            portfolioScore={portfolioScore}
+            criticalBuildings={criticalBuildings}
+            totalViolations={totalViolations}
+            totalOutstanding={totalOutstanding}
+            violationsByType={violationsByType}
+          />
+
+          <TopPropertiesCard
+            properties={topProperties.map(p => ({
+              id: p.id,
+              name: p.name,
+              marketValue: p.marketValue,
+              complianceScore: ViolationDataService.getViolationData(p.id)?.score || 100,
+              violations: (() => {
+                const v = ViolationDataService.getViolationData(p.id);
+                return v ? v.hpd + v.dob + v.dsny : 0;
+              })(),
+            }))}
+            onPropertyPress={onNavigateToBuilding}
+          />
+
+          <DevelopmentOpportunitiesCard
+            opportunities={developmentOpportunities.map(p => ({
+              id: p.id,
+              name: p.name,
+              unusedFARPercent: p.unusedFARPercent,
+              currentFAR: p.builtFAR,
+              maxFAR: p.maxFAR,
+              estimatedValueIncrease: Math.round(p.marketValue * (p.unusedFARPercent / 100)),
+            }))}
+            onOpportunityPress={onNavigateToBuilding}
+          />
+
+          {/* Original Admin Dashboard */}
           <AdminDashboard
             state={viewModel.getState()}
             onWorkerStatusUpdate={handleWorkerStatusUpdate}

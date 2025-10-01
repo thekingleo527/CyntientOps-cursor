@@ -258,3 +258,17 @@ export default {
   SYSTEM_REQUIREMENTS,
   DEV_UTILITIES,
 };
+// Compliance & Property Cards
+export { PortfolioValueCard } from './compliance/PortfolioValueCard';
+export type { PortfolioValueCardProps } from './compliance/PortfolioValueCard';
+export { ComplianceSummaryCard } from './compliance/ComplianceSummaryCard';
+export type { ComplianceSummaryCardProps } from './compliance/ComplianceSummaryCard';
+export { TopPropertiesCard } from './compliance/TopPropertiesCard';
+export type { TopPropertiesCardProps, PropertySummary } from './compliance/TopPropertiesCard';
+export { DevelopmentOpportunitiesCard } from './compliance/DevelopmentOpportunitiesCard';
+export type { DevelopmentOpportunitiesCardProps, DevelopmentOpportunity } from './compliance/DevelopmentOpportunitiesCard';
+export { PropertyOverviewCard } from './compliance/PropertyOverviewCard';
+export type { PropertyOverviewCardProps } from './compliance/PropertyOverviewCard';
+export { ComplianceStatusCard } from './compliance/ComplianceStatusCard';
+export type { ComplianceStatusCardProps } from './compliance/ComplianceStatusCard';
+

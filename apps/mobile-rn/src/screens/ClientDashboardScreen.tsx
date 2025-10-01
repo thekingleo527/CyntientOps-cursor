@@ -7,23 +7,30 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ClientDashboard } from '@cyntientops/ui-components';
+import {
+  ClientDashboard,
+  ErrorBoundary,
+  PropertyOverviewCard,
+  ComplianceStatusCard,
+} from '@cyntientops/ui-components';
 import { ClientViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { ServiceContainer } from '@cyntientops/business-core';
+import { ServiceContainer, PropertyDataService, ViolationDataService } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
-import { ErrorBoundary } from '@cyntientops/ui-components';
+import { Logger } from '@cyntientops/business-core';
 
 interface ClientDashboardScreenProps {
   clientId: string;
+  buildingId?: string; // Optional: if not provided, will show first building in portfolio
   onNavigateToBuilding?: (buildingId: string) => void;
   onNavigateToWorker?: (workerId: string) => void;
 }
 
 export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
   clientId,
+  buildingId,
   onNavigateToBuilding,
   onNavigateToWorker
 }) => {
@@ -123,10 +130,44 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
     return null;
   }
 
+  // Get client's building data (use provided buildingId or first building)
+  const allProperties = PropertyDataService.getAllProperties();
+  const targetBuildingId = buildingId || (allProperties.length > 0 ? allProperties[0].id : null);
+  const property = targetBuildingId ? PropertyDataService.getPropertyDetails(targetBuildingId) : null;
+  const violations = targetBuildingId ? ViolationDataService.getViolationData(targetBuildingId) : null;
+
   return (
     <ErrorBoundary context="ClientDashboardScreen">
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Property Overview Cards */}
+          {property && violations && (
+            <>
+              <PropertyOverviewCard
+                address={property.address}
+                marketValue={property.marketValue}
+                assessedValue={property.assessedValue}
+                yearBuilt={property.yearBuilt}
+                yearRenovated={property.yearRenovated}
+                units={property.unitsTotal}
+                complianceScore={violations.score}
+                violationsCount={violations.hpd + violations.dob + violations.dsny}
+                historicDistrict={property.historicDistrict}
+                neighborhood={property.neighborhood}
+              />
+
+              <ComplianceStatusCard
+                score={violations.score}
+                status={violations.score >= 90 ? 'Excellent' : violations.score >= 70 ? 'Good' : violations.score >= 50 ? 'Fair' : 'Needs Attention'}
+                hpdViolations={violations.hpd}
+                dobViolations={violations.dob}
+                dsnyViolations={violations.dsny}
+                outstanding={violations.outstanding}
+              />
+            </>
+          )}
+
+          {/* Original Client Dashboard */}
           <ClientDashboard
             state={viewModel.getState()}
             onBuildingUpdate={handleBuildingUpdate}

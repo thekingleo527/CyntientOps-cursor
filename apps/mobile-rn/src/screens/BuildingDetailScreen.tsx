@@ -21,6 +21,7 @@ import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
 import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
 import { ViolationDataService } from '../services/ViolationDataService';
+import { PropertyDataService } from '@cyntientops/business-core';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
 interface CollectionScheduleSummary {
@@ -179,6 +180,9 @@ export const BuildingDetailScreen: React.FC = () => {
   // Get real violation data from ViolationDataService
   const violationSummary = ViolationDataService.getViolationData(buildingId);
 
+  // Get property details from PropertyDataService
+  const propertyDetails = PropertyDataService.getPropertyDetails(buildingId);
+
   useEffect(() => {
     const loadSchedule = async () => {
       if (!building) {
@@ -225,6 +229,13 @@ export const BuildingDetailScreen: React.FC = () => {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {renderHero(building, complianceScore)}
+
+        {propertyDetails && (
+          <View style={styles.sectionGroup}>
+            {renderSectionHeader('Property Information')}
+            {renderPropertyDetailsCard(propertyDetails)}
+          </View>
+        )}
 
         <View style={styles.sectionGroup}>
           {renderSectionHeader('Compliance Overview')}
@@ -280,6 +291,71 @@ const renderHero = (building: any, complianceScore: number) => {
 const renderSectionHeader = (title: string) => (
   <Text style={styles.sectionTitle}>{title}</Text>
 );
+
+const renderPropertyDetailsCard = (property: any) => {
+  const formatCurrency = (value: number): string => {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(1)}M`;
+    }
+    return `$${(value / 1000).toFixed(0)}K`;
+  };
+
+  const InfoRow = ({ label, value }: { label: string; value: string | number }) => (
+    <View style={styles.propertyInfoRow}>
+      <Text style={styles.propertyInfoLabel}>{label}</Text>
+      <Text style={styles.propertyInfoValue}>{value}</Text>
+    </View>
+  );
+
+  return (
+    <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
+      <View style={styles.propertyValuesSection}>
+        <View style={styles.propertyValueItem}>
+          <Text style={styles.propertyValueLabel}>Market Value</Text>
+          <Text style={styles.propertyValueAmount}>{formatCurrency(property.marketValue)}</Text>
+          <Text style={styles.propertyValuePerSqFt}>{formatCurrency(property.marketValuePerSqFt)}/sq ft</Text>
+        </View>
+        <View style={styles.propertyValueItem}>
+          <Text style={styles.propertyValueLabel}>Assessed (Tax)</Text>
+          <Text style={styles.propertyValueAmount}>{formatCurrency(property.assessedValue)}</Text>
+          <Text style={styles.propertyValuePerSqFt}>45% of market</Text>
+        </View>
+      </View>
+
+      <View style={styles.propertyDivider} />
+
+      <InfoRow label="Year Built" value={property.yearBuilt} />
+      {property.yearRenovated && <InfoRow label="Renovated" value={property.yearRenovated} />}
+      <InfoRow label="Neighborhood" value={property.neighborhood} />
+      {property.historicDistrict && <InfoRow label="Historic District" value={property.historicDistrict} />}
+
+      <View style={styles.propertyDivider} />
+
+      <InfoRow label="Total Units" value={`${property.unitsTotal} (${property.unitsResidential} res, ${property.unitsCommercial} com)`} />
+      <InfoRow label="Building Area" value={`${formatNumber(property.buildingArea)} sq ft`} />
+      <InfoRow label="Lot Area" value={`${formatNumber(property.lotArea)} sq ft`} />
+      <InfoRow label="Floors" value={property.numFloors} />
+
+      <View style={styles.propertyDivider} />
+
+      <InfoRow label="Zoning" value={property.zoning} />
+      <InfoRow label="FAR (Built / Max)" value={`${property.builtFAR.toFixed(2)} / ${property.maxFAR.toFixed(2)}`} />
+      {property.unusedFARPercent > 0 && (
+        <View style={styles.farOpportunityBanner}>
+          <Text style={styles.farOpportunityText}>
+            ✨ {property.unusedFARPercent}% unused FAR - Development opportunity available
+          </Text>
+        </View>
+      )}
+
+      <View style={styles.propertyDivider} />
+
+      <InfoRow label="Ownership Type" value={property.ownershipType} />
+      <InfoRow label="Owner" value={property.ownerName} />
+      <InfoRow label="Building Class" value={property.buildingClass} />
+    </GlassCard>
+  );
+};
 
 const renderComplianceCard = (summary: ViolationSummary, complianceScore: number) => (
   <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
@@ -619,6 +695,65 @@ const styles = StyleSheet.create({
   statPillLabel: {
     ...Typography.caption,
     color: Colors.text.secondary,
+  },
+  propertyValuesSection: {
+    flexDirection: 'row',
+    marginBottom: Spacing.md,
+  },
+  propertyValueItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: Spacing.sm,
+  },
+  propertyValueLabel: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.xs,
+  },
+  propertyValueAmount: {
+    ...Typography.titleLarge,
+    color: Colors.primary,
+    marginBottom: Spacing.xs,
+  },
+  propertyValuePerSqFt: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+  },
+  propertyInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: Spacing.sm,
+    alignItems: 'center',
+  },
+  propertyInfoLabel: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
+    flex: 1,
+  },
+  propertyInfoValue: {
+    ...Typography.bodyMedium,
+    color: Colors.text.primary,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'right',
+  },
+  propertyDivider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginVertical: Spacing.md,
+  },
+  farOpportunityBanner: {
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.success,
+    padding: Spacing.md,
+    borderRadius: 8,
+    marginTop: Spacing.sm,
+  },
+  farOpportunityText: {
+    ...Typography.bodyMedium,
+    color: Colors.success,
+    fontWeight: '600',
   },
 });
 

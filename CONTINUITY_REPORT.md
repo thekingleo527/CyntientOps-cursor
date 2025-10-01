@@ -214,29 +214,35 @@ export default withErrorBoundary(MyComponent, { context: 'MyComponent' });
 - ⏳ Dashboard screens (to be added)
 - ⏳ Navigation screens (to be added)
 
-#### **📋 Deployment Checklist - Created (2025-10-01)**
-- **Document Created**: Comprehensive 3-week deployment roadmap
-- **Status**: ✅ Week 1 priorities defined
-- **Purpose**: Track progress from code → production
+#### **🚀 Production Readiness - Next Steps (2025-10-01)**
+- **Status**: ~85% complete, 2-3 weeks to production
+- **Target Launch**: October 22, 2025
 
-**Checklist Sections**:
-1. **Week 1**: Integration Phase (code quality, backend, ViewModels)
-2. **Week 2**: Polish & Testing (device testing, performance)
-3. **Week 3**: Deploy (builds, beta, production launch)
-4. **Technical Debt**: Post-launch improvements
-5. **Blockers**: Critical path items requiring action
+**Immediate Actions Required** (Owner - ~3 hours total):
+1. [ ] Create Supabase project and add credentials to .env (10 min)
+2. [ ] Gather NYC API keys (HPD, DOB, DSNY, Weather) (30 min)
+3. [ ] Test app on device and report errors (30 min)
+4. [ ] Review ViewModel integration points (60 min)
+5. [ ] Pick first workflow to wire end-to-end (30 min)
 
-**Key Milestones**:
-- Week 1: Backend integration + ViewModel wiring
-- Week 2: Device testing + performance optimization
-- Week 3: Beta deployment + 1 pilot client
-- Target Launch: October 22, 2025 (3 weeks)
+**Week 1 Priorities** (Development):
+- Replace console.log statements in critical components (957 total)
+- Wire ViewModels to dashboard screens
+- Add ErrorBoundary to individual screens
+- Test NYC API integrations with real keys
+- Fix TypeScript `any` types in critical paths (42 instances)
 
-**Owner Action Items Identified**:
-- [ ] Create Supabase project (10 min)
-- [ ] Gather NYC API keys (30 min)
-- [ ] Test one complete workflow (2 hours)
-- [ ] Review ViewModel integration points (1 hour)
+**Week 2 Priorities**:
+- Device testing (iOS/Android real hardware)
+- Performance optimization and loading states
+- Offline mode testing
+- Beta build preparation
+
+**Week 3 Priorities**:
+- EAS builds (TestFlight + Play Store Internal)
+- 1 pilot client onboarding
+- Production monitoring setup
+- Launch readiness verification
 
 ### 🔄 **Previous Session Updates (2025-09-30)**
 

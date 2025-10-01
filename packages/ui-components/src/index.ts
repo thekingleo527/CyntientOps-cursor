@@ -43,8 +43,11 @@ export { default as SecurityManager, useSecurityManager } from './security/Secur
 export { default as DSNYTaskManager, useDSNYTaskManager } from './dsny/DSNYTaskManager';
 
 // Dashboard Components
+export { default as AdminDashboard } from './dashboards/AdminDashboard';
 export { default as AdminDashboardMainView } from './dashboards/AdminDashboardMainView';
+export { default as ClientDashboard } from './dashboards/ClientDashboard';
 export { default as ClientDashboardMainView } from './dashboards/ClientDashboardMainView';
+export { default as WorkerDashboard } from './dashboards/WorkerDashboard';
 export { default as WorkerDashboardMainView } from './dashboards/WorkerDashboardMainView';
 
 // Weather Components
@@ -125,8 +128,12 @@ export type {
 } from './dsny/DSNYTaskManager';
 
 // Re-export existing components
+export * from './dashboards/AdminDashboard';
 export * from './dashboards/AdminDashboardMainView';
+export * from './dashboards/ClientDashboard';
 export * from './dashboards/ClientDashboardMainView';
+export * from './dashboards/WorkerDashboard';
+export * from './dashboards/WorkerDashboardMainView';
 export * from './buildings/BuildingDetailOverview';
 export * from './routines/RoutinePriority';
 

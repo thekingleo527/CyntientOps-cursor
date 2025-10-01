@@ -13,6 +13,7 @@ export const GlassIntensity = {
   ultraThin: 'ultraThin',
   thin: 'thin',
   regular: 'regular',
+  medium: 'medium',
   thick: 'thick',
 } as const;
 
@@ -35,6 +36,7 @@ export const GlassCard: React.FC<{
       case 'ultraThin': return { backgroundColor: 'rgba(255, 255, 255, 0.05)' };
       case 'thin': return { backgroundColor: 'rgba(255, 255, 255, 0.1)' };
       case 'regular': return { backgroundColor: 'rgba(255, 255, 255, 0.15)' };
+      case 'medium': return { backgroundColor: 'rgba(255, 255, 255, 0.2)' };
       case 'thick': return { backgroundColor: 'rgba(255, 255, 255, 0.25)' };
       default: return { backgroundColor: 'rgba(255, 255, 255, 0.15)' };
     }

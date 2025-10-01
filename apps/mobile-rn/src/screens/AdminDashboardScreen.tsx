@@ -19,7 +19,8 @@ import { AdminViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { ServiceContainer, PropertyDataService, ViolationDataService } from '@cyntientops/business-core';
+import { ServiceContainer, PropertyDataService } from '@cyntientops/business-core';
+import { ViolationDataService } from '../services/ViolationDataService';
 import { APIClientManager } from '@cyntientops/api-clients';
 import { Logger } from '@cyntientops/business-core';
 

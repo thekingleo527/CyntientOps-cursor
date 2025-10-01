@@ -1,0 +1,28 @@
+{
+  "searchDate": "2025-10-01T18:51:00.562Z",
+  "totalBuildings": 17,
+  "foundBuildings": 14,
+  "notFoundBuildings": 3,
+  "withViolationData": 0,
+  "buildings": [],
+  "notFound": [
+    {
+      "id": "7",
+      "name": "112 West 18th Street",
+      "searchAddress": "112 WEST 18 STREET",
+      "zipcode": "10011"
+    },
+    {
+      "id": "9",
+      "name": "117 West 17th Street",
+      "searchAddress": "117 WEST 17 STREET",
+      "zipcode": "10011"
+    },
+    {
+      "id": "19",
+      "name": "115 7th Avenue",
+      "searchAddress": "115 7 AVENUE",
+      "zipcode": "10011"
+    }
+  ]
+}

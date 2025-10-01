@@ -7,18 +7,20 @@
  * Admin: Home, Portfolio, Workers, Intelligence (4 tabs)
  */
 
-import React, { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { Ionicons } from '@cyntientops/ui-components/src/mocks/expo-vector-icons';
 import { Colors } from '@cyntientops/design-tokens';
+import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
+import { useServices } from '../providers/AppProvider';
+import type { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
+import type { RootStackParamList } from './AppNavigator';
 
-// Import main dashboard screens
 import { WorkerDashboardMainView } from '@cyntientops/ui-components/src/dashboards/WorkerDashboardMainView';
 import { ClientDashboardMainView } from '@cyntientops/ui-components/src/dashboards/ClientDashboardMainView';
 import { AdminDashboardMainView } from '@cyntientops/ui-components/src/dashboards/AdminDashboardMainView';
-
-// Import tab screens
 import { WorkerScheduleTab } from './tabs/WorkerScheduleTab';
 import { WorkerSiteDepartureTab } from './tabs/WorkerSiteDepartureTab';
 import { WorkerMapTab } from './tabs/WorkerMapTab';
@@ -28,14 +30,11 @@ import { ClientIntelligenceTab } from './tabs/ClientIntelligenceTab';
 import { AdminPortfolioTab } from './tabs/AdminPortfolioTab';
 import { AdminWorkersTab } from './tabs/AdminWorkersTab';
 import { AdminIntelligenceTab } from './tabs/AdminIntelligenceTab';
-
-// Import global components
 import { EmergencyQuickAccess } from '../components/EmergencyQuickAccess';
 import { WeatherAlertBanner } from '../components/WeatherAlertBanner';
 
 const Tab = createBottomTabNavigator();
 
-// Types
 export interface TabNavigatorProps {
   userRole: 'worker' | 'client' | 'admin';
   userId: string;
@@ -47,10 +46,12 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
   userId,
   userName,
 }) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const services = useServices();
+
   const [showEmergencyAccess, setShowEmergencyAccess] = useState(false);
   const [weatherAlerts, setWeatherAlerts] = useState<string[]>([]);
 
-  // Mock weather alerts for demonstration
   React.useEffect(() => {
     setWeatherAlerts([
       'Rain expected in 2 hours - consider rescheduling outdoor tasks',
@@ -58,20 +59,120 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
     ]);
   }, []);
 
-  const handleEmergencyActivation = () => {
-    setShowEmergencyAccess(true);
-  };
+  const handleTaskNavigation = useCallback(
+    (task?: OperationalDataTaskAssignment) => {
+      if (!task?.id) {
+        Alert.alert('Task Unavailable', 'This task is missing an identifier.');
+        return;
+      }
+      navigation.navigate('TaskTimeline', { taskId: task.id });
+    },
+    [navigation],
+  );
 
-  const handleEmergencyClose = () => {
-    setShowEmergencyAccess(false);
-  };
+  const handleBuildingNavigation = useCallback(
+    (buildingId?: string) => {
+      if (!buildingId) {
+        Alert.alert('Building Unavailable', 'No building selected.');
+        return;
+      }
+      navigation.navigate('BuildingDetail', { buildingId });
+    },
+    [navigation],
+  );
 
-  const getTabScreens = () => {
+  const handleClockIn = useCallback(
+    async (buildingId?: string) => {
+      if (!buildingId) {
+        Alert.alert('Clock In Failed', 'Select a building before clocking in.');
+        return;
+      }
+
+      const building = RealDataService.getBuildingById(buildingId);
+      if (!building) {
+        Alert.alert('Clock In Failed', 'Unable to find building details.');
+        return;
+      }
+
+      const result = await services.clockIn.clockInWorker({
+        workerId: userId,
+        buildingId,
+        latitude: building.latitude ?? 0,
+        longitude: building.longitude ?? 0,
+        timestamp: new Date(),
+      });
+
+      if (result.success) {
+        Alert.alert('Clocked In', `You are now clocked in at ${building.name}.`);
+      } else {
+        const validation = result.validation;
+        const message = validation.errors.join('\n') || 'Clock in validation failed.';
+        Alert.alert('Clock In Failed', message);
+      }
+    },
+    [services.clockIn, userId],
+  );
+
+  const handleClockOut = useCallback(
+    async () => {
+      const result = await services.clockIn.clockOutWorker({
+        workerId: userId,
+        timestamp: new Date(),
+      });
+
+      if (result.success) {
+        Alert.alert('Clocked Out', 'You are now clocked out.');
+      } else {
+        Alert.alert('Clock Out Failed', 'No active clock-in session was found.');
+      }
+    },
+    [services.clockIn, userId],
+  );
+
+  const handleHeaderRoute = useCallback(
+    (route: unknown) => {
+      const target = typeof route === 'string' ? route : String(route ?? '');
+      switch (target) {
+        case 'profile':
+          navigation.navigate('DailyRoutine');
+          break;
+        case 'novaChat':
+          Alert.alert('Nova AI', 'Launching Nova intelligence assistant…');
+          break;
+        case 'clockAction':
+          handleClockOut();
+          break;
+        default:
+          navigation.navigate('MultisiteDeparture');
+          break;
+      }
+    },
+    [handleClockOut, navigation],
+  );
+
+  const handleWeatherAlert = useCallback(
+    (alertMessage: string) => {
+      Alert.alert('Weather Alert', alertMessage, [
+        { text: 'Dismiss', style: 'cancel' },
+        {
+          text: 'Emergency Tools',
+          onPress: () => setShowEmergencyAccess(true),
+        },
+      ]);
+    },
+    [],
+  );
+
+  const handleWorkerSelect = useCallback((workerId: string) => {
+    const worker = RealDataService.getWorkerById(workerId);
+    Alert.alert('Worker Selected', worker ? worker.name : workerId);
+  }, []);
+
+  const tabScreens = useMemo(() => {
     switch (userRole) {
       case 'worker':
         return (
           <>
-            {/* Worker Tab 1: Home (default) */}
             <Tab.Screen
               name="WorkerHome"
               options={{
@@ -86,16 +187,15 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                   workerId={userId}
                   workerName={userName}
                   userRole={userRole}
-                  onTaskPress={(task) => console.log('Task pressed:', task)}
-                  onBuildingPress={(buildingId) => console.log('Building pressed:', buildingId)}
-                  onClockIn={(buildingId) => console.log('Clock in:', buildingId)}
-                  onClockOut={() => console.log('Clock out')}
-                  onHeaderRoute={(route) => console.log('Header route:', route)}
+                  onTaskPress={handleTaskNavigation}
+                  onBuildingPress={handleBuildingNavigation}
+                  onClockIn={handleClockIn}
+                  onClockOut={handleClockOut}
+                  onHeaderRoute={handleHeaderRoute}
                 />
               )}
             </Tab.Screen>
-            
-            {/* Worker Tab 2: Schedule */}
+
             <Tab.Screen
               name="WorkerSchedule"
               options={{
@@ -113,8 +213,7 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                 />
               )}
             </Tab.Screen>
-            
-            {/* Worker Tab 3: Site Departure */}
+
             <Tab.Screen
               name="WorkerSiteDeparture"
               options={{
@@ -132,8 +231,7 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                 />
               )}
             </Tab.Screen>
-            
-            {/* Worker Tab 4: Map */}
+
             <Tab.Screen
               name="WorkerMap"
               options={{
@@ -151,8 +249,7 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                 />
               )}
             </Tab.Screen>
-            
-            {/* Worker Tab 5: Intelligence */}
+
             <Tab.Screen
               name="WorkerIntelligence"
               options={{
@@ -176,7 +273,6 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
       case 'client':
         return (
           <>
-            {/* Client Tab 1: Home (default) */}
             <Tab.Screen
               name="ClientHome"
               options={{
@@ -191,13 +287,12 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                   clientId={userId}
                   clientName={userName}
                   userRole={userRole}
-                  onBuildingPress={(buildingId) => console.log('Building pressed:', buildingId)}
-                  onHeaderRoute={(route) => console.log('Header route:', route)}
+                  onBuildingPress={handleBuildingNavigation}
+                  onHeaderRoute={handleHeaderRoute}
                 />
               )}
             </Tab.Screen>
 
-            {/* Client Tab 2: Portfolio */}
             <Tab.Screen
               name="ClientPortfolio"
               options={{
@@ -216,7 +311,6 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
               )}
             </Tab.Screen>
 
-            {/* Client Tab 3: Intelligence */}
             <Tab.Screen
               name="ClientIntelligence"
               options={{
@@ -240,7 +334,6 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
       case 'admin':
         return (
           <>
-            {/* Admin Tab 1: Home (default) */}
             <Tab.Screen
               name="AdminHome"
               options={{
@@ -255,14 +348,13 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
                   adminId={userId}
                   adminName={userName}
                   userRole={userRole}
-                  onWorkerPress={(workerId) => console.log('Worker pressed:', workerId)}
-                  onBuildingPress={(buildingId) => console.log('Building pressed:', buildingId)}
-                  onHeaderRoute={(route) => console.log('Header route:', route)}
+                  onWorkerPress={handleWorkerSelect}
+                  onBuildingPress={handleBuildingNavigation}
+                  onHeaderRoute={handleHeaderRoute}
                 />
               )}
             </Tab.Screen>
 
-            {/* Admin Tab 2: Portfolio */}
             <Tab.Screen
               name="AdminPortfolio"
               options={{
@@ -281,7 +373,6 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
               )}
             </Tab.Screen>
 
-            {/* Admin Tab 3: Workers */}
             <Tab.Screen
               name="AdminWorkers"
               options={{
@@ -300,7 +391,6 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
               )}
             </Tab.Screen>
 
-            {/* Admin Tab 4: Intelligence */}
             <Tab.Screen
               name="AdminIntelligence"
               options={{
@@ -324,21 +414,29 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
       default:
         return null;
     }
-  };
+  }, [
+    handleBuildingNavigation,
+    handleClockIn,
+    handleClockOut,
+    handleHeaderRoute,
+    handleTaskNavigation,
+    handleWorkerSelect,
+    userId,
+    userName,
+    userRole,
+  ]);
 
   return (
     <View style={styles.container}>
-      {/* Weather Alert Banner */}
       {weatherAlerts.length > 0 && (
         <WeatherAlertBanner
           alerts={weatherAlerts}
-          onAlertPress={(alert) => console.log('Alert pressed:', alert)}
-          autoDismiss={true}
+          onAlertPress={handleWeatherAlert}
+          autoDismiss
           dismissDelay={5000}
         />
       )}
 
-      {/* Main Tab Navigator */}
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -357,13 +455,12 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
           },
         }}
       >
-        {getTabScreens()}
+        {tabScreens}
       </Tab.Navigator>
 
-      {/* Emergency Quick Access Modal */}
       {showEmergencyAccess && (
         <EmergencyQuickAccess
-          onClose={handleEmergencyClose}
+          onClose={() => setShowEmergencyAccess(false)}
           userId={userId}
         />
       )}
@@ -371,13 +468,16 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
   );
 };
 
-// Helper function to get role-specific colors
 const getRoleColor = (role: string) => {
   switch (role) {
-    case 'worker': return Colors.role.worker.primary;
-    case 'client': return Colors.role.client.primary;
-    case 'admin': return Colors.role.admin.primary;
-    default: return Colors.primaryAction;
+    case 'worker':
+      return Colors.role.worker.primary;
+    case 'client':
+      return Colors.role.client.primary;
+    case 'admin':
+      return Colors.role.admin.primary;
+    default:
+      return Colors.primaryAction;
   }
 };
 

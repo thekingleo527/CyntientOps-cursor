@@ -75,7 +75,10 @@ enum ComplianceCategory {
 }
 
 interface ComplianceSuiteScreenProps {
-  navigation: any;
+  navigation: {
+    navigate: (screen: string, params?: object) => void;
+    goBack: () => void;
+  };
 }
 
 export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ navigation }) => {
@@ -115,8 +118,10 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
             // Convert NYC API data to ComplianceData format
             return convertNYCDataToComplianceData(building, summary);
           } catch (error) {
-            console.warn(`Failed to load real compliance data for ${building.name}, using fallback:`, error);
-            // Fallback to generated data if API fails
+            // Failed to load real compliance data - fallback to generated data
+            container.sentryService.captureException(error, {
+              tags: { feature: 'compliance', buildingId: building.id },
+            });
             return generateComplianceData(building);
           }
         })
@@ -139,18 +144,41 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
     }
   };
 
+  // NYC API data types
+  interface NYCAPISummary {
+    hpdViolations?: NYCAPIViolation[];
+    dobPermits?: NYCAPIPermit[];
+  }
+
+  interface NYCAPIViolation {
+    currentstatus: string;
+    job_status: string;
+    violationid: string;
+    violationdescription: string;
+    novissueddate: string;
+    violationcategory: string;
+  }
+
+  interface NYCAPIPermit {
+    job_status: string;
+    permit_sequence_number: string;
+    permit_type: string;
+    permit_status: string;
+    filing_date: string;
+  }
+
   // Convert NYC API data to ComplianceData format
-  const convertNYCDataToComplianceData = (building: Building, summary: any): ComplianceData => {
+  const convertNYCDataToComplianceData = (building: Building, summary: NYCAPISummary): ComplianceData => {
     const hpdViolations = summary.hpdViolations || [];
     const dobPermits = summary.dobPermits || [];
 
     // Calculate real compliance status based on NYC API data
-    const calculateStatus = (violations: any[], category: string): ComplianceStatus => {
-      const openViolations = violations.filter((v: any) =>
+    const calculateStatus = (violations: NYCAPIViolation[], category: string): ComplianceStatus => {
+      const openViolations = violations.filter((v: NYCAPIViolation) =>
         v.currentstatus === 'OPEN' || v.currentstatus === 'ACTIVE' || v.job_status === 'ACTIVE'
       );
-      const criticalViolations = violations.filter((v: any) =>
-        v.violationclass === 'A' || v.violationclass === 'B' || v.job_status === 'EXPIRED'
+      const criticalViolations = violations.filter((v: NYCAPIViolation) =>
+        v.violationcategory === 'CRITICAL' || v.violationcategory === 'IMMEDIATE HAZARD'
       );
 
       let status: 'compliant' | 'warning' | 'violation';
@@ -183,7 +211,7 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
     const dobStatus = calculateStatus(dobPermits, 'DOB');
 
     // Convert HPD violations to ComplianceViolation format
-    const violations: ComplianceViolation[] = hpdViolations.map((hpdViolation: any) => ({
+    const violations: ComplianceViolation[] = hpdViolations.map((hpdViolation: NYCAPIViolation) => ({
       id: `hpd_${hpdViolation.violationid}`,
       category: 'HPD',
       description: hpdViolation.novdescription || 'Housing violation',

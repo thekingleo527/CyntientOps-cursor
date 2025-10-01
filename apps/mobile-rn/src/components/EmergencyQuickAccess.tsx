@@ -15,6 +15,7 @@ import {
   Alert,
   Dimensions,
   Animated,
+  Linking,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
@@ -150,10 +151,24 @@ export const EmergencyQuickAccess: React.FC<EmergencyQuickAccessProps> = ({
         { text: 'Cancel', style: 'cancel' },
         { 
           text: 'Call', 
-          onPress: () => {
-            // In real app, this would initiate a phone call
-            console.log(`Calling ${contact.name} at ${contact.phone}`);
-            Alert.alert('Call Initiated', `Calling ${contact.name}...`);
+          onPress: async () => {
+            try {
+              const sanitized = contact.phone.replace(/[^0-9+]/g, '');
+              const phoneUrl = sanitized ? `tel:${sanitized}` : '';
+              if (!sanitized || !phoneUrl) {
+                Alert.alert('Call Failed', 'Phone number is not available.');
+                return;
+              }
+              const canOpen = await Linking.canOpenURL(phoneUrl);
+              if (!canOpen) {
+                Alert.alert('Call Failed', 'Unable to initiate a phone call on this device.');
+                return;
+              }
+              await Linking.openURL(phoneUrl);
+            } catch (callError) {
+              console.error('Phone call failed', callError);
+              Alert.alert('Call Failed', 'Something went wrong while trying to place the call.');
+            }
           }
         },
       ]

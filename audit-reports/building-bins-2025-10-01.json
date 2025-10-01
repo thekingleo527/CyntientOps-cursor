@@ -1,0 +1,99 @@
+{
+  "lookupDate": "2025-10-01T18:49:03.791Z",
+  "totalBuildings": 18,
+  "successfulLookups": 0,
+  "failedLookups": 18,
+  "buildings": [],
+  "failed": [
+    {
+      "id": "1",
+      "name": "12 West 18th Street",
+      "address": "12 West 18th Street, New York, NY 10011"
+    },
+    {
+      "id": "3",
+      "name": "135-139 West 17th Street",
+      "address": "135-139 West 17th Street, New York, NY 10011"
+    },
+    {
+      "id": "4",
+      "name": "104 Franklin Street",
+      "address": "104 Franklin Street, New York, NY 10013"
+    },
+    {
+      "id": "5",
+      "name": "138 West 17th Street",
+      "address": "138 West 17th Street, New York, NY 10011"
+    },
+    {
+      "id": "6",
+      "name": "68 Perry Street",
+      "address": "68 Perry Street, New York, NY 10014"
+    },
+    {
+      "id": "7",
+      "name": "112 West 18th Street",
+      "address": "112 West 18th Street, New York, NY 10011"
+    },
+    {
+      "id": "8",
+      "name": "41 Elizabeth Street",
+      "address": "41 Elizabeth Street, New York, NY 10013"
+    },
+    {
+      "id": "9",
+      "name": "117 West 17th Street",
+      "address": "117 West 17th Street, New York, NY 10011"
+    },
+    {
+      "id": "10",
+      "name": "131 Perry Street",
+      "address": "131 Perry Street, New York, NY 10014"
+    },
+    {
+      "id": "11",
+      "name": "123 1st Avenue",
+      "address": "123 1st Avenue, New York, NY 10003"
+    },
+    {
+      "id": "13",
+      "name": "136 West 17th Street",
+      "address": "136 West 17th Street, New York, NY 10011"
+    },
+    {
+      "id": "14",
+      "name": "Rubin Museum (142–148 W 17th)",
+      "address": "150 West 17th Street, New York, NY 10011"
+    },
+    {
+      "id": "15",
+      "name": "133 East 15th Street",
+      "address": "133 East 15th Street, New York, NY 10003"
+    },
+    {
+      "id": "16",
+      "name": "Stuyvesant Cove Park",
+      "address": "Stuyvesant Cove Park, New York, NY 10009"
+    },
+    {
+      "id": "17",
+      "name": "178 Spring Street",
+      "address": "178 Spring Street, New York, NY 10012"
+    },
+    {
+      "id": "18",
+      "name": "36 Walker Street",
+      "address": "36 Walker Street, New York, NY 10013"
+    },
+    {
+      "id": "19",
+      "name": "115 7th Avenue",
+      "address": "115 7th Avenue, New York, NY 10011"
+    },
+    {
+      "id": "21",
+      "name": "148 Chambers Street",
+      "address": "148 Chambers Street, New York, NY 10007"
+    }
+  ]
+}

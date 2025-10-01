@@ -40,7 +40,9 @@
         "CFBundleURLTypes": [
           {
             "CFBundleURLName": "cyntientops",
-            "CFBundleURLSchemes": ["cyntientops"]
+            "CFBundleURLSchemes": [
+              "cyntientops"
+            ]
           }
         ],
         "LSApplicationQueriesSchemes": [
@@ -109,14 +111,20 @@
       "intentFilters": [
         {
           "action": "android.intent.action.VIEW",
-          "category": ["android.intent.category.DEFAULT", "android.intent.category.BROWSABLE"],
+          "category": [
+            "android.intent.category.DEFAULT",
+            "android.intent.category.BROWSABLE"
+          ],
           "data": {
             "scheme": "cyntientops"
           }
         },
         {
           "action": "android.intent.action.VIEW",
-          "category": ["android.intent.category.DEFAULT", "android.intent.category.BROWSABLE"],
+          "category": [
+            "android.intent.category.DEFAULT",
+            "android.intent.category.BROWSABLE"
+          ],
           "data": {
             "scheme": "https",
             "host": "cyntientops.com"
@@ -204,7 +212,8 @@
             "targetSdkVersion": 34
           }
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true

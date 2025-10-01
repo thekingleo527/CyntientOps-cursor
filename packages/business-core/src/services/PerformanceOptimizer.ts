@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { NamedCoordinate, WeatherSnapshot } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface PerformanceMetrics {
   memoryUsage: number;
@@ -58,7 +59,7 @@ export class PerformanceOptimizer {
     this.database = database;
     this.performanceMetrics = this.initializeMetrics();
     this.config = this.getDefaultConfig();
-    console.log('PerformanceOptimizer initialized');
+    Logger.debug('PerformanceOptimizer initialized', undefined, 'PerformanceOptimizer');
   }
 
   public static getInstance(database: DatabaseManager): PerformanceOptimizer {
@@ -105,7 +106,7 @@ export class PerformanceOptimizer {
       this.monitorBackgroundTasks();
     }
     
-    console.log('Performance monitoring started');
+    Logger.debug('Performance monitoring started', undefined, 'PerformanceOptimizer');
   }
 
   private monitorMemoryUsage(): void {
@@ -132,7 +133,7 @@ export class PerformanceOptimizer {
   }
 
   private triggerMemoryCleanup(): void {
-    console.log('Triggering memory cleanup...');
+    Logger.debug('Triggering memory cleanup...', undefined, 'PerformanceOptimizer');
     
     // Clear old cache entries
     this.clearOldCacheEntries();
@@ -147,7 +148,7 @@ export class PerformanceOptimizer {
   }
 
   private optimizeBackgroundTasks(): void {
-    console.log('Optimizing background tasks...');
+    Logger.debug('Optimizing background tasks...', undefined, 'PerformanceOptimizer');
     
     // Reduce task frequency
     // Prioritize critical tasks
@@ -239,7 +240,7 @@ export class PerformanceOptimizer {
       return optimizedWorker;
       
     } catch (error) {
-      console.error('Failed to optimize worker data:', error);
+      Logger.error('Failed to optimize worker data:', undefined, 'PerformanceOptimizer');
       throw error;
     }
   }
@@ -285,7 +286,7 @@ export class PerformanceOptimizer {
       return optimizedBuilding;
       
     } catch (error) {
-      console.error('Failed to optimize building data:', error);
+      Logger.error('Failed to optimize building data:', undefined, 'PerformanceOptimizer');
       throw error;
     }
   }
@@ -330,7 +331,7 @@ export class PerformanceOptimizer {
       return optimizedRoutines;
       
     } catch (error) {
-      console.error('Failed to optimize routine data:', error);
+      Logger.error('Failed to optimize routine data:', undefined, 'PerformanceOptimizer');
       throw error;
     }
   }
@@ -338,7 +339,7 @@ export class PerformanceOptimizer {
   // MARK: - Offline Capabilities
 
   public async enableOfflineMode(): Promise<void> {
-    console.log('Enabling offline mode...');
+    Logger.debug('Enabling offline mode...', undefined, 'PerformanceOptimizer');
     
     // Preload critical data
     await this.preloadCriticalData();
@@ -364,16 +365,16 @@ export class PerformanceOptimizer {
         await this.optimizeBuildingData(building.id);
       }
       
-      console.log('Critical data preloaded for offline mode');
+      Logger.debug('Critical data preloaded for offline mode', undefined, 'PerformanceOptimizer');
     } catch (error) {
-      console.error('Failed to preload critical data:', error);
+      Logger.error('Failed to preload critical data:', undefined, 'PerformanceOptimizer');
     }
   }
 
   private setupOfflineQueue(): void {
     // Setup offline queue for data synchronization
     this.offlineQueue = [];
-    console.log('Offline queue setup complete');
+    Logger.debug('Offline queue setup complete', undefined, 'PerformanceOptimizer');
   }
 
   private enableBackgroundSync(): void {
@@ -397,7 +398,7 @@ export class PerformanceOptimizer {
 
   private optimizeDataStructures(): void {
     // Optimize data structures for better performance
-    console.log('Optimizing data structures...');
+    Logger.debug('Optimizing data structures...', undefined, 'PerformanceOptimizer');
     
     // Convert arrays to Maps for faster lookups
     // Compress large data structures
@@ -409,7 +410,7 @@ export class PerformanceOptimizer {
   public async optimizeNetworkRequests(): Promise<void> {
     if (!this.config.enableNetworkOptimization) return;
     
-    console.log('Optimizing network requests...');
+    Logger.debug('Optimizing network requests...', undefined, 'PerformanceOptimizer');
     
     // Batch requests
     // Compress data
@@ -429,7 +430,7 @@ export class PerformanceOptimizer {
 
   public async clearCache(): Promise<void> {
     this.cache.clear();
-    console.log('Cache cleared');
+    Logger.debug('Cache cleared', undefined, 'PerformanceOptimizer');
   }
 
   public async getCacheStats(): Promise<{ size: number; hitRate: number }> {

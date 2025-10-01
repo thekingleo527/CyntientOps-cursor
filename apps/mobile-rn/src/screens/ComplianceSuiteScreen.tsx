@@ -132,7 +132,7 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
       setCriticalDeadlines(critical);
 
     } catch (error) {
-      console.error('Failed to load compliance data:', error);
+      Logger.error('Failed to load compliance data:', undefined, 'ComplianceSuiteScreen.tsx');
       Alert.alert('Error', 'Failed to load compliance data');
     } finally {
       setIsLoading(false);

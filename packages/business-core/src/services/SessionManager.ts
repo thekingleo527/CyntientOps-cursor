@@ -7,6 +7,7 @@
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole, WorkerProfile, ClientProfile } from '@cyntientops/domain-schema';
 import { AuthService, AuthUser } from './AuthService';
+import { Logger } from './LoggingService';
 
 export interface SessionData {
   userId: string;
@@ -139,7 +140,7 @@ export class SessionManager {
       console.log(`✅ Session created for user ${user.id} (${user.role})`);
       return session;
     } catch (error) {
-      console.error('Failed to create session:', error);
+      Logger.error('Failed to create session:', undefined, 'SessionManager');
       return null;
     }
   }
@@ -199,7 +200,7 @@ export class SessionManager {
 
       return session;
     } catch (error) {
-      console.error('Failed to validate session:', error);
+      Logger.error('Failed to validate session:', undefined, 'SessionManager');
       return null;
     }
   }
@@ -224,7 +225,7 @@ export class SessionManager {
         this.activeSessions.set(sessionToken, session);
       }
     } catch (error) {
-      console.error('Failed to update session activity:', error);
+      Logger.error('Failed to update session activity:', undefined, 'SessionManager');
     }
   }
 
@@ -244,7 +245,7 @@ export class SessionManager {
 
       console.log(`🔒 Session invalidated: ${sessionToken}`);
     } catch (error) {
-      console.error('Failed to invalidate session:', error);
+      Logger.error('Failed to invalidate session:', undefined, 'SessionManager');
     }
   }
 
@@ -263,7 +264,7 @@ export class SessionManager {
 
       console.log(`🔒 All sessions invalidated for user: ${userId}`);
     } catch (error) {
-      console.error('Failed to invalidate all user sessions:', error);
+      Logger.error('Failed to invalidate all user sessions:', undefined, 'SessionManager');
     }
   }
 
@@ -311,7 +312,7 @@ export class SessionManager {
         session
       };
     } catch (error) {
-      console.error('Login failed:', error);
+      Logger.error('Login failed:', undefined, 'SessionManager');
       return {
         success: false,
         error: 'Login failed due to system error'
@@ -327,7 +328,7 @@ export class SessionManager {
       await this.invalidateSession(sessionToken);
       return true;
     } catch (error) {
-      console.error('Logout failed:', error);
+      Logger.error('Logout failed:', undefined, 'SessionManager');
       return false;
     }
   }
@@ -355,7 +356,7 @@ export class SessionManager {
 
       return session;
     } catch (error) {
-      console.error('Failed to refresh session:', error);
+      Logger.error('Failed to refresh session:', undefined, 'SessionManager');
       return null;
     }
   }
@@ -392,7 +393,7 @@ export class SessionManager {
           return false;
       }
     } catch (error) {
-      console.error('Failed to check resource access:', error);
+      Logger.error('Failed to check resource access:', undefined, 'SessionManager');
       return false;
     }
   }
@@ -510,7 +511,7 @@ export class SessionManager {
         profile: row.profile ? JSON.parse(row.profile) : undefined
       }));
     } catch (error) {
-      console.error('Failed to get user active sessions:', error);
+      Logger.error('Failed to get user active sessions:', undefined, 'SessionManager');
       return [];
     }
   }
@@ -545,9 +546,9 @@ export class SessionManager {
         }
       }
 
-      console.log('🧹 Session cleanup completed');
+      Logger.debug('🧹 Session cleanup completed', undefined, 'SessionManager');
     } catch (error) {
-      console.error('Failed to cleanup expired sessions:', error);
+      Logger.error('Failed to cleanup expired sessions:', undefined, 'SessionManager');
     }
   }
 
@@ -569,7 +570,7 @@ export class SessionManager {
         memorySessions: this.activeSessions.size
       };
     } catch (error) {
-      console.error('Failed to get session stats:', error);
+      Logger.error('Failed to get session stats:', undefined, 'SessionManager');
       return {
         activeSessions: 0,
         expiredSessions: 0,

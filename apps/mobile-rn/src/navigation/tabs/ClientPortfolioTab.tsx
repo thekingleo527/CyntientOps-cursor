@@ -20,6 +20,7 @@ import { BuildingMapView } from '@cyntientops/ui-components/src/maps/BuildingMap
 import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
 import { Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import buildingsData from '@cyntientops/data-seed/buildings.json';
+import { Logger } from '@cyntientops/business-core';
 
 const { width, height } = Dimensions.get('window');
 
@@ -106,7 +107,7 @@ export const ClientPortfolioTab: React.FC<ClientPortfolioTabProps> = ({
 
       setTasks(allTasks);
     } catch (error) {
-      console.error('Failed to load client portfolio data:', error);
+      Logger.error('Failed to load client portfolio data:', undefined, 'ClientPortfolioTab.tsx');
     }
   };
 
@@ -117,7 +118,7 @@ export const ClientPortfolioTab: React.FC<ClientPortfolioTabProps> = ({
 
   const handleTaskPress = (task: OperationalDataTaskAssignment) => {
     // Navigate to task details
-    console.log('Task pressed:', task);
+    Logger.debug('Task pressed:', undefined, 'ClientPortfolioTab.tsx');
   };
 
   const renderModeButton = (mode: MapViewMode) => {

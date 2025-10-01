@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { NamedCoordinate } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface BuildingInfrastructure {
   id: string;
@@ -130,7 +131,7 @@ export class BuildingInfrastructureCatalog {
 
   private constructor(database: DatabaseManager) {
     this.database = database;
-    console.log('BuildingInfrastructureCatalog initialized');
+    Logger.debug('BuildingInfrastructureCatalog initialized', undefined, 'BuildingInfrastructureCatalog');
     this.initializeBuildingData();
   }
 
@@ -254,7 +255,7 @@ export class BuildingInfrastructureCatalog {
 
       console.log(`✅ Building infrastructure catalog loaded: ${this.buildingInfrastructure.size} buildings`);
     } catch (error) {
-      console.error('Failed to initialize building infrastructure catalog:', error);
+      Logger.error('Failed to initialize building infrastructure catalog:', undefined, 'BuildingInfrastructureCatalog');
     }
   }
 

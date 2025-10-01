@@ -19,6 +19,7 @@ import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-compone
 import { LinearGradient } from 'expo-linear-gradient';
 import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
+import { Logger } from '@cyntientops/business-core';
 
 // Types
 export interface WorkerSiteDepartureTabProps {
@@ -109,7 +110,7 @@ export const WorkerSiteDepartureTab: React.FC<WorkerSiteDepartureTabProps> = ({
       ];
       setDepartureChecklist(checklist);
     } catch (error) {
-      console.error('Failed to load departure data:', error);
+      Logger.error('Failed to load departure data:', undefined, 'WorkerSiteDepartureTab.tsx');
     }
   };
 

@@ -10,6 +10,7 @@ import { WeatherSnapshot, WeatherForecast, WeatherAlert } from '@cyntientops/dom
 import { OperationalDataTaskAssignment, TaskCategory, TaskPriority } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '../ServiceContainer';
 import { WeatherAPIClient } from '@cyntientops/api-clients';
+import { Logger } from './LoggingService';
 
 export interface WeatherTriggeredTask {
   id: string;
@@ -446,12 +447,12 @@ export class WeatherTriggeredTaskManager extends EventEmitter {
 
   async startWeatherMonitoring(): Promise<void> {
     if (this.isMonitoring) {
-      console.log('Weather monitoring already active');
+      Logger.debug('Weather monitoring already active', undefined, 'WeatherTriggeredTaskManager');
       return;
     }
 
     this.isMonitoring = true;
-    console.log('🌤️ Starting weather monitoring...');
+    Logger.debug('🌤️ Starting weather monitoring...', undefined, 'WeatherTriggeredTaskManager');
 
     // Initial weather check
     await this.checkWeatherConditions();
@@ -476,7 +477,7 @@ export class WeatherTriggeredTaskManager extends EventEmitter {
       this.monitoringInterval = null;
     }
 
-    console.log('🌤️ Weather monitoring stopped');
+    Logger.debug('🌤️ Weather monitoring stopped', undefined, 'WeatherTriggeredTaskManager');
     this.emit('weatherMonitoringStopped');
   }
 
@@ -502,7 +503,7 @@ export class WeatherTriggeredTaskManager extends EventEmitter {
         activeTasks: this.activeTasks.size,
       });
     } catch (error) {
-      console.error('Failed to check weather conditions:', error);
+      Logger.error('Failed to check weather conditions:', undefined, 'WeatherTriggeredTaskManager');
       this.emit('weatherCheckFailed', error);
     }
   }

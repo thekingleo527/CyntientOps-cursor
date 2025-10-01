@@ -7,6 +7,7 @@ import { OperationalDataService } from './OperationalDataService';
 import { BuildingService } from './BuildingService';
 import { TaskService } from './TaskService';
 import { NYCAPIService } from '@cyntientops/api-clients';
+import { Logger } from './LoggingService';
 
 export interface BuildingMetrics {
   buildingId: string;

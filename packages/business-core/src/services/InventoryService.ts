@@ -4,6 +4,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
+import { Logger } from './LoggingService';
 
 export interface InventoryItem {
   id: string;
@@ -77,7 +78,7 @@ export class InventoryService {
       requestedAt: now,
     };
 
-    console.log('Creating supply request:', supplyRequest);
+    Logger.debug('Creating supply request:', undefined, 'InventoryService');
     return requestId;
   }
 
@@ -85,7 +86,7 @@ export class InventoryService {
    * Get inventory for a building
    */
   async getInventory(buildingId: string): Promise<InventoryItem[]> {
-    console.log('Fetching inventory for building:', buildingId);
+    Logger.debug('Fetching inventory for building:', undefined, 'InventoryService');
 
     // Mock data for demonstration
     return [
@@ -124,7 +125,7 @@ export class InventoryService {
    * Get inventory usage for a building
    */
   async getInventoryUsage(buildingId: string, days: number = 30): Promise<InventoryUsage[]> {
-    console.log('Fetching inventory usage for building:', buildingId, 'days:', days);
+    Logger.debug('Fetching inventory usage for building:', undefined, 'InventoryService');
     return [];
   }
 
@@ -132,7 +133,7 @@ export class InventoryService {
    * Get low stock alerts
    */
   async getLowStockAlerts(buildingId: string): Promise<InventoryItem[]> {
-    console.log('Fetching low stock alerts for building:', buildingId);
+    Logger.debug('Fetching low stock alerts for building:', undefined, 'InventoryService');
 
     const inventory = await this.getInventory(buildingId);
     return inventory.filter(item => item.quantity <= item.minThreshold);
@@ -151,7 +152,7 @@ export class InventoryService {
       date: now,
     };
 
-    console.log('Recording inventory usage:', inventoryUsage);
+    Logger.debug('Recording inventory usage:', undefined, 'InventoryService');
     return usageId;
   }
 
@@ -159,7 +160,7 @@ export class InventoryService {
    * Update inventory quantity
    */
   async updateQuantity(itemId: string, quantity: number): Promise<boolean> {
-    console.log('Updating inventory item:', itemId, 'quantity:', quantity);
+    Logger.debug('Updating inventory item:', undefined, 'InventoryService');
     return true;
   }
 
@@ -167,7 +168,7 @@ export class InventoryService {
    * Get supply requests for a building
    */
   async getSupplyRequests(buildingId: string): Promise<SupplyRequest[]> {
-    console.log('Fetching supply requests for building:', buildingId);
+    Logger.debug('Fetching supply requests for building:', undefined, 'InventoryService');
     return [];
   }
 
@@ -175,7 +176,7 @@ export class InventoryService {
    * Update supply request status
    */
   async updateRequestStatus(requestId: string, status: SupplyRequest['status']): Promise<boolean> {
-    console.log('Updating supply request:', requestId, 'status:', status);
+    Logger.debug('Updating supply request:', undefined, 'InventoryService');
     return true;
   }
 

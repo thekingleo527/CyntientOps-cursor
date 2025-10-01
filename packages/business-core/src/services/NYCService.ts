@@ -5,6 +5,7 @@
 
 import { BuildingService } from './BuildingService';
 import { NYCAPIService, DSNYViolationsService, PropertyValueService } from '@cyntientops/api-clients';
+import { Logger } from './LoggingService';
 
 export class NYCService {
   private static instance: NYCService;

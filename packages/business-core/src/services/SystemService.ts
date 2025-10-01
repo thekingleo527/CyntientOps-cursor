@@ -4,6 +4,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
+import { Logger } from './LoggingService';
 
 export interface SystemHealth {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -166,7 +167,7 @@ export class SystemService {
     };
 
     this.events.push(systemEvent);
-    console.log('System event logged:', systemEvent);
+    Logger.debug('System event logged:', undefined, 'SystemService');
 
     return eventId;
   }
@@ -193,7 +194,7 @@ export class SystemService {
     if (event) {
       event.resolved = true;
       event.resolvedAt = new Date().toISOString();
-      console.log('System event resolved:', eventId);
+      Logger.debug('System event resolved:', undefined, 'SystemService');
       return true;
     }
     return false;

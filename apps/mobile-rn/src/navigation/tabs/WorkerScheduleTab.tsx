@@ -22,6 +22,7 @@ import { TaskService, TaskSchedule } from '@cyntientops/business-core/src/servic
 import { WeatherRibbonView } from '@cyntientops/ui-components/src/weather/WeatherRibbonView';
 import { TaskTimelineView } from '@cyntientops/ui-components/src/timeline/TaskTimelineView';
 import { OperationalDataTaskAssignment, WeatherSnapshot, WeatherForecast } from '@cyntientops/domain-schema';
+import { Logger } from '@cyntientops/business-core';
 
 const { width } = Dimensions.get('window');
 
@@ -89,7 +90,7 @@ export const WorkerScheduleTab: React.FC<WorkerScheduleTabProps> = ({
       const impacts = generateWeatherImpacts(schedule.today, weatherData);
       setWeatherImpacts(impacts);
     } catch (error) {
-      console.error('Failed to load schedule data:', error);
+      Logger.error('Failed to load schedule data:', undefined, 'WorkerScheduleTab.tsx');
     }
   };
 
@@ -124,7 +125,7 @@ export const WorkerScheduleTab: React.FC<WorkerScheduleTabProps> = ({
       setWeatherData(mockWeather);
       setWeatherForecast(mockForecast);
     } catch (error) {
-      console.error('Failed to load weather data:', error);
+      Logger.error('Failed to load weather data:', undefined, 'WorkerScheduleTab.tsx');
     }
   };
 
@@ -341,7 +342,7 @@ export const WorkerScheduleTab: React.FC<WorkerScheduleTabProps> = ({
         <WeatherRibbonView
           currentWeather={weatherData}
           forecast={weatherForecast}
-          onWeatherAlert={(alert) => console.log('Weather alert:', alert)}
+          onWeatherAlert={(alert) => Logger.debug('Weather alert:', undefined, 'WorkerScheduleTab.tsx')}
           showHourlyForecast={true}
           showTaskImpacts={true}
           showWorkerGuidance={true}

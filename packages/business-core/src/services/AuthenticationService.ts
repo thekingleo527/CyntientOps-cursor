@@ -9,6 +9,7 @@ import { DatabaseManager } from '@cyntientops/database';
 import { WorkerProfile } from '@cyntientops/domain-schema';
 import workersData from '@cyntientops/data-seed/workers.json';
 import clientsData from '@cyntientops/data-seed/clients.json';
+import { Logger } from './LoggingService';
 
 // Types
 export interface UserCredentials {
@@ -178,7 +179,7 @@ export class AuthenticationService {
         user
       };
     } catch (error) {
-      console.error('[AuthenticationService] Authentication failed:', error);
+      Logger.error('Authentication failed', error, 'AuthenticationService');
       return {
         success: false,
         error: 'Authentication failed'
@@ -423,7 +424,7 @@ export class AuthenticationService {
       const user = await this.getUserById(userId);
       return user !== null;
     } catch (error) {
-      console.error('[AuthenticationService] Session validation failed:', error);
+      Logger.error('Session validation failed', error, 'AuthenticationService');
       return false;
     }
   }

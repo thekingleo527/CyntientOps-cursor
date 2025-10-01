@@ -113,7 +113,7 @@ export class IntelligentPhotoStorageService {
         metadata
       };
     } catch (error) {
-      console.error('Failed to process and store photo:', error);
+      Logger.error('Failed to process and store photo:', undefined, 'IntelligentPhotoStorageService');
       throw new Error(`Photo processing failed: ${error.message}`);
     }
   }

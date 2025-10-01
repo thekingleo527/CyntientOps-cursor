@@ -8,6 +8,7 @@ import { EventEmitter } from 'events';
 import { WebSocketManager, WebSocketMessage, WebSocketConfig } from '@cyntientops/realtime-sync';
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface RealTimeEvent {
   id: string;
@@ -143,10 +144,10 @@ export class RealTimeCommunicationService extends EventEmitter {
       await this.webSocketManager.connect();
       
       this.isInitialized = true;
-      console.log('🔌 Real-time communication initialized');
+      Logger.debug('🔌 Real-time communication initialized', undefined, 'RealTimeCommunicationService');
       return true;
     } catch (error) {
-      console.error('Failed to initialize real-time communication:', error);
+      Logger.error('Failed to initialize real-time communication:', undefined, 'RealTimeCommunicationService');
       return false;
     }
   }
@@ -179,7 +180,7 @@ export class RealTimeCommunicationService extends EventEmitter {
     this.startHeartbeat();
     this.processMessageQueue();
 
-    console.log('🔌 Real-time connection established');
+    Logger.debug('🔌 Real-time connection established', undefined, 'RealTimeCommunicationService');
   }
 
   /**
@@ -197,7 +198,7 @@ export class RealTimeCommunicationService extends EventEmitter {
     this.emit('disconnected', event);
     this.stopHeartbeat();
 
-    console.log('🔌 Real-time connection lost');
+    Logger.debug('🔌 Real-time connection lost', undefined, 'RealTimeCommunicationService');
   }
 
   /**
@@ -218,7 +219,7 @@ export class RealTimeCommunicationService extends EventEmitter {
 
       this.processEvent(event);
     } catch (error) {
-      console.error('Failed to process WebSocket message:', error);
+      Logger.error('Failed to process WebSocket message:', undefined, 'RealTimeCommunicationService');
     }
   }
 
@@ -226,7 +227,7 @@ export class RealTimeCommunicationService extends EventEmitter {
    * Handle WebSocket error
    */
   private handleError(error: any): void {
-    console.error('WebSocket error:', error);
+    Logger.error('WebSocket error:', undefined, 'RealTimeCommunicationService');
     this.emit('error', error);
   }
 
@@ -294,7 +295,7 @@ export class RealTimeCommunicationService extends EventEmitter {
         try {
           subscription.callback(event);
         } catch (error) {
-          console.error('Error in event callback:', error);
+          Logger.error('Error in event callback:', undefined, 'RealTimeCommunicationService');
         }
       }
     }
@@ -365,7 +366,7 @@ export class RealTimeCommunicationService extends EventEmitter {
         return false;
       }
     } catch (error) {
-      console.error('Failed to broadcast event:', error);
+      Logger.error('Failed to broadcast event:', undefined, 'RealTimeCommunicationService');
       return false;
     }
   }
@@ -404,7 +405,7 @@ export class RealTimeCommunicationService extends EventEmitter {
         return false;
       }
     } catch (error) {
-      console.error('Failed to send direct message:', error);
+      Logger.error('Failed to send direct message:', undefined, 'RealTimeCommunicationService');
       return false;
     }
   }
@@ -601,7 +602,7 @@ export class RealTimeCommunicationService extends EventEmitter {
     this.subscriptions.clear();
     this.messageQueue = [];
     this.isInitialized = false;
-    console.log('🔌 Real-time communication disconnected');
+    Logger.debug('🔌 Real-time communication disconnected', undefined, 'RealTimeCommunicationService');
   }
 }
 

@@ -11,6 +11,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { DatabaseManager } from '@cyntientops/database';
 import { OperationalDataTaskAssignment, WorkerProfile } from '@cyntientops/domain-schema';
+import { Logger } from '@cyntientops/business-core';
 
 type TaskTimelineScreenRouteProp = RouteProp<RootStackParamList, 'TaskTimeline'>;
 
@@ -52,7 +53,7 @@ export const TaskTimelineScreen: React.FC = () => {
       setTask(taskData);
       setWorker(workerData);
     } catch (err) {
-      console.error('Failed to load task data:', err);
+      Logger.error('Failed to load task data:', undefined, 'TaskTimelineScreen.tsx');
       setError(err instanceof Error ? err.message : 'Failed to load task data');
     } finally {
       setIsLoading(false);
@@ -75,7 +76,7 @@ export const TaskTimelineScreen: React.FC = () => {
         Alert.alert('Error', 'Failed to update task status');
       }
     } catch (error) {
-      console.error('Task status update error:', error);
+      Logger.error('Task status update error:', undefined, 'TaskTimelineScreen.tsx');
       Alert.alert('Error', 'Failed to update task status');
     }
   };

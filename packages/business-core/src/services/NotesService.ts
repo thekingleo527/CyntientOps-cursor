@@ -4,6 +4,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
+import { Logger } from './LoggingService';
 
 export interface DailyNote {
   id: string;
@@ -54,7 +55,7 @@ export class NotesService {
       updatedAt: now,
     };
 
-    console.log('Adding daily note:', dailyNote);
+    Logger.debug('Adding daily note:', undefined, 'NotesService');
 
     // In a real implementation, this would insert into database
     // For now, we'll just return the ID
@@ -65,7 +66,7 @@ export class NotesService {
    * Get daily notes for a building
    */
   async getDailyNotes(buildingId: string, date?: string): Promise<DailyNote[]> {
-    console.log('Fetching daily notes for building:', buildingId, 'date:', date);
+    Logger.debug('Fetching daily notes for building:', undefined, 'NotesService');
 
     // In a real implementation, this would query the database
     return [];
@@ -75,7 +76,7 @@ export class NotesService {
    * Get notes by worker
    */
   async getNotesByWorker(workerId: string, limit: number = 50): Promise<DailyNote[]> {
-    console.log('Fetching notes for worker:', workerId, 'limit:', limit);
+    Logger.debug('Fetching notes for worker:', undefined, 'NotesService');
     return [];
   }
 
@@ -94,7 +95,7 @@ export class NotesService {
       createdAt: now,
     };
 
-    console.log('Adding task note:', taskNote);
+    Logger.debug('Adding task note:', undefined, 'NotesService');
     return noteId;
   }
 
@@ -102,7 +103,7 @@ export class NotesService {
    * Get notes for a specific task
    */
   async getTaskNotes(taskId: string): Promise<TaskNote[]> {
-    console.log('Fetching notes for task:', taskId);
+    Logger.debug('Fetching notes for task:', undefined, 'NotesService');
     return [];
   }
 
@@ -110,7 +111,7 @@ export class NotesService {
    * Delete a note
    */
   async deleteNote(noteId: string): Promise<boolean> {
-    console.log('Deleting note:', noteId);
+    Logger.debug('Deleting note:', undefined, 'NotesService');
     return true;
   }
 
@@ -118,7 +119,7 @@ export class NotesService {
    * Update a note
    */
   async updateNote(noteId: string, content: string): Promise<boolean> {
-    console.log('Updating note:', noteId, 'with content:', content);
+    Logger.debug('Updating note:', undefined, 'NotesService');
     return true;
   }
 

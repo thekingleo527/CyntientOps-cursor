@@ -7,6 +7,7 @@
 
 import { ServiceContainer } from '../ServiceContainer';
 import { BuildingMetrics, ComplianceIssue } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface ReportConfig {
   includeCharts: boolean;
@@ -212,7 +213,7 @@ export class ReportService {
       ...config,
     };
 
-    console.log('📊 Generating portfolio report...');
+    Logger.debug('📊 Generating portfolio report...', undefined, 'ReportService');
 
     try {
       // Gather data from various services
@@ -256,11 +257,11 @@ export class ReportService {
       }
 
       this.reports.set(report.id, report);
-      console.log('✅ Portfolio report generated:', report.id);
+      Logger.debug('✅ Portfolio report generated:', undefined, 'ReportService');
 
       return report;
     } catch (error) {
-      console.error('❌ Failed to generate portfolio report:', error);
+      Logger.error('❌ Failed to generate portfolio report:', undefined, 'ReportService');
       throw error;
     }
   }
@@ -284,7 +285,7 @@ export class ReportService {
       ...config,
     };
 
-    console.log('🛡️ Generating compliance report for building:', buildingId);
+    Logger.debug('🛡️ Generating compliance report for building:', undefined, 'ReportService');
 
     try {
       const building = await this.getBuildingData(buildingId);
@@ -322,11 +323,11 @@ export class ReportService {
       }
 
       this.reports.set(report.id, report);
-      console.log('✅ Compliance report generated:', report.id);
+      Logger.debug('✅ Compliance report generated:', undefined, 'ReportService');
 
       return report;
     } catch (error) {
-      console.error('❌ Failed to generate compliance report:', error);
+      Logger.error('❌ Failed to generate compliance report:', undefined, 'ReportService');
       throw error;
     }
   }
@@ -349,7 +350,7 @@ export class ReportService {
       ...config,
     };
 
-    console.log('📈 Generating performance report...');
+    Logger.debug('📈 Generating performance report...', undefined, 'ReportService');
 
     try {
       const performance = await this.getPerformanceData(reportConfig.dateRange);
@@ -383,11 +384,11 @@ export class ReportService {
       }
 
       this.reports.set(report.id, report);
-      console.log('✅ Performance report generated:', report.id);
+      Logger.debug('✅ Performance report generated:', undefined, 'ReportService');
 
       return report;
     } catch (error) {
-      console.error('❌ Failed to generate performance report:', error);
+      Logger.error('❌ Failed to generate performance report:', undefined, 'ReportService');
       throw error;
     }
   }
@@ -411,7 +412,7 @@ export class ReportService {
       ...config,
     };
 
-    console.log('💰 Generating tax history report for building:', buildingId);
+    Logger.debug('💰 Generating tax history report for building:', undefined, 'ReportService');
 
     try {
       const building = await this.getBuildingData(buildingId);
@@ -445,11 +446,11 @@ export class ReportService {
       }
 
       this.reports.set(report.id, report);
-      console.log('✅ Tax history report generated:', report.id);
+      Logger.debug('✅ Tax history report generated:', undefined, 'ReportService');
 
       return report;
     } catch (error) {
-      console.error('❌ Failed to generate tax history report:', error);
+      Logger.error('❌ Failed to generate tax history report:', undefined, 'ReportService');
       throw error;
     }
   }
@@ -478,14 +479,14 @@ export class ReportService {
       if (report.filePath) {
         try {
           // In a real implementation, this would delete the actual file
-          console.log('🗑️ Deleting report file:', report.filePath);
+          Logger.debug('🗑️ Deleting report file:', undefined, 'ReportService');
         } catch (error) {
-          console.error('Failed to delete report file:', error);
+          Logger.error('Failed to delete report file:', undefined, 'ReportService');
         }
       }
       
       this.reports.delete(reportId);
-      console.log('✅ Report deleted:', reportId);
+      Logger.debug('✅ Report deleted:', undefined, 'ReportService');
     }
   }
 
@@ -688,7 +689,7 @@ export class ReportService {
     const fileName = `${report.type}_${report.id}_${Date.now()}.pdf`;
     const filePath = `/tmp/reports/${fileName}`;
     
-    console.log('📄 Generating PDF report:', filePath);
+    Logger.debug('📄 Generating PDF report:', undefined, 'ReportService');
     
     // In a real implementation, this would:
     // 1. Create a PDF document

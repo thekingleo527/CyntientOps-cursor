@@ -6,6 +6,7 @@
 
 import { Audio } from 'expo-av';
 import * as Speech from 'expo-speech';
+import { Logger } from './LoggingService';
 
 export interface VoiceCommand {
   id: string;
@@ -189,7 +190,7 @@ export class AdvancedVoiceProcessingService {
 
       return true;
     } catch (error) {
-      console.error('Failed to initialize voice processing:', error);
+      Logger.error('Failed to initialize voice processing:', undefined, 'AdvancedVoiceProcessingService');
       return false;
     }
   }
@@ -215,7 +216,7 @@ export class AdvancedVoiceProcessingService {
       
       return true;
     } catch (error) {
-      console.error('Failed to start listening:', error);
+      Logger.error('Failed to start listening:', undefined, 'AdvancedVoiceProcessingService');
       this.isListening = false;
       return false;
     }
@@ -266,7 +267,7 @@ export class AdvancedVoiceProcessingService {
           };
       }
     } catch (error) {
-      console.error('Failed to process voice command:', error);
+      Logger.error('Failed to process voice command:', undefined, 'AdvancedVoiceProcessingService');
       return {
         success: false,
         message: 'Sorry, I encountered an error processing your command.',
@@ -289,7 +290,7 @@ export class AdvancedVoiceProcessingService {
 
       await Speech.speak(text, speechOptions);
     } catch (error) {
-      console.error('Failed to speak response:', error);
+      Logger.error('Failed to speak response:', undefined, 'AdvancedVoiceProcessingService');
     }
   }
 
@@ -595,7 +596,7 @@ export class AdvancedVoiceProcessingService {
         
         // Process the simulated command
         this.processVoiceCommand(command).then(response => {
-          console.log('Voice command processed:', response);
+          Logger.debug('Voice command processed:', undefined, 'AdvancedVoiceProcessingService');
           if (response.success && response.message) {
             this.speakResponse(response.message);
           }

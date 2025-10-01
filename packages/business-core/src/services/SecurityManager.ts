@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface SecurityPolicy {
   id: string;
@@ -81,7 +82,7 @@ export class SecurityManager {
 
   private constructor(database: DatabaseManager) {
     this.database = database;
-    console.log('SecurityManager initialized');
+    Logger.debug('SecurityManager initialized', undefined, 'SecurityManager');
     this.initializeSecurityPolicies();
     this.initializeComplianceRequirements();
   }
@@ -274,7 +275,7 @@ export class SecurityManager {
       
       return isValid;
     } catch (error) {
-      console.error('Authentication error:', error);
+      Logger.error('Authentication error:', undefined, 'SecurityManager');
       this.logSecurityEvent(userId, 'authentication', 'system_error', 'failure');
       return false;
     }
@@ -295,7 +296,7 @@ export class SecurityManager {
       
       return hasPermission;
     } catch (error) {
-      console.error('Authorization error:', error);
+      Logger.error('Authorization error:', undefined, 'SecurityManager');
       this.logSecurityEvent(userId, 'authorization', 'system_error', 'failure');
       return false;
     }
@@ -328,7 +329,7 @@ export class SecurityManager {
       this.accessControls.set(userId, accessControl);
       return accessControl;
     } catch (error) {
-      console.error('Failed to get access control:', error);
+      Logger.error('Failed to get access control:', undefined, 'SecurityManager');
       return null;
     }
   }
@@ -352,7 +353,7 @@ export class SecurityManager {
       const workerRoutines = routinesData.routines.filter((r: any) => r.workerId === workerId);
       return [...new Set(workerRoutines.map((r: any) => r.buildingId))];
     } catch (error) {
-      console.error('Failed to get worker buildings:', error);
+      Logger.error('Failed to get worker buildings:', undefined, 'SecurityManager');
       return [];
     }
   }
@@ -368,7 +369,7 @@ export class SecurityManager {
       
       return [...new Set(clientIds)];
     } catch (error) {
-      console.error('Failed to get worker clients:', error);
+      Logger.error('Failed to get worker clients:', undefined, 'SecurityManager');
       return [];
     }
   }
@@ -509,23 +510,23 @@ export class SecurityManager {
 
   public async encryptSensitiveData(data: any): Promise<string> {
     // In a real implementation, this would use proper encryption
-    console.log('Encrypting sensitive data...');
+    Logger.debug('Encrypting sensitive data...', undefined, 'SecurityManager');
     return Buffer.from(JSON.stringify(data)).toString('base64');
   }
 
   public async decryptSensitiveData(encryptedData: string): Promise<any> {
     // In a real implementation, this would use proper decryption
-    console.log('Decrypting sensitive data...');
+    Logger.debug('Decrypting sensitive data...', undefined, 'SecurityManager');
     return JSON.parse(Buffer.from(encryptedData, 'base64').toString());
   }
 
   public async backupData(): Promise<void> {
-    console.log('Creating data backup...');
+    Logger.debug('Creating data backup...', undefined, 'SecurityManager');
     // In a real implementation, this would create actual backups
   }
 
   public async anonymizeData(data: any): Promise<any> {
-    console.log('Anonymizing data...');
+    Logger.debug('Anonymizing data...', undefined, 'SecurityManager');
     // In a real implementation, this would properly anonymize data
     const anonymized = { ...data };
     if (anonymized.email) {

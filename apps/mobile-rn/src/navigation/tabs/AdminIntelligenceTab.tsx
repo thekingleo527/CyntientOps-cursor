@@ -20,6 +20,7 @@ import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-compone
 import { LinearGradient } from 'expo-linear-gradient';
 import { LegacyAnalyticsDashboard, AnalyticsData } from '@cyntientops/ui-components/src/analytics/components/AnalyticsDashboard';
 import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientops/intelligence-services';
+import { Logger } from '@cyntientops/business-core';
 
 // Types
 export interface AdminIntelligenceTabProps {
@@ -96,7 +97,7 @@ export const AdminIntelligenceTab: React.FC<AdminIntelligenceTabProps> = ({
       const predictions = await loadMaintenancePredictions();
       setMaintenancePredictions(predictions);
     } catch (error) {
-      console.error('Failed to load admin intelligence data:', error);
+      Logger.error('Failed to load admin intelligence data:', undefined, 'AdminIntelligenceTab.tsx');
     }
   };
 
@@ -120,7 +121,7 @@ export const AdminIntelligenceTab: React.FC<AdminIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'View Details',
-        onAction: () => console.log('View worker details'),
+        onAction: () => Logger.debug('View worker details', undefined, 'AdminIntelligenceTab.tsx'),
       },
       {
         id: '3',
@@ -131,7 +132,7 @@ export const AdminIntelligenceTab: React.FC<AdminIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'Schedule Maintenance',
-        onAction: () => console.log('Schedule maintenance'),
+        onAction: () => Logger.debug('Schedule maintenance', undefined, 'AdminIntelligenceTab.tsx'),
       },
       {
         id: '4',
@@ -142,7 +143,7 @@ export const AdminIntelligenceTab: React.FC<AdminIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'Reschedule Tasks',
-        onAction: () => console.log('Reschedule tasks'),
+        onAction: () => Logger.debug('Reschedule tasks', undefined, 'AdminIntelligenceTab.tsx'),
       },
     ];
   };
@@ -178,7 +179,7 @@ export const AdminIntelligenceTab: React.FC<AdminIntelligenceTabProps> = ({
       const service = new PredictiveMaintenanceService();
       return await service.getMaintenancePredictions(adminId);
     } catch (error) {
-      console.error('Failed to load maintenance predictions:', error);
+      Logger.error('Failed to load maintenance predictions:', undefined, 'AdminIntelligenceTab.tsx');
       return [];
     }
   };

@@ -22,6 +22,7 @@ import { LegacyAnalyticsDashboard, AnalyticsData } from '@cyntientops/ui-compone
 import { BuildingProfile, ClientProfile } from '@cyntientops/domain-schema';
 import buildingsData from '@cyntientops/data-seed/buildings.json';
 import clientsData from '@cyntientops/data-seed/clients.json';
+import { Logger } from '@cyntientops/business-core';
 
 // Types
 export interface ClientIntelligenceTabProps {
@@ -98,7 +99,7 @@ export const ClientIntelligenceTab: React.FC<ClientIntelligenceTabProps> = ({
       const analytics = generateAnalyticsData(clientId, buildings);
       setAnalyticsData(analytics);
     } catch (error) {
-      console.error('Failed to load client intelligence data:', error);
+      Logger.error('Failed to load client intelligence data:', undefined, 'ClientIntelligenceTab.tsx');
     }
   };
 
@@ -125,7 +126,7 @@ export const ClientIntelligenceTab: React.FC<ClientIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'View Details',
-        onAction: () => console.log('View compliance details'),
+        onAction: () => Logger.debug('View compliance details', undefined, 'ClientIntelligenceTab.tsx'),
       },
       {
         id: '3',
@@ -136,7 +137,7 @@ export const ClientIntelligenceTab: React.FC<ClientIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'View Team',
-        onAction: () => console.log('View team performance'),
+        onAction: () => Logger.debug('View team performance', undefined, 'ClientIntelligenceTab.tsx'),
       },
       {
         id: '4',
@@ -147,7 +148,7 @@ export const ClientIntelligenceTab: React.FC<ClientIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'View Schedule',
-        onAction: () => console.log('View maintenance schedule'),
+        onAction: () => Logger.debug('View maintenance schedule', undefined, 'ClientIntelligenceTab.tsx'),
       },
     ];
   };

@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
 import { Building, WorkerProfile, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import { MapContainer } from '@cyntientops/ui-components';
+import { Logger } from '@cyntientops/business-core';
 
 interface DepartureSite {
   building: Building;
@@ -90,7 +91,7 @@ export const MultisiteDepartureScreen: React.FC = () => {
 
       setDepartureSites(sites);
     } catch (error) {
-      console.error('Failed to load departure sites:', error);
+      Logger.error('Failed to load departure sites:', undefined, 'MultisiteDepartureScreen.tsx');
       Alert.alert('Error', 'Failed to load departure sites');
     } finally {
       setIsLoading(false);
@@ -174,7 +175,7 @@ export const MultisiteDepartureScreen: React.FC = () => {
         fuelEfficiency: 85, // Mock value
       });
     } catch (error) {
-      console.error('Failed to optimize route:', error);
+      Logger.error('Failed to optimize route:', undefined, 'MultisiteDepartureScreen.tsx');
     }
   };
 
@@ -223,11 +224,11 @@ export const MultisiteDepartureScreen: React.FC = () => {
         'Departure Started',
         `Starting departure to ${selectedSites.size} site(s). Route optimized for efficiency.`,
         [
-          { text: 'OK', onPress: () => console.log('Departure started') }
+          { text: 'OK', onPress: () => Logger.debug('Departure started', undefined, 'MultisiteDepartureScreen.tsx') }
         ]
       );
     } catch (error) {
-      console.error('Failed to start departure:', error);
+      Logger.error('Failed to start departure:', undefined, 'MultisiteDepartureScreen.tsx');
       Alert.alert('Error', 'Failed to start departure');
     }
   };

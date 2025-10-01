@@ -4,6 +4,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
+import { Logger } from './LoggingService';
 
 export interface VendorAccessEntry {
   id: string;
@@ -64,7 +65,7 @@ export class VendorAccessService {
       updatedAt: now,
     };
 
-    console.log('Logging vendor access:', accessEntry);
+    Logger.debug('Logging vendor access:', undefined, 'VendorAccessService');
     return entryId;
   }
 
@@ -73,7 +74,7 @@ export class VendorAccessService {
    */
   async logCheckout(entryId: string, notes?: string): Promise<boolean> {
     const now = new Date().toISOString();
-    console.log('Logging vendor checkout:', entryId, 'at', now);
+    Logger.debug('Logging vendor checkout:', undefined, 'VendorAccessService');
     return true;
   }
 
@@ -81,7 +82,7 @@ export class VendorAccessService {
    * Get recent vendor access for a worker
    */
   async getRecentAccess(workerId: string, limit: number = 10): Promise<VendorAccessEntry[]> {
-    console.log('Fetching recent vendor access for worker:', workerId, 'limit:', limit);
+    Logger.debug('Fetching recent vendor access for worker:', undefined, 'VendorAccessService');
 
     // Mock data for demonstration
     return [];
@@ -96,7 +97,7 @@ export class VendorAccessService {
     purpose?: VendorAccessEntry['purpose'];
     limit?: number;
   }): Promise<VendorAccessEntry[]> {
-    console.log('Fetching vendor access for building:', buildingId, options);
+    Logger.debug('Fetching vendor access for building:', undefined, 'VendorAccessService');
     return [];
   }
 
@@ -104,7 +105,7 @@ export class VendorAccessService {
    * Get active vendor visits (not checked out)
    */
   async getActiveVisits(buildingId: string): Promise<VendorAccessEntry[]> {
-    console.log('Fetching active vendor visits for building:', buildingId);
+    Logger.debug('Fetching active vendor visits for building:', undefined, 'VendorAccessService');
     return [];
   }
 
@@ -119,7 +120,7 @@ export class VendorAccessService {
       id: vendorId,
     };
 
-    console.log('Registering vendor:', newVendor);
+    Logger.debug('Registering vendor:', undefined, 'VendorAccessService');
     return vendorId;
   }
 
@@ -127,7 +128,7 @@ export class VendorAccessService {
    * Get approved vendors for a building
    */
   async getApprovedVendors(buildingId: string): Promise<VendorCompany[]> {
-    console.log('Fetching approved vendors for building:', buildingId);
+    Logger.debug('Fetching approved vendors for building:', undefined, 'VendorAccessService');
 
     // Mock data for demonstration
     return [
@@ -154,7 +155,7 @@ export class VendorAccessService {
     byVendor: { [key: string]: number };
     averageDuration: number; // in minutes
   }> {
-    console.log('Fetching vendor stats for building:', buildingId, 'period:', period);
+    Logger.debug('Fetching vendor stats for building:', undefined, 'VendorAccessService');
 
     return {
       totalVisits: 0,
@@ -168,7 +169,7 @@ export class VendorAccessService {
    * Search vendors
    */
   async searchVendors(query: string): Promise<VendorCompany[]> {
-    console.log('Searching vendors:', query);
+    Logger.debug('Searching vendors:', undefined, 'VendorAccessService');
     return [];
   }
 

@@ -16,6 +16,7 @@ import {
 } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '../ServiceContainer';
 import { NYCAPIService, HPDViolation, DOBPermit, DSNYRoute, LL97Emission } from '@cyntientops/api-clients';
+import { Logger } from './LoggingService';
 
 export class ComplianceService {
   private static instance: ComplianceService;
@@ -42,7 +43,7 @@ export class ComplianceService {
 
   async loadComplianceData(buildingIds: string[]): Promise<ComplianceDashboardData> {
     try {
-      console.log('🛡️ Loading compliance data for buildings:', buildingIds);
+      Logger.debug('🛡️ Loading compliance data for buildings:', undefined, 'ComplianceService');
 
       const [violations, deadlines, insights, metrics] = await Promise.all([
         this.loadViolations({ buildingId: buildingIds[0] }),
@@ -66,7 +67,7 @@ export class ComplianceService {
         lastUpdated: new Date()
       };
     } catch (error) {
-      console.error('❌ Failed to load compliance data:', error);
+      Logger.error('❌ Failed to load compliance data:', undefined, 'ComplianceService');
       throw error;
     }
   }
@@ -138,7 +139,7 @@ export class ComplianceService {
         return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
       });
     } catch (error) {
-      console.error('❌ Failed to load violations:', error);
+      Logger.error('❌ Failed to load violations:', undefined, 'ComplianceService');
       throw error;
     }
   }
@@ -158,7 +159,7 @@ export class ComplianceService {
       const maxPossibleSeverity = violations.length * 4.0;
       return Math.max(0.0, 1.0 - (totalSeverity / maxPossibleSeverity));
     } catch (error) {
-      console.error('❌ Failed to calculate compliance score:', error);
+      Logger.error('❌ Failed to calculate compliance score:', undefined, 'ComplianceService');
       return 0.5;
     }
   }
@@ -206,7 +207,7 @@ export class ComplianceService {
         categoryScores
       };
     } catch (error) {
-      console.error('❌ Failed to get compliance metrics:', error);
+      Logger.error('❌ Failed to get compliance metrics:', undefined, 'ComplianceService');
       throw error;
     }
   }
@@ -243,7 +244,7 @@ export class ComplianceService {
 
       return deadlines.sort((a, b) => a.daysRemaining - b.daysRemaining);
     } catch (error) {
-      console.error('❌ Failed to get critical deadlines:', error);
+      Logger.error('❌ Failed to get critical deadlines:', undefined, 'ComplianceService');
       return [];
     }
   }
@@ -273,7 +274,7 @@ export class ComplianceService {
 
       return insights.sort((a, b) => b.riskScore - a.riskScore);
     } catch (error) {
-      console.error('❌ Failed to get predictive insights:', error);
+      Logger.error('❌ Failed to get predictive insights:', undefined, 'ComplianceService');
       return [];
     }
   }

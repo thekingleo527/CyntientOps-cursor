@@ -67,7 +67,7 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
 
       setViewModel(clientViewModel);
     } catch (err) {
-      console.error('Failed to initialize client dashboard:', err);
+      Logger.error('Failed to initialize client dashboard:', undefined, 'ClientDashboardScreen.tsx');
       setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
     } finally {
       setIsLoading(false);
@@ -83,7 +83,7 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
         Alert.alert('Update Failed', 'Failed to update building information.');
       }
     } catch (error) {
-      console.error('Building update error:', error);
+      Logger.error('Building update error:', undefined, 'ClientDashboardScreen.tsx');
       Alert.alert('Error', 'Failed to update building. Please try again.');
     }
   };
@@ -94,7 +94,7 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
     try {
       await viewModel.markNotificationAsRead(notificationId);
     } catch (error) {
-      console.error('Notification read error:', error);
+      Logger.error('Notification read error:', undefined, 'ClientDashboardScreen.tsx');
     }
   };
 

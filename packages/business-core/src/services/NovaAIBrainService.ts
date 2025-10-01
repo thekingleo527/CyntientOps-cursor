@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole, OperationalDataTaskAssignment, NamedCoordinate } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface NovaInsight {
   id: string;
@@ -149,7 +150,7 @@ export class NovaAIBrainService {
         try {
           response = await this.processWithSupabase(prompt);
         } catch (error) {
-          console.log('🔄 Nova: Supabase failed, falling back to local processing');
+          Logger.debug('🔄 Nova: Supabase failed, falling back to local processing', undefined, 'NovaAIBrainService');
           response = await this.processLocally(prompt);
         }
       } else {
@@ -167,7 +168,7 @@ export class NovaAIBrainService {
       return response;
       
     } catch (error) {
-      console.error('❌ Nova: Failed to process prompt:', error);
+      Logger.error('❌ Nova: Failed to process prompt:', undefined, 'NovaAIBrainService');
       
       // Return error response
       return {
@@ -231,7 +232,7 @@ export class NovaAIBrainService {
       };
       
     } catch (error) {
-      console.error('Supabase processing failed:', error);
+      Logger.error('Supabase processing failed:', undefined, 'NovaAIBrainService');
       throw error;
     }
   }
@@ -275,7 +276,7 @@ export class NovaAIBrainService {
       };
       
     } catch (error) {
-      console.error('Local processing failed:', error);
+      Logger.error('Local processing failed:', undefined, 'NovaAIBrainService');
       throw error;
     }
   }
@@ -544,7 +545,7 @@ export class NovaAIBrainService {
       );
       return result[0] || null;
     } catch (error) {
-      console.error('Failed to get worker data:', error);
+      Logger.error('Failed to get worker data:', undefined, 'NovaAIBrainService');
       return null;
     }
   }
@@ -560,7 +561,7 @@ export class NovaAIBrainService {
       );
       return result;
     } catch (error) {
-      console.error('Failed to get worker tasks:', error);
+      Logger.error('Failed to get worker tasks:', undefined, 'NovaAIBrainService');
       return [];
     }
   }
@@ -590,7 +591,7 @@ export class NovaAIBrainService {
         averageCompletionTime: Math.round(metrics.avg_completion_time || 0)
       };
     } catch (error) {
-      console.error('Failed to get worker performance:', error);
+      Logger.error('Failed to get worker performance:', undefined, 'NovaAIBrainService');
       return { totalTasks: 0, completedTasks: 0, completionRate: 0, averageCompletionTime: 0 };
     }
   }
@@ -606,7 +607,7 @@ export class NovaAIBrainService {
       );
       return result[0] || null;
     } catch (error) {
-      console.error('Failed to get building data:', error);
+      Logger.error('Failed to get building data:', undefined, 'NovaAIBrainService');
       return null;
     }
   }
@@ -622,7 +623,7 @@ export class NovaAIBrainService {
       );
       return result;
     } catch (error) {
-      console.error('Failed to get building tasks:', error);
+      Logger.error('Failed to get building tasks:', undefined, 'NovaAIBrainService');
       return [];
     }
   }
@@ -641,7 +642,7 @@ export class NovaAIBrainService {
         efficiencyScore: 80
       };
     } catch (error) {
-      console.error('Failed to get building metrics:', error);
+      Logger.error('Failed to get building metrics:', undefined, 'NovaAIBrainService');
       return { maintenanceScore: 0, complianceScore: 0, safetyScore: 0, efficiencyScore: 0 };
     }
   }
@@ -657,7 +658,7 @@ export class NovaAIBrainService {
       );
       return result;
     } catch (error) {
-      console.error('Failed to get task history:', error);
+      Logger.error('Failed to get task history:', undefined, 'NovaAIBrainService');
       return [];
     }
   }
@@ -743,7 +744,7 @@ export class NovaAIBrainService {
         ]
       );
     } catch (error) {
-      console.error('Failed to store Nova response:', error);
+      Logger.error('Failed to store Nova response:', undefined, 'NovaAIBrainService');
     }
   }
 
@@ -779,7 +780,7 @@ export class NovaAIBrainService {
         isProcessing: this.isProcessing
       };
     } catch (error) {
-      console.error('Failed to get service stats:', error);
+      Logger.error('Failed to get service stats:', undefined, 'NovaAIBrainService');
       return {
         responsesLast24h: 0,
         queueSize: 0,

@@ -13,6 +13,7 @@ import { AuthenticationService, AuthenticatedUser } from '@cyntientops/business-
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
+import { Logger } from '@cyntientops/business-core';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: AuthenticatedUser) => void;
@@ -35,7 +36,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         const service = AuthenticationService.getInstance(databaseManager);
         setAuthService(service);
       } catch (error) {
-        console.error('Failed to initialize authentication service:', error);
+        Logger.error('Failed to initialize authentication service:', undefined, 'LoginScreen.tsx');
       }
     };
     initializeAuth();
@@ -62,7 +63,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         Alert.alert('Error', result.error || 'Login failed');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      Logger.error('Login error:', undefined, 'LoginScreen.tsx');
       Alert.alert('Error', 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -85,7 +86,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         Alert.alert('Error', result.error || 'Quick login failed');
       }
     } catch (error) {
-      console.error('Quick login error:', error);
+      Logger.error('Quick login error:', undefined, 'LoginScreen.tsx');
       Alert.alert('Error', 'Quick login failed. Please try again.');
     } finally {
       setIsLoading(false);

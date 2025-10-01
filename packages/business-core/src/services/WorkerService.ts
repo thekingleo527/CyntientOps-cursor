@@ -7,6 +7,7 @@
 import { OperationalDataService } from './OperationalDataService';
 import { CanonicalIDs } from '@cyntientops/domain-schema';
 import { WorkerProfile, WorkerStatus, ClockStatus } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface WorkerLocation {
   workerId: string;

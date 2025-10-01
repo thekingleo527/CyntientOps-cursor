@@ -35,6 +35,7 @@ export interface BuildingMaintenanceSchedule {
 }
 
 import { APIClientManager } from '@cyntientops/api-clients';
+import { Logger } from './LoggingService';
 
 export class BuildingService {
   private operationalDataService: OperationalDataService;
@@ -141,7 +142,7 @@ export class BuildingService {
         dobPermits = permits;
         dsnyCompliance = dsny;
       } catch (error) {
-        console.error('Failed to load compliance data for building:', buildingId, error);
+        Logger.error('Failed to load compliance data for building:', undefined, 'BuildingService');
       }
     }
 
@@ -432,7 +433,7 @@ export class BuildingService {
    */
   private async getHPDViolations(buildingId: string): Promise<number> {
     if (!this.apiClients) {
-      console.warn('API clients not initialized, returning 0 violations');
+      Logger.warn('API clients not initialized, returning 0 violations', undefined, 'BuildingService');
       return 0;
     }
 
@@ -440,7 +441,7 @@ export class BuildingService {
       const violations = await this.apiClients.hpd.getViolationsForBuilding(buildingId, '');
       return violations.filter(v => v.isActive).length;
     } catch (error) {
-      console.error('Failed to get HPD violations:', error);
+      Logger.error('Failed to get HPD violations:', undefined, 'BuildingService');
       return 0;
     }
   }
@@ -450,7 +451,7 @@ export class BuildingService {
    */
   private async getDOBPermits(buildingId: string): Promise<number> {
     if (!this.apiClients) {
-      console.warn('API clients not initialized, returning 0 permits');
+      Logger.warn('API clients not initialized, returning 0 permits', undefined, 'BuildingService');
       return 0;
     }
 
@@ -458,7 +459,7 @@ export class BuildingService {
       const permits = await this.apiClients.dob.getPermitsForBuilding(buildingId);
       return permits.length;
     } catch (error) {
-      console.error('Failed to get DOB permits:', error);
+      Logger.error('Failed to get DOB permits:', undefined, 'BuildingService');
       return 0;
     }
   }
@@ -468,7 +469,7 @@ export class BuildingService {
    */
   private async getDSNYCompliance(buildingId: string): Promise<boolean> {
     if (!this.apiClients) {
-      console.warn('API clients not initialized, returning false');
+      Logger.warn('API clients not initialized, returning false', undefined, 'BuildingService');
       return false;
     }
 
@@ -476,7 +477,7 @@ export class BuildingService {
       const violations = await this.apiClients.dsny.getViolationsForBuilding(buildingId);
       return violations.length === 0;
     } catch (error) {
-      console.error('Failed to get DSNY compliance:', error);
+      Logger.error('Failed to get DSNY compliance:', undefined, 'BuildingService');
       return false;
     }
   }

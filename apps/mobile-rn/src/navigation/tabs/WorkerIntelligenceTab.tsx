@@ -20,6 +20,7 @@ import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-compone
 import { LinearGradient } from 'expo-linear-gradient';
 import { LegacyAnalyticsDashboard, AnalyticsData } from '@cyntientops/ui-components/src/analytics/components/AnalyticsDashboard';
 import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientops/intelligence-services';
+import { Logger } from '@cyntientops/business-core';
 
 // Types
 export interface WorkerIntelligenceTabProps {
@@ -96,7 +97,7 @@ export const WorkerIntelligenceTab: React.FC<WorkerIntelligenceTabProps> = ({
       const predictions = await loadMaintenancePredictions();
       setMaintenancePredictions(predictions);
     } catch (error) {
-      console.error('Failed to load intelligence data:', error);
+      Logger.error('Failed to load intelligence data:', undefined, 'WorkerIntelligenceTab.tsx');
     }
   };
 
@@ -111,7 +112,7 @@ export const WorkerIntelligenceTab: React.FC<WorkerIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'View Optimization',
-        onAction: () => console.log('View optimization'),
+        onAction: () => Logger.debug('View optimization', undefined, 'WorkerIntelligenceTab.tsx'),
       },
       {
         id: '2',
@@ -122,7 +123,7 @@ export const WorkerIntelligenceTab: React.FC<WorkerIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'Reschedule Tasks',
-        onAction: () => console.log('Reschedule tasks'),
+        onAction: () => Logger.debug('Reschedule tasks', undefined, 'WorkerIntelligenceTab.tsx'),
       },
       {
         id: '3',
@@ -133,7 +134,7 @@ export const WorkerIntelligenceTab: React.FC<WorkerIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'Schedule Inspection',
-        onAction: () => console.log('Schedule inspection'),
+        onAction: () => Logger.debug('Schedule inspection', undefined, 'WorkerIntelligenceTab.tsx'),
       },
       {
         id: '4',
@@ -144,7 +145,7 @@ export const WorkerIntelligenceTab: React.FC<WorkerIntelligenceTabProps> = ({
         timestamp: new Date(),
         actionable: true,
         actionText: 'View Route',
-        onAction: () => console.log('View route'),
+        onAction: () => Logger.debug('View route', undefined, 'WorkerIntelligenceTab.tsx'),
       },
     ];
   };
@@ -180,7 +181,7 @@ export const WorkerIntelligenceTab: React.FC<WorkerIntelligenceTabProps> = ({
       const service = new PredictiveMaintenanceService();
       return await service.getMaintenancePredictions(userId);
     } catch (error) {
-      console.error('Failed to load maintenance predictions:', error);
+      Logger.error('Failed to load maintenance predictions:', undefined, 'WorkerIntelligenceTab.tsx');
       return [];
     }
   };

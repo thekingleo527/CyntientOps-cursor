@@ -125,7 +125,7 @@ export class MapClusteringService {
     this.supercluster.load(features);
     this.initialized = true;
 
-    console.log('[MapClustering] Initialization complete');
+    Logger.debug('Initialization complete', undefined, 'MapClusteringService');
   }
 
   /**
@@ -133,7 +133,7 @@ export class MapClusteringService {
    */
   getClusters(region: any, zoom: number): ClusteredMarker[] {
     if (!this.initialized || !this.supercluster) {
-      console.warn('[MapClustering] Not initialized');
+      Logger.warn('Not initialized', undefined, 'MapClusteringService');
       return [];
     }
 
@@ -203,7 +203,7 @@ export class MapClusteringService {
         longitudeDelta,
       };
     } catch (error) {
-      console.error('[MapClustering] Failed to get expansion region:', error);
+      Logger.error('Failed to get expansion region:', error, 'MapClustering');
       return null;
     }
   }
@@ -231,7 +231,7 @@ export class MapClusteringService {
         metadata: leaf.properties.metadata,
       }));
     } catch (error) {
-      console.error('[MapClustering] Failed to get cluster leaves:', error);
+      Logger.error('Failed to get cluster leaves:', error, 'MapClustering');
       return [];
     }
   }

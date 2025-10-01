@@ -6,6 +6,7 @@
 import { UserRole, WorkerProfile, ClientProfile } from '@cyntientops/domain-schema';
 import { DatabaseManager } from '@cyntientops/database';
 import { OperationalDataService } from './OperationalDataService';
+import { Logger } from './LoggingService';
 
 export interface AuthUser {
   id: string;
@@ -80,7 +81,7 @@ export class AuthService {
       return this.currentUser;
 
     } catch (error) {
-      console.error('Login failed:', error);
+      Logger.error('Login failed:', undefined, 'AuthService');
       throw error;
     }
   }
@@ -101,7 +102,7 @@ export class AuthService {
       this.clearSessionTimeout();
 
     } catch (error) {
-      console.error('Logout failed:', error);
+      Logger.error('Logout failed:', undefined, 'AuthService');
       throw error;
     }
   }
@@ -152,7 +153,7 @@ export class AuthService {
       return null;
 
     } catch (error) {
-      console.error('Session restoration failed:', error);
+      Logger.error('Session restoration failed:', undefined, 'AuthService');
       return null;
     }
   }
@@ -225,7 +226,7 @@ export class AuthService {
         return operationalData.getClientById(userId);
       }
     } catch (error) {
-      console.error('Failed to load user profile:', error);
+      Logger.error('Failed to load user profile:', undefined, 'AuthService');
     }
 
     return undefined;
@@ -245,9 +246,9 @@ export class AuthService {
     try {
       // In a real implementation, this would store in a sessions table
       // For now, we'll just log it
-      console.log('Session stored for user:', user.id);
+      Logger.debug('Session stored for user:', undefined, 'AuthService');
     } catch (error) {
-      console.error('Failed to store session:', error);
+      Logger.error('Failed to store session:', undefined, 'AuthService');
     }
   }
 
@@ -257,9 +258,9 @@ export class AuthService {
   private async clearSession(userId: string): Promise<void> {
     try {
       // In a real implementation, this would clear from sessions table
-      console.log('Session cleared for user:', userId);
+      Logger.debug('Session cleared for user:', undefined, 'AuthService');
     } catch (error) {
-      console.error('Failed to clear session:', error);
+      Logger.error('Failed to clear session:', undefined, 'AuthService');
     }
   }
 
@@ -271,7 +272,7 @@ export class AuthService {
       // In a real implementation, this would retrieve from sessions table
       return null;
     } catch (error) {
-      console.error('Failed to get stored session:', error);
+      Logger.error('Failed to get stored session:', undefined, 'AuthService');
       return null;
     }
   }
@@ -295,7 +296,7 @@ export class AuthService {
     this.clearSessionTimeout();
     
     this.sessionTimeout = setTimeout(() => {
-      console.log('Session expired, logging out user');
+      Logger.debug('Session expired, logging out user', undefined, 'AuthService');
       this.logout();
     }, this.SESSION_DURATION);
   }
@@ -354,7 +355,7 @@ export class AuthService {
       return false;
 
     } catch (error) {
-      console.error('Failed to check building access:', error);
+      Logger.error('Failed to check building access:', undefined, 'AuthService');
       return false;
     }
   }

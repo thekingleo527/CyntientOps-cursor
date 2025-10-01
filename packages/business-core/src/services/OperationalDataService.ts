@@ -7,6 +7,7 @@
 import { workers, buildings, clients, routines, validateDataIntegrity } from '@cyntientops/data-seed';
 import { CanonicalIDs, validateTaskAssignment } from '@cyntientops/domain-schema';
 import { WorkerProfile, BuildingMetrics, ContextualTask, TaskStatus } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface OperationalDataState {
   workers: WorkerProfile[];
@@ -71,9 +72,9 @@ export class OperationalDataService {
       this.state.lastUpdated = new Date();
 
       this.notifyListeners();
-      console.log('✅ Operational data loaded successfully');
+      Logger.debug('✅ Operational data loaded successfully', undefined, 'OperationalDataService');
     } catch (error) {
-      console.error('❌ Failed to load operational data:', error);
+      Logger.error('❌ Failed to load operational data:', undefined, 'OperationalDataService');
       throw error;
     }
   }
@@ -277,7 +278,7 @@ export class OperationalDataService {
       try {
         listener(this.state);
       } catch (error) {
-        console.error('Error in state listener:', error);
+        Logger.error('Error in state listener:', undefined, 'OperationalDataService');
       }
     });
   }

@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
 import { Building, OperationalDataTaskAssignment, WorkerProfile } from '@cyntientops/domain-schema';
 import { RoutinePriorityComponent, BuildingRoutine, ScheduleType, RoutinePriority } from '@cyntientops/ui-components';
+import { Logger } from '@cyntientops/business-core';
 
 interface WeeklyRoutineData {
   routines: BuildingRoutine[];
@@ -62,7 +63,7 @@ export const WeeklyRoutineScreen: React.FC = () => {
       });
 
     } catch (error) {
-      console.error('Failed to load weekly routine data:', error);
+      Logger.error('Failed to load weekly routine data:', undefined, 'WeeklyRoutineScreen.tsx');
       Alert.alert('Error', 'Failed to load weekly routine data');
     } finally {
       setIsLoading(false);

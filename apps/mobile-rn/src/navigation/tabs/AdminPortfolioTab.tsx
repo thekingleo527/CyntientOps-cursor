@@ -21,6 +21,7 @@ import { TaskService } from '@cyntientops/business-core/src/services/TaskService
 import { Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import buildingsData from '@cyntientops/data-seed/buildings.json';
 import workersData from '@cyntientops/data-seed/workers.json';
+import { Logger } from '@cyntientops/business-core';
 
 const { width, height } = Dimensions.get('window');
 
@@ -88,7 +89,7 @@ export const AdminPortfolioTab: React.FC<AdminPortfolioTabProps> = ({
 
       setTasks(allTasks);
     } catch (error) {
-      console.error('Failed to load admin portfolio data:', error);
+      Logger.error('Failed to load admin portfolio data:', undefined, 'AdminPortfolioTab.tsx');
     }
   };
 
@@ -99,7 +100,7 @@ export const AdminPortfolioTab: React.FC<AdminPortfolioTabProps> = ({
 
   const handleTaskPress = (task: OperationalDataTaskAssignment) => {
     // Navigate to task details
-    console.log('Task pressed:', task);
+    Logger.debug('Task pressed:', undefined, 'AdminPortfolioTab.tsx');
   };
 
   const renderModeButton = (mode: MapViewMode) => {

@@ -71,7 +71,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
 
       setViewModel(workerViewModel);
     } catch (err) {
-      console.error('Failed to initialize worker dashboard:', err);
+      Logger.error('Failed to initialize worker dashboard:', undefined, 'WorkerDashboardScreen.tsx');
       setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
     } finally {
       setIsLoading(false);
@@ -87,7 +87,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
         Alert.alert('Clock In Failed', 'Please check your location and try again.');
       }
     } catch (error) {
-      console.error('Clock in error:', error);
+      Logger.error('Clock in error:', undefined, 'WorkerDashboardScreen.tsx');
       Alert.alert('Error', 'Failed to clock in. Please try again.');
     }
   };
@@ -101,7 +101,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
         Alert.alert('Clock Out Failed', 'Please try again.');
       }
     } catch (error) {
-      console.error('Clock out error:', error);
+      Logger.error('Clock out error:', undefined, 'WorkerDashboardScreen.tsx');
       Alert.alert('Error', 'Failed to clock out. Please try again.');
     }
   };
@@ -115,7 +115,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
         Alert.alert('Update Failed', 'Failed to update task status.');
       }
     } catch (error) {
-      console.error('Task update error:', error);
+      Logger.error('Task update error:', undefined, 'WorkerDashboardScreen.tsx');
       Alert.alert('Error', 'Failed to update task. Please try again.');
     }
   };
@@ -126,7 +126,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
     try {
       await viewModel.markNotificationAsRead(notificationId);
     } catch (error) {
-      console.error('Notification read error:', error);
+      Logger.error('Notification read error:', undefined, 'WorkerDashboardScreen.tsx');
     }
   };
 

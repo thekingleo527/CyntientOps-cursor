@@ -19,6 +19,7 @@ import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-compone
 import { LinearGradient } from 'expo-linear-gradient';
 import { WorkerProfile } from '@cyntientops/domain-schema';
 import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
+import { Logger } from '@cyntientops/business-core';
 
 // Types
 export interface AdminWorkersTabProps {
@@ -93,7 +94,7 @@ export const AdminWorkersTab: React.FC<AdminWorkersTabProps> = ({
 
       setWorkers(workersList);
     } catch (error) {
-      console.error('Failed to load workers data:', error);
+      Logger.error('Failed to load workers data:', undefined, 'AdminWorkersTab.tsx');
     }
   };
 
@@ -104,7 +105,7 @@ export const AdminWorkersTab: React.FC<AdminWorkersTabProps> = ({
   };
 
   const handleWorkerPress = (worker: WorkerManagementData) => {
-    console.log('Worker pressed:', worker.worker.name);
+    Logger.debug('Worker pressed:', undefined, 'AdminWorkersTab.tsx');
   };
 
   const renderWorkerCard = (workerData: WorkerManagementData) => {

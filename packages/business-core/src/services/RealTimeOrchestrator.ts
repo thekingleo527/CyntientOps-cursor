@@ -8,6 +8,7 @@ import { ServiceContainer } from '../ServiceContainer';
 import { DatabaseManager } from '@cyntientops/database';
 import { WebSocketManager } from '@cyntientops/realtime-sync';
 import { 
+import { Logger } from './LoggingService';
   DashboardUpdate, 
   DashboardUpdateSource, 
   DashboardUpdateType,
@@ -161,7 +162,7 @@ export class RealTimeOrchestrator {
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
     
-    console.log('🔄 Initializing RealTimeOrchestrator...');
+    Logger.debug('🔄 Initializing RealTimeOrchestrator...', undefined, 'RealTimeOrchestrator');
     
     try {
       // Setup WebSocket connection
@@ -174,10 +175,10 @@ export class RealTimeOrchestrator {
       this.setupAuthenticationMonitoring();
       
       this.isInitialized = true;
-      console.log('✅ RealTimeOrchestrator initialized');
+      Logger.debug('✅ RealTimeOrchestrator initialized', undefined, 'RealTimeOrchestrator');
       
     } catch (error) {
-      console.error('❌ RealTimeOrchestrator initialization failed:', error);
+      Logger.error('❌ RealTimeOrchestrator initialization failed:', undefined, 'RealTimeOrchestrator');
       throw error;
     }
   }
@@ -397,7 +398,7 @@ export class RealTimeOrchestrator {
         try {
           subscription.callback(event);
         } catch (error) {
-          console.error('Error in event subscription callback:', error);
+          Logger.error('Error in event subscription callback:', undefined, 'RealTimeOrchestrator');
         }
       }
     });
@@ -564,7 +565,7 @@ export class RealTimeOrchestrator {
   public broadcastWorkerUpdate(update: DashboardUpdate): void {
     if (!this.isLive) return;
     
-    console.log('📤 Broadcasting worker update:', update.type);
+    Logger.debug('📤 Broadcasting worker update:', undefined, 'RealTimeOrchestrator');
     
     if (this.isOnline) {
       // Send locally
@@ -586,7 +587,7 @@ export class RealTimeOrchestrator {
   public broadcastAdminUpdate(update: DashboardUpdate): void {
     if (!this.isLive) return;
     
-    console.log('📤 Broadcasting admin update:', update.type);
+    Logger.debug('📤 Broadcasting admin update:', undefined, 'RealTimeOrchestrator');
     
     if (this.isOnline) {
       // Send locally
@@ -608,7 +609,7 @@ export class RealTimeOrchestrator {
   public broadcastClientUpdate(update: DashboardUpdate): void {
     if (!this.isLive) return;
     
-    console.log('📤 Broadcasting client update:', update.type);
+    Logger.debug('📤 Broadcasting client update:', undefined, 'RealTimeOrchestrator');
     
     if (this.isOnline) {
       // Send locally
@@ -699,7 +700,7 @@ export class RealTimeOrchestrator {
       try {
         listener(update);
       } catch (error) {
-        console.error('Error in update listener:', error);
+        Logger.error('Error in update listener:', undefined, 'RealTimeOrchestrator');
       }
     });
   }
@@ -781,9 +782,9 @@ export class RealTimeOrchestrator {
       // Get auth token from ServiceContainer's session manager
       const authToken = await this.getAuthToken();
       await this.webSocketManager.connect(authToken);
-      console.log('🔌 WebSocket connected with auth token');
+      Logger.debug('🔌 WebSocket connected with auth token', undefined, 'RealTimeOrchestrator');
     } catch (error) {
-      console.error('❌ WebSocket connection failed:', error);
+      Logger.error('❌ WebSocket connection failed:', undefined, 'RealTimeOrchestrator');
     }
   }
 
@@ -792,7 +793,7 @@ export class RealTimeOrchestrator {
       const session = this.serviceContainer.sessionManager.getCurrentSession();
       return session?.token || 'anonymous-token';
     } catch (error) {
-      console.warn('⚠️ Failed to get auth token, using anonymous:', error);
+      Logger.warn('⚠️ Failed to get auth token, using anonymous:', undefined, 'RealTimeOrchestrator');
       return 'anonymous-token';
     }
   }
@@ -800,16 +801,16 @@ export class RealTimeOrchestrator {
   private async sendToServer(update: DashboardUpdate): Promise<void> {
     try {
       await this.webSocketManager.send(update);
-      console.log('🌐 Sent update to server:', update.type);
+      Logger.debug('🌐 Sent update to server:', undefined, 'RealTimeOrchestrator');
     } catch (error) {
-      console.error('❌ Failed to send update to server:', error);
+      Logger.error('❌ Failed to send update to server:', undefined, 'RealTimeOrchestrator');
       // Queue for retry
       this.enqueueUpdate(update);
     }
   }
   
   public async handleRemoteUpdate(update: DashboardUpdate): Promise<void> {
-    console.log('📥 Received remote update:', update.type);
+    Logger.debug('📥 Received remote update:', undefined, 'RealTimeOrchestrator');
     
     // Handle conflicts
     await this.detectAndResolveConflicts(update);
@@ -840,7 +841,7 @@ export class RealTimeOrchestrator {
         ]
       );
 
-      console.log('📥 Queued update for offline processing:', update.type);
+      Logger.debug('📥 Queued update for offline processing:', undefined, 'RealTimeOrchestrator');
       this.pendingUpdatesCount++;
 
       if (this.getUpdatePriority(update.type) === 'urgent') {
@@ -848,14 +849,14 @@ export class RealTimeOrchestrator {
       }
 
     } catch (error) {
-      console.error('❌ Failed to queue update:', error);
+      Logger.error('❌ Failed to queue update:', undefined, 'RealTimeOrchestrator');
     }
   }
   
   public async processPendingUpdatesBatch(): Promise<void> {
     if (!this.isOnline) return;
 
-    console.log('🔄 Processing pending updates...');
+    Logger.debug('🔄 Processing pending updates...', undefined, 'RealTimeOrchestrator');
 
     try {
       // Retrieve queued updates from database, ordered by priority and creation time
@@ -878,7 +879,7 @@ export class RealTimeOrchestrator {
           );
           processed++;
         } catch (error) {
-          console.error('❌ Failed to process queued update:', error);
+          Logger.error('❌ Failed to process queued update:', undefined, 'RealTimeOrchestrator');
           failed++;
         }
       }
@@ -898,7 +899,7 @@ export class RealTimeOrchestrator {
 
       console.log(`✅ Processed ${processed} updates, ${failed} failed, ${this.pendingUpdatesCount} remaining`);
     } catch (error) {
-      console.error('❌ Failed to process pending updates:', error);
+      Logger.error('❌ Failed to process pending updates:', undefined, 'RealTimeOrchestrator');
     }
   }
   
@@ -1002,18 +1003,18 @@ export class RealTimeOrchestrator {
          localVersion.version !== update.data.version);
 
       if (hasConflict) {
-        console.log('⚠️ Conflict detected for update:', update.id);
+        Logger.debug('⚠️ Conflict detected for update:', undefined, 'RealTimeOrchestrator');
 
         // Use last-write-wins strategy
         if (localVersion.timestamp > update.timestamp) {
-          console.log('📌 Local version is newer, keeping local');
+          Logger.debug('📌 Local version is newer, keeping local', undefined, 'RealTimeOrchestrator');
           return;
         } else {
-          console.log('📥 Remote version is newer, using remote');
+          Logger.debug('📥 Remote version is newer, using remote', undefined, 'RealTimeOrchestrator');
         }
       }
     } catch (error) {
-      console.error('❌ Conflict detection failed:', error);
+      Logger.error('❌ Conflict detection failed:', undefined, 'RealTimeOrchestrator');
     }
   }
 
@@ -1036,7 +1037,7 @@ export class RealTimeOrchestrator {
   private setupNetworkMonitoring(): void {
     // Set initial online status
     this.isOnline = true;
-    console.log('📡 Network monitoring setup (online mode)');
+    Logger.debug('📡 Network monitoring setup (online mode)', undefined, 'RealTimeOrchestrator');
 
     // Periodically check network status
     setInterval(() => {
@@ -1051,13 +1052,13 @@ export class RealTimeOrchestrator {
       this.isOnline = this.webSocketManager.isConnected();
 
       if (!wasOnline && this.isOnline) {
-        console.log('🌐 Network restored, processing pending updates...');
+        Logger.debug('🌐 Network restored, processing pending updates...', undefined, 'RealTimeOrchestrator');
         await this.processPendingUpdatesBatch();
       } else if (wasOnline && !this.isOnline) {
-        console.log('📴 Network lost, queuing updates for offline processing');
+        Logger.debug('📴 Network lost, queuing updates for offline processing', undefined, 'RealTimeOrchestrator');
       }
     } catch (error) {
-      console.error('❌ Network status check failed:', error);
+      Logger.error('❌ Network status check failed:', undefined, 'RealTimeOrchestrator');
     }
   }
 
@@ -1068,9 +1069,9 @@ export class RealTimeOrchestrator {
         await this.checkAuthenticationStatus();
       }, 60000); // Check every minute
 
-      console.log('🔐 Authentication monitoring setup');
+      Logger.debug('🔐 Authentication monitoring setup', undefined, 'RealTimeOrchestrator');
     } catch (error) {
-      console.error('❌ Authentication monitoring setup failed:', error);
+      Logger.error('❌ Authentication monitoring setup failed:', undefined, 'RealTimeOrchestrator');
     }
   }
 
@@ -1079,11 +1080,11 @@ export class RealTimeOrchestrator {
       const session = this.serviceContainer.sessionManager.getCurrentSession();
 
       if (!session || !session.isValid) {
-        console.warn('⚠️ Session invalid or expired, disconnecting real-time services');
+        Logger.warn('⚠️ Session invalid or expired, disconnecting real-time services', undefined, 'RealTimeOrchestrator');
         await this.disconnect();
       }
     } catch (error) {
-      console.error('❌ Authentication status check failed:', error);
+      Logger.error('❌ Authentication status check failed:', undefined, 'RealTimeOrchestrator');
     }
   }
   
@@ -1091,12 +1092,12 @@ export class RealTimeOrchestrator {
   
   public enableCrossDashboardSync(): void {
     this.isLive = true;
-    console.log('🔄 Cross-dashboard synchronization enabled');
+    Logger.debug('🔄 Cross-dashboard synchronization enabled', undefined, 'RealTimeOrchestrator');
   }
   
   public disableCrossDashboardSync(): void {
     this.isLive = false;
-    console.log('⏸️ Cross-dashboard synchronization disabled');
+    Logger.debug('⏸️ Cross-dashboard synchronization disabled', undefined, 'RealTimeOrchestrator');
   }
   
   public clearLiveUpdates(): void {
@@ -1108,23 +1109,23 @@ export class RealTimeOrchestrator {
   public async disconnect(): Promise<void> {
     await this.webSocketManager.disconnect();
     this.isOnline = false;
-    console.log('🔌 RealTimeOrchestrator disconnected');
+    Logger.debug('🔌 RealTimeOrchestrator disconnected', undefined, 'RealTimeOrchestrator');
   }
 
   // MARK: - Missing Helper Methods
 
   private updateWorkerContextEngine(event: RealTimeEvent): void {
-    console.log('🔄 Updating WorkerContextEngine with event:', event.type);
+    Logger.debug('🔄 Updating WorkerContextEngine with event:', undefined, 'RealTimeOrchestrator');
     // Implementation would update worker context engine
   }
 
   private updateAdminContextEngine(event: RealTimeEvent): void {
-    console.log('🔄 Updating AdminContextEngine with event:', event.type);
+    Logger.debug('🔄 Updating AdminContextEngine with event:', undefined, 'RealTimeOrchestrator');
     // Implementation would update admin context engine
   }
 
   private updateNovaAI(event: RealTimeEvent): void {
-    console.log('🔄 Updating Nova AI with event:', event.type);
+    Logger.debug('🔄 Updating Nova AI with event:', undefined, 'RealTimeOrchestrator');
     // Implementation would update Nova AI
   }
 

@@ -67,7 +67,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
 
       setViewModel(adminViewModel);
     } catch (err) {
-      console.error('Failed to initialize admin dashboard:', err);
+      Logger.error('Failed to initialize admin dashboard:', undefined, 'AdminDashboardScreen.tsx');
       setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
     } finally {
       setIsLoading(false);
@@ -83,7 +83,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
         Alert.alert('Update Failed', 'Failed to update worker status.');
       }
     } catch (error) {
-      console.error('Worker status update error:', error);
+      Logger.error('Worker status update error:', undefined, 'AdminDashboardScreen.tsx');
       Alert.alert('Error', 'Failed to update worker status. Please try again.');
     }
   };
@@ -94,7 +94,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
     try {
       viewModel.resolveAlert(alertId);
     } catch (error) {
-      console.error('Alert resolve error:', error);
+      Logger.error('Alert resolve error:', undefined, 'AdminDashboardScreen.tsx');
     }
   };
 
@@ -104,7 +104,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
     try {
       await viewModel.markNotificationAsRead(notificationId);
     } catch (error) {
-      console.error('Notification read error:', error);
+      Logger.error('Notification read error:', undefined, 'AdminDashboardScreen.tsx');
     }
   };
 

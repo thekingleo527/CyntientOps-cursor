@@ -6,6 +6,7 @@
 
 import { OperationalDataManager } from '../OperationalDataManager';
 import { WebSocketManager } from '@cyntientops/realtime-sync';
+import { Logger } from './LoggingService';
 
 export interface SyncEvent {
   id: string;
@@ -68,7 +69,7 @@ export class RealTimeSyncService {
 
   public async start(): Promise<void> {
     if (!this.config.enableRealTimeSync) {
-      console.log('🔄 Real-time sync disabled');
+      Logger.debug('🔄 Real-time sync disabled', undefined, 'RealTimeSyncService');
       return;
     }
 
@@ -77,9 +78,9 @@ export class RealTimeSyncService {
       this.isConnected = true;
       this.setupEventHandlers();
       this.startPeriodicSync();
-      console.log('✅ Real-time sync started');
+      Logger.debug('✅ Real-time sync started', undefined, 'RealTimeSyncService');
     } catch (error) {
-      console.error('❌ Failed to start real-time sync:', error);
+      Logger.error('❌ Failed to start real-time sync:', undefined, 'RealTimeSyncService');
       throw error;
     }
   }
@@ -95,7 +96,7 @@ export class RealTimeSyncService {
       this.isConnected = false;
     }
 
-    console.log('🔄 Real-time sync stopped');
+    Logger.debug('🔄 Real-time sync stopped', undefined, 'RealTimeSyncService');
   }
 
   // MARK: - Event Handling
@@ -133,7 +134,7 @@ export class RealTimeSyncService {
     };
 
     this.emitEvent(event);
-    console.log('📋 Task completed:', data.taskId);
+    Logger.debug('📋 Task completed:', undefined, 'RealTimeSyncService');
   }
 
   private handleTaskUpdated(data: any): void {
@@ -147,7 +148,7 @@ export class RealTimeSyncService {
     };
 
     this.emitEvent(event);
-    console.log('📋 Task updated:', data.taskId);
+    Logger.debug('📋 Task updated:', undefined, 'RealTimeSyncService');
   }
 
   private handleWorkerStatus(data: any): void {
@@ -160,7 +161,7 @@ export class RealTimeSyncService {
     };
 
     this.emitEvent(event);
-    console.log('👷 Worker status updated:', data.workerId);
+    Logger.debug('👷 Worker status updated:', undefined, 'RealTimeSyncService');
   }
 
   private handleBuildingUpdate(data: any): void {
@@ -173,7 +174,7 @@ export class RealTimeSyncService {
     };
 
     this.emitEvent(event);
-    console.log('🏢 Building updated:', data.buildingId);
+    Logger.debug('🏢 Building updated:', undefined, 'RealTimeSyncService');
   }
 
   private handleInventoryChange(data: any): void {
@@ -186,7 +187,7 @@ export class RealTimeSyncService {
     };
 
     this.emitEvent(event);
-    console.log('📦 Inventory changed:', data.buildingId);
+    Logger.debug('📦 Inventory changed:', undefined, 'RealTimeSyncService');
   }
 
   // MARK: - Event Emission
@@ -215,7 +216,7 @@ export class RealTimeSyncService {
         try {
           callback(event);
         } catch (error) {
-          console.error('❌ Error in event listener:', error);
+          Logger.error('❌ Error in event listener:', undefined, 'RealTimeSyncService');
         }
       });
     }
@@ -232,7 +233,7 @@ export class RealTimeSyncService {
       try {
         await this.syncOperationalData();
       } catch (error) {
-        console.error('❌ Periodic sync failed:', error);
+        Logger.error('❌ Periodic sync failed:', undefined, 'RealTimeSyncService');
       }
     }, this.config.syncInterval);
   }
@@ -253,9 +254,9 @@ export class RealTimeSyncService {
       // Sync inventory changes
       await this.syncInventoryChanges();
 
-      console.log('🔄 Operational data synced');
+      Logger.debug('🔄 Operational data synced', undefined, 'RealTimeSyncService');
     } catch (error) {
-      console.error('❌ Failed to sync operational data:', error);
+      Logger.error('❌ Failed to sync operational data:', undefined, 'RealTimeSyncService');
     }
   }
 

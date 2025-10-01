@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { NamedCoordinate } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface RouteTask {
   id: string;
@@ -55,7 +56,7 @@ export class RouteManager implements RouteOperationalBridge {
 
   private constructor(database: DatabaseManager) {
     this.database = database;
-    console.log('RouteManager initialized');
+    Logger.debug('RouteManager initialized', undefined, 'RouteManager');
     this.loadRoutines();
   }
 
@@ -92,7 +93,7 @@ export class RouteManager implements RouteOperationalBridge {
       }));
       console.log(`Loaded ${this.routines.length} canonical routines`);
     } catch (error) {
-      console.error('Failed to load routines:', error);
+      Logger.error('Failed to load routines:', undefined, 'RouteManager');
       this.routines = [];
     }
   }
@@ -221,7 +222,7 @@ export class RouteManager implements RouteOperationalBridge {
       
       return null;
     } catch (error) {
-      console.error('Failed to get building coordinates:', error);
+      Logger.error('Failed to get building coordinates:', undefined, 'RouteManager');
       return null;
     }
   }

@@ -9,6 +9,7 @@ import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert, TextInput,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
 import { WorkerProfile, Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
+import { Logger } from '@cyntientops/business-core';
 
 interface WorkerDetailData {
   worker: WorkerProfile;
@@ -57,7 +58,7 @@ export const WorkerManagementScreen: React.FC<WorkerManagementScreenProps> = ({ 
       setWorkers(workersData);
 
     } catch (error) {
-      console.error('Failed to load workers:', error);
+      Logger.error('Failed to load workers:', undefined, 'WorkerManagementScreen.tsx');
       Alert.alert('Error', 'Failed to load workers');
     } finally {
       setIsLoading(false);
@@ -135,7 +136,7 @@ export const WorkerManagementScreen: React.FC<WorkerManagementScreenProps> = ({ 
       setShowWorkerDetail(true);
 
     } catch (error) {
-      console.error('Failed to load worker detail:', error);
+      Logger.error('Failed to load worker detail:', undefined, 'WorkerManagementScreen.tsx');
       Alert.alert('Error', 'Failed to load worker details');
     }
   };

@@ -20,6 +20,7 @@ import { BuildingMapView } from '@cyntientops/ui-components/src/maps/BuildingMap
 import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
 import { Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import buildingsData from '@cyntientops/data-seed/buildings.json';
+import { Logger } from '@cyntientops/business-core';
 
 const { width, height } = Dimensions.get('window');
 
@@ -79,7 +80,7 @@ export const WorkerMapTab: React.FC<WorkerMapTabProps> = ({
       const schedule = taskService.generateWorkerTasks(userId);
       setTasks([...schedule.now, ...schedule.next, ...schedule.today]);
     } catch (error) {
-      console.error('Failed to load map data:', error);
+      Logger.error('Failed to load map data:', undefined, 'WorkerMapTab.tsx');
     }
   };
 
@@ -90,7 +91,7 @@ export const WorkerMapTab: React.FC<WorkerMapTabProps> = ({
 
   const handleTaskPress = (task: OperationalDataTaskAssignment) => {
     // Navigate to task details
-    console.log('Task pressed:', task);
+    Logger.debug('Task pressed:', undefined, 'WorkerMapTab.tsx');
   };
 
   const renderModeButton = (mode: MapViewMode) => {

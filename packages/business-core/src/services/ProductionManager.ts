@@ -7,6 +7,7 @@
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole } from '@cyntientops/domain-schema';
 import { SentryService } from './SentryService';
+import { Logger } from './LoggingService';
 
 export interface ProductionConfig {
   environment: 'development' | 'staging' | 'production';
@@ -91,7 +92,7 @@ export class ProductionManager {
     this.sentryService = SentryService.getInstance();
     this.config = this.getDefaultConfig();
     this.metrics = this.initializeMetrics();
-    console.log('ProductionManager initialized');
+    Logger.debug('ProductionManager initialized', undefined, 'ProductionManager');
     this.initializeQualityGates();
   }
 
@@ -216,7 +217,7 @@ export class ProductionManager {
   // MARK: - Production Readiness
 
   public async performProductionReadinessCheck(): Promise<boolean> {
-    console.log('Performing production readiness check...');
+    Logger.debug('Performing production readiness check...', undefined, 'ProductionManager');
     this.sentryService.addBreadcrumb('Production readiness check started', 'system');
     
     try {
@@ -270,7 +271,7 @@ export class ProductionManager {
         tags: { component: 'ProductionManager', operation: 'readiness_check' },
         level: 'error'
       });
-      console.error('Production readiness check failed:', error);
+      Logger.error('Production readiness check failed:', undefined, 'ProductionManager');
       return false;
     }
   }
@@ -294,7 +295,7 @@ export class ProductionManager {
       
       return isValid;
     } catch (error) {
-      console.error('Data integrity check failed:', error);
+      Logger.error('Data integrity check failed:', undefined, 'ProductionManager');
       this.updateQualityGate('Data Integrity', 'failed', 0);
       return false;
     }
@@ -317,7 +318,7 @@ export class ProductionManager {
       
       return isHealthy;
     } catch (error) {
-      console.error('System health check failed:', error);
+      Logger.error('System health check failed:', undefined, 'ProductionManager');
       this.updateQualityGate('Performance', 'failed', 0);
       return false;
     }
@@ -340,7 +341,7 @@ export class ProductionManager {
       
       return isPerformant;
     } catch (error) {
-      console.error('Performance check failed:', error);
+      Logger.error('Performance check failed:', undefined, 'ProductionManager');
       this.updateQualityGate('Performance', 'failed', 0);
       return false;
     }
@@ -366,7 +367,7 @@ export class ProductionManager {
       
       return isSecure;
     } catch (error) {
-      console.error('Security check failed:', error);
+      Logger.error('Security check failed:', undefined, 'ProductionManager');
       this.updateQualityGate('Security', 'failed', 0);
       return false;
     }
@@ -392,7 +393,7 @@ export class ProductionManager {
       
       return isCompliant;
     } catch (error) {
-      console.error('Compliance check failed:', error);
+      Logger.error('Compliance check failed:', undefined, 'ProductionManager');
       this.updateQualityGate('Compliance', 'failed', 0);
       return false;
     }
@@ -475,7 +476,7 @@ export class ProductionManager {
       
       return this.metrics;
     } catch (error) {
-      console.error('Failed to collect metrics:', error);
+      Logger.error('Failed to collect metrics:', undefined, 'ProductionManager');
       return this.metrics;
     }
   }
@@ -535,7 +536,7 @@ export class ProductionManager {
   // MARK: - Monitoring
 
   public async startMonitoring(): Promise<void> {
-    console.log('Starting production monitoring...');
+    Logger.debug('Starting production monitoring...', undefined, 'ProductionManager');
     
     // Start health checks
     setInterval(() => {
@@ -547,13 +548,13 @@ export class ProductionManager {
       this.collectMetrics();
     }, 60000); // Every minute
     
-    console.log('Production monitoring started');
+    Logger.debug('Production monitoring started', undefined, 'ProductionManager');
   }
 
   public async stopMonitoring(): Promise<void> {
-    console.log('Stopping production monitoring...');
+    Logger.debug('Stopping production monitoring...', undefined, 'ProductionManager');
     // In a real implementation, this would stop all monitoring intervals
-    console.log('Production monitoring stopped');
+    Logger.debug('Production monitoring stopped', undefined, 'ProductionManager');
   }
 
   // MARK: - Public API

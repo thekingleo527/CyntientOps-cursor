@@ -11,6 +11,7 @@ import { DatabaseManager } from '@cyntientops/database';
 import { Building, OperationalDataTaskAssignment, WorkerProfile } from '@cyntientops/domain-schema';
 import { RoutinePriorityComponent, BuildingRoutine, ScheduleType, RoutinePriority } from '@cyntientops/ui-components';
 import { TodaysProgressDetailView } from '@cyntientops/ui-components';
+import { Logger } from '@cyntientops/business-core';
 
 interface DailyRoutineData {
   routines: BuildingRoutine[];
@@ -77,7 +78,7 @@ export const DailyRoutineScreen: React.FC = () => {
       });
 
     } catch (error) {
-      console.error('Failed to load daily routine data:', error);
+      Logger.error('Failed to load daily routine data:', undefined, 'DailyRoutineScreen.tsx');
       Alert.alert('Error', 'Failed to load daily routine data');
     } finally {
       setIsLoading(false);

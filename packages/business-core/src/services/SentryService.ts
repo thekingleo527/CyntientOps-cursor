@@ -83,23 +83,23 @@ export class SentryService {
   async initialize(): Promise<void> {
     try {
       if (this.isInitialized) {
-        console.log('🔍 Sentry already initialized');
+        Logger.debug('🔍 Sentry already initialized', undefined, 'SentryService');
         return;
       }
 
       // In a real implementation, this would initialize Sentry SDK
       // For now, we'll simulate the initialization
-      console.log('🔍 Initializing Sentry Service...');
+      Logger.debug('🔍 Initializing Sentry Service...', undefined, 'SentryService');
       console.log(`🔍 Environment: ${this.config.environment}`);
       console.log(`🔍 DSN: ${this.config.dsn ? 'Configured' : 'Not configured'}`);
       console.log(`🔍 Crash Reporting: ${this.config.enableCrashReporting ? 'Enabled' : 'Disabled'}`);
       console.log(`🔍 Performance Monitoring: ${this.config.enablePerformanceMonitoring ? 'Enabled' : 'Disabled'}`);
 
       this.isInitialized = true;
-      console.log('✅ Sentry Service initialized successfully');
+      Logger.debug('✅ Sentry Service initialized successfully', undefined, 'SentryService');
 
     } catch (error) {
-      console.error('❌ Failed to initialize Sentry Service:', error);
+      Logger.error('❌ Failed to initialize Sentry Service:', undefined, 'SentryService');
       throw error;
     }
   }
@@ -121,7 +121,7 @@ export class SentryService {
       //   },
       // });
     } catch (error) {
-      console.error('❌ Failed to set Sentry user:', error);
+      Logger.error('❌ Failed to set Sentry user:', undefined, 'SentryService');
     }
   }
 
@@ -145,7 +145,7 @@ export class SentryService {
       //   timestamp: Date.now() / 1000,
       // });
     } catch (error) {
-      console.error('❌ Failed to add breadcrumb:', error);
+      Logger.error('❌ Failed to add breadcrumb:', undefined, 'SentryService');
     }
   }
 
@@ -169,14 +169,7 @@ export class SentryService {
         buildNumber: this.getBuildNumber(),
       };
 
-      console.error('🔍 Crash Report Generated:', {
-        id: reportId,
-        error: error.message,
-        stack: error.stack,
-        user: crashReport.context.user.id,
-        platform: crashReport.platform,
-        breadcrumbs: this.breadcrumbs.length,
-      });
+      Logger.error('🔍 Crash Report Generated:', undefined, 'SentryService');
 
       // In real implementation, this would call Sentry.captureException()
       // Sentry.captureException(error, {
@@ -188,7 +181,7 @@ export class SentryService {
 
       return reportId;
     } catch (reportError) {
-      console.error('❌ Failed to capture exception:', reportError);
+      Logger.error('❌ Failed to capture exception:', undefined, 'SentryService');
       return 'failed_to_capture';
     }
   }
@@ -213,7 +206,7 @@ export class SentryService {
 
       return messageId;
     } catch (error) {
-      console.error('❌ Failed to capture message:', error);
+      Logger.error('❌ Failed to capture message:', undefined, 'SentryService');
       return 'failed_to_capture';
     }
   }
@@ -236,7 +229,7 @@ export class SentryService {
 
       return transactionId;
     } catch (error) {
-      console.error('❌ Failed to start transaction:', error);
+      Logger.error('❌ Failed to start transaction:', undefined, 'SentryService');
       return 'failed_to_start';
     }
   }
@@ -251,7 +244,7 @@ export class SentryService {
       //   transaction.finish();
       // }
     } catch (error) {
-      console.error('❌ Failed to finish transaction:', error);
+      Logger.error('❌ Failed to finish transaction:', undefined, 'SentryService');
     }
   }
 
@@ -274,7 +267,7 @@ export class SentryService {
       //   level: 'info',
       // });
     } catch (error) {
-      console.error('❌ Failed to add performance metric:', error);
+      Logger.error('❌ Failed to add performance metric:', undefined, 'SentryService');
     }
   }
 
@@ -285,7 +278,7 @@ export class SentryService {
       // In real implementation, this would call Sentry.setContext()
       // Sentry.setContext(key, context);
     } catch (error) {
-      console.error('❌ Failed to set context:', error);
+      Logger.error('❌ Failed to set context:', undefined, 'SentryService');
     }
   }
 
@@ -296,21 +289,21 @@ export class SentryService {
       // In real implementation, this would call Sentry.setTag()
       // Sentry.setTag(key, value);
     } catch (error) {
-      console.error('❌ Failed to set tag:', error);
+      Logger.error('❌ Failed to set tag:', undefined, 'SentryService');
     }
   }
 
   clearBreadcrumbs(): void {
     try {
       this.breadcrumbs = [];
-      console.log('🔍 Breadcrumbs cleared');
+      Logger.debug('🔍 Breadcrumbs cleared', undefined, 'SentryService');
 
       // In real implementation, this would call Sentry.configureScope()
       // Sentry.configureScope(scope => {
       //   scope.clearBreadcrumbs();
       // });
     } catch (error) {
-      console.error('❌ Failed to clear breadcrumbs:', error);
+      Logger.error('❌ Failed to clear breadcrumbs:', undefined, 'SentryService');
     }
   }
 

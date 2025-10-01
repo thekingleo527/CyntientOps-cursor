@@ -267,6 +267,7 @@ const realViolationData = {
 
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Logger } from '@cyntientops/business-core';
 
 // Temporary inline NYC API service for development
 class NYCAPIService {
@@ -503,7 +504,7 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
 
       return schedule;
     } catch (error) {
-      console.error('Failed to load collection schedule:', error);
+      Logger.error('Failed to load collection schedule:', undefined, 'BuildingDetailScreen.tsx');
       return undefined;
     }
   };
@@ -580,7 +581,7 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = ({ rout
       });
 
     } catch (error) {
-      console.error('Failed to load building details:', error);
+      Logger.error('Failed to load building details:', undefined, 'BuildingDetailScreen.tsx');
       Alert.alert('Error', 'Failed to load building details');
     } finally {
       setIsLoading(false);

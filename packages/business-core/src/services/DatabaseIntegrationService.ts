@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { OperationalDataTaskAssignment, NamedCoordinate, WorkerProfile, ClientProfile } from '@cyntientops/domain-schema';
+import { Logger } from './LoggingService';
 
 export interface DatabaseQueryResult<T> {
   data: T[];
@@ -76,7 +77,7 @@ export class DatabaseIntegrationService {
         updatedAt: new Date(worker.updated_at)
       };
     } catch (error) {
-      console.error('Failed to get worker profile:', error);
+      Logger.error('Failed to get worker profile:', undefined, 'DatabaseIntegrationService');
       return null;
     }
   }
@@ -133,7 +134,7 @@ export class DatabaseIntegrationService {
         hasMore: options?.limit ? workers.length === options.limit : false
       };
     } catch (error) {
-      console.error('Failed to get workers:', error);
+      Logger.error('Failed to get workers:', undefined, 'DatabaseIntegrationService');
       return { data: [], count: 0, hasMore: false };
     }
   }
@@ -158,7 +159,7 @@ export class DatabaseIntegrationService {
         address: building.address
       }));
     } catch (error) {
-      console.error('Failed to get worker assigned buildings:', error);
+      Logger.error('Failed to get worker assigned buildings:', undefined, 'DatabaseIntegrationService');
       return [];
     }
   }
@@ -222,7 +223,7 @@ export class DatabaseIntegrationService {
         hasMore: options?.limit ? tasks.length === options.limit : false
       };
     } catch (error) {
-      console.error('Failed to get worker tasks:', error);
+      Logger.error('Failed to get worker tasks:', undefined, 'DatabaseIntegrationService');
       return { data: [], count: 0, hasMore: false };
     }
   }
@@ -238,7 +239,7 @@ export class DatabaseIntegrationService {
       );
       return true;
     } catch (error) {
-      console.error('Failed to update task status:', error);
+      Logger.error('Failed to update task status:', undefined, 'DatabaseIntegrationService');
       return false;
     }
   }
@@ -272,7 +273,7 @@ export class DatabaseIntegrationService {
       
       return taskId;
     } catch (error) {
-      console.error('Failed to create task:', error);
+      Logger.error('Failed to create task:', undefined, 'DatabaseIntegrationService');
       return null;
     }
   }
@@ -300,7 +301,7 @@ export class DatabaseIntegrationService {
         address: building.address
       };
     } catch (error) {
-      console.error('Failed to get building:', error);
+      Logger.error('Failed to get building:', undefined, 'DatabaseIntegrationService');
       return null;
     }
   }
@@ -348,7 +349,7 @@ export class DatabaseIntegrationService {
         hasMore: options?.limit ? buildings.length === options.limit : false
       };
     } catch (error) {
-      console.error('Failed to get buildings:', error);
+      Logger.error('Failed to get buildings:', undefined, 'DatabaseIntegrationService');
       return { data: [], count: 0, hasMore: false };
     }
   }
@@ -370,7 +371,7 @@ export class DatabaseIntegrationService {
       
       return true;
     } catch (error) {
-      console.error('Failed to clock in worker:', error);
+      Logger.error('Failed to clock in worker:', undefined, 'DatabaseIntegrationService');
       return false;
     }
   }
@@ -388,7 +389,7 @@ export class DatabaseIntegrationService {
       
       return true;
     } catch (error) {
-      console.error('Failed to clock out worker:', error);
+      Logger.error('Failed to clock out worker:', undefined, 'DatabaseIntegrationService');
       return false;
     }
   }
@@ -421,7 +422,7 @@ export class DatabaseIntegrationService {
         status: clockIn.status
       };
     } catch (error) {
-      console.error('Failed to get worker clock status:', error);
+      Logger.error('Failed to get worker clock status:', undefined, 'DatabaseIntegrationService');
       return null;
     }
   }
@@ -472,7 +473,7 @@ export class DatabaseIntegrationService {
         activeDays: metrics.active_days
       };
     } catch (error) {
-      console.error('Failed to get worker performance metrics:', error);
+      Logger.error('Failed to get worker performance metrics:', undefined, 'DatabaseIntegrationService');
       return {
         totalTasks: 0,
         completedTasks: 0,
@@ -492,7 +493,7 @@ export class DatabaseIntegrationService {
     try {
       return await this.database.query(query, params);
     } catch (error) {
-      console.error('Failed to execute query:', error);
+      Logger.error('Failed to execute query:', undefined, 'DatabaseIntegrationService');
       return [];
     }
   }
@@ -505,7 +506,7 @@ export class DatabaseIntegrationService {
       await this.database.execute(command, params);
       return true;
     } catch (error) {
-      console.error('Failed to execute command:', error);
+      Logger.error('Failed to execute command:', undefined, 'DatabaseIntegrationService');
       return false;
     }
   }
@@ -529,7 +530,7 @@ export class DatabaseIntegrationService {
         activeClockIns: stats[3][0]?.count || 0
       };
     } catch (error) {
-      console.error('Failed to get database stats:', error);
+      Logger.error('Failed to get database stats:', undefined, 'DatabaseIntegrationService');
       return {
         activeWorkers: 0,
         activeBuildings: 0,

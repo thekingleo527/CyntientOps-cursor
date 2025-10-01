@@ -18,7 +18,7 @@ import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
 import { LinearGradient } from 'expo-linear-gradient';
 import { WorkerProfile } from '@cyntientops/domain-schema';
-import workersData from '@cyntientops/data-seed/workers.json';
+import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
 
 // Types
 export interface AdminWorkersTabProps {
@@ -56,21 +56,41 @@ export const AdminWorkersTab: React.FC<AdminWorkersTabProps> = ({
 
   const loadWorkersData = async () => {
     try {
-      const workersList: WorkerManagementData[] = workersData.map((worker: any) => ({
-        worker: worker as WorkerProfile,
-        isActive: Math.random() > 0.3, // 70% active
-        currentBuilding: worker.isActive ? '131 Perry Street' : null,
-        todaysTasks: Math.floor(Math.random() * 8) + 3, // 3-10 tasks
-        completedTasks: Math.floor(Math.random() * 6) + 2, // 2-7 completed
-        completionRate: Math.floor(Math.random() * 20) + 80, // 80-99%
-        lastActive: new Date(Date.now() - Math.random() * 2 * 60 * 60 * 1000), // Last 2 hours
-        performance: {
-          thisWeek: Math.floor(Math.random() * 20) + 80,
-          lastWeek: Math.floor(Math.random() * 20) + 75,
-          monthlyAverage: Math.floor(Math.random() * 15) + 80,
-          streak: Math.floor(Math.random() * 10) + 1,
-        },
-      }));
+      const dataService = RealDataService;
+      const workersFromData = dataService.getWorkers();
+      const assignments = dataService.getWorkerBuildingAssignments();
+
+      const workersList: WorkerManagementData[] = workersFromData.map((worker: any) => {
+        const workerProfile = worker as WorkerProfile;
+        const buildingIds = assignments[workerProfile.id] || [];
+        const primaryBuilding = buildingIds.length > 0 ? dataService.getBuildingById(buildingIds[0]) : null;
+        const stats = dataService.getTaskStatsForWorker(workerProfile.id);
+        const performance = dataService.getPerformanceForWorker(workerProfile.id);
+
+        const lastUpdated = workerProfile.updatedAt || worker.updated_at;
+        const lastActiveTimestamp = typeof lastUpdated === 'string'
+          ? new Date(lastUpdated)
+          : lastUpdated instanceof Date
+            ? lastUpdated
+            : new Date();
+
+        return {
+          worker: workerProfile,
+          isActive: workerProfile.isActive ?? workerProfile.status === 'Available',
+          currentBuilding: primaryBuilding?.name ?? null,
+          todaysTasks: stats.totalTasks,
+          completedTasks: stats.completedTasks,
+          completionRate: stats.completionRate,
+          lastActive: lastActiveTimestamp,
+          performance: performance || {
+            thisWeek: 0,
+            lastWeek: 0,
+            monthlyAverage: 0,
+            streak: 0,
+          },
+        };
+      });
+
       setWorkers(workersList);
     } catch (error) {
       console.error('Failed to load workers data:', error);

@@ -13,6 +13,9 @@
  * Based on comprehensive SwiftUI analysis (356+ files, 50,000+ lines)
  */
 
+// Error Handling
+export { ErrorBoundary, withErrorBoundary } from './errors/ErrorBoundary';
+
 // Nova AI System - Unified
 export { default as UnifiedNovaAI, useUnifiedNovaAI } from './nova/UnifiedNovaAISystem';
 export { default as NovaAIManager, useNovaAIManager } from './nova/NovaAIManager';

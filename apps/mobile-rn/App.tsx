@@ -9,6 +9,8 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { WorkerProfile } from '@cyntientops/domain-schema';
+import { AppProvider } from './src/providers/AppProvider';
+import { ErrorBoundary } from '@cyntientops/ui-components';
 
 export default function App() {
   const [user, setUser] = useState<WorkerProfile | null>(null);
@@ -22,16 +24,20 @@ export default function App() {
   };
 
   return (
-    <SafeAreaProvider>
-      <View style={styles.container}>
-        <StatusBar style="light" backgroundColor="#0a0a0a" />
-        <AppNavigator 
-          initialUser={user}
-          onLoginSuccess={handleLoginSuccess}
-          onLogout={handleLogout}
-        />
-      </View>
-    </SafeAreaProvider>
+    <ErrorBoundary context="App">
+      <SafeAreaProvider>
+        <AppProvider>
+          <View style={styles.container}>
+            <StatusBar style="light" backgroundColor="#0a0a0a" />
+            <AppNavigator
+              initialUser={user}
+              onLoginSuccess={handleLoginSuccess}
+              onLogout={handleLogout}
+            />
+          </View>
+        </AppProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
 

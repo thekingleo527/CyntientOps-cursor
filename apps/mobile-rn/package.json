@@ -1,6 +1,6 @@
 {
   "name": "mobile-rn",
-  "main": "expo-router/entry",
+  "main": "App.tsx",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
@@ -34,7 +34,6 @@
     "expo-location": "~18.0.2",
     "expo-media-library": "^18.2.0",
     "expo-notifications": "^0.29.14",
-    "expo-router": "~6.0.8",
     "expo-splash-screen": "~31.0.10",
     "expo-sqlite": "~15.0.2",
     "expo-status-bar": "~3.0.8",

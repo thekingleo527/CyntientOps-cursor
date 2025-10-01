@@ -118,12 +118,20 @@ unsubscribe();
 
 ## 🏙️ NYC API Integration
 
+**🔑 Important: NYC Open Data APIs are PUBLIC**
+
+All NYC Open Data APIs work without authentication. API keys are **optional** and only provide higher rate limits:
+- **Without keys**: ~1000 requests/day (shared IP-based pool)
+- **With keys**: 1000 requests/hour per app
+
+Get free API keys at: https://data.cityofnewyork.us/
+
 ### Testing All APIs
 
 ```typescript
 import { nycAPI } from '@cyntientops/business-core';
 
-// Test all APIs at once
+// Test all APIs at once (works with or without keys)
 const results = await nycAPI.testAllAPIs('1001026');
 
 results.forEach(result => {
@@ -416,18 +424,20 @@ eas submit --platform android
 Make sure your `.env` file has:
 
 ```bash
-# Supabase
+# Supabase (REQUIRED)
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# NYC APIs
-HPD_API_KEY=your-hpd-key
-DOB_API_KEY=your-dob-key
-DOB_SUBSCRIBER_KEY=your-dob-subscriber-key
-DSNY_API_KEY=your-dsny-key
+# NYC APIs (OPTIONAL - only for higher rate limits)
+# Without keys: ~1000 requests/day (shared pool)
+# With keys: 1000 requests/hour per app
+HPD_API_KEY=
+DOB_API_KEY=
+DOB_SUBSCRIBER_KEY=
+DSNY_API_KEY=
 
-# Weather
+# Weather (OPTIONAL)
 WEATHER_API_KEY=your-weather-key
 ```
 
@@ -437,10 +447,10 @@ WEATHER_API_KEY=your-weather-key
 
 ### Before First Build:
 
-- [ ] Add Supabase credentials to `.env`
-- [ ] Add NYC API keys to `.env`
+- [ ] Add Supabase credentials to `.env` (REQUIRED)
+- [ ] (Optional) Add NYC API keys to `.env` for higher rate limits
 - [ ] Test Supabase connection: `supabase.healthCheck()`
-- [ ] Test NYC APIs: `nycAPI.testAllAPIs()`
+- [ ] Test NYC APIs: `nycAPI.testAllAPIs()` (works without keys)
 - [ ] Update `app.json` version number
 - [ ] Configure EAS: `eas.json` (already done)
 

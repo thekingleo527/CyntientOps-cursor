@@ -40,6 +40,9 @@ export class NYCAPIIntegration {
 
   /**
    * Load API keys from environment
+   * NOTE: NYC Open Data APIs are PUBLIC - keys are optional
+   * Without keys: ~1000 requests/day (shared pool)
+   * With keys: 1000 requests/hour per app
    */
   private loadConfig() {
     this.config = {
@@ -50,38 +53,41 @@ export class NYCAPIIntegration {
       weatherApiKey: process.env.WEATHER_API_KEY,
     };
 
+    const hasAnyKey = !!(this.config.hpdApiKey || this.config.dobApiKey || this.config.dsnyApiKey);
+
+    if (!hasAnyKey) {
+      Logger.warn('NYC API keys not configured - using public access (lower rate limits)', {
+        message: 'APIs will work but with ~1000 requests/day limit',
+        docs: 'https://dev.socrata.com/docs/app-tokens.html'
+      }, 'NYCAPIIntegration');
+    }
+
     Logger.debug('NYC API configuration loaded', {
       hasHPD: !!this.config.hpdApiKey,
       hasDOB: !!this.config.dobApiKey,
       hasDSNY: !!this.config.dsnyApiKey,
       hasWeather: !!this.config.weatherApiKey,
+      usingPublicAccess: !hasAnyKey,
     }, 'NYCAPIIntegration');
   }
 
   /**
    * Test HPD Violations API
+   * Works with or without API key (public access)
    */
   async testHPDAPI(buildingId?: string): Promise<APITestResult> {
     const startTime = Date.now();
 
     try {
-      if (!this.config.hpdApiKey) {
-        return {
-          api: 'HPD',
-          success: false,
-          latency: 0,
-          error: 'HPD API key not configured',
-        };
-      }
-
       const testBin = buildingId || '1001026'; // Test with a known BIN
       const url = `https://data.cityofnewyork.us/resource/wvxf-dwi5.json?bin=${testBin}&$limit=10`;
 
-      const response = await fetch(url, {
-        headers: {
-          'X-App-Token': this.config.hpdApiKey,
-        },
-      });
+      const headers: Record<string, string> = {};
+      if (this.config.hpdApiKey) {
+        headers['X-App-Token'] = this.config.hpdApiKey;
+      }
+
+      const response = await fetch(url, { headers });
 
       const latency = Date.now() - startTime;
 
@@ -118,28 +124,21 @@ export class NYCAPIIntegration {
 
   /**
    * Test DOB Violations API
+   * Works with or without API key (public access)
    */
   async testDOBAPI(buildingId?: string): Promise<APITestResult> {
     const startTime = Date.now();
 
     try {
-      if (!this.config.dobApiKey || !this.config.dobSubscriberKey) {
-        return {
-          api: 'DOB',
-          success: false,
-          latency: 0,
-          error: 'DOB API key or subscriber key not configured',
-        };
-      }
-
       const testBin = buildingId || '1001026';
       const url = `https://data.cityofnewyork.us/resource/3h2n-5cm9.json?bin=${testBin}&$limit=10`;
 
-      const response = await fetch(url, {
-        headers: {
-          'X-App-Token': this.config.dobApiKey,
-        },
-      });
+      const headers: Record<string, string> = {};
+      if (this.config.dobApiKey) {
+        headers['X-App-Token'] = this.config.dobApiKey;
+      }
+
+      const response = await fetch(url, { headers });
 
       const latency = Date.now() - startTime;
 
@@ -176,29 +175,22 @@ export class NYCAPIIntegration {
 
   /**
    * Test DSNY Collection Schedule API
+   * Works with or without API key (public access)
    */
   async testDSNYAPI(address?: string): Promise<APITestResult> {
     const startTime = Date.now();
 
     try {
-      if (!this.config.dsnyApiKey) {
-        return {
-          api: 'DSNY',
-          success: false,
-          latency: 0,
-          error: 'DSNY API key not configured',
-        };
+      const testAddress = address || '120 Broadway, New York, NY';
+      // Using DSNY Collection Schedule dataset
+      const url = `https://data.cityofnewyork.us/resource/8rma-fjni.json?$limit=10`;
+
+      const headers: Record<string, string> = {};
+      if (this.config.dsnyApiKey) {
+        headers['X-App-Token'] = this.config.dsnyApiKey;
       }
 
-      const testAddress = address || '120 Broadway, New York, NY';
-      // Note: DSNY API might require specific endpoint - adjust as needed
-      const url = `https://data.cityofnewyork.us/resource/ym44-fwnf.json?$limit=10`;
-
-      const response = await fetch(url, {
-        headers: {
-          'X-App-Token': this.config.dsnyApiKey,
-        },
-      });
+      const response = await fetch(url, { headers });
 
       const latency = Date.now() - startTime;
 
@@ -273,6 +265,7 @@ export class NYCAPIIntegration {
 
   /**
    * Fetch violations for a building (production use)
+   * Works with or without API key (public access)
    */
   async fetchBuildingViolations(
     buildingId: string,
@@ -282,10 +275,6 @@ export class NYCAPIIntegration {
     }
   ): Promise<{ data: any[]; error?: string }> {
     try {
-      if (!this.config.hpdApiKey) {
-        return { data: [], error: 'HPD API key not configured' };
-      }
-
       let url = `https://data.cityofnewyork.us/resource/wvxf-dwi5.json?bin=${buildingId}`;
 
       if (options?.limit) {
@@ -296,11 +285,12 @@ export class NYCAPIIntegration {
         url += `&violationstatus=Open`;
       }
 
-      const response = await fetch(url, {
-        headers: {
-          'X-App-Token': this.config.hpdApiKey,
-        },
-      });
+      const headers: Record<string, string> = {};
+      if (this.config.hpdApiKey) {
+        headers['X-App-Token'] = this.config.hpdApiKey;
+      }
+
+      const response = await fetch(url, { headers });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);

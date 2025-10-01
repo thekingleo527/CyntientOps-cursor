@@ -72,9 +72,10 @@
 - Type: Condo (Condo #1450)
 - Assessed Value: $4,890,151
 - **Market Value: $10,867,002**
-- Year Built: Unknown (major alteration 2004) | Floors: 10
+- Year Built: 2012-2014 (complete rebuild, PLUTO shows 2004 alteration) | Floors: 10
 - Units: 7 residential, 1 commercial
 - Building Area: 11,200 sq ft
+- Note: Modern construction, one of newest buildings in portfolio
 
 **4. Building 21: 148 Chambers St**
 - Type: Condo (Condo #1990)

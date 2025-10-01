@@ -51,6 +51,8 @@ export { NotesService } from './services/NotesService';
 export { InventoryService } from './services/InventoryService';
 export { VendorAccessService } from './services/VendorAccessService';
 export { SystemService } from './services/SystemService';
+export { PropertyDataService } from './services/PropertyDataService';
+export type { PropertyDetails } from './services/PropertyDataService';
 
 // Managers
 export { ClockInManager } from './managers/ClockInManager';

@@ -4,6 +4,32 @@
 
 ### 🔄 **Latest Updates (2025-10-01)**
 
+#### **🏢 Property Data Integration - READY FOR IMPLEMENTATION**
+- **PropertyDataService Created**: Comprehensive service with $110M portfolio data
+- **All Building Details**: Market values, zoning, FAR, historic districts
+- **Corrected Building Data**: 136 West 17th St confirmed as 2012-2014 rebuild
+- **Integration Guide Created**: 563-line guide for dashboard integration
+- **Ready to Use**: Import and display in Admin/Client dashboards
+
+**PropertyDataService Features**:
+- Complete property details for all 14 buildings
+- Market values vs assessed values
+- Development opportunities (6 buildings with 20%+ unused FAR)
+- Historic district information
+- Ownership data
+- Zoning and FAR analysis
+
+**Integration Points Documented**:
+1. Admin Dashboard - Portfolio Value card ($110M total)
+2. Admin Dashboard - Compliance Overview (89 violations, $39,814 outstanding)
+3. Admin Dashboard - Top 5 Properties by value
+4. Admin Dashboard - Development Opportunities
+5. Client Dashboard - Property Overview
+6. Client Dashboard - Compliance Status
+7. Building Detail Screen - Property Information tab
+
+**See:** `PROPERTY_DATA_INTEGRATION_GUIDE.md` for complete implementation details
+
 #### **🚨 Violation Data Audit - COMPLETE & CORRECTED (OATH Integration)**
 - **Previous Audit Error Identified**: Used wrong API - ECB instead of OATH Hearings Division
 - **Real Data Retrieved**: Successfully queried NYC HPD and OATH APIs with correct filters

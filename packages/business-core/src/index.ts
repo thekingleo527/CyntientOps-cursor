@@ -7,6 +7,10 @@
 // Services
 export { Logger, LogLevel } from './services/LoggingService';
 export type { LogEntry } from './services/LoggingService';
+export { SupabaseService, supabase } from './services/SupabaseService';
+export type { SupabaseHealthCheck, SupabaseQueryResult } from './services/SupabaseService';
+export { ProductionMonitoring, monitoring } from './services/ProductionMonitoring';
+export type { PerformanceMetric, ErrorReport, AnalyticsEvent } from './services/ProductionMonitoring';
 export { TaskService } from './services/TaskService';
 export { WorkerService } from './services/WorkerService';
 export { BuildingService } from './services/BuildingService';
@@ -62,6 +66,18 @@ export { PerformanceEngine } from './engines/PerformanceEngine';
 
 // Service Container
 export { ServiceContainer } from './ServiceContainer';
+
+// ViewModel Integration Helpers
+export {
+  useViewModel,
+  useService,
+  createActionHandler,
+  useDebouncedViewModelUpdate,
+} from './helpers/ViewModelIntegration';
+
+// NYC API Integration Helpers
+export { NYCAPIIntegration, nycAPI } from './helpers/NYCAPIIntegration';
+export type { APITestResult, NYCAPIConfig } from './helpers/NYCAPIIntegration';
 
 // Supabase Configuration
 export { SUPABASE_CONFIG, getSupabaseConfig } from './config/supabase.config';

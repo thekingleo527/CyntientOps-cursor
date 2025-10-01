@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Image } from 'react-native';
 import { Building } from '@cyntientops/domain-schema';
 
 interface BuildingMarkerProps {
@@ -65,17 +65,33 @@ export const BuildingMarker: React.FC<BuildingMarkerProps> = ({
             backgroundColor: 'rgba(255, 255, 255, 0.2)',
           }
         ]}>
+          {/* Building Image */}
+          {building.imageAssetName ? (
+            <Image
+              source={{ uri: `https://example.com/images/${building.imageAssetName}.jpg` }}
+              style={[
+                styles.buildingImage,
+                {
+                  width: innerSize * 0.8,
+                  height: innerSize * 0.8,
+                  borderRadius: (innerSize * 0.8) / 2,
+                }
+              ]}
+              defaultSource={require('../../assets/images/building-placeholder.png')}
+            />
+          ) : (
+            /* Building Type Icon Fallback */
+            <Text style={styles.buildingIcon}>
+              {getBuildingIcon(building.building_type)}
+            </Text>
+          )}
+          
           {/* Task Count Badge */}
           {taskCount > 0 && (
             <View style={styles.taskBadge}>
               <Text style={styles.taskCount}>{taskCount}</Text>
             </View>
           )}
-          
-          {/* Building Type Icon */}
-          <Text style={styles.buildingIcon}>
-            {getBuildingIcon(building.building_type)}
-          </Text>
         </View>
       </View>
       
@@ -157,6 +173,13 @@ const styles = StyleSheet.create({
   },
   buildingIcon: {
     fontSize: 16,
+    color: '#ffffff',
+    textAlign: 'center',
+  },
+  buildingImage: {
+    resizeMode: 'cover',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   statusIndicator: {
     position: 'absolute',

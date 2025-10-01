@@ -25,10 +25,13 @@ import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientop
 import { IntelligencePanelTabs } from './components/IntelligencePanelTabs';
 import { IntelligenceOverlay } from './components/IntelligenceOverlay';
 import { RoutinesOverlayContent } from './components/RoutinesOverlayContent';
+import { MapOverlayContent } from './components/MapOverlayContent';
 import { QuickActionsOverlayContent } from './components/QuickActionsOverlayContent';
 import { InsightsOverlayContent } from './components/InsightsOverlayContent';
 import { AlertsOverlayContent } from './components/AlertsOverlayContent';
 import { PredictionsOverlayContent } from './components/PredictionsOverlayContent';
+// Import REAL data from data-seed package - NO MOCK DATA ANYWHERE
+import { buildings as buildingsData, workers as workersData, routines as routinesData } from '@cyntientops/data-seed';
 // import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
 // import { useAppState } from '@cyntientops/business-core';
 
@@ -97,32 +100,13 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   //   ui: uiState 
   // } = useAppState();
 
-  // Import real data from data-seed
-  // Import data from data-seed package
-  const buildingsData = [
-    { id: "1", name: "12 West 18th Street", address: "12 West 18th Street, New York, NY 10011", latitude: 40.738948, longitude: -73.993415 },
-    { id: "3", name: "135-139 West 17th Street", address: "135-139 West 17th Street, New York, NY 10011", latitude: 40.738234, longitude: -73.994567 },
-    { id: "14", name: "Rubin Museum", address: "150 W 17th St, New York, NY 10011", latitude: 40.7389, longitude: -73.9934 },
-    { id: "20", name: "CyntientOps HQ", address: "123 Main St, New York, NY 10001", latitude: 40.7589, longitude: -73.9851 }
-  ];
-  
-  const workersData = [
-    { id: "1", name: "Greg Hutson", role: "Building Specialist", phone: "(555) 100-0001", email: "greg.hutson@francomanagement.com" },
-    { id: "2", name: "Edwin Lema", role: "Maintenance Specialist", phone: "(555) 100-0002", email: "edwin.lema@francomanagement.com" },
-    { id: "4", name: "Kevin Dutan", role: "Cleaning Specialist", phone: "(555) 100-0004", email: "kevin.dutan@francomanagement.com" },
-    { id: "5", name: "Mercedes Inamagua", role: "Glass Cleaning Specialist", phone: "(555) 100-0005", email: "mercedes.inamagua@francomanagement.com" }
-  ];
-  
-  const routinesData = [
-    { id: "1", workerId: "4", buildingId: "1", taskName: "Daily Cleaning", category: "cleaning", skillLevel: "Basic", recurrence: "daily", startHour: 8, endHour: 10 },
-    { id: "2", workerId: "4", buildingId: "3", taskName: "Weekly Deep Clean", category: "cleaning", skillLevel: "Advanced", recurrence: "weekly", startHour: 9, endHour: 12 },
-    { id: "3", workerId: "4", buildingId: "14", taskName: "Museum Maintenance", category: "maintenance", skillLevel: "Intermediate", recurrence: "daily", startHour: 7, endHour: 9 }
-  ];
+  // Filter to get only JMR buildings (since workers are typically assigned to JMR properties)
+  const jmrBuildings = buildingsData.filter((building: any) => building.client_id === 'JMR');
 
   // Calculate real worker assignments from routines
   const workerRoutines = routinesData.filter((r: any) => r.workerId.toString() === workerId);
   const assignedBuildingIds = [...new Set(workerRoutines.map((r: any) => r.buildingId))];
-  const workerBuildings = buildingsData.filter((b: any) => assignedBuildingIds.includes(b.id));
+  const workerBuildings = jmrBuildings.filter((b: any) => assignedBuildingIds.includes(b.id));
   
   const workerState = { 
     currentWorker: { avatar: undefined }, 
@@ -152,7 +136,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   const [selectedAnalyticsTab, setSelectedAnalyticsTab] = React.useState<'overview' | 'performance' | 'compliance' | 'workers'>('overview');
   const [maintenancePredictions, setMaintenancePredictions] = React.useState<MaintenancePrediction[]>([]);
   const [predictiveMaintenanceService] = React.useState(() => new PredictiveMaintenanceService(null as any));
-  const [selectedIntelligenceTab, setSelectedIntelligenceTab] = React.useState<'routines' | 'insights' | 'alerts' | 'predictions' | 'quickactions' | null>(null);
+  const [selectedIntelligenceTab, setSelectedIntelligenceTab] = React.useState<'routines' | 'portfolio' | 'insights' | 'alerts' | 'quickactions' | null>(null);
 
   // Real-time analytics data for worker performance
   const analyticsData: AnalyticsData = {
@@ -243,7 +227,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     }
   };
 
-  const handleIntelligenceTabPress = (tabId: 'routines' | 'insights' | 'alerts' | 'predictions' | 'quickactions') => {
+  const handleIntelligenceTabPress = (tabId: 'routines' | 'portfolio' | 'insights' | 'alerts' | 'quickactions') => {
     if (selectedIntelligenceTab === tabId) {
       // If same tab is pressed, close overlay
       setSelectedIntelligenceTab(null);
@@ -863,46 +847,20 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         </IntelligenceOverlay>
       )}
 
-      {selectedIntelligenceTab === 'predictions' && (
+      {selectedIntelligenceTab === 'portfolio' && (
         <IntelligenceOverlay
           visible={true}
           onClose={() => setSelectedIntelligenceTab(null)}
-          title="Predictive Analytics"
-          tabId="predictions"
+          title="Building Portfolio Map"
+          tabId="portfolio"
         >
-          <PredictionsOverlayContent
-            workerId={workerId}
-            workerName={workerName}
-            maintenancePredictions={maintenancePredictions.map(pred => ({
-              ...pred,
-              component: pred.componentName || 'Unknown Component',
-            }))}
-            trends={[
-              {
-                label: 'Task Completion',
-                value: dashboardData.worker.completionRate,
-                change: dashboardData.performance.thisWeek - dashboardData.performance.lastWeek,
-                trend: (dashboardData.performance.thisWeek > dashboardData.performance.lastWeek ? 'up' : 'down') as 'up' | 'down',
-              },
-              {
-                label: 'Efficiency',
-                value: analyticsData.performanceMetrics.workerEfficiency,
-                change: 5.2,
-                trend: 'up' as const,
-              },
-              {
-                label: 'Client Satisfaction',
-                value: analyticsData.performanceMetrics.clientSatisfaction,
-                change: 2.1,
-                trend: 'up' as const,
-              },
-              {
-                label: 'Avg Task Time',
-                value: analyticsData.performanceMetrics.averageTaskTime,
-                change: -3.5,
-                trend: 'down' as const,
-              },
-            ]}
+          <MapOverlayContent
+            buildings={jmrBuildings}
+            workers={workersData}
+            tasks={routinesData}
+            onBuildingSelect={(building) => onBuildingPress?.(building.id)}
+            onWorkerSelect={(worker) => console.log('Worker selected:', worker)}
+            userRole="worker"
           />
         </IntelligenceOverlay>
       )}

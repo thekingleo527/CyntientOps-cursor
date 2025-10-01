@@ -44,12 +44,15 @@ export { default as AdvancedGlassmorphism } from './effects/AdvancedGlassmorphis
 export { default as HolographicOverlay } from './effects/HolographicOverlay';
 
 // Interaction Components
-export { default as MapInteractionHint } from './interactions/MapInteractionHint';
+export { default as MapInteractionHint } from './maps/MapInteractionHint';
 
 // Map Clustering Components
 export { default as MapClusteringService } from './maps/services/MapClusteringService';
 export { ClusterMarker } from './maps/components/ClusterMarker';
 export { ClusterListView } from './maps/components/ClusterListView';
+
+// Map Container Components
+export { default as MapRevealContainer } from './containers/MapRevealContainer';
 export { useMapClustering } from './maps/hooks/useMapClustering';
 
 // Conflict Resolution Components

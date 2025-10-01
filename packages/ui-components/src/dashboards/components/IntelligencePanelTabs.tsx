@@ -28,9 +28,9 @@ export interface IntelligenceTab {
 // Default Worker tabs
 const WORKER_TABS: IntelligenceTab[] = [
   { id: 'routines', title: 'Routines', icon: '🔄', color: Colors.role.worker.primary },
+  { id: 'portfolio', title: 'Portfolio', icon: '🗺️', color: Colors.status.info },
   { id: 'insights', title: 'Insights', icon: '💡', color: Colors.status.info },
   { id: 'alerts', title: 'Alerts', icon: '⚠️', color: Colors.status.warning },
-  { id: 'predictions', title: 'Predictions', icon: '🔮', color: Colors.status.success },
   { id: 'quickactions', title: 'Actions', icon: '⚡', color: Colors.role.worker.accent },
 ];
 
@@ -108,7 +108,7 @@ export const IntelligencePanelTabs: React.FC<IntelligencePanelTabsProps> = ({
     <View style={styles.container}>
       <GlassCard
         intensity={GlassIntensity.regular}
-        cornerRadius={CornerRadius.LARGE}
+        cornerRadius={CornerRadius.large}
         style={styles.tabContainer}
       >
         <View style={styles.tabsRow}>

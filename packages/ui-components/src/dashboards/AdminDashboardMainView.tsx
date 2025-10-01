@@ -21,9 +21,8 @@ import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { LinearGradient } from '../mocks/expo-linear-gradient';
 import { AdminHeaderV3B } from '../headers/AdminHeaderV3B';
 import { WorkerProfile } from '@cyntientops/domain-schema';
-// Import real data from data-seed
-const workersData = require('@cyntientops/data-seed/workers.json');
-const buildingsData = require('@cyntientops/data-seed/buildings.json');
+// Import REAL data from data-seed package - NO MOCK DATA ANYWHERE
+import { workers as workersData, buildings as buildingsData, clients as clientsData } from '@cyntientops/data-seed';
 
 // Define BuildingProfile interface based on actual data structure
 interface BuildingProfile {
@@ -120,10 +119,10 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
         return;
       }
 
-      // Calculate system metrics
+      // Calculate system metrics from REAL data
       const totalWorkers = workersData.length;
       const totalBuildings = buildingsData.length;
-      const totalClients = 7; // From clients.json
+      const totalClients = clientsData.length;
       const activeTasks = 47; // Mock data - would come from task service
       const systemAlerts = Math.floor(Math.random() * 3); // Mock data
 

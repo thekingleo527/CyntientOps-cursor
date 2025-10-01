@@ -103,7 +103,7 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
 
       // Initialize ComplianceService
       const container = ServiceContainer.getInstance();
-      const complianceService = new ComplianceService(container);
+      const complianceService = ComplianceService.getInstance(container);
 
       // Load REAL compliance data from NYC Open Data APIs for each building
       const complianceDataArray = await Promise.all(

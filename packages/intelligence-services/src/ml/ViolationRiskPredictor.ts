@@ -7,6 +7,7 @@
  */
 
 import { MLEngine, TrainingData } from './MLEngine';
+import { Logger } from '@cyntientops/business-core';
 
 export interface ViolationRisk {
   buildingId: string;
@@ -44,16 +45,16 @@ export class ViolationRiskPredictor {
    * Train violation risk prediction model
    */
   async trainModel(): Promise<void> {
-    console.log('[ViolationRiskPredictor] Gathering training data...');
+    Logger.info('[ViolationRiskPredictor] Gathering training data...');
 
     const trainingData = await this.gatherTrainingData();
 
     if (trainingData.features.length < 50) {
-      console.warn('[ViolationRiskPredictor] Insufficient data, using default model');
+      Logger.warn('[ViolationRiskPredictor] Insufficient data, using default model', null, 'ViolationRiskPredictor');
       return;
     }
 
-    console.log(`[ViolationRiskPredictor] Training with ${trainingData.features.length} samples`);
+    Logger.info(`[ViolationRiskPredictor] Training with ${trainingData.features.length} samples`);
 
     await this.mlEngine.trainModel(this.modelName, trainingData, {
       epochs: 150,
@@ -375,7 +376,7 @@ export class ViolationRiskPredictor {
   private getPreventiveActions(
     violationType: string,
     riskScore: number,
-    buildingData: any
+    _buildingData: any
   ): string[] {
     const actions: string[] = [];
 
@@ -434,8 +435,8 @@ export class ViolationRiskPredictor {
    */
   private interpretRiskFactors(
     factors: Array<{ name: string; importance: number }>,
-    features: number[],
-    violationType: string
+    _features: number[],
+    _violationType: string
   ): Array<{ factor: string; impact: number }> {
     const featureNames = [
       'Building Age',
@@ -459,7 +460,7 @@ export class ViolationRiskPredictor {
   /**
    * Estimate timeframe
    */
-  private estimateTimeframe(riskScore: number, daysSinceLastViolation: number): number {
+  private estimateTimeframe(riskScore: number, _daysSinceLastViolation: number): number {
     // Higher risk = sooner violation expected
     if (riskScore >= 80) return 30;  // Within 1 month
     if (riskScore >= 60) return 90;  // Within 3 months

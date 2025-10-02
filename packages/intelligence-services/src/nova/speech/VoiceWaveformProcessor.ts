@@ -13,6 +13,66 @@
  */
 
 import { Platform } from 'react-native';
+import { Logger } from '@cyntientops/business-core';
+
+// Global type declarations for Web Audio API
+declare global {
+  interface AudioContext {
+    createAnalyser(): AnalyserNode;
+    createGain(): GainNode;
+    createDynamicsCompressor(): DynamicsCompressorNode;
+    createScriptProcessor(bufferSize: number, numberOfInputChannels: number, numberOfOutputChannels: number): ScriptProcessorNode;
+  }
+  
+  interface MediaStream {
+    getAudioTracks(): MediaStreamTrack[];
+  }
+  
+  interface ScriptProcessorNode {
+    connect(destination: AudioNode): void;
+    disconnect(): void;
+  }
+  
+  interface AnalyserNode {
+    frequencyBinCount: number;
+    getByteFrequencyData(array: Uint8Array): void;
+  }
+  
+  interface GainNode {
+    gain: AudioParam;
+  }
+  
+  interface DynamicsCompressorNode {
+    threshold: AudioParam;
+    knee: AudioParam;
+    ratio: AudioParam;
+    attack: AudioParam;
+    release: AudioParam;
+  }
+  
+  interface AudioBuffer {
+    length: number;
+    duration: number;
+    sampleRate: number;
+    numberOfChannels: number;
+    getChannelData(channel: number): Float32Array;
+  }
+  
+  interface Navigator {
+    mediaDevices: MediaDevices;
+  }
+  
+  interface MediaDevices {
+    getUserMedia(constraints: MediaStreamConstraints): Promise<MediaStream>;
+  }
+  
+  interface Window {
+    AudioContext: typeof AudioContext;
+    webkitAudioContext: typeof AudioContext;
+  }
+  
+  function requestAnimationFrame(callback: (time: number) => void): number;
+}
 
 export interface WaveformData {
   amplitude: number;
@@ -102,7 +162,7 @@ export class VoiceWaveformProcessor {
   async initialize(): Promise<boolean> {
     try {
       if (Platform.OS !== 'web') {
-        console.warn('⚠️ Voice waveform processing is only available on web platform');
+        Logger.warn('⚠️ Voice waveform processing is only available on web platform');
         return false;
       }
 
@@ -161,10 +221,10 @@ export class VoiceWaveformProcessor {
       // Initialize noise baseline
       await this.initializeNoiseBaseline();
 
-      console.log('✅ Voice Waveform Processor initialized successfully');
+      Logger.info('✅ Voice Waveform Processor initialized successfully');
       return true;
     } catch (error) {
-      console.error('❌ Failed to initialize Voice Waveform Processor:', error);
+      Logger.error('❌ Failed to initialize Voice Waveform Processor:', null, 'VoiceWaveformProcessor', error);
       return false;
     }
   }
@@ -194,13 +254,13 @@ export class VoiceWaveformProcessor {
           // Calculate noise baseline
           this.noiseBaseline = noiseSamples.reduce((sum, sample) => sum + sample, 0) / noiseSamples.length;
           this.noiseHistory = [...noiseSamples];
-          console.log('🎵 Noise baseline established:', this.noiseBaseline);
+          Logger.info('🎵 Noise baseline established:', null, 'VoiceWaveformProcessor', this.noiseBaseline);
         }
       };
 
       collectNoise();
     } catch (error) {
-      console.error('❌ Failed to initialize noise baseline:', error);
+      Logger.error('❌ Failed to initialize noise baseline:', null, 'VoiceWaveformProcessor', error);
     }
   }
 
@@ -210,7 +270,7 @@ export class VoiceWaveformProcessor {
   async startProcessing(): Promise<boolean> {
     try {
       if (this.isProcessing) {
-        console.warn('⚠️ Waveform processing already active');
+        Logger.warn('⚠️ Waveform processing already active');
         return true;
       }
 
@@ -220,10 +280,10 @@ export class VoiceWaveformProcessor {
       }
 
       this.isProcessing = true;
-      console.log('🌊 Voice waveform processing started');
+      Logger.info('🌊 Voice waveform processing started');
       return true;
     } catch (error) {
-      console.error('❌ Failed to start waveform processing:', error);
+      Logger.error('❌ Failed to start waveform processing:', null, 'VoiceWaveformProcessor', error);
       this.onErrorCallback?.(error as Error);
       return false;
     }
@@ -249,9 +309,9 @@ export class VoiceWaveformProcessor {
         this.mediaStream = null;
       }
 
-      console.log('🛑 Voice waveform processing stopped');
+      Logger.info('🛑 Voice waveform processing stopped');
     } catch (error) {
-      console.error('❌ Failed to stop waveform processing:', error);
+      Logger.error('❌ Failed to stop waveform processing:', null, 'VoiceWaveformProcessor', error);
       this.onErrorCallback?.(error as Error);
     }
   }
@@ -282,22 +342,22 @@ export class VoiceWaveformProcessor {
       // Calculate audio quality metrics
       this.calculateAudioQuality(channelData, timestamp);
     } catch (error) {
-      console.error('❌ Error processing audio buffer:', error);
+      Logger.error('❌ Error processing audio buffer:', null, 'VoiceWaveformProcessor', error);
     }
   }
 
   /**
    * Process waveform data
    */
-  private processWaveformData(audioData: Float32Array, timestamp: number): void {
+  private processWaveformData(_audioData: Float32Array, _timestamp: number): void {
     try {
       const waveformData: WaveformData[] = [];
 
       // Calculate amplitude and frequency for each sample
-      for (let i = 0; i < audioData.length; i += 4) { // Process every 4th sample for performance
-        const amplitude = Math.abs(audioData[i]);
-        const frequency = this.calculateFrequency(audioData, i);
-        const phase = Math.atan2(audioData[i], audioData[i + 1] || 0);
+      for (let i = 0; i < _audioData.length; i += 4) { // Process every 4th sample for performance
+        const amplitude = Math.abs(_audioData[i]);
+        const frequency = this.calculateFrequency(_audioData, i);
+        const phase = Math.atan2(_audioData[i], _audioData[i + 1] || 0);
         const quality = this.calculateSampleQuality(amplitude, frequency);
 
         waveformData.push({
@@ -325,14 +385,14 @@ export class VoiceWaveformProcessor {
       // Notify callback
       this.onWaveformDataCallback?.(processedData);
     } catch (error) {
-      console.error('❌ Error processing waveform data:', error);
+      Logger.error('❌ Error processing waveform data:', null, 'VoiceWaveformProcessor', error);
     }
   }
 
   /**
    * Process frequency analysis
    */
-  private processFrequencyAnalysis(audioData: Float32Array, timestamp: number): void {
+  private processFrequencyAnalysis(_audioData: Float32Array, _timestamp: number): void {
     try {
       if (!this.analyserNode) return;
 
@@ -358,16 +418,16 @@ export class VoiceWaveformProcessor {
       // Add to buffer
       this.frequencyBuffer = frequencyBins;
     } catch (error) {
-      console.error('❌ Error processing frequency analysis:', error);
+      Logger.error('❌ Error processing frequency analysis:', null, 'VoiceWaveformProcessor', error);
     }
   }
 
   /**
    * Detect voice activity
    */
-  private detectVoiceActivity(audioData: Float32Array, timestamp: number): void {
+  private detectVoiceActivity(_audioData: Float32Array, _timestamp: number): void {
     try {
-      const rms = this.calculateRMS(audioData);
+      const rms = this.calculateRMS(_audioData);
       const noiseLevel = Math.max(0, rms - this.noiseBaseline);
       const signalToNoiseRatio = rms / Math.max(0.001, this.noiseBaseline);
       const voiceLevel = Math.max(0, rms - this.noiseBaseline);
@@ -398,20 +458,20 @@ export class VoiceWaveformProcessor {
       // Notify callback
       this.onVoiceActivityCallback?.(detection);
     } catch (error) {
-      console.error('❌ Error detecting voice activity:', error);
+      Logger.error('❌ Error detecting voice activity:', null, 'VoiceWaveformProcessor', error);
     }
   }
 
   /**
    * Calculate audio quality metrics
    */
-  private calculateAudioQuality(audioData: Float32Array, timestamp: number): void {
+  private calculateAudioQuality(_audioData: Float32Array, _timestamp: number): void {
     try {
-      const rms = this.calculateRMS(audioData);
+      const rms = this.calculateRMS(_audioData);
       const signalToNoiseRatio = rms / Math.max(0.001, this.noiseBaseline);
       
       // Calculate total harmonic distortion (simplified)
-      const totalHarmonicDistortion = this.calculateTHD(audioData);
+      const totalHarmonicDistortion = this.calculateTHD(_audioData);
       
       // Calculate frequency response
       const frequencyResponse = this.calculateFrequencyResponse();
@@ -442,7 +502,7 @@ export class VoiceWaveformProcessor {
       // Notify callback
       this.onAudioQualityCallback?.(metrics);
     } catch (error) {
-      console.error('❌ Error calculating audio quality:', error);
+      Logger.error('❌ Error calculating audio quality:', null, 'VoiceWaveformProcessor', error);
     }
   }
 
@@ -644,9 +704,9 @@ export class VoiceWaveformProcessor {
       }
 
       this.clearBuffers();
-      console.log('🧹 Voice Waveform Processor cleaned up');
+      Logger.info('🧹 Voice Waveform Processor cleaned up');
     } catch (error) {
-      console.error('❌ Error during cleanup:', error);
+      Logger.error('❌ Error during cleanup:', null, 'VoiceWaveformProcessor', error);
     }
   }
 }

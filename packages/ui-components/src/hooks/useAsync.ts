@@ -7,6 +7,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Logger } from '@cyntientops/business-core';
 
+// Type definitions for Node.js globals
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+}
+
 export interface AsyncState<T> {
   data: T | null;
   loading: boolean;

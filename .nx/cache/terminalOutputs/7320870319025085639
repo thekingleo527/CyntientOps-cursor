@@ -1,0 +1,14 @@
+
+Linting "command-chains"...
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/command-chains/src/CommandChain.ts[24m[0m
+[0m  [2m268:5[22m   [33mwarning[39m  Unexpected console statement                                                       [2mno-console[22m[0m
+[0m  [2m346:5[22m   [31merror[39m    'runningCommands' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m411:5[22m   [33mwarning[39m  Unexpected console statement                                                       [2mno-console[22m[0m
+[0m  [2m425:11[22m  [33mwarning[39m  Unexpected console statement                                                       [2mno-console[22m[0m
+[0m  [2m540:5[22m   [33mwarning[39m  Unexpected console statement                                                       [2mno-console[22m[0m
+[0m[0m
+[0m[31m[1m✖ 5 problems (1 error, 4 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 5 problems (1 error, 4 warnings)
+

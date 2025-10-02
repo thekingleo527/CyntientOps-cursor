@@ -6,7 +6,8 @@
  * Features: Maintenance scheduling, risk assessment, cost optimization
  */
 
-import { MLEngine, TrainingData, Prediction } from './MLEngine';
+import { MLEngine, TrainingData } from './MLEngine';
+import { Logger } from '@cyntientops/business-core';
 
 export interface MaintenancePrediction {
   buildingId: string;
@@ -45,17 +46,17 @@ export class PredictiveMaintenanceService {
    * Train maintenance prediction model
    */
   async trainModel(): Promise<void> {
-    console.log('[PredictiveMaintenance] Gathering training data...');
+    Logger.info('[PredictiveMaintenance] Gathering training data...');
 
     // Gather historical maintenance data
     const trainingData = await this.gatherTrainingData();
 
     if (trainingData.features.length < 100) {
-      console.warn('[PredictiveMaintenance] Insufficient data for training');
+      Logger.warn('[PredictiveMaintenance] Insufficient data for training');
       return;
     }
 
-    console.log(`[PredictiveMaintenance] Training with ${trainingData.features.length} samples`);
+    Logger.info(`[PredictiveMaintenance] Training with ${trainingData.features.length} samples`);
 
     // Train model
     const result = await this.mlEngine.trainModel(this.modelName, trainingData, {
@@ -64,7 +65,7 @@ export class PredictiveMaintenanceService {
       validationSplit: 0.2,
     });
 
-    console.log(`[PredictiveMaintenance] Model trained: accuracy=${result.accuracy.toFixed(2)}`);
+    Logger.info(`[PredictiveMaintenance] Model trained: accuracy=${result.accuracy.toFixed(2)}`);
   }
 
   /**
@@ -230,12 +231,12 @@ export class PredictiveMaintenanceService {
   /**
    * Get predicted issue type
    */
-  private getPredictedIssue(buildingData: any, factors: any[]): string {
+  private getPredictedIssue(buildingData: any, _factors: any[]): string {
     // Logic based on building characteristics
     if (buildingData.age_years > 50) {
       return 'Plumbing System Maintenance';
     }
-    if (factors[0]?.name.includes('compliance')) {
+    if (_factors[0]?.name.includes('compliance')) {
       return 'Compliance-Related Maintenance';
     }
     return 'General Maintenance';
@@ -247,7 +248,7 @@ export class PredictiveMaintenanceService {
   private getRecommendedActions(
     buildingData: any,
     estimatedDays: number,
-    factors: any[]
+    _factors: any[]
   ): string[] {
     const actions: string[] = [];
 
@@ -317,7 +318,7 @@ export class PredictiveMaintenanceService {
         const prediction = await this.predictMaintenance(building.id);
         predictions.push(prediction);
       } catch (error) {
-        console.error(`[PredictiveMaintenance] Failed for building ${building.id}:`, error);
+        Logger.error(`[PredictiveMaintenance] Failed for building ${building.id}:`, null, 'PredictiveMaintenanceService', error);
       }
     }
 
@@ -331,7 +332,7 @@ export class PredictiveMaintenanceService {
    * Retrain model with new data (call periodically)
    */
   async retrainModel(): Promise<void> {
-    console.log('[PredictiveMaintenance] Retraining model with updated data...');
+    Logger.info('[PredictiveMaintenance] Retraining model with updated data...');
     await this.trainModel();
   }
 }

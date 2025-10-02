@@ -3276,6 +3276,15 @@
         "hash": "sha512-he+DHOWReW0nghN24E1WUqM0efK4kI9oTqDm6XmK8ZPe2djZ90BSNdGnIyCLzCPw7/pogPlGbzI2wHGGmi4O/Q=="
       }
     },
+    "npm:@types/crypto-js": {
+      "type": "npm",
+      "name": "npm:@types/crypto-js",
+      "data": {
+        "version": "4.2.2",
+        "packageName": "@types/crypto-js",
+        "hash": "sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ=="
+      }
+    },
     "npm:@types/geojson": {
       "type": "npm",
       "name": "npm:@types/geojson",
@@ -4428,9 +4437,9 @@
         "hash": "sha512-ESAc/RJvGTFEzRwOTT4+lNDk/GNHMkKbNzsvT0qKRfDyyYTskxB5rnU2njIDYVxXCBHHEI1c0YwHob3WaYujOg=="
       }
     },
-    "npm:babel-plugin-macros@3.1.0": {
+    "npm:babel-plugin-macros": {
       "type": "npm",
-      "name": "npm:babel-plugin-macros@3.1.0",
+      "name": "npm:babel-plugin-macros",
       "data": {
         "version": "3.1.0",
         "packageName": "babel-plugin-macros",
@@ -5553,6 +5562,15 @@
         "hash": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="
       }
     },
+    "npm:crypto-js": {
+      "type": "npm",
+      "name": "npm:crypto-js",
+      "data": {
+        "version": "4.2.0",
+        "packageName": "crypto-js",
+        "hash": "sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q=="
+      }
+    },
     "npm:crypto-random-string": {
       "type": "npm",
       "name": "npm:crypto-random-string",
@@ -6219,9 +6237,9 @@
         "hash": "sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg=="
       }
     },
-    "npm:encoding@0.1.13": {
+    "npm:encoding": {
       "type": "npm",
-      "name": "npm:encoding@0.1.13",
+      "name": "npm:encoding",
       "data": {
         "version": "0.1.13",
         "packageName": "encoding",
@@ -12409,15 +12427,6 @@
         "version": "18.3.1",
         "packageName": "react",
         "hash": "sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ=="
-      }
-    },
-    "npm:react@19.2.0": {
-      "type": "npm",
-      "name": "npm:react@19.2.0",
-      "data": {
-        "version": "19.2.0",
-        "packageName": "react",
-        "hash": "sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ=="
       }
     },
     "npm:read-cache": {
@@ -24035,7 +24044,7 @@
     },
     {
       "source": "npm:@nx/js",
-      "target": "npm:babel-plugin-macros@3.1.0",
+      "target": "npm:babel-plugin-macros",
       "type": "static"
     },
     {
@@ -24185,7 +24194,7 @@
     },
     {
       "source": "npm:@nx/js",
-      "target": "npm:babel-plugin-macros@3.1.0",
+      "target": "npm:babel-plugin-macros",
       "type": "static"
     },
     {
@@ -28064,32 +28073,32 @@
       "type": "static"
     },
     {
-      "source": "npm:babel-plugin-macros@3.1.0",
+      "source": "npm:babel-plugin-macros",
       "target": "npm:@babel/runtime",
       "type": "static"
     },
     {
-      "source": "npm:babel-plugin-macros@3.1.0",
+      "source": "npm:babel-plugin-macros",
       "target": "npm:cosmiconfig@7.1.0",
       "type": "static"
     },
     {
-      "source": "npm:babel-plugin-macros@3.1.0",
+      "source": "npm:babel-plugin-macros",
       "target": "npm:resolve",
       "type": "static"
     },
     {
-      "source": "npm:babel-plugin-macros@3.1.0",
+      "source": "npm:babel-plugin-macros",
       "target": "npm:@babel/runtime",
       "type": "static"
     },
     {
-      "source": "npm:babel-plugin-macros@3.1.0",
+      "source": "npm:babel-plugin-macros",
       "target": "npm:cosmiconfig@7.1.0",
       "type": "static"
     },
     {
-      "source": "npm:babel-plugin-macros@3.1.0",
+      "source": "npm:babel-plugin-macros",
       "target": "npm:resolve",
       "type": "static"
     },
@@ -30424,7 +30433,7 @@
       "type": "static"
     },
     {
-      "source": "npm:encoding@0.1.13",
+      "source": "npm:encoding",
       "target": "npm:iconv-lite@0.6.3",
       "type": "static"
     },

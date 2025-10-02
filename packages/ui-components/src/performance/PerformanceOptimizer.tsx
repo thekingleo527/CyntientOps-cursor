@@ -7,6 +7,16 @@
 import React, { useMemo, useCallback, useRef, useEffect } from 'react';
 import { InteractionManager, Dimensions, ScrollView, View, Image, Modal } from 'react-native';
 
+// Global type declarations
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+}
+
 const { width, height } = Dimensions.get('window');
 
 // Performance monitoring
@@ -37,7 +47,7 @@ export const PerformanceMonitor = {
 };
 
 // Lazy loading hook
-export const useLazyLoading = <T>(
+export const useLazyLoading = <T,>(
   loadFunction: () => Promise<T>,
   dependencies: any[] = []
 ) => {
@@ -183,7 +193,7 @@ export const OptimizedImage = React.memo(({
 });
 
 // Debounced input
-export const useDebounce = <T>(value: T, delay: number): T => {
+export const useDebounce = <T,>(value: T, delay: number): T => {
   const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
 
   useEffect(() => {
@@ -200,7 +210,7 @@ export const useDebounce = <T>(value: T, delay: number): T => {
 };
 
 // Throttled function
-export const useThrottle = <T extends (...args: any[]) => any>(
+export const useThrottle = <T extends (...args: any[]) => any,>(
   func: T,
   delay: number
 ): T => {
@@ -230,7 +240,7 @@ export const useThrottle = <T extends (...args: any[]) => any>(
 };
 
 // Memory-efficient data processing
-export const useDataProcessor = <T, R>(
+export const useDataProcessor = <T, R,>(
   data: T[],
   processor: (data: T[]) => R,
   dependencies: any[] = []

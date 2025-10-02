@@ -7,7 +7,17 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
-import { OperationalDataTaskAssignment, WeatherSnapshot, Building } from '@cyntientops/domain-schema';
+import { WeatherSnapshot } from '@cyntientops/domain-schema';
+
+// Global type declarations
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+}
 
 // Types
 export interface WeatherTrigger {
@@ -518,7 +528,7 @@ export class WeatherTriggeredTaskManager {
   /**
    * Create weather-triggered task
    */
-  private async createWeatherTask(trigger: WeatherTrigger, weatherData: WeatherSnapshot): Promise<void> {
+  private async createWeatherTask(trigger: WeatherTrigger, _weatherData: WeatherSnapshot): Promise<void> {
     try {
       // Check if task already exists for this trigger today
       const today = new Date().toISOString().split('T')[0];

@@ -1,0 +1,115 @@
+
+Linting "managers"...
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/managers/src/ClockInManager.ts[24m[0m
+[0m  [2m141:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m206:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m339:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m348:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m367:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/managers/src/LocationManager.ts[24m[0m
+[0m  [2m113:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m116:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m133:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m136:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m148:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m155:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m166:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m216:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m218:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m284:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m298:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m391:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m405:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m428:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m436:5[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/managers/src/NotificationManager.ts[24m[0m
+[0m  [2m196:41[22m  [31merror[39m    'type' is not defined         [2mno-undef[22m[0m
+[0m  [2m196:49[22m  [31merror[39m    'targetId' is not defined     [2mno-undef[22m[0m
+[0m  [2m212:11[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m221:11[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m231:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m234:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m293:9[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m325:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m345:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m355:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m375:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m389:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m474:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m482:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/managers/src/PhotoEvidenceManager.ts[24m[0m
+[0m  [2m101:9[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m104:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m180:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m183:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m245:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m259:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m289:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m320:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m380:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m452:9[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m455:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m474:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m484:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m494:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m506:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m525:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m528:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m541:11[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m546:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m553:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m568:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m604:11[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m614:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m646:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m648:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m667:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m695:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m707:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/managers/src/WeatherTaskManager.ts[24m[0m
+[0m  [2m107:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m378:38[22m  [31merror[39m    'taskType' is not defined     [2mno-undef[22m[0m
+[0m  [2m378:50[22m  [31merror[39m    'buildingId' is not defined   [2mno-undef[22m[0m
+[0m  [2m397:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m418:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m443:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/managers/src/WeatherTriggeredTaskManager.ts[24m[0m
+[0m   [2m10:10[22m  [31merror[39m    'OperationalDataTaskAssignment' is defined but never used                     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m10:58[22m  [31merror[39m    'Building' is defined but never used                                          [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m71:31[22m  [31merror[39m    'NodeJS' is not defined                                                       [2mno-undef[22m[0m
+[0m   [2m72:34[22m  [31merror[39m    'NodeJS' is not defined                                                       [2mno-undef[22m[0m
+[0m  [2m369:5[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m394:5[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m438:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m440:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m454:9[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m467:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m531:9[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m584:9[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m587:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m595:36[22m  [31merror[39m    'buildingId' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m614:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m662:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m704:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m739:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m757:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/managers/src/WorkCompletionManager.ts[24m[0m
+[0m  [2m118:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m169:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m220:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m265:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m312:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m393:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m431:7[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m[0m
+[0m[31m[1m✖ 94 problems (9 errors, 85 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 94 problems (9 errors, 85 warnings)
+

@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Dimensions, Alert } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Alert } from 'react-native';
 import MapView, { Marker, Callout, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Building, WorkerProfile, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import { IntelligencePopover } from './IntelligencePopover';

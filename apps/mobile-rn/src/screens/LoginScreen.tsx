@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { Logger } from '@cyntientops/business-core';
+import config from '../config/app.config';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: AuthenticatedUser) => void;
@@ -30,13 +31,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
     const initializeAuth = async () => {
       try {
         const databaseManager = DatabaseManager.getInstance({
-          path: 'cyntientops.db'
+          path: config.databasePath
         });
         await databaseManager.initialize();
         const service = AuthenticationService.getInstance(databaseManager);
         setAuthService(service);
       } catch (error) {
-        Logger.error('Failed to initialize authentication service:', undefined, 'LoginScreen.tsx');
+        Logger.error('Failed to initialize authentication service', error, 'LoginScreen');
       }
     };
     initializeAuth();

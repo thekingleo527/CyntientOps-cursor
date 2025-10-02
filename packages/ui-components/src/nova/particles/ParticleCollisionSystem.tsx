@@ -22,6 +22,7 @@ import {
   Animated,
   Dimensions,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';

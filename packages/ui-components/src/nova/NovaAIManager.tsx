@@ -89,7 +89,7 @@ export interface NovaManagerState {
   };
   
   // Contextual Awareness
-  currentContext: {
+  contextualAwareness: {
     screen: string;
     timeOfDay: 'morning' | 'afternoon' | 'evening' | 'night';
     userMood: 'focused' | 'stressed' | 'relaxed' | 'busy';
@@ -209,11 +209,11 @@ class VoiceRecognitionManager {
         console.log('🎤 Voice recognition manager initialized');
       } else {
         // Web fallback
-        if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
-          this.recognition = new (window as any).webkitSpeechRecognition();
+        if (typeof global !== 'undefined' && global.window && 'webkitSpeechRecognition' in global.window) {
+          this.recognition = new (global.window as any).webkitSpeechRecognition();
           this.setupWebRecognition();
-        } else if (typeof window !== 'undefined' && 'SpeechRecognition' in window) {
-          this.recognition = new (window as any).SpeechRecognition();
+        } else if (typeof global !== 'undefined' && global.window && 'SpeechRecognition' in global.window) {
+          this.recognition = new (global.window as any).SpeechRecognition();
           this.setupWebRecognition();
         }
       }
@@ -387,6 +387,31 @@ export const useNovaAIManager = (config: NovaManagerConfig) => {
     
     // Real-time Properties
     urgentAlerts: [],
+    
+    // Weather Intelligence Properties
+    weatherContext: {
+      currentWeather: null,
+      upcomingWeather: [],
+      weatherSuggestions: [],
+      isWeatherAware: false,
+    },
+    
+    // Sentient Behavior Properties
+    userPreferences: {
+      preferredTaskOrder: [],
+      workingHours: { start: 9, end: 17 },
+      communicationStyle: 'conversational',
+      notificationFrequency: 'moderate',
+    },
+    
+    // Contextual Awareness
+    contextualAwareness: {
+      screen: 'home',
+      timeOfDay: 'morning',
+      userMood: 'focused',
+      taskProgress: 0,
+      buildingContext: null,
+    },
   });
 
   // Refs

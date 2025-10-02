@@ -6,6 +6,8 @@
  * Features: TSP solving, multi-worker assignment, time windows, map integration
  */
 
+import { Logger } from '@cyntientops/business-core';
+
 export interface Location {
   id: string;
   name: string;
@@ -58,7 +60,7 @@ export class RouteOptimizationService {
     locations: Location[],
     options: RouteOptimizationOptions = {}
   ): Promise<OptimizedRoute> {
-    console.log(`[RouteOptimization] Optimizing route for ${locations.length} locations`);
+    Logger.info(`[RouteOptimization] Optimizing route for ${locations.length} locations`);
 
     if (locations.length === 0) {
       throw new Error('No locations to optimize');
@@ -288,7 +290,7 @@ export class RouteOptimizationService {
 
         // If we arrive after window closes, skip or reschedule
         if (currentTime > location.timeWindow.end) {
-          console.warn(`[RouteOptimization] Location ${location.name} misses time window`);
+          Logger.warn(`[RouteOptimization] Location ${location.name} misses time window`);
           // Could implement rescheduling logic here
         }
       }
@@ -391,7 +393,7 @@ export class RouteOptimizationService {
     locations: Location[],
     options: RouteOptimizationOptions = {}
   ): Promise<OptimizedRoute[]> {
-    console.log(`[RouteOptimization] Optimizing for ${workerIds.length} workers, ${locations.length} locations`);
+    Logger.info(`[RouteOptimization] Optimizing for ${workerIds.length} workers, null, 'RouteOptimizationService', ${locations.length} locations`);
 
     // Simple clustering: assign locations to workers by proximity
     const workerLocations = await this.clusterLocationsByWorkers(workerIds, locations);

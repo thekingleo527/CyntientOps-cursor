@@ -13,6 +13,12 @@
  * Based on SwiftUI ParticlePhysicsEngine.swift (500+ lines)
  */
 
+// Global function declarations for React Native
+declare global {
+  function requestAnimationFrame(callback: (time: number) => void): number;
+  function cancelAnimationFrame(id: number): void;
+}
+
 import { Dimensions } from 'react-native';
 
 export interface Particle {

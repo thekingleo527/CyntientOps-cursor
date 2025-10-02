@@ -6,6 +6,8 @@
  * Features: Model training, prediction, feature importance, confidence scoring
  */
 
+import { Logger } from '@cyntientops/business-core';
+
 export interface TrainingData {
   features: number[][];
   labels: number[];
@@ -32,10 +34,10 @@ export class MLEngine {
   async initialize(): Promise<void> {
     try {
       // Mock TensorFlow initialization
-      console.log('[MLEngine] TensorFlow.js initialized (mock)');
+      Logger.info('TensorFlow.js initialized (mock)', null, 'MLEngine');
       this.initialized = true;
     } catch (error) {
-      console.error('[MLEngine] Initialization failed:', error);
+      Logger.error('Initialization failed', error, 'MLEngine');
       throw error;
     }
   }
@@ -46,7 +48,7 @@ export class MLEngine {
   async trainModel(
     modelName: string,
     trainingData: TrainingData,
-    options: {
+    _options: {
       epochs?: number;
       batchSize?: number;
       validationSplit?: number;
@@ -56,12 +58,12 @@ export class MLEngine {
       throw new Error('MLEngine not initialized');
     }
 
-    console.log(`[MLEngine] Training model: ${modelName}`);
+    Logger.info(`Training model: ${modelName}`, null, 'MLEngine');
 
     // Mock training process
-    const epochs = options.epochs || 50;
-    const batchSize = options.batchSize || 32;
-    const validationSplit = options.validationSplit || 0.2;
+    // const _epochs = options.epochs || 50;
+    // const _batchSize = options.batchSize || 32;
+    // const _validationSplit = options.validationSplit || 0.2;
 
     // Simulate training
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -82,7 +84,7 @@ export class MLEngine {
     const finalLoss = 0.1 + Math.random() * 0.2; // Mock loss
     const finalAccuracy = mockModel.accuracy;
 
-    console.log(`[MLEngine] Training complete: loss=${finalLoss.toFixed(4)}, accuracy=${finalAccuracy.toFixed(4)}`);
+    Logger.info(`Training complete: loss=${finalLoss.toFixed(4)}, accuracy=${finalAccuracy.toFixed(4)}`, null, 'MLEngine');
 
     return {
       loss: finalLoss,
@@ -123,7 +125,7 @@ export class MLEngine {
   /**
    * Mock prediction algorithm
    */
-  private mockPrediction(features: number[], model: any): number {
+  private mockPrediction(features: number[], _model: any): number {
     // Simple weighted sum for mock prediction
     const weights = this.getMockWeights(features.length);
     let prediction = 0;
@@ -171,7 +173,7 @@ export class MLEngine {
   /**
    * Get feature importance (mock implementation)
    */
-  private getFeatureImportance(features: number[], model: any): Array<{ name: string; importance: number }> {
+  private getFeatureImportance(features: number[], _model: any): Array<{ name: string; importance: number }> {
     const weights = this.getMockWeights(features.length);
     const featureNames = features.map((_, i) => `Feature ${i + 1}`);
 
@@ -203,9 +205,9 @@ export class MLEngine {
           JSON.stringify(model),
         ]
       );
-      console.log(`[MLEngine] Model metadata saved: ${modelName}`);
+      Logger.info(`Model metadata saved: ${modelName}`, null, 'MLEngine');
     } catch (error) {
-      console.error(`[MLEngine] Failed to save model metadata ${modelName}:`, error);
+      Logger.error(`Failed to save model metadata ${modelName}`, error, 'MLEngine');
     }
   }
 
@@ -223,12 +225,12 @@ export class MLEngine {
         const row = result.rows.item(0);
         const model = JSON.parse(row.metadata);
         this.models.set(modelName, model);
-        console.log(`[MLEngine] Model loaded: ${modelName}`);
+        Logger.info(`Model loaded: ${modelName}`, null, 'MLEngine');
       } else {
         throw new Error(`Model ${modelName} not found in storage`);
       }
     } catch (error) {
-      console.error(`[MLEngine] Failed to load model ${modelName}:`, error);
+      Logger.error(`Failed to load model ${modelName}`, error, 'MLEngine');
       throw error;
     }
   }

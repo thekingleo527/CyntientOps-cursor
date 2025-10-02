@@ -13,6 +13,15 @@
  */
 
 import { Platform } from 'react-native';
+import { Logger } from '@cyntientops/business-core';
+
+// Global type declarations
+declare global {
+  interface Window {
+    webkitSpeechRecognition: any;
+    SpeechRecognition: any;
+  }
+}
 import { UserRole } from '@cyntientops/domain-schema';
 
 // Voice Recognition Libraries
@@ -24,13 +33,13 @@ if (Platform.OS === 'ios') {
   try {
     Voice = require('@react-native-voice/voice');
   } catch (error) {
-    console.warn('Voice recognition not available on iOS:', error);
+    Logger.warn('Voice recognition not available on iOS:', null, 'NovaSpeechRecognizer', error);
   }
 } else if (Platform.OS === 'android') {
   try {
     SpeechToText = require('@react-native-voice/voice');
   } catch (error) {
-    console.warn('Voice recognition not available on Android:', error);
+    Logger.warn('Voice recognition not available on Android:', null, 'NovaSpeechRecognizer', error);
   }
 } else if (Platform.OS === 'web') {
   // Web Speech API will be used directly
@@ -137,10 +146,10 @@ export class NovaSpeechRecognizer {
       }
 
       this.isInitialized = true;
-      console.log('✅ Nova Speech Recognizer initialized successfully');
+      Logger.info('✅ Nova Speech Recognizer initialized successfully');
       return true;
     } catch (error) {
-      console.error('❌ Failed to initialize Nova Speech Recognizer:', error);
+      Logger.error('❌ Failed to initialize Nova Speech Recognizer:', null, 'NovaSpeechRecognizer', error);
       return false;
     }
   }
@@ -150,32 +159,32 @@ export class NovaSpeechRecognizer {
    */
   private async configureAudioSession(): Promise<void> {
     try {
-      const audioConfig: AudioSessionConfig = {
-        category: 'playAndRecord',
-        mode: 'voiceChat',
-        options: {
-          allowBluetooth: true,
-          allowBluetoothA2DP: false,
-          allowAirPlay: false,
-          defaultToSpeaker: false,
-          mixWithOthers: false,
-          duckOthers: true,
-          interruptSpokenAudioAndMixWithOthers: false
-        }
-      };
+      // const _audioConfig: AudioSessionConfig = {
+      //   category: 'playAndRecord',
+      //   mode: 'voiceChat',
+      //   options: {
+      //     allowBluetooth: true,
+      //     allowBluetoothA2DP: false,
+      //     allowAirPlay: false,
+      //     defaultToSpeaker: false,
+      //     mixWithOthers: false,
+      //     duckOthers: true,
+      //     interruptSpokenAudioAndMixWithOthers: false
+      //   }
+      // };
 
       // Platform-specific audio session configuration
       if (Platform.OS === 'ios') {
         // iOS audio session configuration would go here
-        console.log('🎵 iOS Audio Session configured for speech recognition');
+        Logger.info('🎵 iOS Audio Session configured for speech recognition');
       } else if (Platform.OS === 'android') {
         // Android audio session configuration would go here
-        console.log('🎵 Android Audio Session configured for speech recognition');
+        Logger.info('🎵 Android Audio Session configured for speech recognition');
       }
 
       this.audioSessionConfigured = true;
     } catch (error) {
-      console.error('❌ Failed to configure audio session:', error);
+      Logger.error('❌ Failed to configure audio session:', null, 'NovaSpeechRecognizer', error);
       throw error;
     }
   }
@@ -201,7 +210,7 @@ export class NovaSpeechRecognizer {
       maxAlternatives: this.config.maxAlternatives
     };
 
-    console.log('🍎 iOS Speech Recognition initialized with options:', options);
+    Logger.info('🍎 iOS Speech Recognition initialized with options:', null, 'NovaSpeechRecognizer', options);
   }
 
   /**
@@ -217,7 +226,7 @@ export class NovaSpeechRecognizer {
     SpeechToText.onSpeechError = this.handleSpeechError.bind(this);
     SpeechToText.onSpeechPartialResults = this.handleSpeechPartialResults.bind(this);
 
-    console.log('🤖 Android Speech Recognition initialized');
+    Logger.info('🤖 Android Speech Recognition initialized');
   }
 
   /**
@@ -241,7 +250,7 @@ export class NovaSpeechRecognizer {
     this.webRecognition.onresult = this.handleWebSpeechResults.bind(this);
     this.webRecognition.onerror = this.handleSpeechError.bind(this);
 
-    console.log('🌐 Web Speech Recognition initialized');
+    Logger.info('🌐 Web Speech Recognition initialized');
   }
 
   /**
@@ -255,7 +264,7 @@ export class NovaSpeechRecognizer {
       }
 
       if (this.isListening) {
-        console.warn('⚠️ Speech recognition already listening');
+        Logger.warn('⚠️ Speech recognition already listening');
         return true;
       }
 
@@ -274,10 +283,10 @@ export class NovaSpeechRecognizer {
 
       this.isListening = true;
       this.onStatusChangeCallback?.('listening');
-      console.log('🎤 Speech recognition started');
+      Logger.info('🎤 Speech recognition started');
       return true;
     } catch (error) {
-      console.error('❌ Failed to start speech recognition:', error);
+      Logger.error('❌ Failed to start speech recognition:', null, 'NovaSpeechRecognizer', error);
       this.onErrorCallback?.(error as Error);
       return false;
     }
@@ -301,9 +310,9 @@ export class NovaSpeechRecognizer {
 
       this.isListening = false;
       this.onStatusChangeCallback?.('stopped');
-      console.log('🛑 Speech recognition stopped');
+      Logger.info('🛑 Speech recognition stopped');
     } catch (error) {
-      console.error('❌ Failed to stop speech recognition:', error);
+      Logger.error('❌ Failed to stop speech recognition:', null, 'NovaSpeechRecognizer', error);
       this.onErrorCallback?.(error as Error);
     }
   }
@@ -326,9 +335,9 @@ export class NovaSpeechRecognizer {
 
       this.isListening = false;
       this.onStatusChangeCallback?.('cancelled');
-      console.log('❌ Speech recognition cancelled');
+      Logger.info('❌ Speech recognition cancelled');
     } catch (error) {
-      console.error('❌ Failed to cancel speech recognition:', error);
+      Logger.error('❌ Failed to cancel speech recognition:', null, 'NovaSpeechRecognizer', error);
       this.onErrorCallback?.(error as Error);
     }
   }
@@ -337,7 +346,7 @@ export class NovaSpeechRecognizer {
    * Handle speech start event
    */
   private handleSpeechStart(): void {
-    console.log('🎤 Speech recognition started');
+    Logger.info('🎤 Speech recognition started');
     this.onStatusChangeCallback?.('speech_started');
   }
 
@@ -345,7 +354,7 @@ export class NovaSpeechRecognizer {
    * Handle speech end event
    */
   private handleSpeechEnd(): void {
-    console.log('🛑 Speech recognition ended');
+    Logger.info('🛑 Speech recognition ended');
     this.onStatusChangeCallback?.('speech_ended');
   }
 
@@ -361,7 +370,7 @@ export class NovaSpeechRecognizer {
       this.recognitionResults.push(result);
       this.onResultCallback?.(result);
     } catch (error) {
-      console.error('❌ Error processing speech results:', error);
+      Logger.error('❌ Error processing speech results:', null, 'NovaSpeechRecognizer', error);
       this.onErrorCallback?.(error as Error);
     }
   }
@@ -377,7 +386,7 @@ export class NovaSpeechRecognizer {
       const result = this.processSpeechResults(results, false);
       this.onResultCallback?.(result);
     } catch (error) {
-      console.error('❌ Error processing partial speech results:', error);
+      Logger.error('❌ Error processing partial speech results:', null, 'NovaSpeechRecognizer', error);
     }
   }
 
@@ -393,7 +402,7 @@ export class NovaSpeechRecognizer {
       this.recognitionResults.push(result);
       this.onResultCallback?.(result);
     } catch (error) {
-      console.error('❌ Error processing web speech results:', error);
+      Logger.error('❌ Error processing web speech results:', null, 'NovaSpeechRecognizer', error);
       this.onErrorCallback?.(error as Error);
     }
   }
@@ -640,7 +649,7 @@ export class NovaSpeechRecognizer {
    * Handle speech recognition errors
    */
   private handleSpeechError(error: any): void {
-    console.error('❌ Speech recognition error:', error);
+    Logger.error('❌ Speech recognition error:', null, 'NovaSpeechRecognizer', error);
     this.isListening = false;
     this.onErrorCallback?.(new Error(error.message || 'Speech recognition error'));
   }
@@ -737,9 +746,9 @@ export class NovaSpeechRecognizer {
       this.audioSessionConfigured = false;
       this.clearHistory();
       
-      console.log('🧹 Nova Speech Recognizer cleaned up');
+      Logger.info('🧹 Nova Speech Recognizer cleaned up');
     } catch (error) {
-      console.error('❌ Error during cleanup:', error);
+      Logger.error('❌ Error during cleanup:', null, 'NovaSpeechRecognizer', error);
     }
   }
 }

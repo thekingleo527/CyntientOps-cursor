@@ -5,6 +5,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
+import { Logger } from '@cyntientops/business-core';
 import { WorkerProfile, OperationalDataTaskAssignment, Building } from '@cyntientops/domain-schema';
 
 export interface PerformanceMetrics {
@@ -134,7 +135,7 @@ export class PerformanceMonitor {
       
       return metrics;
     } catch (error) {
-      console.error('Failed to get worker performance metrics:', error);
+      Logger.error('Failed to get worker performance metrics', error, 'PerformanceMonitor');
       throw error;
     }
   }
@@ -206,7 +207,7 @@ export class PerformanceMonitor {
         optimizationOpportunities,
       };
     } catch (error) {
-      console.error('Failed to get system performance metrics:', error);
+      Logger.error('Failed to get system performance metrics', error, 'PerformanceMonitor');
       throw error;
     }
   }
@@ -280,7 +281,7 @@ export class PerformanceMonitor {
 
       return alerts;
     } catch (error) {
-      console.error('Failed to generate performance alerts:', error);
+      Logger.error('Failed to generate performance alerts', error, 'PerformanceMonitor');
       return [];
     }
   }
@@ -321,7 +322,7 @@ export class PerformanceMonitor {
 
       return trends;
     } catch (error) {
-      console.error('Failed to get performance trends:', error);
+      Logger.error('Failed to get performance trends', error, 'PerformanceMonitor');
       return { efficiency: [], quality: [], punctuality: [], dates: [] };
     }
   }
@@ -425,7 +426,7 @@ export class PerformanceMonitor {
       // Estimate 2 hours per completed task (this would be more sophisticated in reality)
       return completedTasks.length * 2;
     } catch (error) {
-      console.error('Failed to calculate total hours:', error);
+      Logger.error('Failed to calculate total hours', error, 'PerformanceMonitor');
       return 0;
     }
   }
@@ -442,7 +443,7 @@ export class PerformanceMonitor {
         return taskDate >= startDate && taskDate <= endDate;
       });
     } catch (error) {
-      console.error('Failed to get tasks for period:', error);
+      Logger.error('Failed to get tasks for period', error, 'PerformanceMonitor');
       return [];
     }
   }
@@ -554,7 +555,7 @@ export class PerformanceMonitor {
   private async analyzeBottlenecks(
     workers: WorkerProfile[],
     tasks: OperationalDataTaskAssignment[],
-    buildings: Building[]
+    _buildings: Building[]
   ): Promise<BottleneckAnalysis[]> {
     const bottlenecks: BottleneckAnalysis[] = [];
 
@@ -626,7 +627,7 @@ export class PerformanceMonitor {
   private async findOptimizationOpportunities(
     workers: WorkerProfile[],
     tasks: OperationalDataTaskAssignment[],
-    buildings: Building[]
+    _buildings: Building[]
   ): Promise<OptimizationOpportunity[]> {
     const opportunities: OptimizationOpportunity[] = [];
 
@@ -695,7 +696,7 @@ export class PerformanceMonitor {
         resolution: alert.resolution,
       });
     } catch (error) {
-      console.error('Failed to store performance alert:', error);
+      Logger.error('Failed to store performance alert', error, 'PerformanceMonitor');
     }
   }
 

@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { MediaTypeOptions } from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
+import { Logger } from '@cyntientops/business-core';
 
 interface PhotoCaptureModalProps {
   visible: boolean;
@@ -65,7 +66,7 @@ export const PhotoCaptureModal: React.FC<PhotoCaptureModalProps> = ({
       onPhotoCaptured(photo.uri, metadata);
       onClose();
     } catch (error) {
-      console.error('Error taking picture:', error);
+      Logger.error('Error taking picture', error, 'PhotoCaptureModal');
       Alert.alert('Error', 'Failed to take picture. Please try again.');
     } finally {
       setIsCapturing(false);
@@ -96,7 +97,7 @@ export const PhotoCaptureModal: React.FC<PhotoCaptureModalProps> = ({
         onClose();
       }
     } catch (error) {
-      console.error('Error picking image:', error);
+      Logger.error('Error picking image', error, 'PhotoCaptureModal');
       Alert.alert('Error', 'Failed to pick image. Please try again.');
     }
   };

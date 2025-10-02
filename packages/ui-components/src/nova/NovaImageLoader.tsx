@@ -211,7 +211,7 @@ export const useNovaImageLoader = () => {
           };
         }
       } catch (altError) {
-        console.log(`Alternative loading failed for ${imageName}:`, altError);
+        console.log(`Alternative loading failed for ${_imageName}:`, altError);
       }
     }
 

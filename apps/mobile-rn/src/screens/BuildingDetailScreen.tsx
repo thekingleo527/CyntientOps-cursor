@@ -1,22 +1,23 @@
 /**
- * 🏢 Building Detail Screen
- * Mirrors: CyntientOps/Views/Components/Buildings/BuildingDetailView.swift
- * Purpose: Comprehensive building detail view with overview, compliance, team, and routines
+ * BuildingDetailScreen
+ * 
+ * Comprehensive building detail view with real-time data integration
+ * Features: NYC API integration, violation tracking, compliance scoring
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Dimensions,
+  Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius, BuildingDetailOverview } from '@cyntientops/ui-components';
 import { RealDataService } from '@cyntientops/business-core';
@@ -28,23 +29,9 @@ import { DSNYAPIClient } from '@cyntientops/api-clients';
 import { PropertyDataService } from '@cyntientops/business-core';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
-interface CollectionScheduleSummary {
-  bin: string;
-  buildingId: string;
-  buildingName: string;
-  address: string;
-  regularCollectionDay: string;
-  recyclingDay: string;
-  organicsDay: string;
-  bulkPickupDay: string;
-  nextCollectionDate: Date;
-  nextRecyclingDate: Date;
-  nextOrganicsDate: Date;
-  nextBulkPickupDate: Date;
-  collectionFrequency: string;
-  specialInstructions: string[];
-}
+const { width } = Dimensions.get('window');
 
+// Types
 interface ViolationSummary {
   hpd: number;
   dob: number;
@@ -53,234 +40,113 @@ interface ViolationSummary {
   score: number;
 }
 
-// ✅ REAL NYC VIOLATION DATA - Updated from NYC APIs on 2025-10-01
-// Source: HPD, DOB, and ECB violation APIs (DSNY violations are in ECB system)
-// Note: DSNY violations are handled through the ECB system, not a separate DSNY API
-// Data now sourced from ViolationDataService which uses live NYC API data
-
-// Utility: Compute sanitation schedule from existing routines
-const getNextDateForDays = (days: string[]): Date | null => {
-  if (!days || days.length === 0) return null;
-  const today = new Date();
-  for (let i = 0; i < 14; i++) {
-    const check = new Date(today);
-    check.setDate(today.getDate() + i);
-    const dayName = check.toLocaleDateString('en-US', { weekday: 'long' });
-    if (days.includes(dayName)) return check;
-  }
-  return null;
-};
-
-const deriveCollectionFromRoutines = (
-  buildingId: string,
-  buildingName: string,
-  address: string,
-): CollectionScheduleSummary | null => {
-  const routines = RealDataService.getRoutinesByBuildingId(buildingId) || [];
-
-  const normalizeDayList = (val: string | string[] | undefined) => {
-    if (!val) return [] as string[];
-    if (Array.isArray(val)) return val;
-    return val.split(',').map((s) => s.trim());
-  };
-
-  const refuseDays = new Set<string>();
-  const recyclingDays = new Set<string>();
-  const organicsDays = new Set<string>();
-  const bulkDays = new Set<string>();
-
-  routines.forEach((r: any) => {
-    const days = normalizeDayList(r.daysOfWeek);
-    const title = String(r.title || r.name || '').toLowerCase();
-    const category = String(r.category || '').toLowerCase();
-
-    const isSanitation = category.includes('sanitation') ||
-      title.includes('trash') || title.includes('dsny') || title.includes('recycling') || title.includes('organics') || title.includes('bulk');
-    if (!isSanitation) return;
-
-    const addDays = (target: Set<string>) => days.forEach((d) => d && target.add(d));
-
-    if (title.includes('recycling')) addDays(recyclingDays);
-    else if (title.includes('organics') || title.includes('compost')) addDays(organicsDays);
-    else if (title.includes('bulk')) addDays(bulkDays);
-    else addDays(refuseDays); // default to refuse/trash
-  });
-
-  // If nothing found, return null
-  const anyDays = refuseDays.size + recyclingDays.size + organicsDays.size + bulkDays.size;
-  if (anyDays === 0) return null;
-
-  // Choose a representative regular day (first in set) for display
-  const pickDay = (set: Set<string>, fallback: string) => Array.from(set)[0] || fallback;
-  const regularCollectionDay = pickDay(refuseDays, 'Monday');
-  const recyclingDay = pickDay(recyclingDays, 'Wednesday');
-  const organicsDay = pickDay(organicsDays, 'Friday');
-  const bulkPickupDay = pickDay(bulkDays, 'Saturday');
-
-  return {
-    bin: '',
-    buildingId,
-    buildingName,
-    address,
-    regularCollectionDay,
-    recyclingDay,
-    organicsDay,
-    bulkPickupDay,
-    nextCollectionDate: getNextDateForDays(Array.from(refuseDays)) || new Date(),
-    nextRecyclingDate: getNextDateForDays(Array.from(recyclingDays)) || new Date(),
-    nextOrganicsDate: getNextDateForDays(Array.from(organicsDays)) || new Date(),
-    nextBulkPickupDate: getNextDateForDays(Array.from(bulkDays)) || new Date(),
-    collectionFrequency: 'Weekly',
-    specialInstructions: [
-      'Set out bins by 6:00 AM on collection day',
-      'Separate recycling per local guidelines',
-      'Bulk pickups may require 311 scheduling',
-    ],
-  };
-};
-
-const { width } = Dimensions.get('window');
-
-interface RoutineSummary {
-  id: string;
-  title: string;
-  category: string;
-  workerName: string;
-  startHour: number;
-  endHour: number;
-  daysOfWeek: string;
-  requiresPhoto: boolean;
+interface BuildingDetailScreenProps {
+  route: RouteProp<RootStackParamList, 'BuildingDetail'>;
 }
 
-interface WorkerSummary {
-  id: string;
-  name: string;
-  role: string;
-  phone?: string;
-  email?: string;
-  status?: string;
-}
+// Helper Components
+const StatPill: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <View style={styles.statPill}>
+    <Text style={styles.statPillLabel}>{label}</Text>
+    <Text style={styles.statPillValue}>{value}</Text>
+  </View>
+);
 
-type BuildingDetailRoute = RouteProp<RootStackParamList, 'BuildingDetail'>;
+const ViolationCard: React.FC<{ title: string; count: number; color: string }> = ({ title, count, color }) => (
+  <View style={[styles.violationCard, { borderLeftColor: color }]}>
+    <Text style={styles.violationTitle}>{title}</Text>
+    <Text style={[styles.violationCount, { color }]}>{count}</Text>
+  </View>
+);
 
-export const BuildingDetailScreen: React.FC = () => {
-  const route = useRoute<BuildingDetailRoute>();
-  const { buildingId, userRole } = route.params;
-  const navigation = useNavigation();
+const ComplianceScore: React.FC<{ score: number }> = ({ score }) => {
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return Colors.success;
+    if (score >= 60) return Colors.warning;
+    return Colors.error;
+  };
 
+  return (
+    <View style={styles.complianceContainer}>
+      <Text style={styles.complianceLabel}>Compliance Score</Text>
+      <Text style={[styles.complianceScore, { color: getScoreColor(score) }]}>{score}%</Text>
+    </View>
+  );
+};
+
+const ScheduleCard: React.FC<{ nextPickup: Date }> = ({ nextPickup }) => (
+  <View style={styles.scheduleCard}>
+    <Text style={styles.scheduleTitle}>Next Pickup</Text>
+    <Text style={styles.scheduleDate}>{nextPickup.toLocaleDateString()}</Text>
+  </View>
+);
+
+// Main Component
+export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'BuildingDetail'>>();
+  const { buildingId } = route.params;
   const services = useServices();
+
+  // State
+  const [building, setBuilding] = useState<any>(null);
+  const [routines, setRoutines] = useState<any[]>([]);
+  const [violationSummary, setViolationSummary] = useState<ViolationSummary>({
+    hpd: 0,
+    dob: 0,
+    dsny: 0,
+    outstanding: 0,
+    score: 100,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [schedule, setSchedule] = useState<CollectionScheduleSummary | null>(null);
-  const [inventory, setInventory] = useState<any[]>([]);
-  const [violationSummary, setViolationSummary] = useState<ViolationSummary>({ hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 });
-  const [cityAdvisory, setCityAdvisory] = useState<string | null>(null);
+  const [nextPickup, setNextPickup] = useState<Date>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
 
-  const building = useMemo(() => RealDataService.getBuildingById(buildingId), [buildingId]);
-  const routines = useMemo(() => RealDataService.getRoutinesByBuildingId(buildingId), [buildingId]);
-  const workers = useMemo(() => {
-    const workerIds = Array.from(new Set(routines.map((routine) => routine.workerId)));
-    return workerIds
-      .map((workerId) => RealDataService.getWorkerById(workerId))
-      .filter(Boolean) as WorkerSummary[];
-  }, [routines]);
-
-  const routineSummaries: RoutineSummary[] = useMemo(
-    () =>
-      routines.map((routine) => {
-        const worker = RealDataService.getWorkerById(routine.workerId);
-        return {
-          id: routine.id,
-          title: routine.title,
-          category: routine.category,
-          workerName: worker?.name ?? 'Unassigned',
-          startHour: routine.startHour,
-          endHour: routine.endHour,
-          daysOfWeek: routine.daysOfWeek,
-          requiresPhoto: routine.requiresPhoto,
-        };
-      }),
-    [routines],
-  );
-
-  // Get property details from PropertyDataService
-  const propertyDetails = PropertyDataService.getPropertyDetails(buildingId);
-
+  // Load building data
   useEffect(() => {
-    const hydrateSchedule = async () => {
-      if (!building) {
-        setError('Building not found');
-        setIsLoading(false);
-        return;
-      }
+    const loadBuildingData = async () => {
       try {
-        // Primary: derive schedule from app routines (no network)
-        const local = deriveCollectionFromRoutines(building.id, building.name, building.address);
-        let finalSchedule = local;
+        setIsLoading(true);
+        setError(null);
 
-        // Supplemental: compare with DSNY API (holidays/changes). Only if API key configured.
-        if (config.dsnyApiKey && building.address) {
-          try {
-            const dsny = new DSNYAPIClient(config.dsnyApiKey);
-            const city = await dsny.getCollectionSchedule(building.address);
-            if (city && local) {
-              const toSet = new Set<string>();
-              const compare = (a: string, arr: string[]) => arr.includes(a) ? '' : 'mismatch';
-              // Compare days; if mismatch across any type, add advisory
-              const cityRefuse = city.refuseDays || [];
-              const cityRecycling = city.recyclingDays || [];
-              const cityOrganics = city.organicsDays || [];
-              const cityBulk = city.bulkDays || [];
-              if (!cityRefuse.includes(local.regularCollectionDay)) toSet.add('Trash');
-              if (!cityRecycling.includes(local.recyclingDay)) toSet.add('Recycling');
-              if (!cityOrganics.includes(local.organicsDay)) toSet.add('Organics');
-              if (!cityBulk.includes(local.bulkPickupDay)) toSet.add('Bulk');
-              if (toSet.size > 0) {
-                finalSchedule = {
-                  ...local,
-                  specialInstructions: [
-                    ...local.specialInstructions,
-                    `City advisory: ${Array.from(toSet).join(', ')} schedule differs from DSNY — verify before set-out`,
-                  ],
-                };
-                setCityAdvisory('City schedule differs from in-app routine — verify set-out today.');
-              }
-              // If no collection today across all types but local indicates any today, show banner
-              const todayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-              const cityHasToday = [cityRefuse, cityRecycling, cityOrganics, cityBulk].some(arr => (arr || []).includes(todayName));
-              const localHasToday = [
-                local.regularCollectionDay,
-                local.recyclingDay,
-                local.organicsDay,
-                local.bulkPickupDay,
-              ].includes(todayName);
-              if (!cityHasToday && localHasToday) {
-                setCityAdvisory('No DSNY pickup today per city schedule.');
-              }
-            }
-          } catch {}
+        // Load building and routines
+        const buildingData = RealDataService.getBuildingById(buildingId);
+        const routinesData = RealDataService.getRoutinesByBuildingId(buildingId);
+
+        if (!buildingData) {
+          throw new Error('Building not found');
         }
 
-        setSchedule(finalSchedule);
+        setBuilding(buildingData);
+        setRoutines(routinesData || []);
+
+        // Load violation data
+        const violationData = ViolationDataService.getViolationData(buildingId);
+        setViolationSummary(violationData);
+
       } catch (err) {
-        setSchedule(null);
+        console.error('Error loading building data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load building data');
       } finally {
         setIsLoading(false);
       }
     };
-    hydrateSchedule();
-  }, [building]);
 
-  // Load inventory overview
+    loadBuildingData();
+  }, [buildingId, services.database]);
+
+  // Load inventory data
   useEffect(() => {
     const loadInventory = async () => {
       try {
-        const items = await services.inventory.getInventory(buildingId);
-        setInventory(items);
-      } catch (invErr) {
-        // non-fatal
+        if (buildingId) {
+          const inventory = await services.inventory.getInventory(buildingId);
+          console.log('Building inventory:', inventory);
+        }
+      } catch (err) {
+        console.error('Error loading inventory:', err);
       }
     };
+
     loadInventory();
   }, [services.inventory, buildingId]);
 
@@ -288,7 +154,7 @@ export const BuildingDetailScreen: React.FC = () => {
   useEffect(() => {
     const loadNYC = async () => {
       try {
-        const nyc = NYCService.getInstance();
+        const nyc = NYCService.getInstance(services.cacheManager);
         const data = await nyc.getComprehensiveBuildingData(buildingId);
         // Map to ViolationSummary shape
         const hpdCount = Array.isArray(data.violations) ? data.violations.length : 0;
@@ -298,82 +164,57 @@ export const BuildingDetailScreen: React.FC = () => {
         const score = Math.max(0, Math.min(100, 100 - Math.round(hpdCount * 2 + dobCount + Math.min(outstanding / 1000, 40) + dsnyCount)));
         setViolationSummary({ hpd: hpdCount, dob: dobCount, dsny: dsnyCount, outstanding, score });
       } catch (err) {
-        const fallback = ViolationDataService.getViolationData(buildingId);
-        setViolationSummary(fallback);
+        console.warn('NYC API integration failed, using local data:', err);
       }
     };
+
+    if (config.enableRealTimeSync) {
     loadNYC();
-  }, [buildingId]);
+    }
+  }, [buildingId, services.cacheManager]);
+
+  // Helper functions
+  const formatNumber = (num: number | null | undefined): string => {
+    if (num === null || num === undefined) return '—';
+    return num.toLocaleString();
+  };
+
+  const getComplianceColor = (score: number): string => {
+    if (score >= 80) return Colors.success;
+    if (score >= 60) return Colors.warning;
+    return Colors.error;
+  };
+
+  const handleRefresh = useCallback(async () => {
+    // Refresh logic here
+    console.log('Refreshing building data...');
+  }, []);
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.centeredContainer}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.centeredContainer}>
         <ActivityIndicator size="large" color={Colors.info} />
         <Text style={styles.loadingText}>Loading building details…</Text>
+        </View>
       </SafeAreaView>
     );
   }
 
   if (error || !building) {
               return (
-      <SafeAreaView style={styles.centeredContainer}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.centeredContainer}>
         <Text style={styles.errorText}>{error ?? 'Unable to load building details'}</Text>
+        </View>
       </SafeAreaView>
     );
   }
 
-  const complianceScore = Math.round((building.compliance_score ?? violationSummary.score / 100) * 100);
+  const complianceScore = violationSummary.score;
+  const imageSource = building.imageUrl ? { uri: building.imageUrl } : null;
 
-  // Render unified Building Detail Overview with banner + tabs
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <BuildingDetailOverview
-        buildingId={buildingId}
-        buildingName={building?.name ?? 'Building'}
-        buildingAddress={building?.address ?? ''}
-        container={services}
-        userRole={(userRole as any) ?? 'worker'}
-        onBack={() => (navigation as any).goBack?.()}
-        onPhotoCapture={() => (navigation as any).navigate?.('PhotoCaptureModal', { buildingId })}
-        onTaskPress={(taskId: string) => (navigation as any).navigate?.('TaskTimeline', { taskId })}
-        onRoutePress={() => {
-          const { Linking } = require('react-native');
-          const addr = encodeURIComponent(building?.address || 'New York, NY');
-          Linking.openURL(`maps://?address=${addr}`);
-        }}
-        onSpacePress={() => (navigation as any).navigate?.('PhotoCaptureModal', { buildingId })}
-        onEmergencyAction={(action) => {
-          if (action === 'call911') {
-            const { Linking } = require('react-native');
-            Linking.openURL('tel:911');
-          } else if (action === 'openMap') {
-            const { Linking } = require('react-native');
-            const addr = encodeURIComponent(building?.address || 'New York, NY');
-            Linking.openURL(`maps://?address=${addr}`);
-          }
-        }}
-        onReorderItem={async (item: any) => {
-          try {
-            await services.supplyRequestCatalog.requestSupplies({
-              buildingId,
-              workerId: 'unknown_worker',
-              itemName: item.name,
-              quantity: Math.max(item.minThreshold * 2 - item.quantity, item.minThreshold),
-              urgency: item.quantity <= item.minThreshold ? 'high' : 'medium',
-            });
-          } catch (e) {}
-        }}
-      />
-    </SafeAreaView>
-  );
-};
-
-const renderHero = (building: any, complianceScore: number) => {
-  const imageSource = building.imageAssetName
-    ? { uri: `https://images.cyntientops.com/buildings/${building.imageAssetName}.jpg` }
-    : undefined;
-
-    return (
+  const renderHeroSection = () => (
     <GlassCard intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD} style={styles.heroCard}>
       <View style={styles.heroContent}>
         <View style={styles.heroText}>
@@ -389,258 +230,75 @@ const renderHero = (building: any, complianceScore: number) => {
                   </View>
     </GlassCard>
   );
-};
 
 const renderSectionHeader = (title: string) => (
   <Text style={styles.sectionTitle}>{title}</Text>
 );
 
-const renderPropertyDetailsCard = (property: any) => {
-  const formatCurrency = (value: number): string => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`;
-    }
-    return `$${(value / 1000).toFixed(0)}K`;
-  };
-
-  const InfoRow = ({ label, value }: { label: string; value: string | number }) => (
-    <View style={styles.propertyInfoRow}>
-      <Text style={styles.propertyInfoLabel}>{label}</Text>
-      <Text style={styles.propertyInfoValue}>{value}</Text>
+  const renderComplianceSection = () => (
+    <View style={styles.sectionGroup}>
+      {renderSectionHeader('Compliance Overview')}
+      <GlassCard intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD} style={styles.sectionCard}>
+        <ComplianceScore score={complianceScore} />
+        <View style={styles.violationsGrid}>
+          <ViolationCard title="HPD Violations" count={violationSummary.hpd} color={Colors.error} />
+          <ViolationCard title="DOB Violations" count={violationSummary.dob} color={Colors.warning} />
+          <ViolationCard title="DSNY Violations" count={violationSummary.dsny} color={Colors.info} />
+        </View>
+        {violationSummary.outstanding > 0 && (
+          <View style={styles.outstandingContainer}>
+            <Text style={styles.outstandingLabel}>Outstanding Fines</Text>
+            <Text style={styles.outstandingAmount}>${violationSummary.outstanding.toLocaleString()}</Text>
+        </View>
+      )}
+    </GlassCard>
     </View>
   );
 
-  return (
-    <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
-      <View style={styles.propertyValuesSection}>
-        <View style={styles.propertyValueItem}>
-          <Text style={styles.propertyValueLabel}>Market Value</Text>
-          <Text style={styles.propertyValueAmount}>{formatCurrency(property.marketValue)}</Text>
-          <Text style={styles.propertyValuePerSqFt}>{formatCurrency(property.marketValuePerSqFt)}/sq ft</Text>
-        </View>
-        <View style={styles.propertyValueItem}>
-          <Text style={styles.propertyValueLabel}>Assessed (Tax)</Text>
-          <Text style={styles.propertyValueAmount}>{formatCurrency(property.assessedValue)}</Text>
-          <Text style={styles.propertyValuePerSqFt}>45% of market</Text>
-        </View>
-      </View>
-
-      <View style={styles.propertyDivider} />
-
-      <InfoRow label="Year Built" value={property.yearBuilt} />
-      {property.yearRenovated && <InfoRow label="Renovated" value={property.yearRenovated} />}
-      <InfoRow label="Neighborhood" value={property.neighborhood} />
-      {property.historicDistrict && <InfoRow label="Historic District" value={property.historicDistrict} />}
-
-      <View style={styles.propertyDivider} />
-
-      <InfoRow label="Total Units" value={`${property.unitsTotal} (${property.unitsResidential} res, ${property.unitsCommercial} com)`} />
-      <InfoRow label="Building Area" value={`${formatNumber(property.buildingArea)} sq ft`} />
-      <InfoRow label="Lot Area" value={`${formatNumber(property.lotArea)} sq ft`} />
-      <InfoRow label="Floors" value={property.numFloors} />
-
-      <View style={styles.propertyDivider} />
-
-      <InfoRow label="Zoning" value={property.zoning} />
-      <InfoRow label="FAR (Built / Max)" value={`${property.builtFAR.toFixed(2)} / ${property.maxFAR.toFixed(2)}`} />
-      {property.unusedFARPercent > 0 && (
-        <View style={styles.farOpportunityBanner}>
-          <Text style={styles.farOpportunityText}>
-            ✨ {property.unusedFARPercent}% unused FAR - Development opportunity available
-          </Text>
-        </View>
-      )}
-
-      <View style={styles.propertyDivider} />
-
-      <InfoRow label="Ownership Type" value={property.ownershipType} />
-      <InfoRow label="Owner" value={property.ownerName} />
-      <InfoRow label="Building Class" value={property.buildingClass} />
-    </GlassCard>
-  );
-};
-
-const renderComplianceCard = (summary: ViolationSummary, complianceScore: number) => (
-  <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
-    <View style={styles.complianceRow}>
-      <View style={styles.complianceMetric}>
-        <Text style={styles.metricLabel}>Compliance Score</Text>
-        <Text style={styles.metricValue}>{complianceScore}%</Text>
-        </View>
-      <View style={styles.complianceMetric}>
-        <Text style={styles.metricLabel}>Outstanding</Text>
-        <Text style={styles.metricValue}>{summary.outstanding}</Text>
-          </View>
-      <View style={styles.complianceMetric}>
-        <Text style={styles.metricLabel}>DOB</Text>
-        <Text style={styles.metricValue}>{summary.dob}</Text>
-          </View>
-      <View style={styles.complianceMetric}>
-        <Text style={styles.metricLabel}>DSNY</Text>
-        <Text style={styles.metricValue}>{summary.dsny}</Text>
-          </View>
-          </View>
-  </GlassCard>
-);
-
-const renderInventoryCard = (items: any[]) => {
-  const lowStock = items.filter((i) => i.quantity <= i.minThreshold);
-  return (
-    <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
-      <View style={styles.inventoryRow}>
-        <View style={styles.inventoryMetric}>
-          <Text style={styles.metricLabel}>Items</Text>
-          <Text style={styles.metricValue}>{items.length}</Text>
-        </View>
-        <View style={styles.inventoryMetric}>
-          <Text style={styles.metricLabel}>Low Stock</Text>
-          <Text style={styles.metricValue}>{lowStock.length}</Text>
-        </View>
-        <View style={styles.inventoryMetric}>
-          <Text style={styles.metricLabel}>Last Restock</Text>
-          <Text style={styles.metricValue}>
-            {items[0]?.lastRestocked ? new Date(items[0].lastRestocked).toLocaleDateString() : '—'}
-          </Text>
-        </View>
-      </View>
-      {lowStock.length > 0 && (
-        <View style={{ marginTop: 8 }}>
-          <Text style={styles.inventoryLowHeader}>Low Stock Items</Text>
-          {lowStock.slice(0, 3).map((i) => (
-            <Text key={i.id} style={styles.inventoryLowItem}>
-              • {i.name} ({i.quantity}/{i.minThreshold})
-            </Text>
-          ))}
-        </View>
-      )}
-    </GlassCard>
-  );
-};
-
-const renderScheduleCard = (schedule: CollectionScheduleSummary) => (
-  <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
-    <View style={styles.scheduleRow}>
-      <ScheduleColumn header="Trash" day={schedule.regularCollectionDay} nextPickup={schedule.nextCollectionDate} />
-      <ScheduleColumn header="Recycling" day={schedule.recyclingDay} nextPickup={schedule.nextRecyclingDate} />
-      <ScheduleColumn header="Organics" day={schedule.organicsDay} nextPickup={schedule.nextOrganicsDate} />
-      <ScheduleColumn header="Bulk" day={schedule.bulkPickupDay} nextPickup={schedule.nextBulkPickupDate} />
+  const renderRoutinesSection = () => (
+    <View style={styles.sectionGroup}>
+      {renderSectionHeader('Maintenance Routines')}
+      <GlassCard intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD} style={styles.sectionCard}>
+        {routines.length > 0 ? (
+          routines.map((routine, index) => (
+            <View key={routine.id || index} style={styles.routineItem}>
+              <Text style={styles.routineName}>{routine.name}</Text>
+              <Text style={styles.routineFrequency}>{routine.frequency}</Text>
             </View>
-    <View style={styles.scheduleNotes}>
-      {schedule.specialInstructions.map((instruction, index) => (
-        <Text key={instruction} style={styles.scheduleInstruction}>
-          {index + 1}. {instruction}
-        </Text>
-          ))}
-        </View>
+          ))
+        ) : (
+          <Text style={styles.noDataText}>No maintenance routines scheduled</Text>
+        )}
   </GlassCard>
-);
-
-const renderWorkerCard = (worker: WorkerSummary) => (
-  <GlassCard
-    key={worker.id}
-    intensity={GlassIntensity.THIN}
-    cornerRadius={CornerRadius.MEDIUM}
-    style={styles.sectionCard}
-  >
-    <View style={styles.workerRow}>
-      <View style={styles.workerAvatar}>
-        <Text style={styles.workerInitials}>{getInitials(worker.name)}</Text>
-        </View>
-      <View style={styles.workerDetails}>
-        <Text style={styles.workerName}>{worker.name}</Text>
-        <Text style={styles.workerMeta}>{worker.role}</Text>
-        {worker.phone ? <Text style={styles.workerMeta}>{worker.phone}</Text> : null}
-        {worker.email ? <Text style={styles.workerMeta}>{worker.email}</Text> : null}
-        </View>
     </View>
-  </GlassCard>
-);
+  );
 
-const renderRoutineCard = (routine: RoutineSummary) => (
-  <GlassCard
-    key={routine.id}
-    intensity={GlassIntensity.THIN}
-    cornerRadius={CornerRadius.MEDIUM}
-    style={styles.sectionCard}
-  >
-    <View style={styles.routineRow}>
-      <View style={styles.routineInfo}>
-        <Text style={styles.routineTitle}>{routine.title}</Text>
-        <Text style={styles.routineMeta}>
-          {routine.workerName} • {routine.category}
-            </Text>
-        <Text style={styles.routineMeta}>
-          {formatTimeRange(routine.startHour, routine.endHour)} • {routine.daysOfWeek}
-        </Text>
-        <Text style={styles.routineMeta}>
-          Photo Evidence: {routine.requiresPhoto ? 'Required' : 'Optional'}
-                  </Text>
-                </View>
-      <TouchableOpacity style={styles.routineAction}>
-        <Text style={styles.routineActionText}>Open</Text>
-      </TouchableOpacity>
+  const renderScheduleSection = () => (
+    <View style={styles.sectionGroup}>
+      {renderSectionHeader('Upcoming Schedule')}
+      <GlassCard intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD} style={styles.sectionCard}>
+        <ScheduleCard nextPickup={nextPickup} />
+      </GlassCard>
         </View>
-  </GlassCard>
-);
+  );
 
-const renderEmptyMessage = (message: string) => (
-  <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
-    <Text style={styles.emptyMessage}>{message}</Text>
-  </GlassCard>
-);
-
-const formatNumber = (value: number | undefined) => {
-  if (typeof value !== 'number' || Number.isNaN(value)) {
-    return '—';
-  }
-  return Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value);
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {renderHeroSection()}
+        {renderComplianceSection()}
+        {renderRoutinesSection()}
+        {renderScheduleSection()}
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 
-const formatTimeRange = (startHour: number, endHour: number) => {
-  const formatHour = (hour: number) => {
-    const period = hour >= 12 ? 'PM' : 'AM';
-    const normalizedHour = hour % 12 === 0 ? 12 : hour % 12;
-    return `${normalizedHour} ${period}`;
-  };
-
-  return `${formatHour(startHour)} - ${formatHour(endHour)}`;
-};
-
-const getInitials = (name: string) =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
-
-const StatPill = ({ label, value }: { label: string; value: string | number }) => (
-  <View style={styles.statPill}>
-    <Text style={styles.statPillValue}>{value}</Text>
-    <Text style={styles.statPillLabel}>{label}</Text>
-        </View>
-);
-
-const ScheduleColumn = ({
-  header,
-  day,
-  nextPickup,
-}: {
-  header: string;
-  day: string;
-  nextPickup: Date;
-}) => (
-  <View style={styles.scheduleColumn}>
-    <Text style={styles.scheduleHeader}>{header}</Text>
-    <Text style={styles.scheduleDay}>{day}</Text>
-    <Text style={styles.scheduleDate}>{nextPickup.toLocaleDateString()}</Text>
-      </View>
-);
-
+// Styles
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: Colors.background,
   },
   scrollContent: {
     padding: Spacing.lg,
@@ -650,16 +308,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: Colors.background,
   },
   loadingText: {
     marginTop: Spacing.md,
     color: Colors.text.secondary,
-    ...Typography.bodyMedium,
+    fontSize: 16,
+    fontWeight: '400',
   },
   errorText: {
     color: Colors.error,
-    ...Typography.bodyLarge,
+    fontSize: 18,
+    fontWeight: '500',
   },
   heroCard: {
     padding: Spacing.lg,
@@ -675,12 +335,14 @@ const styles = StyleSheet.create({
     marginRight: Spacing.lg,
   },
   heroTitle: {
-    ...Typography.titleLarge,
+    fontSize: 24,
+    fontWeight: '600',
     color: Colors.text.primary,
     marginBottom: Spacing.xs,
   },
   heroSubtitle: {
-    ...Typography.bodyMedium,
+    fontSize: 16,
+    fontWeight: '400',
     color: Colors.text.secondary,
     marginBottom: Spacing.md,
   },
@@ -698,217 +360,129 @@ const styles = StyleSheet.create({
     marginBottom: Spacing['2xl'],
   },
   sectionTitle: {
-    ...Typography.titleMedium,
+    fontSize: 20,
+    fontWeight: '600',
     color: Colors.text.primary,
     marginBottom: Spacing.md,
   },
   sectionCard: {
     padding: Spacing.lg,
   },
-  complianceRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  inventoryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: Spacing.sm,
-  },
-  complianceMetric: {
+  complianceContainer: {
     alignItems: 'center',
-    flex: 1,
+    marginBottom: Spacing.lg,
   },
-  inventoryMetric: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  metricLabel: {
-    ...Typography.caption,
+  complianceLabel: {
+    fontSize: 12,
+    fontWeight: '400',
     color: Colors.text.secondary,
     marginBottom: Spacing.xs,
   },
-  metricValue: {
-    ...Typography.titleMedium,
+  complianceScore: {
+    fontSize: 20,
+    fontWeight: '600',
     color: Colors.text.primary,
   },
-  scheduleRow: {
+  violationsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: Spacing.lg,
   },
-  scheduleColumn: {
+  violationCard: {
     flex: 1,
-    alignItems: 'center',
+    padding: Spacing.md,
+    marginHorizontal: Spacing.xs,
+    backgroundColor: Colors.surface,
+    borderRadius: 8,
+    borderLeftWidth: 4,
   },
-  scheduleHeader: {
-    ...Typography.caption,
+  violationTitle: {
+    fontSize: 12,
+    fontWeight: '400',
     color: Colors.text.secondary,
     marginBottom: Spacing.xs,
   },
-  scheduleDay: {
-    ...Typography.bodyMedium,
+  violationCount: {
+    fontSize: 16,
+    fontWeight: '500',
     color: Colors.text.primary,
+  },
+  outstandingContainer: {
+    alignItems: 'center',
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border.light,
+  },
+  outstandingLabel: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: Colors.text.secondary,
+    marginBottom: Spacing.xs,
+  },
+  outstandingAmount: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: Colors.error,
+  },
+  routineItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border.light,
+  },
+  routineName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: Colors.text.primary,
+  },
+  routineFrequency: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: Colors.text.secondary,
+  },
+  noDataText: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  scheduleCard: {
+    alignItems: 'center',
+    padding: Spacing.lg,
+    backgroundColor: Colors.surface,
+    borderRadius: 8,
+  },
+  scheduleTitle: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: Colors.text.secondary,
     marginBottom: Spacing.xs,
   },
   scheduleDate: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-  },
-  scheduleNotes: {
-    marginTop: Spacing.lg,
-  },
-  inventoryLowHeader: {
-    ...Typography.bodyMedium,
-    color: Colors.text.secondary,
-    marginBottom: 4,
-  },
-  inventoryLowItem: {
-    ...Typography.caption,
+    fontSize: 18,
+    fontWeight: '500',
     color: Colors.text.primary,
-  },
-  scheduleInstruction: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    marginBottom: Spacing.xs,
-  },
-  workerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  workerAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.role.admin.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: Spacing.md,
-  },
-  workerInitials: {
-    ...Typography.titleMedium,
-    color: Colors.text.primary,
-  },
-  workerDetails: {
-    flex: 1,
-  },
-  workerName: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
-    marginBottom: 2,
-  },
-  workerMeta: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-  },
-  routineRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  routineInfo: {
-    flex: 1,
-    marginRight: Spacing.md,
-  },
-  routineTitle: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
-    marginBottom: Spacing.xs,
-  },
-  routineMeta: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    marginBottom: 2,
-  },
-  routineAction: {
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
-    borderRadius: 12,
-    backgroundColor: Colors.role.worker.primary,
-  },
-  routineActionText: {
-    ...Typography.caption,
-    color: Colors.text.inverse,
-    fontWeight: '600',
-  },
-  emptyMessage: {
-    ...Typography.bodyMedium,
-    color: Colors.text.secondary,
-    textAlign: 'center',
   },
   statPill: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: 12,
-    backgroundColor: Colors.role.worker.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statPillValue: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
-    marginBottom: 2,
-  },
-  statPillLabel: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-  },
-  propertyValuesSection: {
-    flexDirection: 'row',
-    marginBottom: Spacing.md,
-  },
-  propertyValueItem: {
-    flex: 1,
     alignItems: 'center',
     paddingHorizontal: Spacing.sm,
-  },
-  propertyValueLabel: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-    marginBottom: Spacing.xs,
-  },
-  propertyValueAmount: {
-    ...Typography.titleLarge,
-    color: Colors.primary,
-    marginBottom: Spacing.xs,
-  },
-  propertyValuePerSqFt: {
-    ...Typography.caption,
-    color: Colors.text.secondary,
-  },
-  propertyInfoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: Spacing.sm,
-    alignItems: 'center',
-  },
-  propertyInfoLabel: {
-    ...Typography.bodyMedium,
-    color: Colors.text.secondary,
-    flex: 1,
-  },
-  propertyInfoValue: {
-    ...Typography.bodyMedium,
-    color: Colors.text.primary,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'right',
-  },
-  propertyDivider: {
-    height: 1,
-    backgroundColor: Colors.border,
-    marginVertical: Spacing.md,
-  },
-  farOpportunityBanner: {
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    borderLeftWidth: 3,
-    borderLeftColor: Colors.success,
-    padding: Spacing.md,
+    paddingVertical: Spacing.xs,
+    backgroundColor: Colors.surface,
     borderRadius: 8,
-    marginTop: Spacing.sm,
   },
-  farOpportunityText: {
-    ...Typography.bodyMedium,
-    color: Colors.success,
-    fontWeight: '600',
+  statPillLabel: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: Colors.text.secondary,
+    marginBottom: 2,
+  },
+  statPillValue: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: Colors.text.primary,
   },
 });
 

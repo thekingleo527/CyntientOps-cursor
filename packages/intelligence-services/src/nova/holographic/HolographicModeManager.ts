@@ -16,6 +16,17 @@
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Audio } from 'expo-av';
+import { Logger } from '@cyntientops/business-core';
+
+// Global type declarations
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+}
 
 export interface HolographicMode {
   id: string;
@@ -108,7 +119,7 @@ export class HolographicModeManager {
   private activeTransitions: Map<string, ModeTransition> = new Map();
   private soundCache: Map<string, Audio.Sound> = new Map();
   private statePersistenceKey: string = 'holographic_mode_state';
-  private autoSaveInterval: NodeJS.Timeout | null = null;
+  private autoSaveInterval: any = null;
 
   // Event callbacks
   private onModeActivatedCallback?: (mode: HolographicMode) => void;
@@ -463,7 +474,7 @@ export class HolographicModeManager {
       }
 
       if (this.isHolographicModeActive && this.currentMode?.id === modeId) {
-        console.log('⚠️ Holographic mode already active:', modeId);
+        Logger.info('⚠️ Holographic mode already active:', null, 'HolographicModeManager', modeId);
         return true;
       }
 
@@ -493,10 +504,10 @@ export class HolographicModeManager {
         this.onModeSwitchedCallback?.(this.modeHistory[this.modeHistory.length - 2], mode);
       }
 
-      console.log('✅ Holographic mode activated:', modeId);
+      Logger.info('✅ Holographic mode activated:', null, 'HolographicModeManager', modeId);
       return true;
     } catch (error) {
-      console.error('❌ Failed to activate holographic mode:', error);
+      Logger.error('❌ Failed to activate holographic mode:', null, 'HolographicModeManager', error);
       this.onErrorCallback?.(error as Error);
       return false;
     }
@@ -508,7 +519,7 @@ export class HolographicModeManager {
   async deactivateHolographicMode(): Promise<boolean> {
     try {
       if (!this.isHolographicModeActive || !this.currentMode) {
-        console.log('⚠️ No holographic mode to deactivate');
+        Logger.info('⚠️ No holographic mode to deactivate');
         return true;
       }
 
@@ -531,10 +542,10 @@ export class HolographicModeManager {
       // Trigger callbacks
       this.onModeDeactivatedCallback?.(currentMode);
 
-      console.log('✅ Holographic mode deactivated');
+      Logger.info('✅ Holographic mode deactivated');
       return true;
     } catch (error) {
-      console.error('❌ Failed to deactivate holographic mode:', error);
+      Logger.error('❌ Failed to deactivate holographic mode:', null, 'HolographicModeManager', error);
       this.onErrorCallback?.(error as Error);
       return false;
     }
@@ -555,7 +566,7 @@ export class HolographicModeManager {
       }
 
       if (this.currentMode?.id === modeId) {
-        console.log('⚠️ Already in holographic mode:', modeId);
+        Logger.info('⚠️ Already in holographic mode:', null, 'HolographicModeManager', modeId);
         return true;
       }
 
@@ -581,10 +592,10 @@ export class HolographicModeManager {
       // Trigger callbacks
       this.onModeSwitchedCallback?.(previousMode, mode);
 
-      console.log('✅ Switched to holographic mode:', modeId);
+      Logger.info('✅ Switched to holographic mode:', null, 'HolographicModeManager', modeId);
       return true;
     } catch (error) {
-      console.error('❌ Failed to switch holographic mode:', error);
+      Logger.error('❌ Failed to switch holographic mode:', null, 'HolographicModeManager', error);
       this.onErrorCallback?.(error as Error);
       return false;
     }
@@ -703,7 +714,7 @@ export class HolographicModeManager {
         }
       }
     } catch (error) {
-      console.error('❌ Error triggering haptic feedback:', error);
+      Logger.error('❌ Error triggering haptic feedback:', null, 'HolographicModeManager', error);
     }
   }
 
@@ -742,7 +753,7 @@ export class HolographicModeManager {
         }
       }
     } catch (error) {
-      console.error('❌ Error playing sound effects:', error);
+      Logger.error('❌ Error playing sound effects:', null, 'HolographicModeManager', error);
     }
   }
 
@@ -756,11 +767,11 @@ export class HolographicModeManager {
           effect.customFunction();
         } else {
           // Default visual effect implementation
-          console.log(`🎨 Visual effect: ${effect.type} with intensity ${effect.intensity}`);
+          Logger.info(`🎨 Visual effect: ${effect.type} with intensity ${effect.intensity}`);
         }
       }
     } catch (error) {
-      console.error('❌ Error triggering visual effects:', error);
+      Logger.error('❌ Error triggering visual effects:', null, 'HolographicModeManager', error);
     }
   }
 
@@ -774,11 +785,11 @@ export class HolographicModeManager {
           effect.customFunction();
         } else {
           // Default particle effect implementation
-          console.log(`⚡ Particle effect: ${effect.type} with density ${effect.density}`);
+          Logger.info(`⚡ Particle effect: ${effect.type} with density ${effect.density}`);
         }
       }
     } catch (error) {
-      console.error('❌ Error triggering particle effects:', error);
+      Logger.error('❌ Error triggering particle effects:', null, 'HolographicModeManager', error);
     }
   }
 
@@ -791,9 +802,9 @@ export class HolographicModeManager {
 
       // Load from AsyncStorage or similar
       // This is a placeholder implementation
-      console.log('📚 Loading persisted holographic mode state...');
+      Logger.info('📚 Loading persisted holographic mode state...');
     } catch (error) {
-      console.error('❌ Error loading persisted state:', error);
+      Logger.error('❌ Error loading persisted state:', null, 'HolographicModeManager', error);
     }
   }
 
@@ -804,23 +815,23 @@ export class HolographicModeManager {
     try {
       if (!this.config.enableStatePersistence) return;
 
-      const state = {
-        currentMode: this.currentMode?.id || null,
-        isHolographicModeActive: this.isHolographicModeActive,
-        modeHistory: this.modeHistory.map(mode => mode.id),
-        modes: Array.from(this.modes.values()).map(mode => ({
-          id: mode.id,
-          totalActiveTime: mode.totalActiveTime,
-          usageCount: mode.usageCount,
-        })),
-        timestamp: new Date().toISOString(),
-      };
+      // const _state = {
+      //   currentMode: this.currentMode?.id || null,
+      //   isHolographicModeActive: this.isHolographicModeActive,
+      //   modeHistory: this.modeHistory.map(mode => mode.id),
+      //   modes: Array.from(this.modes.values()).map(mode => ({
+      //     id: mode.id,
+      //     totalActiveTime: mode.totalActiveTime,
+      //     usageCount: mode.usageCount,
+      //   })),
+      //   timestamp: new Date().toISOString(),
+      // };
 
       // Save to AsyncStorage or similar
       // This is a placeholder implementation
-      console.log('💾 Saving holographic mode state...');
+      Logger.info('💾 Saving holographic mode state...');
     } catch (error) {
-      console.error('❌ Error saving state:', error);
+      Logger.error('❌ Error saving state:', null, 'HolographicModeManager', error);
     }
   }
 
@@ -931,9 +942,9 @@ export class HolographicModeManager {
         await this.deactivateHolographicMode();
       }
       
-      console.log('🧹 Holographic Mode Manager cleaned up');
+      Logger.info('🧹 Holographic Mode Manager cleaned up');
     } catch (error) {
-      console.error('❌ Error during cleanup:', error);
+      Logger.error('❌ Error during cleanup:', null, 'HolographicModeManager', error);
     }
   }
 }

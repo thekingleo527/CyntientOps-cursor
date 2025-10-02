@@ -1,0 +1,9 @@
+
+Linting "business-core"...
+
+[0m[7m[1m[31m NX [39m[22m[27m[0m  [31mCannot read properties of undefined (reading 'type')[39m
+
+Occurred while linting /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/business-core/src/services/AuditTrailManager.ts:6
+Rule: "@typescript-eslint/no-unused-vars"
+Pass --verbose to see the stacktrace.
+

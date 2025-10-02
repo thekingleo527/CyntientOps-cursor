@@ -20,7 +20,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SecureStorageService } from '@cyntientops/business-core';
 
 // Screens
 import { BuildingDetailScreen } from '../screens/BuildingDetailScreen';
@@ -66,7 +66,7 @@ type AppUser = {
   profile?: WorkerProfile;
 };
 
-const SESSION_TOKEN_STORAGE_KEY = 'cyntientops.session.token';
+const secureStorage = SecureStorageService.getInstance();
 
 interface AppNavigatorProps {
   initialUser?: WorkerProfile;
@@ -101,7 +101,9 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
    */
   const restoreActiveSession = async () => {
     try {
-      const storedToken = await AsyncStorage.getItem(SESSION_TOKEN_STORAGE_KEY);
+      // Use secure storage only (migration complete)
+      const storedToken = await secureStorage.getSessionToken();
+
       if (!storedToken) {
         setIsLoading(false);
         return;
@@ -109,7 +111,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
 
       const validated = await services.sessionManager.validateSession(storedToken);
       if (!validated) {
-        await AsyncStorage.removeItem(SESSION_TOKEN_STORAGE_KEY);
+        await secureStorage.removeSessionToken();
         setIsLoading(false);
         return;
       }
@@ -119,7 +121,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
       setUser(resolveAppUser(validated));
     } catch (error) {
       console.error('Failed to restore session', error);
-      await AsyncStorage.removeItem(SESSION_TOKEN_STORAGE_KEY);
+      await secureStorage.removeSessionToken();
     } finally {
       setIsLoading(false);
     }
@@ -167,7 +169,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
         throw new Error('Unable to create application session');
       }
 
-      await AsyncStorage.setItem(SESSION_TOKEN_STORAGE_KEY, sessionData.sessionToken);
+      await secureStorage.storeSessionToken(sessionData.sessionToken);
       setSession(sessionData);
       setUser(resolveAppUser(sessionData));
     },
@@ -176,13 +178,14 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
 
   const handleLogout = useCallback(async () => {
     try {
-      const token = await AsyncStorage.getItem(SESSION_TOKEN_STORAGE_KEY);
+      const token = await secureStorage.getSessionToken();
       if (token) {
         await services.sessionManager.logout(token);
       }
-      await AsyncStorage.removeItem(SESSION_TOKEN_STORAGE_KEY);
+      await secureStorage.removeSessionToken();
     } catch (err) {
-      // Best-effort logout
+      // Best-effort logout - ensure token is removed even on error
+      await secureStorage.removeSessionToken().catch(() => {});
     } finally {
       setSession(null);
       setUser(null);

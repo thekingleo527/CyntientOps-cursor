@@ -4,6 +4,16 @@
  * Purpose: Single source of truth for all Nova AI functionality
  */
 
+// Type definitions for Node.js globals
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+}
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Animated, Vibration, Platform } from 'react-native';
 import { NovaAIBrainService, NovaPrompt, NovaResponse, NovaContext, NovaInsight, NovaAction } from '@cyntientops/business-core';

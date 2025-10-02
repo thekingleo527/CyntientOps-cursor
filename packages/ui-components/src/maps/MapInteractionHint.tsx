@@ -158,7 +158,7 @@ export const MapInteractionHint: React.FC<MapInteractionHintProps> = ({
           ]).start();
           break;
 
-        case 'slide':
+        case 'slide': {
           const slideValue = direction === 'left' ? -50 : direction === 'right' ? 50 : 0;
           Animated.sequence([
             Animated.timing(slideAnim, {
@@ -172,6 +172,7 @@ export const MapInteractionHint: React.FC<MapInteractionHintProps> = ({
               useNativeDriver: true,
             }),
           ]).start();
+        }
           break;
 
         case 'bounce':
@@ -194,7 +195,7 @@ export const MapInteractionHint: React.FC<MapInteractionHintProps> = ({
           ]).start();
           break;
 
-        case 'pulse':
+        case 'pulse': {
           const pulseLoop = Animated.loop(
             Animated.sequence([
               Animated.timing(pulseAnim, {
@@ -211,6 +212,7 @@ export const MapInteractionHint: React.FC<MapInteractionHintProps> = ({
             { iterations: 3 }
           );
           pulseLoop.start();
+        }
           break;
 
         case 'rotate':

@@ -5,6 +5,7 @@
 
 import { Asset } from 'expo-asset';
 import { Image } from 'react-native';
+import { Logger } from '@cyntientops/business-core';
 
 // Critical assets that should be preloaded
 const CRITICAL_ASSETS = [
@@ -40,9 +41,9 @@ export class AssetOptimizer {
       });
 
       await Promise.all(preloadPromises);
-      console.log('✅ Critical assets preloaded successfully');
+      Logger.info('Critical assets preloaded successfully', undefined, 'AssetOptimizer');
     } catch (error) {
-      console.warn('⚠️ Asset preloading failed:', error);
+      Logger.warn('Asset preloading failed', error, 'AssetOptimizer');
     }
   }
 
@@ -60,11 +61,11 @@ export class AssetOptimizer {
     return new Promise((resolve, reject) => {
       Image.prefetch(uri)
         .then(() => {
-          console.log(`✅ Image preloaded: ${uri}`);
+          Logger.info(`Image preloaded: ${uri}`, undefined, 'AssetOptimizer');
           resolve();
         })
         .catch((error) => {
-          console.warn(`⚠️ Image preload failed: ${uri}`, error);
+          Logger.warn(`Image preload failed: ${uri}`, error, 'AssetOptimizer');
           reject(error);
         });
     });

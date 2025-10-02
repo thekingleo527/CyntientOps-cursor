@@ -5,6 +5,16 @@
 
 import { EventEmitter } from 'events';
 
+// Global type declarations
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+}
+
 export interface GestureData {
   id: string;
   type: 'swipe' | 'pinch' | 'tap' | 'hold' | 'rotate' | 'drag' | 'double-tap' | 'long-press';
@@ -37,7 +47,7 @@ export interface GestureState {
 
 export class HolographicGestureHandler extends EventEmitter {
   private state: GestureState;
-  private recognitionTimeout: NodeJS.Timeout | null = null;
+  private recognitionTimeout: any = null;
   private gestureBuffer: GestureData[] = [];
 
   constructor() {

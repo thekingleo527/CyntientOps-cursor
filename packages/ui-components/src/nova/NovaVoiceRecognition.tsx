@@ -16,6 +16,16 @@
  * Based on SwiftUI voice recognition system (500+ lines)
  */
 
+// Type definitions for Node.js globals
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+}
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,

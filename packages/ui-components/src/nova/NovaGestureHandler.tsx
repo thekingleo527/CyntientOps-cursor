@@ -273,7 +273,7 @@ export const useNovaGestureHandler = (config: Partial<GestureConfig> = {}) => {
         // Continue tracking
         break;
         
-      case State.END:
+      case State.END: {
         lastTranslateX.current += translationX;
         lastTranslateY.current += translationY;
         
@@ -323,6 +323,7 @@ export const useNovaGestureHandler = (config: Partial<GestureConfig> = {}) => {
         
         updateGestureState({ isActive: false, isRecognized: false });
         break;
+      }
         
       case State.CANCELLED:
         updateGestureState({ isActive: false, isRecognized: false });

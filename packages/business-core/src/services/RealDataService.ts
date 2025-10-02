@@ -16,6 +16,19 @@ export class RealDataService {
     return RealDataService.instance;
   }
 
+  // MARK: - Static Methods for convenience
+  static getWorkerById(id: string) {
+    return RealDataService.getInstance().getWorkerById(id);
+  }
+
+  static getBuildingById(id: string) {
+    return RealDataService.getInstance().getBuildingById(id);
+  }
+
+  static getRoutinesByBuildingId(buildingId: string) {
+    return RealDataService.getInstance().getRoutinesByBuildingId(buildingId);
+  }
+
   // MARK: - Workers
   getWorkers() {
     return workers;

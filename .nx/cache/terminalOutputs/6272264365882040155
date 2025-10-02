@@ -1,0 +1,58 @@
+
+Linting "realtime-sync"...
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/realtime-sync/src/WebSocketManager.ts[24m[0m
+[0m   [2m40:15[22m  [31merror[39m    'WebSocket' is not defined    [2mno-undef[22m[0m
+[0m   [2m44:27[22m  [31merror[39m    'NodeJS' is not defined       [2mno-undef[22m[0m
+[0m   [2m45:22[22m  [31merror[39m    'NodeJS' is not defined       [2mno-undef[22m[0m
+[0m   [2m66:65[22m  [31merror[39m    'WebSocket' is not defined    [2mno-undef[22m[0m
+[0m   [2m73:21[22m  [31merror[39m    'WebSocket' is not defined    [2mno-undef[22m[0m
+[0m   [2m76:9[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m   [2m89:11[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m   [2m94:9[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m101:9[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m107:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m139:43[22m  [31merror[39m    'WebSocket' is not defined    [2mno-undef[22m[0m
+[0m  [2m276:55[22m  [31merror[39m    'WebSocket' is not defined    [2mno-undef[22m[0m
+[0m  [2m310:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m314:30[22m  [31merror[39m    'CloseEvent' is not defined   [2mno-undef[22m[0m
+[0m  [2m315:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m321:7[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m327:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/realtime-sync/src/conflicts/ConflictDetector.ts[24m[0m
+[0m  [2m105:5[22m   [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m  [2m190:7[22m   [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m  [2m210:14[22m  [31merror[39m    'error' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m230:14[22m  [31merror[39m    'error' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/realtime-sync/src/conflicts/ConflictResolver.ts[24m[0m
+[0m    [2m9:40[22m  [31merror[39m    'DataRecord' is defined but never used   [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m10:32[22m  [31merror[39m    'MergeResult' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m38:5[22m   [33mwarning[39m  Unexpected console statement             [2mno-console[22m[0m
+[0m  [2m242:5[22m   [33mwarning[39m  Unexpected console statement             [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/realtime-sync/src/conflicts/ThreeWayMerge.ts[24m[0m
+[0m    [2m9:20[22m  [31merror[39m    'DataRecord' is defined but never used            [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m    [2m9:32[22m  [31merror[39m    'ConflictResolution' is defined but never used    [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m49:7[22m   [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m211:11[22m  [31merror[39m    'serverAdded' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/realtime-sync/src/delta/DeltaSyncService.ts[24m[0m
+[0m   [2m33:24[22m  [31merror[39m    'apiBaseUrl' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m38:9[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m   [2m43:9[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m   [2m53:5[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m   [2m58:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m   [2m65:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m   [2m83:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m129:13[22m  [31merror[39m    'response' is assigned a value but never used                                 [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m145:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m167:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m190:9[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m294:5[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m[0m
+[0m[31m[1m✖ 41 problems (17 errors, 24 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 41 problems (17 errors, 24 warnings)
+

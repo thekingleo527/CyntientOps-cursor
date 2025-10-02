@@ -7,7 +7,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard } from '../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { OperationalDataTaskAssignment, TaskUrgency, TaskStatus } from '@cyntientops/domain-schema';
 import { TaskTimelineRow } from './TaskTimelineRow';
 
@@ -79,7 +79,7 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({
           if (!b.due_date) return -1;
           return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
         
-        case 'priority':
+        case 'priority': {
           const priorityOrder: Record<TaskUrgency, number> = {
             emergency: 0,
             critical: 1,
@@ -90,6 +90,7 @@ export const TaskTimelineView: React.FC<TaskTimelineViewProps> = ({
             normal: 6,
           };
           return priorityOrder[a.priority] - priorityOrder[b.priority];
+        }
         
         case 'created_at':
           return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();

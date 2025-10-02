@@ -1,0 +1,48 @@
+
+Linting "testing"...
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/testing/src/EndToEndTestSuite.ts[24m[0m
+[0m   [2m71:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m   [2m90:7[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m121:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m138:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m145:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m159:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m166:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m222:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m268:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m291:13[22m  [31merror[39m    'hasPermission' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m303:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m311:16[22m  [31merror[39m    'error' is defined but never used                   [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m322:16[22m  [31merror[39m    'error' is defined but never used                   [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m334:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m362:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m409:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m460:7[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m464:7[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m475:7[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m489:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m490:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m491:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m492:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m493:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m494:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m495:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m496:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m499:7[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m503:11[22m  [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m507:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m514:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m  [2m516:5[22m   [33mwarning[39m  Unexpected console statement                        [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/testing/src/index.ts[24m[0m
+[0m  [2m17:25[22m  [31merror[39m    'EndToEndTestSuite' is not defined  [2mno-undef[22m[0m
+[0m  [2m23:7[22m   [33mwarning[39m  Unexpected console statement        [2mno-console[22m[0m
+[0m  [2m26:7[22m   [33mwarning[39m  Unexpected console statement        [2mno-console[22m[0m
+[0m  [2m30:5[22m   [33mwarning[39m  Unexpected console statement        [2mno-console[22m[0m
+[0m  [2m38:16[22m  [31merror[39m    'EndToEndTestSuite' is not defined  [2mno-undef[22m[0m
+[0m[0m
+[0m[31m[1m✖ 37 problems (5 errors, 32 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 37 problems (5 errors, 32 warnings)
+

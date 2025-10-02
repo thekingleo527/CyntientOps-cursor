@@ -87,7 +87,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               {this.state.error.message || 'An unexpected error occurred'}
             </Text>
 
-            {__DEV__ && (
+            {process.env.NODE_ENV === 'development' && (
               <ScrollView style={styles.debugContainer}>
                 <Text style={styles.debugTitle}>Debug Info:</Text>
                 <Text style={styles.debugText}>

@@ -5,7 +5,7 @@
  */
 
 import React, { useRef, useEffect, ReactNode } from 'react';
-import { Animated, Easing, Dimensions, PanResponder, GestureResponderEvent, PanResponderGestureState, TouchableOpacity, Platform } from 'react-native';
+import { View, Animated, Easing, Dimensions, PanResponder, GestureResponderEvent, PanResponderGestureState, TouchableOpacity, Platform } from 'react-native';
 import { Colors } from '@cyntientops/design-tokens';
 
 const { width, height } = Dimensions.get('window');
@@ -713,15 +713,17 @@ export const GestureAnimation: React.FC<{
           case 'drag':
             animatedValue.setValue({ x: gestureState.dx, y: gestureState.dy });
             break;
-          case 'pinch':
+          case 'pinch': {
             const distance = Math.sqrt(gestureState.dx * gestureState.dx + gestureState.dy * gestureState.dy);
             const scale = Math.max(0.5, Math.min(2, distance / threshold));
             scaleValue.setValue(scale);
             break;
-          case 'rotate':
+          }
+          case 'rotate': {
             const angle = Math.atan2(gestureState.dy, gestureState.dx) * (180 / Math.PI);
             rotateValue.setValue(angle);
             break;
+          }
         }
 
         const progress = Math.min(1, Math.abs(gestureState.dx) / threshold);

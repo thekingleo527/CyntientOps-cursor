@@ -1,65 +1,21 @@
 {
   "run": {
-    "command": "nx run intelligence-services:build",
-    "startTime": "2025-09-30T02:28:45.084Z",
-    "endTime": "2025-09-30T02:28:46.485Z",
+    "command": "nx run intelligence-services:lint",
+    "startTime": "2025-10-02T22:54:06.871Z",
+    "endTime": "2025-10-02T22:54:56.727Z",
     "inner": false
   },
   "tasks": [
     {
-      "taskId": "domain-schema:build",
-      "target": "build",
-      "projectName": "domain-schema",
-      "hash": "16720350171361800296",
-      "startTime": "2025-09-30T02:28:45.087Z",
-      "endTime": "2025-09-30T02:28:45.604Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "api-clients:build",
-      "target": "build",
-      "projectName": "api-clients",
-      "hash": "18338528298422195737",
-      "startTime": "2025-09-30T02:28:45.087Z",
-      "endTime": "2025-09-30T02:28:45.607Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "data-seed:build",
-      "target": "build",
-      "projectName": "data-seed",
-      "hash": "6328954844819280910",
-      "startTime": "2025-09-30T02:28:45.087Z",
-      "endTime": "2025-09-30T02:28:45.655Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "database:build",
-      "target": "build",
-      "projectName": "database",
-      "hash": "4937395411445785380",
-      "startTime": "2025-09-30T02:28:45.655Z",
-      "endTime": "2025-09-30T02:28:46.050Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "intelligence-services:build",
-      "target": "build",
+      "taskId": "intelligence-services:lint",
+      "target": "lint",
       "projectName": "intelligence-services",
-      "hash": "6192065732275318854",
-      "startTime": "2025-09-30T02:28:46.051Z",
-      "endTime": "2025-09-30T02:28:46.485Z",
+      "hash": "11056689445670424614",
+      "startTime": "2025-10-02T22:54:06.880Z",
+      "endTime": "2025-10-02T22:54:56.727Z",
       "params": "",
       "cacheStatus": "cache-miss",
-      "status": 0
+      "status": 1
     }
   ]
 }

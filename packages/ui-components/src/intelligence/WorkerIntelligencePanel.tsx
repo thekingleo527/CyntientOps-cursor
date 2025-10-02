@@ -98,8 +98,8 @@ export const WorkerIntelligencePanel: React.FC<WorkerIntelligencePanelProps> = (
 
   const initializeRealTimeOrchestrator = async () => {
     try {
-      // Get from ServiceContainer
-      const serviceContainer = ServiceContainer.getInstance();
+      // Get from ServiceContainer (commented out for now)
+      // const serviceContainer = ServiceContainer.getInstance();
       const orchestrator = RealTimeOrchestrator.getInstance();
       setRealTimeOrchestrator(orchestrator);
       
@@ -135,9 +135,9 @@ export const WorkerIntelligencePanel: React.FC<WorkerIntelligencePanelProps> = (
   };
 
   const loadSequences = () => {
-    // Load from RouteManager
-    const serviceContainer = ServiceContainer.getInstance();
-    const routeManager = serviceContainer.routeManager;
+    // Load from RouteManager (commented out for now)
+    // const serviceContainer = ServiceContainer.getInstance();
+    // const routeManager = serviceContainer.routeManager;
     const mockActiveSequences: RouteSequence[] = [
       {
         id: '1',

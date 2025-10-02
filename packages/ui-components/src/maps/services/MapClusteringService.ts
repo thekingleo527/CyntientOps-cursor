@@ -7,6 +7,23 @@
  * Features: Dynamic clustering, zoom-based expansion, performance optimization
  */
 
+// Type definitions for external libraries
+declare global {
+  interface Supercluster {
+    load(features: any[]): void;
+    getClusters(bbox: [number, number, number, number], zoom: number): any[];
+    getClusterExpansionZoom(clusterId: number): number;
+    getClusterLeaves(clusterId: number, limit?: number): any[];
+  }
+  
+  const Supercluster: {
+    new (options?: any): Supercluster;
+  };
+}
+
+// Import Logger
+import { Logger } from '@cyntientops/business-core';
+
 // Mock Supercluster for development
 interface MockSupercluster {
   load(features: any[]): void;

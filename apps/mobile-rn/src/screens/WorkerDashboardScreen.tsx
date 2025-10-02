@@ -16,6 +16,7 @@ import { ServiceContainer, Logger } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
 import { ErrorBoundary } from '@cyntientops/ui-components';
 import { useNavigation } from '@react-navigation/native';
+import config from '../config/app.config';
 
 interface WorkerDashboardScreenProps {
   workerId: string;
@@ -60,11 +61,19 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
           if (t.includes('task') || t.includes('building') || t.includes('clock')) {
             void refreshDashboard();
           }
-        } catch {}
+        } catch (error) {
+          Logger.warn('Error processing realtime update', error, 'WorkerDashboardScreen');
+        }
       });
-    } catch {}
+    } catch (error) {
+      Logger.warn('Failed to setup realtime listener', error, 'WorkerDashboardScreen');
+    }
     return () => {
-      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
+      try {
+        services.realTimeOrchestrator.removeUpdateListener(id);
+      } catch (error) {
+        Logger.warn('Failed to remove realtime listener', error, 'WorkerDashboardScreen');
+      }
     };
   }, [workerId]);
 
@@ -75,7 +84,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
 
       // Initialize all required services
       const databaseManager = DatabaseManager.getInstance({
-        path: 'cyntientops.db'
+        path: config.databasePath
       });
       await databaseManager.initialize();
 
@@ -105,7 +114,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
 
       setViewModel(workerViewModel);
     } catch (err) {
-      Logger.error('Failed to initialize worker dashboard:', undefined, 'WorkerDashboardScreen.tsx');
+      Logger.error('Failed to initialize worker dashboard', err, 'WorkerDashboardScreen');
       setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
     } finally {
       setIsLoading(false);

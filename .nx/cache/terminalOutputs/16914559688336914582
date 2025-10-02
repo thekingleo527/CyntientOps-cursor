@@ -1,0 +1,223 @@
+
+Linting "intelligence-services"...
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/IntelligenceService.ts[24m[0m
+[0m    [2m9:10[22m  [31merror[39m    'WorkerProfile' is defined but never used                                     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m    [2m9:25[22m  [31merror[39m    'Building' is defined but never used                                          [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m    [2m9:35[22m  [31merror[39m    'OperationalDataTaskAssignment' is defined but never used                     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m163:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m196:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m199:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m209:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m242:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m245:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m255:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m280:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m283:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m293:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m326:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m329:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m341:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m374:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m377:7[22m   [33mwarning[39m  Unexpected console statement                                                  [2mno-console[22m[0m
+[0m  [2m385:41[22m  [31merror[39m    'period' is defined but never used. Allowed unused args must match /^_/u      [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m437:39[22m  [31merror[39m    'period' is defined but never used. Allowed unused args must match /^_/u      [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m473:44[22m  [31merror[39m    'period' is defined but never used. Allowed unused args must match /^_/u      [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m522:39[22m  [31merror[39m    'period' is defined but never used. Allowed unused args must match /^_/u      [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m606:23[22m  [31merror[39m    'building' is defined but never used. Allowed unused args must match /^_/u    [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m902:39[22m  [31merror[39m    'buildingId' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/PerformanceMonitor.ts[24m[0m
+[0m  [2m137:7[22m  [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m209:7[22m  [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m283:7[22m  [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m324:7[22m  [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m428:7[22m  [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m445:7[22m  [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m557:5[22m  [31merror[39m    'buildings' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m629:5[22m  [31merror[39m    'buildings' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m698:7[22m  [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/ml/MLEngine.ts[24m[0m
+[0m   [2m35:7[22m   [33mwarning[39m  Unexpected console statement                                             [2mno-console[22m[0m
+[0m   [2m38:7[22m   [33mwarning[39m  Unexpected console statement                                             [2mno-console[22m[0m
+[0m   [2m59:5[22m   [33mwarning[39m  Unexpected console statement                                             [2mno-console[22m[0m
+[0m   [2m62:11[22m  [31merror[39m    'epochs' is assigned a value but never used                              [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m63:11[22m  [31merror[39m    'batchSize' is assigned a value but never used                           [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m64:11[22m  [31merror[39m    'validationSplit' is assigned a value but never used                     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m85:5[22m   [33mwarning[39m  Unexpected console statement                                             [2mno-console[22m[0m
+[0m  [2m126:46[22m  [31merror[39m    'model' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m174:52[22m  [31merror[39m    'model' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m206:7[22m   [33mwarning[39m  Unexpected console statement                                             [2mno-console[22m[0m
+[0m  [2m208:7[22m   [33mwarning[39m  Unexpected console statement                                             [2mno-console[22m[0m
+[0m  [2m226:9[22m   [33mwarning[39m  Unexpected console statement                                             [2mno-console[22m[0m
+[0m  [2m231:7[22m   [33mwarning[39m  Unexpected console statement                                             [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/ml/PredictiveMaintenanceService.ts[24m[0m
+[0m    [2m9:34[22m  [31merror[39m    'Prediction' is defined but never used                                     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m48:5[22m   [33mwarning[39m  Unexpected console statement                                               [2mno-console[22m[0m
+[0m   [2m54:7[22m   [33mwarning[39m  Unexpected console statement                                               [2mno-console[22m[0m
+[0m   [2m58:5[22m   [33mwarning[39m  Unexpected console statement                                               [2mno-console[22m[0m
+[0m   [2m67:5[22m   [33mwarning[39m  Unexpected console statement                                               [2mno-console[22m[0m
+[0m  [2m250:5[22m   [31merror[39m    'factors' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m320:9[22m   [33mwarning[39m  Unexpected console statement                                               [2mno-console[22m[0m
+[0m  [2m334:5[22m   [33mwarning[39m  Unexpected console statement                                               [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/ml/RouteOptimizationService.ts[24m[0m
+[0m   [2m61:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m291:11[22m  [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m  [2m394:5[22m   [33mwarning[39m  Unexpected console statement  [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/ml/ViolationRiskPredictor.ts[24m[0m
+[0m   [2m47:5[22m   [33mwarning[39m  Unexpected console statement                                                              [2mno-console[22m[0m
+[0m   [2m52:7[22m   [33mwarning[39m  Unexpected console statement                                                              [2mno-console[22m[0m
+[0m   [2m56:5[22m   [33mwarning[39m  Unexpected console statement                                                              [2mno-console[22m[0m
+[0m  [2m378:5[22m   [31merror[39m    'buildingData' is defined but never used. Allowed unused args must match /^_/u            [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m437:5[22m   [31merror[39m    'features' is defined but never used. Allowed unused args must match /^_/u                [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m438:5[22m   [31merror[39m    'violationType' is defined but never used. Allowed unused args must match /^_/u           [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m462:48[22m  [31merror[39m    'daysSinceLastViolation' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/nova/holographic/AdvancedHolographicEffects.ts[24m[0m
+[0m   [2m98:23[22m  [31merror[39m  'NodeJS' is not defined                  [2mno-undef[22m[0m
+[0m  [2m426:17[22m  [31merror[39m  'id' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/nova/holographic/HolographicGestureHandler.ts[24m[0m
+[0m  [2m40:31[22m  [31merror[39m  'NodeJS' is not defined  [2mno-undef[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/nova/holographic/HolographicModeManager.ts[24m[0m
+[0m  [2m111:29[22m  [31merror[39m    'NodeJS' is not defined                     [2mno-undef[22m[0m
+[0m  [2m466:9[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m496:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m499:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m511:9[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m534:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m537:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m558:9[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m584:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m587:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m706:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m745:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m759:11[22m  [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m763:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m777:11[22m  [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m781:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m794:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m796:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m807:13[22m  [31merror[39m    'state' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m821:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m823:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m934:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m  [2m936:7[22m   [33mwarning[39m  Unexpected console statement                [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/nova/speech/NovaSpeechRecognizer.ts[24m[0m
+[0m   [2m27:5[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m   [2m33:5[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m140:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m143:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m153:13[22m   [31merror[39m    'audioConfig' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m170:9[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m173:9[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m178:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m204:5[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m220:5[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m227:73[22m   [31merror[39m    'window' is not defined                           [2mno-undef[22m[0m
+[0m  [2m227:109[22m  [31merror[39m    'window' is not defined                           [2mno-undef[22m[0m
+[0m  [2m231:32[22m   [31merror[39m    'window' is not defined                           [2mno-undef[22m[0m
+[0m  [2m231:69[22m   [31merror[39m    'window' is not defined                           [2mno-undef[22m[0m
+[0m  [2m244:5[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m258:9[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m277:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m280:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m304:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m306:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m329:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m331:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m340:5[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m348:5[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m364:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m380:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m396:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m643:5[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m702:45[22m   [31merror[39m    'window' is not defined                           [2mno-undef[22m[0m
+[0m  [2m702:80[22m   [31merror[39m    'window' is not defined                           [2mno-undef[22m[0m
+[0m  [2m740:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m  [2m742:7[22m    [33mwarning[39m  Unexpected console statement                      [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/nova/speech/VoiceWaveformProcessor.ts[24m[0m
+[0m   [2m64:25[22m  [31merror[39m    'AudioContext' is not defined                                                [2mno-undef[22m[0m
+[0m   [2m65:24[22m  [31merror[39m    'MediaStream' is not defined                                                 [2mno-undef[22m[0m
+[0m   [2m66:27[22m  [31merror[39m    'ScriptProcessorNode' is not defined                                         [2mno-undef[22m[0m
+[0m   [2m67:25[22m  [31merror[39m    'AnalyserNode' is not defined                                                [2mno-undef[22m[0m
+[0m   [2m68:21[22m  [31merror[39m    'GainNode' is not defined                                                    [2mno-undef[22m[0m
+[0m   [2m69:22[22m  [31merror[39m    'DynamicsCompressorNode' is not defined                                      [2mno-undef[22m[0m
+[0m  [2m105:9[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m110:28[22m  [31merror[39m    'navigator' is not defined                                                   [2mno-undef[22m[0m
+[0m  [2m123:32[22m  [31merror[39m    'window' is not defined                                                      [2mno-undef[22m[0m
+[0m  [2m123:56[22m  [31merror[39m    'window' is not defined                                                      [2mno-undef[22m[0m
+[0m  [2m164:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m167:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m192:11[22m  [31merror[39m    'requestAnimationFrame' is not defined                                       [2mno-undef[22m[0m
+[0m  [2m197:11[22m  [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m203:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m213:9[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m223:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m226:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m252:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m254:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m262:38[22m  [31merror[39m    'AudioBuffer' is not defined                                                 [2mno-undef[22m[0m
+[0m  [2m285:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m328:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m335:36[22m  [31merror[39m    'audioData' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m335:61[22m  [31merror[39m    'timestamp' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m361:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m401:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m408:58[22m  [31merror[39m    'timestamp' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m445:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m629:30[22m  [31merror[39m    'window' is not defined                                                      [2mno-undef[22m[0m
+[0m  [2m647:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m649:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/intelligence-services/src/nova/speech/WakeWordDetector.ts[24m[0m
+[0m   [2m74:25[22m  [31merror[39m    'AudioContext' is not defined                                                [2mno-undef[22m[0m
+[0m   [2m75:24[22m  [31merror[39m    'MediaStream' is not defined                                                 [2mno-undef[22m[0m
+[0m   [2m76:27[22m  [31merror[39m    'ScriptProcessorNode' is not defined                                         [2mno-undef[22m[0m
+[0m   [2m78:28[22m  [31merror[39m    'NodeJS' is not defined                                                      [2mno-undef[22m[0m
+[0m  [2m142:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m145:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m158:28[22m  [31merror[39m    'navigator' is not defined                                                   [2mno-undef[22m[0m
+[0m  [2m169:32[22m  [31merror[39m    'window' is not defined                                                      [2mno-undef[22m[0m
+[0m  [2m169:56[22m  [31merror[39m    'window' is not defined                                                      [2mno-undef[22m[0m
+[0m  [2m183:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m185:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m201:9[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m213:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m216:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m245:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m247:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m265:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m340:9[22m   [31merror[39m    'totalWords' is never reassigned. Use 'const' instead                        [2mprefer-const[22m[0m
+[0m  [2m399:9[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m405:9[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m419:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m421:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m444:38[22m  [31merror[39m    'AudioBuffer' is not defined                                                 [2mno-undef[22m[0m
+[0m  [2m458:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m476:38[22m  [31merror[39m    'audioData' is defined but never used. Allowed unused args must match /^_/u  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m485:5[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m539:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m542:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m550:60[22m  [31merror[39m    'phrase' is defined but never used. Allowed unused args must match /^_/u     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m565:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m567:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m578:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m580:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m673:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m  [2m675:7[22m   [33mwarning[39m  Unexpected console statement                                                 [2mno-console[22m[0m
+[0m[0m
+[0m[31m[1m✖ 189 problems (60 errors, 129 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[31m[1m  1 error and 0 warnings potentially fixable with the `--fix` option.[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 189 problems (60 errors, 129 warnings)
+
+  1 error and 0 warnings are potentially fixable with the `--fix` option.
+

@@ -13,7 +13,64 @@
  */
 
 import { Platform } from 'react-native';
+import { Logger } from '@cyntientops/business-core';
+
+// Global type declarations
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+  
+  interface AudioContext {
+    createAnalyser(): AnalyserNode;
+    createGain(): GainNode;
+    createScriptProcessor(bufferSize: number, numberOfInputChannels: number, numberOfOutputChannels: number): ScriptProcessorNode;
+  }
+  
+  interface MediaStream {
+    getAudioTracks(): MediaStreamTrack[];
+  }
+  
+  interface ScriptProcessorNode {
+    connect(destination: AudioNode): void;
+    disconnect(): void;
+  }
+  
+  interface AnalyserNode {
+    frequencyBinCount: number;
+    getByteFrequencyData(array: Uint8Array): void;
+  }
+  
+  interface GainNode {
+    gain: AudioParam;
+  }
+  
+  interface AudioBuffer {
+    length: number;
+    duration: number;
+    sampleRate: number;
+    numberOfChannels: number;
+    getChannelData(channel: number): Float32Array;
+  }
+  
+  interface Navigator {
+    mediaDevices: MediaDevices;
+  }
+  
+  interface MediaDevices {
+    getUserMedia(constraints: MediaStreamConstraints): Promise<MediaStream>;
+  }
+  
+  interface Window {
+    AudioContext: typeof AudioContext;
+    webkitAudioContext: typeof AudioContext;
+  }
+}
 import { NovaSpeechRecognizer, SpeechRecognitionResult } from './NovaSpeechRecognizer';
+import { Logger } from '@cyntientops/business-core';
 
 export interface WakeWordConfig {
   wakePhrase: string;
@@ -139,10 +196,10 @@ export class WakeWordDetector {
       }
 
       this.isInitialized = true;
-      console.log('✅ Wake Word Detector initialized successfully');
+      Logger.info('✅ Wake Word Detector initialized successfully');
       return true;
     } catch (error) {
-      console.error('❌ Failed to initialize Wake Word Detector:', error);
+      Logger.error('❌ Failed to initialize Wake Word Detector:', null, 'WakeWordDetector', error);
       return false;
     }
   }
@@ -180,9 +237,9 @@ export class WakeWordDetector {
       source.connect(this.audioProcessor);
       this.audioProcessor.connect(this.audioContext.destination);
 
-      console.log('🌐 Web audio processing initialized');
+      Logger.info('🌐 Web audio processing initialized');
     } catch (error) {
-      console.error('❌ Failed to initialize web audio:', error);
+      Logger.error('❌ Failed to initialize web audio:', null, 'WakeWordDetector', error);
       throw error;
     }
   }
@@ -198,7 +255,7 @@ export class WakeWordDetector {
       }
 
       if (this.isListening) {
-        console.warn('⚠️ Wake word detection already active');
+        Logger.warn('⚠️ Wake word detection already active');
         return true;
       }
 
@@ -210,10 +267,10 @@ export class WakeWordDetector {
 
       this.isListening = true;
       this.onStatusChangeCallback?.('listening');
-      console.log('🎯 Wake word detection started');
+      Logger.info('🎯 Wake word detection started');
       return true;
     } catch (error) {
-      console.error('❌ Failed to start wake word detection:', error);
+      Logger.error('❌ Failed to start wake word detection:', null, 'WakeWordDetector', error);
       this.onErrorCallback?.(error as Error);
       return false;
     }
@@ -242,9 +299,9 @@ export class WakeWordDetector {
 
       this.isListening = false;
       this.onStatusChangeCallback?.('stopped');
-      console.log('🛑 Wake word detection stopped');
+      Logger.info('🛑 Wake word detection stopped');
     } catch (error) {
-      console.error('❌ Failed to stop wake word detection:', error);
+      Logger.error('❌ Failed to stop wake word detection:', null, 'WakeWordDetector', error);
       this.onErrorCallback?.(error as Error);
     }
   }
@@ -262,7 +319,7 @@ export class WakeWordDetector {
         this.handleWakeWordDetected(detection);
       }
     } catch (error) {
-      console.error('❌ Error processing speech result:', error);
+      Logger.error('❌ Error processing speech result:', null, 'WakeWordDetector', error);
     }
   }
 
@@ -337,7 +394,7 @@ export class WakeWordDetector {
     const wakeWords = wakePhrase.split(' ');
     
     let matchCount = 0;
-    let totalWords = Math.max(words.length, wakeWords.length);
+    const totalWords = Math.max(words.length, wakeWords.length);
 
     for (const wakeWord of wakeWords) {
       for (const word of words) {
@@ -396,13 +453,13 @@ export class WakeWordDetector {
     try {
       // Check cooldown period
       if (this.isInCooldown) {
-        console.log('⏳ Wake word detection in cooldown period');
+        Logger.info('⏳ Wake word detection in cooldown period');
         return;
       }
 
       // Check if detection meets confidence threshold
       if (detection.confidence < this.config.confidenceThreshold) {
-        console.log('📉 Wake word confidence too low:', detection.confidence);
+        Logger.info('📉 Wake word confidence too low:', null, 'WakeWordDetector', detection.confidence);
         return;
       }
 
@@ -416,9 +473,9 @@ export class WakeWordDetector {
       // Notify callback
       this.onWakeWordDetectedCallback?.(detection);
 
-      console.log('🎯 Wake word detected:', detection.phrase, 'confidence:', detection.confidence);
+      Logger.info('🎯 Wake word detected:', null, 'WakeWordDetector', detection.phrase, 'confidence:', detection.confidence);
     } catch (error) {
-      console.error('❌ Error handling wake word detection:', error);
+      Logger.error('❌ Error handling wake word detection:', null, 'WakeWordDetector', error);
     }
   }
 
@@ -455,7 +512,7 @@ export class WakeWordDetector {
         this.processAudioForRecognition(channelData);
       }
     } catch (error) {
-      console.error('❌ Error processing audio buffer:', error);
+      Logger.error('❌ Error processing audio buffer:', null, 'WakeWordDetector', error);
     }
   }
 
@@ -473,7 +530,7 @@ export class WakeWordDetector {
   /**
    * Process audio data for speech recognition
    */
-  private processAudioForRecognition(audioData: Float32Array): void {
+  private processAudioForRecognition(_audioData: Float32Array): void {
     // This would integrate with the speech recognizer
     // For now, we rely on the speech recognizer's built-in processing
   }
@@ -482,7 +539,7 @@ export class WakeWordDetector {
    * Handle speech recognition errors
    */
   private handleSpeechError(error: Error): void {
-    console.error('❌ Speech recognition error in wake word detector:', error);
+    Logger.error('❌ Speech recognition error in wake word detector:', null, 'WakeWordDetector', error);
     this.onErrorCallback?.(error);
   }
 
@@ -536,10 +593,10 @@ export class WakeWordDetector {
       // Save to persistent storage
       await this.saveTrainingData();
 
-      console.log('✅ Custom wake word trained successfully:', phrase, 'accuracy:', averageAccuracy);
+      Logger.info('✅ Custom wake word trained successfully:', null, 'WakeWordDetector', phrase, 'accuracy:', averageAccuracy);
       return true;
     } catch (error) {
-      console.error('❌ Failed to train custom wake word:', error);
+      Logger.error('❌ Failed to train custom wake word:', null, 'WakeWordDetector', error);
       return false;
     }
   }
@@ -547,7 +604,7 @@ export class WakeWordDetector {
   /**
    * Process training sample
    */
-  private async processTrainingSample(sample: AudioSample, phrase: string): Promise<number> {
+  private async processTrainingSample(sample: AudioSample, _phrase: string): Promise<number> {
     // Simulate training sample processing with realistic accuracy
     // In a real implementation, this would use machine learning algorithms
     const baseAccuracy = 0.85; // Base accuracy for wake word detection
@@ -562,9 +619,9 @@ export class WakeWordDetector {
     try {
       // Load from AsyncStorage or similar
       // This is a placeholder implementation
-      console.log('📚 Loading custom training data...');
+      Logger.info('📚 Loading custom training data...');
     } catch (error) {
-      console.error('❌ Failed to load training data:', error);
+      Logger.error('❌ Failed to load training data:', null, 'WakeWordDetector', error);
     }
   }
 
@@ -575,9 +632,9 @@ export class WakeWordDetector {
     try {
       // Save to AsyncStorage or similar
       // This is a placeholder implementation
-      console.log('💾 Saving custom training data...');
+      Logger.info('💾 Saving custom training data...');
     } catch (error) {
-      console.error('❌ Failed to save training data:', error);
+      Logger.error('❌ Failed to save training data:', null, 'WakeWordDetector', error);
     }
   }
 
@@ -670,9 +727,9 @@ export class WakeWordDetector {
       this.isInitialized = false;
       this.clearHistory();
       
-      console.log('🧹 Wake Word Detector cleaned up');
+      Logger.info('🧹 Wake Word Detector cleaned up');
     } catch (error) {
-      console.error('❌ Error during cleanup:', error);
+      Logger.error('❌ Error during cleanup:', null, 'WakeWordDetector', error);
     }
   }
 }

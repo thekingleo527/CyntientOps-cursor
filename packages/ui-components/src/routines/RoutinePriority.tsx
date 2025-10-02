@@ -71,12 +71,14 @@ export const RoutinePriorityComponent: React.FC<RoutinePriorityProps> = ({
     switch (routine.scheduleType) {
       case ScheduleType.DAILY:
         return `Daily at ${routine.startTime}`;
-      case ScheduleType.WEEKLY:
+      case ScheduleType.WEEKLY: {
         const days = routine.scheduleDays.slice(0, 3).join(', ');
         return `${days} at ${routine.startTime}`;
-      case ScheduleType.MONTHLY:
+      }
+      case ScheduleType.MONTHLY: {
         const dayNumbers = routine.scheduleDays.join(', ');
         return `Monthly on ${dayNumbers}th at ${routine.startTime}`;
+      }
       default:
         return 'Custom schedule';
     }

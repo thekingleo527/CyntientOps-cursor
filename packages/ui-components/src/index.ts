@@ -15,6 +15,8 @@
 
 // Error Handling
 export { ErrorBoundary, withErrorBoundary } from './errors/ErrorBoundary';
+export { ComponentErrorBoundary } from './errors/ComponentErrorBoundary';
+export { useErrorBoundary } from './hooks/useErrorBoundary';
 
 // Loading States
 export { LoadingState, InlineLoading, SkeletonLoader } from './loading/LoadingState';
@@ -216,10 +218,10 @@ export const SYSTEM_REQUIREMENTS = {
 // Development utilities
 export const DEV_UTILITIES = {
   // Enable debug mode
-  DEBUG_MODE: __DEV__,
+  DEBUG_MODE: process.env.NODE_ENV === 'development',
   
   // Performance monitoring
-  ENABLE_PERFORMANCE_MONITORING: __DEV__,
+  ENABLE_PERFORMANCE_MONITORING: process.env.NODE_ENV === 'development',
   
   // Error reporting
   ENABLE_ERROR_REPORTING: true,

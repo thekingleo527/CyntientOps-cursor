@@ -5,6 +5,16 @@
 
 import { EventEmitter } from 'events';
 
+// Global type declarations
+declare global {
+  namespace NodeJS {
+    interface Timeout {
+      ref(): Timeout;
+      unref(): Timeout;
+    }
+  }
+}
+
 export interface HolographicEffect {
   id: string;
   type: 'glow' | 'particle' | 'wave' | 'pulse' | 'shimmer' | 'ripple' | 'beam' | 'field';
@@ -95,7 +105,7 @@ export interface EffectState {
 
 export class AdvancedHolographicEffects extends EventEmitter {
   private state: EffectState;
-  private renderLoop: NodeJS.Timeout | null = null;
+  private renderLoop: any = null;
   private effectPresets: Map<string, HolographicEffect> = new Map();
   private scenePresets: Map<string, HolographicScene> = new Map();
 
@@ -413,9 +423,9 @@ export class AdvancedHolographicEffects extends EventEmitter {
     }
 
     // Remove expired effects
-    effectsToRemove.forEach(id => {
-      this.state.activeEffects.delete(id);
-      this.emit('effectExpired', id);
+    effectsToRemove.forEach(_id => {
+      this.state.activeEffects.delete(_id);
+      this.emit('effectExpired', _id);
     });
   }
 
@@ -423,7 +433,7 @@ export class AdvancedHolographicEffects extends EventEmitter {
    * Update active scenes
    */
   private updateActiveScenes(): void {
-    for (const [id, scene] of this.state.activeScenes) {
+    for (const [, scene] of this.state.activeScenes) {
       // Update scene layers
       scene.layers.forEach(layer => {
         this.updateEffectLayer(layer);

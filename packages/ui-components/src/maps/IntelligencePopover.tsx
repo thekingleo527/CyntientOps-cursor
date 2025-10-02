@@ -25,7 +25,7 @@ interface IntelligencePopoverProps {
   onViewDetails: () => void;
 }
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export const IntelligencePopover: React.FC<IntelligencePopoverProps> = ({
   data,

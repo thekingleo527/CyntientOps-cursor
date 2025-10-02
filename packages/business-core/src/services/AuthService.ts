@@ -174,7 +174,7 @@ export class AuthService {
       (row: any) => (row.email || '').toLowerCase() === normalizedEmail
     );
 
-    if (worker && this.passwordMatches(credentials.password, worker.password)) {
+    if (worker && await this.passwordMatches(credentials.password, worker.password)) {
       const profile = operationalData.getWorkerById(worker.id);
 
       return {
@@ -194,7 +194,7 @@ export class AuthService {
       return email === normalizedEmail;
     });
 
-    if (client && this.passwordMatches(credentials.password, 'client123')) {
+    if (client && await this.passwordMatches(credentials.password, 'client123')) {
       const profile = operationalData.getClientById(client.id);
 
       return {
@@ -312,7 +312,22 @@ export class AuthService {
   }
 
   /**
+   * Hash a password for secure storage
+   */
+  async hashPassword(password: string): Promise<string> {
+    try {
+      const bcrypt = require('bcryptjs');
+      return await bcrypt.hash(password, 12);
+    } catch (error) {
+      Logger.error('Password hashing failed:', error, 'AuthService');
+      throw new Error('Password hashing failed');
+    }
+  }
+
+  /**
    * Get demo login options for testing
+   * Note: These use plain text passwords for demo purposes
+   * In production, all passwords should be hashed
    */
   getDemoCredentials(): LoginCredentials[] {
     return [
@@ -322,13 +337,25 @@ export class AuthService {
     ];
   }
 
-  private passwordMatches(input: string, stored?: string | null): boolean {
+  private async passwordMatches(input: string, stored?: string | null): Promise<boolean> {
     if (!stored) {
       return false;
     }
 
-    // Future enhancement: plug in hashing/pepper logic
-    return stored === input;
+    try {
+      // Check if stored password is already hashed (starts with $2a$ or $2b$)
+      if (stored.startsWith('$2a$') || stored.startsWith('$2b$')) {
+        const bcrypt = require('bcryptjs');
+        return await bcrypt.compare(input, stored);
+      }
+      
+      // For backward compatibility with plain text passwords (migration phase)
+      // TODO: Remove this after all passwords are migrated to hashed format
+      return stored === input;
+    } catch (error) {
+      Logger.error('Password verification failed:', error, 'AuthService');
+      return false;
+    }
   }
 
   /**

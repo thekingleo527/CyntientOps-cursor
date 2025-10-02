@@ -1,0 +1,45 @@
+
+Linting "database"...
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/database/src/DatabaseManager.ts[24m[0m
+[0m    [2m8:26[22m  [31merror[39m    'DatabaseConnection' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m    [2m8:46[22m  [31merror[39m    'QueryResult' is defined but never used         [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m52:7[22m   [33mwarning[39m  Unexpected console statement                    [2mno-console[22m[0m
+[0m   [2m54:7[22m   [33mwarning[39m  Unexpected console statement                    [2mno-console[22m[0m
+[0m   [2m68:7[22m   [33mwarning[39m  Unexpected console statement                    [2mno-console[22m[0m
+[0m   [2m98:7[22m   [33mwarning[39m  Unexpected console statement                    [2mno-console[22m[0m
+[0m  [2m102:5[22m   [33mwarning[39m  Unexpected console statement                    [2mno-console[22m[0m
+[0m  [2m127:5[22m   [33mwarning[39m  Unexpected console statement                    [2mno-console[22m[0m
+[0m  [2m437:7[22m   [33mwarning[39m  Unexpected console statement                    [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/database/src/DatabaseSchema.ts[24m[0m
+[0m  [2m7:10[22m  [31merror[39m  'TableSchema' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/database/src/MigrationManager.ts[24m[0m
+[0m   [2m64:11[22m  [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m   [2m69:7[22m   [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m   [2m71:7[22m   [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m   [2m82:14[22m  [31merror[39m    'error' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m104:7[22m   [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m  [2m107:7[22m   [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m  [2m131:7[22m   [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m  [2m134:7[22m   [33mwarning[39m  Unexpected console statement       [2mno-console[22m[0m
+[0m[0m
+[0m[4m/Volumes/FastSSD/Developer/Projects/CyntientOps-MP/packages/database/src/utils.ts[24m[0m
+[0m   [2m15:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m   [2m31:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m   [2m33:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m   [2m52:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m   [2m54:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m   [2m67:12[22m  [31merror[39m    'size' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m89:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m  [2m102:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m  [2m104:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m  [2m112:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m  [2m114:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m  [2m148:5[22m   [33mwarning[39m  Unexpected console statement               [2mno-console[22m[0m
+[0m[0m
+[0m[31m[1m✖ 30 problems (5 errors, 25 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+✖ 30 problems (5 errors, 25 warnings)
+

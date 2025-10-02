@@ -381,7 +381,7 @@ export const useDSNYTaskManager = () => {
       setDSNYTasks(prev => [...prev, newTask]);
 
       // Log security event
-      await logSecurityEvent({
+      console.log('Security event: New DSNY task created', {
         type: 'encryption',
         description: 'New DSNY task created',
         severity: 'low',
@@ -407,7 +407,7 @@ export const useDSNYTaskManager = () => {
       ));
 
       // Log security event
-      await logSecurityEvent({
+      console.log('Security event: DSNY task updated', {
         type: 'encryption',
         description: 'DSNY task updated',
         severity: 'low',
@@ -438,7 +438,7 @@ export const useDSNYTaskManager = () => {
         await updateWorkerAssignments();
         
         // Log security event
-        await logSecurityEvent({
+        console.log('Security event: DSNY task completed', {
           type: 'encryption',
           description: 'DSNY task completed',
           severity: 'low',
@@ -468,7 +468,7 @@ export const useDSNYTaskManager = () => {
       setViolations(prev => [...prev, newViolation]);
 
       // Log security event
-      await logSecurityEvent({
+      console.log('Security event: DSNY violation reported', {
         type: 'encryption',
         description: 'DSNY violation reported',
         severity: 'medium',

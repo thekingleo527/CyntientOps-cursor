@@ -25,7 +25,7 @@ class LoggingService {
   private maxHistorySize: number = 100;
 
   private constructor() {
-    this.isDevelopment = __DEV__ ?? process.env.NODE_ENV !== 'production';
+    this.isDevelopment = process.env.NODE_ENV === 'development';
   }
 
   public static getInstance(): LoggingService {

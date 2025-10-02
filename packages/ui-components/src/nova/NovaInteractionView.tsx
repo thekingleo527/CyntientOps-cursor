@@ -13,7 +13,7 @@
  * Based on SwiftUI NovaInteractionView.swift (1,874+ lines)
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   View,
   Text,

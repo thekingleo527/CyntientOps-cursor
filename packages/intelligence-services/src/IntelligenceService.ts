@@ -6,7 +6,8 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { APIClientManager } from '@cyntientops/api-clients';
-import { WorkerProfile, Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
+import { Logger } from '@cyntientops/business-core';
+// import { WorkerProfile, Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 
 export interface PerformanceInsight {
   id: string;
@@ -160,7 +161,7 @@ export class IntelligenceService {
    */
   public async generatePerformanceInsights(period: 'daily' | 'weekly' | 'monthly' = 'weekly'): Promise<PerformanceInsight[]> {
     try {
-      console.log(`🧠 Generating ${period} performance insights...`);
+      Logger.info(`Generating ${period} performance insights...`, null, 'IntelligenceService');
       
       const insights: PerformanceInsight[] = [];
 
@@ -193,10 +194,10 @@ export class IntelligenceService {
         this.insights.set(insight.id, insight);
       });
 
-      console.log(`✅ Generated ${insights.length} performance insights`);
+      Logger.info(`Generated ${insights.length} performance insights`, null, 'IntelligenceService');
       return insights;
     } catch (error) {
-      console.error('Failed to generate performance insights:', error);
+      Logger.error('Failed to generate performance insights', error, 'IntelligenceService');
       return [];
     }
   }
@@ -206,7 +207,7 @@ export class IntelligenceService {
    */
   public async generatePredictiveAnalytics(): Promise<PredictiveAnalytics[]> {
     try {
-      console.log('🔮 Generating predictive analytics...');
+      Logger.info('Generating predictive analytics...', null, 'IntelligenceService');
       
       const predictions: PredictiveAnalytics[] = [];
 
@@ -239,10 +240,10 @@ export class IntelligenceService {
         this.predictions.set(prediction.id, prediction);
       });
 
-      console.log(`✅ Generated ${predictions.length} predictive analytics`);
+      Logger.info(`Generated ${predictions.length} predictive analytics`, null, 'IntelligenceService');
       return predictions;
     } catch (error) {
-      console.error('Failed to generate predictive analytics:', error);
+      Logger.error('Failed to generate predictive analytics', error, 'IntelligenceService');
       return [];
     }
   }
@@ -252,7 +253,7 @@ export class IntelligenceService {
    */
   public async detectAnomalies(): Promise<AnomalyDetection[]> {
     try {
-      console.log('🚨 Detecting anomalies...');
+      Logger.info('Detecting anomalies...', null, 'IntelligenceService');
       
       const anomalies: AnomalyDetection[] = [];
 
@@ -277,10 +278,10 @@ export class IntelligenceService {
         this.anomalies.set(anomaly.id, anomaly);
       });
 
-      console.log(`✅ Detected ${anomalies.length} anomalies`);
+      Logger.info(`Detected ${anomalies.length} anomalies`, null, 'IntelligenceService');
       return anomalies;
     } catch (error) {
-      console.error('Failed to detect anomalies:', error);
+      Logger.error('Failed to detect anomalies', error, 'IntelligenceService');
       return [];
     }
   }
@@ -290,7 +291,7 @@ export class IntelligenceService {
    */
   public async generateOptimizationRecommendations(): Promise<OptimizationRecommendation[]> {
     try {
-      console.log('⚡ Generating optimization recommendations...');
+      Logger.info('Generating optimization recommendations...', null, 'IntelligenceService');
       
       const recommendations: OptimizationRecommendation[] = [];
 
@@ -323,10 +324,10 @@ export class IntelligenceService {
         this.recommendations.set(recommendation.id, recommendation);
       });
 
-      console.log(`✅ Generated ${recommendations.length} optimization recommendations`);
+      Logger.info(`Generated ${recommendations.length} optimization recommendations`, null, 'IntelligenceService');
       return recommendations;
     } catch (error) {
-      console.error('Failed to generate optimization recommendations:', error);
+      Logger.error('Failed to generate optimization recommendations', error, 'IntelligenceService');
       return [];
     }
   }
@@ -338,7 +339,7 @@ export class IntelligenceService {
     type: 'daily' | 'weekly' | 'monthly' | 'quarterly' = 'weekly'
   ): Promise<IntelligenceReport> {
     try {
-      console.log(`📊 Generating ${type} intelligence report...`);
+      Logger.info(`Generating ${type} intelligence report...`, null, 'IntelligenceService');
       
       const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const period = this.getReportPeriod(type);
@@ -371,10 +372,10 @@ export class IntelligenceService {
         generatedAt: new Date()
       };
 
-      console.log(`✅ Generated intelligence report: ${reportId}`);
+      Logger.info(`Generated intelligence report: ${reportId}`, null, 'IntelligenceService');
       return report;
     } catch (error) {
-      console.error('Failed to generate intelligence report:', error);
+      Logger.error('Failed to generate intelligence report', error, 'IntelligenceService');
       throw error;
     }
   }
@@ -382,7 +383,7 @@ export class IntelligenceService {
   /**
    * Analyze worker efficiency
    */
-  private async analyzeWorkerEfficiency(period: string): Promise<PerformanceInsight | null> {
+  private async analyzeWorkerEfficiency(_period: string): Promise<PerformanceInsight | null> {
     const workers = this.databaseManager.getWorkers();
     const tasks = this.databaseManager.getTasksForWorker(''); // Get all tasks
     
@@ -434,7 +435,7 @@ export class IntelligenceService {
   /**
    * Analyze task completion rates
    */
-  private async analyzeTaskCompletion(period: string): Promise<PerformanceInsight | null> {
+  private async analyzeTaskCompletion(_period: string): Promise<PerformanceInsight | null> {
     const tasks = this.databaseManager.getTasksForWorker(''); // Get all tasks
     const completedTasks = tasks.filter(task => task.status === 'Completed');
     const overdueTasks = tasks.filter(task => task.status === 'Overdue');
@@ -470,7 +471,7 @@ export class IntelligenceService {
   /**
    * Analyze building performance
    */
-  private async analyzeBuildingPerformance(period: string): Promise<PerformanceInsight | null> {
+  private async analyzeBuildingPerformance(_period: string): Promise<PerformanceInsight | null> {
     const buildings = this.databaseManager.getBuildings();
     const buildingMetrics = buildings.map(building => {
       const buildingTasks = this.databaseManager.getTasksForBuilding(building.id);
@@ -519,7 +520,7 @@ export class IntelligenceService {
   /**
    * Analyze cost efficiency
    */
-  private async analyzeCostEfficiency(period: string): Promise<PerformanceInsight | null> {
+  private async analyzeCostEfficiency(_period: string): Promise<PerformanceInsight | null> {
     // Simulate cost analysis
     const currentCostPerTask = 45.50;
     const previousCostPerTask = 47.20;
@@ -603,7 +604,7 @@ export class IntelligenceService {
     const buildings = this.databaseManager.getBuildings();
     const predictions = [];
     
-    buildings.forEach(building => {
+    buildings.forEach(_building => {
       // Simulate maintenance prediction
       const daysUntilMaintenance = 30 + Math.random() * 60; // 30-90 days
       const maintenanceDate = new Date();
@@ -899,7 +900,7 @@ export class IntelligenceService {
   /**
    * Calculate building compliance score
    */
-  private calculateBuildingCompliance(buildingId: string): number {
+  private calculateBuildingCompliance(_buildingId: string): number {
     // Simulate compliance calculation
     return 0.7 + Math.random() * 0.3; // 0.7-1.0 compliance score
   }

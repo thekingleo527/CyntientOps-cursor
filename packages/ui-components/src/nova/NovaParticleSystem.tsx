@@ -18,12 +18,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   Dimensions,
   Animated,
   PanResponder,
   GestureResponderEvent,
 } from 'react-native';
+
+// Global function declarations for React Native
+declare global {
+  function requestAnimationFrame(callback: (time: number) => void): number;
+  function cancelAnimationFrame(id: number): void;
+}
 import { LinearGradient } from 'expo-linear-gradient';
 
 // Types
@@ -745,7 +752,7 @@ export const NovaParticleSystem: React.FC<{
       {renderConnections()}
       
       {/* Performance overlay */}
-      {__DEV__ && (
+      {process.env.NODE_ENV === 'development' && (
         <View style={styles.performanceOverlay}>
           <Text style={styles.performanceText}>
             FPS: {Math.round(state.performance.fps)} | 

@@ -13,6 +13,19 @@
  * Based on SwiftUI NovaAPIService.swift (704+ lines)
  */
 
+// Type definitions for external libraries
+declare global {
+  interface NetworkMonitor {
+    isConnected: boolean;
+    addEventListener(event: string, callback: () => void): void;
+    removeEventListener(event: string, callback: () => void): void;
+  }
+  
+  const NetworkMonitor: {
+    new (): NetworkMonitor;
+  };
+}
+
 import { 
   NovaPrompt, 
   NovaResponse, 
@@ -40,13 +53,8 @@ export interface NovaAPIServiceDependencies {
   complianceService: any; // ComplianceService
 }
 
-// Network Monitor Interface
-interface NetworkMonitor {
-  isConnected: boolean;
-}
-
 // Mock Network Monitor (replace with real implementation)
-const NetworkMonitor: NetworkMonitor = {
+const networkMonitor: NetworkMonitor = {
   isConnected: true, // This should be replaced with real network detection
 };
 
@@ -83,7 +91,7 @@ export class NovaAPIService {
       console.log('🧠 Processing Nova prompt:', prompt.text);
 
       // HYBRID ROUTING: Check network status first
-      if (NetworkMonitor.isConnected) {
+      if (networkMonitor.isConnected) {
         console.log('🌐 Nova: Online mode - using full AI capabilities');
         return await this.processPromptOnline(prompt);
       } else {
@@ -311,12 +319,13 @@ Please check your device storage and try again.`;
     const contextType = this.determineContextType(text);
     
     // Gather real-time data
-    let contextData: Record<string, string> = {};
-    let insights: string[] = [];
+    const contextData: Record<string, string> = {};
+    const insights: string[] = [];
+    let currentWorker: any = null;
     
     try {
       // Get current worker context if available
-      const currentWorker = await this.getCurrentWorker();
+      currentWorker = await this.getCurrentWorker();
       if (currentWorker) {
         contextData.workerId = currentWorker.id;
         contextData.workerName = currentWorker.name;

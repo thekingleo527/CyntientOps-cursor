@@ -7,9 +7,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Text, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { DatabaseManager } from '@cyntientops/database';
+import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
 import { OperationalDataTaskAssignment, WorkerProfile } from '@cyntientops/domain-schema';
 import { Logger } from '@cyntientops/business-core';
 
@@ -18,6 +19,7 @@ type TaskTimelineScreenRouteProp = RouteProp<RootStackParamList, 'TaskTimeline'>
 export const TaskTimelineScreen: React.FC = () => {
   const route = useRoute<TaskTimelineScreenRouteProp>();
   const { taskId } = route.params;
+  const navigation = useNavigation<any>();
   
   const [task, setTask] = useState<OperationalDataTaskAssignment | null>(null);
   const [worker, setWorker] = useState<WorkerProfile | null>(null);
@@ -39,18 +41,19 @@ export const TaskTimelineScreen: React.FC = () => {
       await databaseManager.initialize();
 
       // Find task in all tasks
-      const allTasks = databaseManager.getTasksForWorker(''); // Get all tasks
-      const taskData = allTasks.find(t => t.id === taskId);
+      const allTasks = await databaseManager.getTasks();
+      const taskData = allTasks.find((t: any) => t.id === taskId) as unknown as OperationalDataTaskAssignment | undefined;
       
       if (!taskData) {
         throw new Error('Task not found');
       }
 
-      // Get worker information
-      const workerData = taskData.assigned_worker_id ? 
-        databaseManager.getWorkerById(taskData.assigned_worker_id) : null;
+      // Get worker information (via RealDataService)
+      const workerData = taskData.assigned_worker_id
+        ? RealDataService.getWorkerById(taskData.assigned_worker_id)
+        : null;
 
-      setTask(taskData);
+      setTask(taskData as any);
       setWorker(workerData);
     } catch (err) {
       Logger.error('Failed to load task data:', undefined, 'TaskTimelineScreen.tsx');
@@ -67,14 +70,9 @@ export const TaskTimelineScreen: React.FC = () => {
       const databaseManager = DatabaseManager.getInstance({
         path: 'cyntientops.db'
       });
-      
-      const success = databaseManager.updateTaskStatus(task.id, newStatus);
-      if (success) {
-        setTask({ ...task, status: newStatus });
-        Alert.alert('Success', 'Task status updated successfully');
-      } else {
-        Alert.alert('Error', 'Failed to update task status');
-      }
+      await databaseManager.updateTaskStatus(task.id, newStatus);
+      setTask({ ...task, status: newStatus } as any);
+      Alert.alert('Success', 'Task status updated successfully');
     } catch (error) {
       Logger.error('Task status update error:', undefined, 'TaskTimelineScreen.tsx');
       Alert.alert('Error', 'Failed to update task status');
@@ -184,12 +182,9 @@ export const TaskTimelineScreen: React.FC = () => {
               {task.requires_photo && (
                 <TouchableOpacity
                   style={[styles.actionButton, styles.photoButton]}
-                  onPress={() => {
-                    // Navigate to photo capture
-                    Alert.alert('Photo Capture', 'Photo capture functionality would be implemented here');
-                  }}
+                  onPress={() => navigation.navigate('PhotoCaptureModal', { taskId })}
                 >
-                  <Text style={styles.actionButtonText}>Take Photo</Text>
+                  <Text style={styles.actionButtonText}>Add Photo Evidence</Text>
                 </TouchableOpacity>
               )}
             </View>

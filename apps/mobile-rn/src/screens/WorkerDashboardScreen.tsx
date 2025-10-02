@@ -4,7 +4,7 @@
  * Purpose: Main worker dashboard with task timeline and clock-in functionality
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WorkerDashboardMainView } from '@cyntientops/ui-components';
@@ -12,27 +12,60 @@ import { WorkerDashboardViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { ClockInManager, LocationManager, NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { ServiceContainer } from '@cyntientops/business-core';
+import { ServiceContainer, Logger } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
 import { ErrorBoundary } from '@cyntientops/ui-components';
+import { useNavigation } from '@react-navigation/native';
 
 interface WorkerDashboardScreenProps {
   workerId: string;
   onNavigateToTask?: (taskId: string) => void;
   onNavigateToBuilding?: (buildingId: string) => void;
+  onLogout?: () => void;
+  userRole?: 'worker' | 'client' | 'admin';
+  userName?: string;
 }
 
 export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   workerId,
   onNavigateToTask,
-  onNavigateToBuilding
+  onNavigateToBuilding,
+  onLogout,
+  userRole = 'worker',
+  userName = 'Worker'
 }) => {
   const [viewModel, setViewModel] = useState<WorkerDashboardViewModel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshTick, setRefreshTick] = useState(0);
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     initializeViewModel();
+  }, [workerId]);
+
+  // Subscribe to real-time updates and refresh dashboard when relevant events arrive
+  useEffect(() => {
+    const services = ServiceContainer.getInstance();
+    const id = `worker-dashboard-${workerId}`;
+    try {
+      services.realTimeOrchestrator.addUpdateListener(id, (update: any) => {
+        try {
+          if (!update) return;
+          if (update.workerId === workerId) {
+            void refreshDashboard();
+            return;
+          }
+          const t = String(update.type || '');
+          if (t.includes('task') || t.includes('building') || t.includes('clock')) {
+            void refreshDashboard();
+          }
+        } catch {}
+      });
+    } catch {}
+    return () => {
+      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
+    };
   }, [workerId]);
 
   const initializeViewModel = async () => {
@@ -76,6 +109,16 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
       setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const refreshDashboard = async () => {
+    if (!viewModel) return;
+    try {
+      await viewModel.initialize(workerId);
+      setRefreshTick((t) => t + 1); // force re-render to pull latest state
+    } catch (err) {
+      Logger.error('Failed to refresh worker dashboard:', undefined, 'WorkerDashboardScreen.tsx');
     }
   };
 
@@ -167,6 +210,11 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
             onNotificationRead={handleNotificationRead}
             onNavigateToTask={onNavigateToTask}
             onNavigateToBuilding={onNavigateToBuilding}
+            onHeaderRoute={(route: any) => {
+              if (route === 'profile') {
+                navigation.navigate('Profile', { userName, userRole, onLogout });
+              }
+            }}
           />
         </ScrollView>
       </SafeAreaView>

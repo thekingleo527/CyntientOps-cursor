@@ -46,6 +46,7 @@ export interface WorkerDashboardMainViewProps {
   onEmergencyReport?: (emergency: any) => void;
   onMessageSent?: (message: any) => void;
   onEmergencyAlert?: (alert: any) => void;
+  onHeaderRoute?: (route: WorkerHeaderRoute) => void;
 }
 
 export interface WorkerDashboardData {
@@ -90,6 +91,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   onEmergencyReport,
   onMessageSent,
   onEmergencyAlert,
+  onHeaderRoute,
 }) => {
   // const { 
   //   worker: workerState, 
@@ -224,6 +226,9 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
       case WorkerHeaderRoute.novaChat:
         setShowNovaAIModal(true);
         break;
+    }
+    if (onHeaderRoute) {
+      try { onHeaderRoute(route); } catch {}
     }
   };
 

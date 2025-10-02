@@ -38,9 +38,29 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
   const [viewModel, setViewModel] = useState<AdminViewModel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
     initializeViewModel();
+  }, []);
+
+  // Subscribe to real-time updates for admin critical events and refresh
+  useEffect(() => {
+    const services = ServiceContainer.getInstance();
+    const id = 'admin-dashboard';
+    try {
+      services.realTimeOrchestrator.addUpdateListener(id, (update: any) => {
+        try {
+          const t = String(update?.type || '');
+          if (t.includes('building') || t.includes('compliance') || t.includes('critical') || t.includes('task')) {
+            void refreshDashboard();
+          }
+        } catch {}
+      });
+    } catch {}
+    return () => {
+      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
+    };
   }, []);
 
   const initializeViewModel = async () => {
@@ -80,6 +100,16 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
       setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const refreshDashboard = async () => {
+    if (!viewModel) return;
+    try {
+      await viewModel.initialize();
+      setRefreshTick((t) => t + 1);
+    } catch (err) {
+      Logger.error('Failed to refresh admin dashboard:', undefined, 'AdminDashboardScreen.tsx');
     }
   };
 

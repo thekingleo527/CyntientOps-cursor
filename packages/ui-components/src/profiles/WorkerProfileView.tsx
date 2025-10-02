@@ -66,7 +66,7 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
   const loadWorkerProfile = async () => {
     try {
       setIsLoading(true);
-      const workerData = await services.worker.getWorkerById(workerId);
+      const workerData = services.workers.getWorkerById(workerId);
       setWorker(workerData);
     } catch (error) {
       console.error('Error loading worker profile:', error);

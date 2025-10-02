@@ -10,18 +10,30 @@ import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
 // Export additional properties that components expect
 export const GlassIntensity = {
+  // lowercase keys
   ultraThin: 'ultraThin',
   thin: 'thin',
   regular: 'regular',
   medium: 'medium',
   thick: 'thick',
+  // uppercase aliases for compatibility with design-tokens enums
+  ULTRA_THIN: 'ultraThin',
+  THIN: 'thin',
+  REGULAR: 'regular',
+  THICK: 'thick',
 } as const;
 
 export const CornerRadius = {
+  // lowercase keys
   small: 8,
   medium: 12,
   large: 16,
   card: 12,
+  // uppercase aliases for compatibility with design-tokens enums
+  SMALL: 8,
+  MEDIUM: 12,
+  LARGE: 16,
+  CARD: 12,
 } as const;
 
 // Mock GlassCard component with intensity and cornerRadius support

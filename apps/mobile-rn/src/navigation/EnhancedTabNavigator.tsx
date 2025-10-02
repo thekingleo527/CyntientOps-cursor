@@ -5,6 +5,12 @@
  * Worker: Home, Schedule, SiteDeparture, Map, Intelligence (5 tabs)
  * Client: Home, Portfolio, Intelligence (3 tabs)
  * Admin: Home, Portfolio, Workers, Intelligence (4 tabs)
+ *
+ * Summary
+ * - Receives `userRole`, `userId`, `userName` from `AppNavigator.Main` route params.
+ * - Renders a bottom tab bar composition based on the role.
+ * - Bridges user actions (task press, building press, clock in/out) to
+ *   navigation and ServiceContainer operations.
  */
 
 import React, { useCallback, useMemo, useState } from 'react';
@@ -18,7 +24,7 @@ import { useServices } from '../providers/AppProvider';
 import type { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import type { RootStackParamList } from './AppNavigator';
 
-import { WorkerDashboardMainView } from '@cyntientops/ui-components/src/dashboards/WorkerDashboardMainView';
+import { WorkerDashboardScreen } from '../screens/WorkerDashboardScreen';
 import { ClientDashboardMainView } from '@cyntientops/ui-components/src/dashboards/ClientDashboardMainView';
 import { AdminDashboardMainView } from '@cyntientops/ui-components/src/dashboards/AdminDashboardMainView';
 import { WorkerScheduleTab } from './tabs/WorkerScheduleTab';
@@ -39,12 +45,14 @@ export interface TabNavigatorProps {
   userRole: 'worker' | 'client' | 'admin';
   userId: string;
   userName: string;
+  onLogout?: () => void;
 }
 
 export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
   userRole,
   userId,
   userName,
+  onLogout,
 }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const services = useServices();
@@ -59,6 +67,10 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
     ]);
   }, []);
 
+  /**
+   * Navigate to the Task Timeline for a given assignment.
+   * Guards against undefined IDs with a user-facing alert.
+   */
   const handleTaskNavigation = useCallback(
     (task?: OperationalDataTaskAssignment) => {
       if (!task?.id) {
@@ -70,17 +82,25 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
     [navigation],
   );
 
+  /**
+   * Navigate to Building Detail for the selected building, carrying role
+   * context forward for conditional UI and data exposure.
+   */
   const handleBuildingNavigation = useCallback(
     (buildingId?: string) => {
       if (!buildingId) {
         Alert.alert('Building Unavailable', 'No building selected.');
         return;
       }
-      navigation.navigate('BuildingDetail', { buildingId });
+      navigation.navigate('BuildingDetail', { buildingId, userRole });
     },
-    [navigation],
+    [navigation, userRole],
   );
 
+  /**
+   * Perform a clock-in operation using coordinates inferred from the selected
+   * building. Validation results are surfaced through alerts.
+   */
   const handleClockIn = useCallback(
     async (buildingId?: string) => {
       if (!buildingId) {
@@ -113,6 +133,9 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
     [services.clockIn, userId],
   );
 
+  /**
+   * Clock out the current worker session.
+   */
   const handleClockOut = useCallback(
     async () => {
       const result = await services.clockIn.clockOutWorker({
@@ -129,12 +152,15 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
     [services.clockIn, userId],
   );
 
+  /**
+   * Handle quick header actions exposed by dashboard views.
+   */
   const handleHeaderRoute = useCallback(
     (route: unknown) => {
       const target = typeof route === 'string' ? route : String(route ?? '');
       switch (target) {
         case 'profile':
-          navigation.navigate('DailyRoutine');
+          navigation.navigate('Profile', { userName, userRole, userId, onLogout });
           break;
         case 'novaChat':
           Alert.alert('Nova AI', 'Launching Nova intelligence assistant…');
@@ -142,14 +168,25 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
         case 'clockAction':
           handleClockOut();
           break;
+        case 'logout':
+          if (onLogout) {
+            Alert.alert('Logout', 'Are you sure you want to logout?', [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Logout', style: 'destructive', onPress: onLogout },
+            ]);
+          }
+          break;
         default:
           navigation.navigate('MultisiteDeparture');
           break;
       }
     },
-    [handleClockOut, navigation],
+    [handleClockOut, navigation, onLogout],
   );
 
+  /**
+   * Surface weather alerts and optionally reveal emergency tools.
+   */
   const handleWeatherAlert = useCallback(
     (alertMessage: string) => {
       Alert.alert('Weather Alert', alertMessage, [
@@ -163,6 +200,9 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
     [],
   );
 
+  /**
+   * Admin-only helper: show a quick summary when a worker is selected.
+   */
   const handleWorkerSelect = useCallback((workerId: string) => {
     const worker = RealDataService.getWorkerById(workerId);
     Alert.alert('Worker Selected', worker ? worker.name : workerId);
@@ -183,15 +223,13 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
               }}
             >
               {() => (
-                <WorkerDashboardMainView
+                <WorkerDashboardScreen
                   workerId={userId}
-                  workerName={userName}
+                  userName={userName}
                   userRole={userRole}
-                  onTaskPress={handleTaskNavigation}
-                  onBuildingPress={handleBuildingNavigation}
-                  onClockIn={handleClockIn}
-                  onClockOut={handleClockOut}
-                  onHeaderRoute={handleHeaderRoute}
+                  onLogout={onLogout}
+                  onNavigateToTask={(taskId) => navigation.navigate('TaskTimeline', { taskId })}
+                  onNavigateToBuilding={(buildingId) => navigation.navigate('BuildingDetail', { buildingId, userRole })}
                 />
               )}
             </Tab.Screen>
@@ -428,6 +466,19 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
 
   return (
     <View style={styles.container}>
+      {/* Real-time updates subscription: shows banner triggers or future hooks */}
+      {/* This subscribes to orchestrator updates and could drive re-fetch logic */}
+      {React.useEffect(() => {
+        const id = `tabs-${userRole}-${userId}`;
+        try {
+          services.realTimeOrchestrator.addUpdateListener(id, () => {
+            // No-op for now; placeholder for refresh hooks
+          });
+        } catch {}
+        return () => {
+          try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
+        };
+      }, [services.realTimeOrchestrator, userRole, userId])}
       {weatherAlerts.length > 0 && (
         <WeatherAlertBanner
           alerts={weatherAlerts}

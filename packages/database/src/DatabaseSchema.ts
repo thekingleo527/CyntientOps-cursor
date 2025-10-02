@@ -13,6 +13,7 @@ export class DatabaseSchema {
       this.createWorkersTable(),
       this.createTasksTable(),
       this.createRoutinesTable(),
+      this.createUserSessionsTable(),
       this.createComplianceTable(),
       this.createPhotoEvidenceTable(),
       this.createSmartPhotoEvidenceTable(),
@@ -34,6 +35,26 @@ export class DatabaseSchema {
       this.createDashboardUpdatesTable(),
       this.createCacheEntriesTable()
     ];
+  }
+
+  private createUserSessionsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS user_sessions (
+        session_token TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        user_role TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        last_activity TEXT NOT NULL,
+        device_id TEXT,
+        ip_address TEXT,
+        user_agent TEXT,
+        permissions TEXT,
+        status TEXT DEFAULT 'active',
+        profile TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
   }
 
   private createBuildingsTable(): string {
@@ -352,6 +373,9 @@ export class DatabaseSchema {
       'CREATE INDEX IF NOT EXISTS idx_tasks_building ON tasks(assigned_building_id);',
       'CREATE INDEX IF NOT EXISTS idx_tasks_worker ON tasks(assigned_worker_id);',
       'CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);',
+      'CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions(user_id);',
+      'CREATE INDEX IF NOT EXISTS idx_user_sessions_status ON user_sessions(status);',
+      'CREATE INDEX IF NOT EXISTS idx_user_sessions_expires ON user_sessions(expires_at);',
       'CREATE INDEX IF NOT EXISTS idx_routines_building ON routines(building_id);',
       'CREATE INDEX IF NOT EXISTS idx_routines_worker ON routines(assigned_worker_id);',
       'CREATE INDEX IF NOT EXISTS idx_compliance_building ON compliance(building_id);',

@@ -38,9 +38,29 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
   const [viewModel, setViewModel] = useState<ClientViewModel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
     initializeViewModel();
+  }, [clientId]);
+
+  // Subscribe to portfolio/building updates and refresh
+  useEffect(() => {
+    const services = ServiceContainer.getInstance();
+    const id = `client-dashboard-${clientId}`;
+    try {
+      services.realTimeOrchestrator.addUpdateListener(id, (update: any) => {
+        try {
+          const t = String(update?.type || '');
+          if (t.includes('building') || t.includes('routine') || t.includes('compliance')) {
+            void refreshDashboard();
+          }
+        } catch {}
+      });
+    } catch {}
+    return () => {
+      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
+    };
   }, [clientId]);
 
   const initializeViewModel = async () => {
@@ -80,6 +100,16 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
       setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const refreshDashboard = async () => {
+    if (!viewModel) return;
+    try {
+      await viewModel.initialize(clientId);
+      setRefreshTick((t) => t + 1);
+    } catch (err) {
+      Logger.error('Failed to refresh client dashboard:', undefined, 'ClientDashboardScreen.tsx');
     }
   };
 

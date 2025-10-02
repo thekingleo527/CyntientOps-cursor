@@ -20,6 +20,8 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
 import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
+import { NYCService } from '@cyntientops/business-core/src/services/NYCService';
+import { useServices } from '../providers/AppProvider';
 import { ViolationDataService } from '../services/ViolationDataService';
 import { PropertyDataService } from '@cyntientops/business-core';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -146,9 +148,12 @@ export const BuildingDetailScreen: React.FC = () => {
   const route = useRoute<BuildingDetailRoute>();
   const { buildingId, userRole } = route.params;
 
+  const services = useServices();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [schedule, setSchedule] = useState<CollectionScheduleSummary | null>(null);
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [violationSummary, setViolationSummary] = useState<ViolationSummary>({ hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 });
 
   const building = useMemo(() => RealDataService.getBuildingById(buildingId), [buildingId]);
   const routines = useMemo(() => RealDataService.getRoutinesByBuildingId(buildingId), [buildingId]);
@@ -177,9 +182,6 @@ export const BuildingDetailScreen: React.FC = () => {
     [routines],
   );
 
-  // Get real violation data from ViolationDataService
-  const violationSummary = ViolationDataService.getViolationData(buildingId);
-
   // Get property details from PropertyDataService
   const propertyDetails = PropertyDataService.getPropertyDetails(buildingId);
 
@@ -205,6 +207,40 @@ export const BuildingDetailScreen: React.FC = () => {
 
     loadSchedule();
   }, [building]);
+
+  // Load inventory overview
+  useEffect(() => {
+    const loadInventory = async () => {
+      try {
+        const items = await services.inventory.getInventory(buildingId);
+        setInventory(items);
+      } catch (invErr) {
+        // non-fatal
+      }
+    };
+    loadInventory();
+  }, [services.inventory, buildingId]);
+
+  // Attempt live NYC API integration with fallback to local violation data
+  useEffect(() => {
+    const loadNYC = async () => {
+      try {
+        const nyc = NYCService.getInstance();
+        const data = await nyc.getComprehensiveBuildingData(buildingId);
+        // Map to ViolationSummary shape
+        const hpdCount = Array.isArray(data.violations) ? data.violations.length : 0;
+        const dsnyCount = data.dsnyViolations && !data.dsnyViolations.isEmpty ? data.dsnyViolations.summons.length : 0;
+        const dobCount = Array.isArray(data.permits) ? data.permits.length : 0;
+        const outstanding = (data.dsnyViolations?.summons || []).reduce((sum: number, s: any) => sum + (parseFloat(s.balance_due) || 0), 0);
+        const score = Math.max(0, Math.min(100, 100 - Math.round(hpdCount * 2 + dobCount + Math.min(outstanding / 1000, 40) + dsnyCount)));
+        setViolationSummary({ hpd: hpdCount, dob: dobCount, dsny: dsnyCount, outstanding, score });
+      } catch (err) {
+        const fallback = ViolationDataService.getViolationData(buildingId);
+        setViolationSummary(fallback);
+      }
+    };
+    loadNYC();
+  }, [buildingId]);
 
   if (isLoading) {
     return (
@@ -244,6 +280,13 @@ export const BuildingDetailScreen: React.FC = () => {
           {renderSectionHeader('Compliance Overview')}
           {renderComplianceCard(violationSummary, complianceScore)}
         </View>
+        
+        {inventory.length > 0 && (
+          <View style={styles.sectionGroup}>
+            {renderSectionHeader('Inventory Overview')}
+            {renderInventoryCard(inventory)}
+          </View>
+        )}
         
         {schedule && (
           <View style={styles.sectionGroup}>
@@ -382,6 +425,40 @@ const renderComplianceCard = (summary: ViolationSummary, complianceScore: number
           </View>
   </GlassCard>
 );
+
+const renderInventoryCard = (items: any[]) => {
+  const lowStock = items.filter((i) => i.quantity <= i.minThreshold);
+  return (
+    <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
+      <View style={styles.inventoryRow}>
+        <View style={styles.inventoryMetric}>
+          <Text style={styles.metricLabel}>Items</Text>
+          <Text style={styles.metricValue}>{items.length}</Text>
+        </View>
+        <View style={styles.inventoryMetric}>
+          <Text style={styles.metricLabel}>Low Stock</Text>
+          <Text style={styles.metricValue}>{lowStock.length}</Text>
+        </View>
+        <View style={styles.inventoryMetric}>
+          <Text style={styles.metricLabel}>Last Restock</Text>
+          <Text style={styles.metricValue}>
+            {items[0]?.lastRestocked ? new Date(items[0].lastRestocked).toLocaleDateString() : '—'}
+          </Text>
+        </View>
+      </View>
+      {lowStock.length > 0 && (
+        <View style={{ marginTop: 8 }}>
+          <Text style={styles.inventoryLowHeader}>Low Stock Items</Text>
+          {lowStock.slice(0, 3).map((i) => (
+            <Text key={i.id} style={styles.inventoryLowItem}>
+              • {i.name} ({i.quantity}/{i.minThreshold})
+            </Text>
+          ))}
+        </View>
+      )}
+    </GlassCard>
+  );
+};
 
 const renderScheduleCard = (schedule: CollectionScheduleSummary) => (
   <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>
@@ -575,7 +652,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  inventoryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: Spacing.sm,
+  },
   complianceMetric: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  inventoryMetric: {
     alignItems: 'center',
     flex: 1,
   },
@@ -612,6 +698,15 @@ const styles = StyleSheet.create({
   },
   scheduleNotes: {
     marginTop: Spacing.lg,
+  },
+  inventoryLowHeader: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
+    marginBottom: 4,
+  },
+  inventoryLowItem: {
+    ...Typography.caption,
+    color: Colors.text.primary,
   },
   scheduleInstruction: {
     ...Typography.caption,

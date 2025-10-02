@@ -1,6 +1,9 @@
 /**
  * 🧭 Unified Navigation System
- * Wrapper around AppNavigator to preserve backwards compatibility
+ *
+ * Wrapper around `AppNavigator` to preserve backwards compatibility with
+ * previous imports (`UnifiedNavigationSystem`) while we consolidate the
+ * navigation architecture. New features should target `AppNavigator`.
  */
 
 import React from 'react';

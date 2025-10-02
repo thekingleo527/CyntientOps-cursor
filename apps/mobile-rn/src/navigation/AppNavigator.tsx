@@ -20,7 +20,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SecureStorageService } from '@cyntientops/business-core';
+// Defer secure storage load to runtime to reduce initial bundle weight
 
 // Screens
 import { BuildingDetailScreen } from '../screens/BuildingDetailScreen';
@@ -41,7 +41,7 @@ import type { SessionData } from '@cyntientops/business-core/src/services/Sessio
 import type { AuthenticatedUser } from '@cyntientops/business-core/src/services/AuthenticationService';
 import { WorkerProfile, UserRole } from '@cyntientops/domain-schema';
 import { useServices } from '../providers/AppProvider';
-import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
+// Defer RealDataService import until needed
 
 export type RootStackParamList = {
   Login: undefined;
@@ -66,7 +66,7 @@ type AppUser = {
   profile?: WorkerProfile;
 };
 
-const secureStorage = SecureStorageService.getInstance();
+let secureStorage: any = null;
 
 interface AppNavigatorProps {
   initialUser?: WorkerProfile;
@@ -102,6 +102,10 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
   const restoreActiveSession = async () => {
     try {
       // Use secure storage only (migration complete)
+      if (!secureStorage) {
+        const bc = await import('@cyntientops/business-core');
+        secureStorage = bc.SecureStorageService.getInstance();
+      }
       const storedToken = await secureStorage.getSessionToken();
 
       if (!storedToken) {
@@ -169,6 +173,10 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
         throw new Error('Unable to create application session');
       }
 
+      if (!secureStorage) {
+        const bc = await import('@cyntientops/business-core');
+        secureStorage = bc.SecureStorageService.getInstance();
+      }
       await secureStorage.storeSessionToken(sessionData.sessionToken);
       setSession(sessionData);
       setUser(resolveAppUser(sessionData));
@@ -178,6 +186,10 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
 
   const handleLogout = useCallback(async () => {
     try {
+      if (!secureStorage) {
+        const bc = await import('@cyntientops/business-core');
+        secureStorage = bc.SecureStorageService.getInstance();
+      }
       const token = await secureStorage.getSessionToken();
       if (token) {
         await services.sessionManager.logout(token);
@@ -324,6 +336,9 @@ const resolveAppUser = (session: SessionData): AppUser => {
   }
 
   if (role === 'worker' || role === 'admin') {
+    // Dynamically require to avoid pulling full business-core at startup
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const RealDataService = require('@cyntientops/business-core/src/services/RealDataService').default;
     const worker = RealDataService.getWorkerById(session.userId);
     if (worker) {
       return {

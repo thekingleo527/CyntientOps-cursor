@@ -4,12 +4,15 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { InteractionManager } from 'react-native';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
-import { ServiceContainer, Logger } from '@cyntientops/business-core';
+// Defer heavy business-core import to runtime to reduce initial bundle work
+import type { ServiceContainer as ServiceContainerType } from '@cyntientops/business-core';
+import { AssetOptimizer } from '../utils/AssetOptimizer';
 import config from '../config/app.config';
 
 interface AppContextValue {
-  services: ServiceContainer;
+  services: ServiceContainerType;
   isReady: boolean;
   error: Error | null;
 }
@@ -23,18 +26,25 @@ interface AppProviderProps {
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [services, setServices] = useState<ServiceContainer | null>(null);
+  const [services, setServices] = useState<ServiceContainerType | null>(null);
 
   useEffect(() => {
-    initializeApp();
+    // Preload critical assets early and in parallel
+    AssetOptimizer.getInstance().preloadCriticalAssets().catch(() => {});
+    // Defer heavy initialization until after first interactions to improve TTI
+    const task = InteractionManager.runAfterInteractions(() => {
+      void initializeApp();
+    });
+    return () => task.cancel();
   }, []);
 
   const initializeApp = async () => {
     try {
-      Logger.info('Initializing CyntientOps Mobile App', undefined, 'AppProvider');
+      const bc = await import('@cyntientops/business-core');
+      bc.Logger.info('Initializing CyntientOps Mobile App', undefined, 'AppProvider');
 
       // Initialize ServiceContainer with configuration
-      const serviceContainer = ServiceContainer.getInstance({
+      const serviceContainer = bc.ServiceContainer.getInstance({
         databasePath: config.databasePath,
         enableOfflineMode: config.enableOfflineMode,
         enableRealTimeSync: config.enableRealTimeSync,
@@ -43,26 +53,32 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       });
 
       // Initialize all services
+      // Initialize essential services; other work can continue lazily inside container
       await serviceContainer.initialize();
 
       // Connect WebSocket if real-time sync is enabled
       if (config.enableRealTimeSync) {
-        Logger.info('Connecting to WebSocket', undefined, 'AppProvider');
-        try {
-          await serviceContainer.webSocket.connect();
-          Logger.info('WebSocket connected successfully', undefined, 'AppProvider');
-        } catch (wsError) {
-          Logger.warn('WebSocket connection failed (will retry)', wsError, 'AppProvider');
-          // Don't fail the whole app if WebSocket fails
-        }
+        // Defer WebSocket connection slightly to avoid blocking startup
+        setTimeout(async () => {
+          bc.Logger.info('Connecting to WebSocket', undefined, 'AppProvider');
+          try {
+            await serviceContainer.webSocket.connect();
+            bc.Logger.info('WebSocket connected successfully', undefined, 'AppProvider');
+          } catch (wsError) {
+            bc.Logger.warn('WebSocket connection failed (will retry)', wsError, 'AppProvider');
+          }
+        }, 750);
       }
 
       setServices(serviceContainer);
       setIsReady(true);
-      Logger.info('App initialized successfully', undefined, 'AppProvider');
+      bc.Logger.info('App initialized successfully', undefined, 'AppProvider');
 
     } catch (err) {
-      Logger.error('App initialization failed', err, 'AppProvider');
+      try {
+        const bc = await import('@cyntientops/business-core');
+        bc.Logger.error('App initialization failed', err as any, 'AppProvider');
+      } catch {}
       setError(err instanceof Error ? err : new Error('Unknown error'));
     }
   };

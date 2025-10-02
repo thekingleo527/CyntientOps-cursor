@@ -725,19 +725,13 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     <View style={styles.container}>
       {/* Header */}
       <WorkerHeaderV3B
-        workerName={workerName}
-        workerId={workerId}
-        isClockedIn={dashboardData.worker.clockedIn}
-        currentBuilding={dashboardData.currentBuilding}
-        clockInTime={dashboardData.worker.clockInTime}
+        name={workerName}
+        initials={workerName.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()}
+        photoURL={undefined}
+        nextTaskName={dashboardData?.urgentTasks?.[0]?.name || undefined}
+        showClockPill={true}
+        isNovaProcessing={false}
         onRoute={handleHeaderRoute}
-        onClockAction={() => {
-          if (dashboardData.worker.clockedIn) {
-            onClockOut?.();
-          } else {
-            dashboardData.currentBuilding && onClockIn?.(dashboardData.currentBuilding.id);
-          }
-        }}
       />
 
       {/* Base Screen Content - Only ~450px total */}

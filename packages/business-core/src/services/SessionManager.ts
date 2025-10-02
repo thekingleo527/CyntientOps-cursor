@@ -45,6 +45,7 @@ export class SessionManager {
   private activeSessions: Map<string, SessionData> = new Map();
   private config: SessionConfig;
   private cleanupTimer: NodeJS.Timeout | null = null;
+  private currentSession: SessionData | null = null;
 
   private constructor(database: DatabaseManager, authService: AuthService, config: SessionConfig) {
     this.database = database;
@@ -136,6 +137,7 @@ export class SessionManager {
 
       // Store in memory for fast access
       this.activeSessions.set(sessionToken, session);
+      this.currentSession = session;
 
       console.log(`✅ Session created for user ${user.id} (${user.role})`);
       return session;
@@ -198,6 +200,7 @@ export class SessionManager {
       // Update last activity
       await this.updateSessionActivity(sessionToken);
 
+      this.currentSession = session;
       return session;
     } catch (error) {
       Logger.error('Failed to validate session:', undefined, 'SessionManager');
@@ -242,6 +245,9 @@ export class SessionManager {
 
       // Remove from memory
       this.activeSessions.delete(sessionToken);
+      if (this.currentSession?.sessionToken === sessionToken) {
+        this.currentSession = null;
+      }
 
       console.log(`🔒 Session invalidated: ${sessionToken}`);
     } catch (error) {
@@ -331,6 +337,23 @@ export class SessionManager {
       Logger.error('Logout failed:', undefined, 'SessionManager');
       return false;
     }
+  }
+
+  /**
+   * Get current in-memory session if available
+   */
+  public getCurrentSession(): SessionData | null {
+    return this.currentSession;
+  }
+
+  /**
+   * Set the current session (e.g., after validation at app start)
+   */
+  public setCurrentSession(session: SessionData | null): void {
+    if (session) {
+      this.activeSessions.set(session.sessionToken, session);
+    }
+    this.currentSession = session;
   }
 
   /**

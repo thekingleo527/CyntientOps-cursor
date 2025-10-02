@@ -56,69 +56,86 @@ interface ViolationSummary {
 // Note: DSNY violations are handled through the ECB system, not a separate DSNY API
 // Data now sourced from ViolationDataService which uses live NYC API data
 
-class InlineNYCAPIService {
-  // ✅ REAL BBL NUMBERS - Updated from NYC PLUTO dataset on 2025-10-01
-  private readonly binMap: Record<string, string> = {
-    '1': '1008197501.00000000',  // 12 West 18th Street
-    '3': '1007930017.00000000',  // 135-139 West 17th Street
-    '4': '1001780005.00000000',  // 104 Franklin Street
-    '5': '1007927502.00000000',  // 138 West 17th Street
-    '6': '1006210051.00000000',  // 68 Perry Street
-    '7': 'MOCK',                 // 112 West 18th Street (not found in PLUTO)
-    '8': '1002040024.00000000',  // 41 Elizabeth Street
-    '9': 'MOCK',                 // 117 West 17th Street (not found in PLUTO)
-    '10': '1006330028.00000000', // 131 Perry Street
-    '11': '1004490034.00000000', // 123 1st Avenue
-    '13': '1007927507.00000000', // 136 West 17th Street
-    '14': '1007920064.00000000', // Rubin Museum (150 West 17th)
-    '15': '1008710030.00000000', // 133 East 15th Street
-    '16': 'MOCK',                // Stuyvesant Cove Park (not in PLUTO)
-    '17': '1004880016.00000000', // 178 Spring Street
-    '18': '1001940014.00000000', // 36 Walker Street
-    '19': 'MOCK',                // 115 7th Avenue (not found in PLUTO)
-    '21': '1001377505.00000000', // 148 Chambers Street
+// Utility: Compute sanitation schedule from existing routines
+const getNextDateForDays = (days: string[]): Date | null => {
+  if (!days || days.length === 0) return null;
+  const today = new Date();
+  for (let i = 0; i < 14; i++) {
+    const check = new Date(today);
+    check.setDate(today.getDate() + i);
+    const dayName = check.toLocaleDateString('en-US', { weekday: 'long' });
+    if (days.includes(dayName)) return check;
+  }
+  return null;
+};
+
+const deriveCollectionFromRoutines = (
+  buildingId: string,
+  buildingName: string,
+  address: string,
+): CollectionScheduleSummary | null => {
+  const routines = RealDataService.getRoutinesByBuildingId(buildingId) || [];
+
+  const normalizeDayList = (val: string | string[] | undefined) => {
+    if (!val) return [] as string[];
+    if (Array.isArray(val)) return val;
+    return val.split(',').map((s) => s.trim());
   };
 
-  public extractBIN(buildingId: string): string {
-    return this.binMap[buildingId] || '';
-  }
+  const refuseDays = new Set<string>();
+  const recyclingDays = new Set<string>();
+  const organicsDays = new Set<string>();
+  const bulkDays = new Set<string>();
 
-  public async getCollectionScheduleSummary(
-    bin: string,
-    buildingName: string,
-    address: string,
-  ): Promise<CollectionScheduleSummary> {
-    const today = new Date();
-    const createFutureDate = (offsetDays: number) => {
-      const future = new Date(today);
-      future.setDate(today.getDate() + offsetDays);
-      return future;
-    };
+  routines.forEach((r: any) => {
+    const days = normalizeDayList(r.daysOfWeek);
+    const title = String(r.title || r.name || '').toLowerCase();
+    const category = String(r.category || '').toLowerCase();
 
-    return {
-      bin,
-      buildingId: bin,
-      buildingName,
-      address,
-      regularCollectionDay: 'Monday',
-      recyclingDay: 'Wednesday',
-      organicsDay: 'Friday',
-      bulkPickupDay: 'Saturday',
-      nextCollectionDate: createFutureDate(2),
-      nextRecyclingDate: createFutureDate(3),
-      nextOrganicsDate: createFutureDate(4),
-      nextBulkPickupDate: createFutureDate(5),
-      collectionFrequency: 'Weekly',
-      specialInstructions: [
-        'Place trash out by 6:00 AM on collection day',
-        'Separate recycling into blue and green bins',
-        'Bulk pickups require 311 appointment scheduling',
-      ],
-    };
-  }
-}
+    const isSanitation = category.includes('sanitation') ||
+      title.includes('trash') || title.includes('dsny') || title.includes('recycling') || title.includes('organics') || title.includes('bulk');
+    if (!isSanitation) return;
 
-const nycAPIService = new InlineNYCAPIService();
+    const addDays = (target: Set<string>) => days.forEach((d) => d && target.add(d));
+
+    if (title.includes('recycling')) addDays(recyclingDays);
+    else if (title.includes('organics') || title.includes('compost')) addDays(organicsDays);
+    else if (title.includes('bulk')) addDays(bulkDays);
+    else addDays(refuseDays); // default to refuse/trash
+  });
+
+  // If nothing found, return null
+  const anyDays = refuseDays.size + recyclingDays.size + organicsDays.size + bulkDays.size;
+  if (anyDays === 0) return null;
+
+  // Choose a representative regular day (first in set) for display
+  const pickDay = (set: Set<string>, fallback: string) => Array.from(set)[0] || fallback;
+  const regularCollectionDay = pickDay(refuseDays, 'Monday');
+  const recyclingDay = pickDay(recyclingDays, 'Wednesday');
+  const organicsDay = pickDay(organicsDays, 'Friday');
+  const bulkPickupDay = pickDay(bulkDays, 'Saturday');
+
+  return {
+    bin: '',
+    buildingId,
+    buildingName,
+    address,
+    regularCollectionDay,
+    recyclingDay,
+    organicsDay,
+    bulkPickupDay,
+    nextCollectionDate: getNextDateForDays(Array.from(refuseDays)) || new Date(),
+    nextRecyclingDate: getNextDateForDays(Array.from(recyclingDays)) || new Date(),
+    nextOrganicsDate: getNextDateForDays(Array.from(organicsDays)) || new Date(),
+    nextBulkPickupDate: getNextDateForDays(Array.from(bulkDays)) || new Date(),
+    collectionFrequency: 'Weekly',
+    specialInstructions: [
+      'Set out bins by 6:00 AM on collection day',
+      'Separate recycling per local guidelines',
+      'Bulk pickups may require 311 scheduling',
+    ],
+  };
+};
 
 const { width } = Dimensions.get('window');
 
@@ -186,26 +203,27 @@ export const BuildingDetailScreen: React.FC = () => {
   const propertyDetails = PropertyDataService.getPropertyDetails(buildingId);
 
   useEffect(() => {
-    const loadSchedule = async () => {
+    const hydrateSchedule = async () => {
       if (!building) {
         setError('Building not found');
         setIsLoading(false);
         return;
       }
-
       try {
-        const bin = nycAPIService.extractBIN(building.id);
-        const summary = await nycAPIService.getCollectionScheduleSummary(bin, building.name, building.address);
-        setSchedule(summary);
-      } catch (scheduleError) {
-        console.error('Failed to load collection schedule', scheduleError);
+        // Primary: derive schedule from app routines (no network)
+        const local = deriveCollectionFromRoutines(building.id, building.name, building.address);
+        if (local) {
+          setSchedule(local);
+        } else {
+          setSchedule(null);
+        }
+      } catch (err) {
         setSchedule(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-    loadSchedule();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    hydrateSchedule();
   }, [building]);
 
   // Load inventory overview

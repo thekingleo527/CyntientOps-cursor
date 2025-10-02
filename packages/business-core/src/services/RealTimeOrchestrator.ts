@@ -791,7 +791,7 @@ export class RealTimeOrchestrator {
   private async getAuthToken(): Promise<string> {
     try {
       const session = this.serviceContainer.sessionManager.getCurrentSession();
-      return session?.token || 'anonymous-token';
+      return session?.sessionToken || 'anonymous-token';
     } catch (error) {
       Logger.warn('⚠️ Failed to get auth token, using anonymous:', undefined, 'RealTimeOrchestrator');
       return 'anonymous-token';

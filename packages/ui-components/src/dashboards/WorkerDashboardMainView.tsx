@@ -47,6 +47,7 @@ export interface WorkerDashboardMainViewProps {
   onMessageSent?: (message: any) => void;
   onEmergencyAlert?: (alert: any) => void;
   onHeaderRoute?: (route: WorkerHeaderRoute) => void;
+  state?: WorkerDashboardData;
 }
 
 export interface WorkerDashboardData {
@@ -92,6 +93,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   onMessageSent,
   onEmergencyAlert,
   onHeaderRoute,
+  state,
 }) => {
   // const { 
   //   worker: workerState, 
@@ -178,8 +180,8 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     loadMaintenancePredictions();
   }, [workerId]);
 
-  // Get data from state management
-  const dashboardData: WorkerDashboardData = {
+  // Get data from state management or use provided state override
+  const dashboardData: WorkerDashboardData = state ?? {
     worker: {
       id: workerId,
       name: workerName,

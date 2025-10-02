@@ -115,6 +115,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
       }
 
       setSession(validated);
+      try { services.sessionManager.setCurrentSession(validated); } catch {}
       setUser(resolveAppUser(validated));
     } catch (error) {
       console.error('Failed to restore session', error);

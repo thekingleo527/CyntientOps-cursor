@@ -25,8 +25,8 @@ import type { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import type { RootStackParamList } from './AppNavigator';
 
 import { WorkerDashboardScreen } from '../screens/WorkerDashboardScreen';
-import { ClientDashboardMainView } from '@cyntientops/ui-components/src/dashboards/ClientDashboardMainView';
-import { AdminDashboardMainView } from '@cyntientops/ui-components/src/dashboards/AdminDashboardMainView';
+import { ClientDashboardScreen } from '../screens/ClientDashboardScreen';
+import { AdminDashboardScreen } from '../screens/AdminDashboardScreen';
 import { WorkerScheduleTab } from './tabs/WorkerScheduleTab';
 import { WorkerSiteDepartureTab } from './tabs/WorkerSiteDepartureTab';
 import { WorkerMapTab } from './tabs/WorkerMapTab';
@@ -321,12 +321,9 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
               }}
             >
               {() => (
-                <ClientDashboardMainView
+                <ClientDashboardScreen
                   clientId={userId}
-                  clientName={userName}
-                  userRole={userRole}
-                  onBuildingPress={handleBuildingNavigation}
-                  onHeaderRoute={handleHeaderRoute}
+                  onNavigateToBuilding={(bid) => handleBuildingNavigation(bid)}
                 />
               )}
             </Tab.Screen>
@@ -382,13 +379,9 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
               }}
             >
               {() => (
-                <AdminDashboardMainView
-                  adminId={userId}
-                  adminName={userName}
-                  userRole={userRole}
-                  onWorkerPress={handleWorkerSelect}
-                  onBuildingPress={handleBuildingNavigation}
-                  onHeaderRoute={handleHeaderRoute}
+                <AdminDashboardScreen
+                  onNavigateToWorker={handleWorkerSelect}
+                  onNavigateToBuilding={(bid) => handleBuildingNavigation(bid)}
                 />
               )}
             </Tab.Screen>

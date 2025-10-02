@@ -25,6 +25,17 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+// Workspace package resolution
+config.resolver.alias = {
+  '@cyntientops/design-tokens': path.resolve(workspaceRoot, 'packages/design-tokens/src'),
+  '@cyntientops/ui-components': path.resolve(workspaceRoot, 'packages/ui-components/src'),
+  '@cyntientops/business-core': path.resolve(workspaceRoot, 'packages/business-core/src'),
+  '@cyntientops/domain-schema': path.resolve(workspaceRoot, 'packages/domain-schema/src'),
+  '@cyntientops/database': path.resolve(workspaceRoot, 'packages/database/src'),
+  '@cyntientops/intelligence-services': path.resolve(workspaceRoot, 'packages/intelligence-services/src'),
+  '@cyntientops/managers': path.resolve(workspaceRoot, 'packages/managers/src'),
+};
+
 // Enable symlinks for monorepo
 config.resolver.unstable_enableSymlinks = true;
 

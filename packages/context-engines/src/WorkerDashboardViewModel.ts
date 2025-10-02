@@ -1319,20 +1319,22 @@ export function useWorkerDashboardViewModel(
 
   const loadWeatherData = async (buildings: BuildingSummary[]): Promise<WorkerWeatherSnapshot> => {
     try {
-      const weather = await container.weather.getCurrentWeather();
-      const buildingGuidance = await Promise.all(
-        buildings.map(building => 
-          container.weather.getBuildingSpecificGuidance(building.id)
-        )
-      );
-      
+      // Use first building coordinate or NYC default
+      const coord = buildings[0]?.coordinate || { latitude: 40.7128, longitude: -74.0060 };
+      const { WeatherAPIClient } = await import('@cyntientops/api-clients/src/weather/WeatherAPIClient');
+      const weatherClient = new WeatherAPIClient(coord.latitude, coord.longitude);
+      const current = await weatherClient.getCurrentWeather();
+
+      // Basic, building-agnostic guidance from current conditions
+      const risk = await weatherClient.getOutdoorWorkRisk();
+
       return {
-        temperature: weather.temperature,
-        condition: weather.condition,
-        guidance: weather.guidance,
-        isOutdoorSafe: weather.isOutdoorSafe,
+        temperature: current.temperature,
+        condition: current.description,
+        guidance: risk.recommendations[0] || 'Weather conditions suitable for outdoor work',
+        isOutdoorSafe: risk.isSafeForWork,
         timestamp: new Date(),
-        buildingSpecificGuidance: buildingGuidance.flat()
+        buildingSpecificGuidance: buildings.map(b => `${b.name}: ${risk.recommendations[0] || 'OK'}`)
       };
     } catch (error) {
       console.error('Failed to load weather data:', error);

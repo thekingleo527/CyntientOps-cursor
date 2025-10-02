@@ -173,6 +173,7 @@ export const BuildingDetailScreen: React.FC = () => {
   const [schedule, setSchedule] = useState<CollectionScheduleSummary | null>(null);
   const [inventory, setInventory] = useState<any[]>([]);
   const [violationSummary, setViolationSummary] = useState<ViolationSummary>({ hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 });
+  const [cityAdvisory, setCityAdvisory] = useState<string | null>(null);
 
   const building = useMemo(() => RealDataService.getBuildingById(buildingId), [buildingId]);
   const routines = useMemo(() => RealDataService.getRoutinesByBuildingId(buildingId), [buildingId]);
@@ -241,6 +242,19 @@ export const BuildingDetailScreen: React.FC = () => {
                     `City advisory: ${Array.from(toSet).join(', ')} schedule differs from DSNY — verify before set-out`,
                   ],
                 };
+                setCityAdvisory('City schedule differs from in-app routine — verify set-out today.');
+              }
+              // If no collection today across all types but local indicates any today, show banner
+              const todayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+              const cityHasToday = [cityRefuse, cityRecycling, cityOrganics, cityBulk].some(arr => (arr || []).includes(todayName));
+              const localHasToday = [
+                local.regularCollectionDay,
+                local.recyclingDay,
+                local.organicsDay,
+                local.bulkPickupDay,
+              ].includes(todayName);
+              if (!cityHasToday && localHasToday) {
+                setCityAdvisory('No DSNY pickup today per city schedule.');
               }
             }
           } catch {}
@@ -315,6 +329,11 @@ export const BuildingDetailScreen: React.FC = () => {
               return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {cityAdvisory && (
+          <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={[styles.sectionCard, { borderLeftWidth: 3, borderLeftColor: Colors.warning }] }>
+            <Text style={{ color: Colors.text.primary, ...Typography.bodyMedium }}>{cityAdvisory}</Text>
+          </GlassCard>
+        )}
         {renderHero(building, complianceScore)}
 
         {canViewPropertyDetails && propertyDetails && (

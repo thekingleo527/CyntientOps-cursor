@@ -140,6 +140,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   const [selectedAnalyticsTab, setSelectedAnalyticsTab] = React.useState<'overview' | 'performance' | 'compliance' | 'workers'>('overview');
   const [maintenancePredictions, setMaintenancePredictions] = React.useState<MaintenancePrediction[]>([]);
   const [predictiveMaintenanceService] = React.useState(() => new PredictiveMaintenanceService(null as any));
+  const useFallbackData = !state;
   const [selectedIntelligenceTab, setSelectedIntelligenceTab] = React.useState<'routines' | 'portfolio' | 'insights' | 'alerts' | 'quickactions' | null>(null);
 
   // Real-time analytics data for worker performance
@@ -167,6 +168,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
 
   // Load maintenance predictions
   React.useEffect(() => {
+    if (!useFallbackData) return; // Skip generation if state is provided by app
     const loadMaintenancePredictions = async () => {
       try {
         await predictiveMaintenanceService.initialize();
@@ -178,7 +180,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     };
 
     loadMaintenancePredictions();
-  }, [workerId]);
+  }, [workerId, useFallbackData]);
 
   // Get data from state management or use provided state override
   const dashboardData: WorkerDashboardData = state ?? {
@@ -211,8 +213,9 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   const isLoading = uiState.isLoading;
 
   React.useEffect(() => {
+    if (!useFallbackData) return; // Skip fallback hydration when state provided
     loadWorkerDashboardData();
-  }, [workerId]);
+  }, [workerId, useFallbackData]);
 
   const handleHeaderRoute = (route: WorkerHeaderRoute) => {
     switch (route) {

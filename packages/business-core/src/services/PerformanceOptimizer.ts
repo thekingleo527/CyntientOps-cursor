@@ -47,24 +47,27 @@ export interface OptimizationConfig {
   enableNetworkOptimization: boolean;
 }
 
+import { CacheManager } from './CacheManager';
+
 export class PerformanceOptimizer {
   private static instance: PerformanceOptimizer;
   private database: DatabaseManager;
-  private cache: Map<string, any> = new Map();
+  private cacheManager: CacheManager;
   private performanceMetrics: PerformanceMetrics;
   private config: OptimizationConfig;
   private offlineQueue: any[] = [];
 
-  private constructor(database: DatabaseManager) {
+  private constructor(database: DatabaseManager, cacheManager: CacheManager) {
     this.database = database;
+    this.cacheManager = cacheManager;
     this.performanceMetrics = this.initializeMetrics();
     this.config = this.getDefaultConfig();
     Logger.debug('PerformanceOptimizer initialized', undefined, 'PerformanceOptimizer');
   }
 
-  public static getInstance(database: DatabaseManager): PerformanceOptimizer {
+  public static getInstance(database: DatabaseManager, cacheManager: CacheManager): PerformanceOptimizer {
     if (!PerformanceOptimizer.instance) {
-      PerformanceOptimizer.instance = new PerformanceOptimizer(database);
+      PerformanceOptimizer.instance = new PerformanceOptimizer(database, cacheManager);
     }
     return PerformanceOptimizer.instance;
   }
@@ -159,30 +162,17 @@ export class PerformanceOptimizer {
 
   public async getCachedData<T>(key: string): Promise<T | null> {
     const startTime = Date.now();
-    
-    if (this.cache.has(key)) {
-      const cached = this.cache.get(key);
+    const cached = await this.cacheManager.get<T>(key);
+    if (cached) {
       this.performanceMetrics.cacheHitRate = (this.performanceMetrics.cacheHitRate + 1) / 2;
       this.performanceMetrics.dataLoadTime = Date.now() - startTime;
       return cached;
     }
-    
     return null;
   }
 
   public async setCachedData<T>(key: string, data: T, ttl: number = 300): Promise<void> {
-    const cacheEntry = {
-      data,
-      timestamp: Date.now(),
-      ttl: ttl * 1000, // Convert to milliseconds
-    };
-    
-    this.cache.set(key, cacheEntry);
-    
-    // Schedule cleanup
-    setTimeout(() => {
-      this.cache.delete(key);
-    }, ttl * 1000);
+    await this.cacheManager.set(key, data, ttl * 1000);
   }
 
   private clearOldCacheEntries(): void {
@@ -428,17 +418,7 @@ export class PerformanceOptimizer {
     this.config = { ...this.config, ...config };
   }
 
-  public async clearCache(): Promise<void> {
-    this.cache.clear();
-    Logger.debug('Cache cleared', undefined, 'PerformanceOptimizer');
-  }
 
-  public async getCacheStats(): Promise<{ size: number; hitRate: number }> {
-    return {
-      size: this.cache.size,
-      hitRate: this.performanceMetrics.cacheHitRate,
-    };
-  }
 
   public async addToOfflineQueue(item: any): Promise<void> {
     this.offlineQueue.push(item);

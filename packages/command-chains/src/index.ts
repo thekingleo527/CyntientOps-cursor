@@ -5,6 +5,7 @@
  * Service orchestration and workflow management
  */
 
+import { CommandChainManager } from './CommandChain';
 export { CommandChainManager } from './CommandChain';
 
 export type { 
@@ -34,4 +35,5 @@ export async function initializeCommandChainManager(
 }
 
 // Default export
+// Default export with a local binding (helps Babel scope tracking)
 export default CommandChainManager;

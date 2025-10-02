@@ -22,9 +22,11 @@ export interface APIEndpoint {
   method: 'GET' | 'POST';
 }
 
+import { CacheManager } from '@cyntientops/business-core';
+
 export class NYCAPIService {
   private config: APIConfig;
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
+  private cacheManager: CacheManager;
   private lastRequestTime: number = 0;
 
   // Hardcoded API keys from Swift Credentials.swift
@@ -40,7 +42,7 @@ export class NYCAPIService {
     DSNY: {
       baseURL: "https://data.cityofnewyork.us/resource",
       timeout: 30000,
-      rateLimitDelay: 3600, // 3.6 seconds between calls
+      rateLimitDelay: 1000, // 1 second between calls
     },
     HPD: {
       baseURL: "https://data.cityofnewyork.us/resource",
@@ -59,20 +61,21 @@ export class NYCAPIService {
     },
   };
 
-  constructor() {
+  constructor(cacheManager: CacheManager) {
     this.config = {
       baseURL: "https://data.cityofnewyork.us/resource",
       timeout: 30000,
-      rateLimitDelay: 3600,
+      rateLimitDelay: 1000,
     };
+    this.cacheManager = cacheManager;
   }
 
   // Generic fetch method with caching and rate limiting
   async fetch<T>(endpoint: APIEndpoint): Promise<T> {
     // Check cache first
-    const cached = this.cache.get(endpoint.cacheKey);
-    if (cached && Date.now() - cached.timestamp < 300000) { // 5 minute cache
-      return cached.data;
+    const cached = await this.cacheManager.get<T>(endpoint.cacheKey);
+    if (cached) {
+      return cached;
     }
 
     // Rate limiting
@@ -99,10 +102,7 @@ export class NYCAPIService {
       const data = await response.json();
       
       // Cache the result
-      this.cache.set(endpoint.cacheKey, {
-        data,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(endpoint.cacheKey, data, 300000); // 5 minute cache
 
       this.lastRequestTime = Date.now();
       return data;
@@ -277,18 +277,7 @@ export class NYCAPIService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // Clear cache
-  clearCache(): void {
-    this.cache.clear();
-  }
 
-  // Get cache statistics
-  getCacheStats(): { size: number; keys: string[] } {
-    return {
-      size: this.cache.size,
-      keys: Array.from(this.cache.keys()),
-    };
-  }
 
   // Get DSNY collection schedule for multiple buildings
   async getMultipleDSNYSchedules(bins: string[]): Promise<DSNYRoute[]> {
@@ -475,5 +464,9 @@ export class NYCAPIService {
   }
 }
 
+import { DatabaseManager } from '@cyntientops/database';
+
 // Export singleton instance
-export const nycAPIService = new NYCAPIService();
+const databaseManager = DatabaseManager.getInstance();
+const cacheManager = CacheManager.getInstance(databaseManager);
+export const nycAPIService = new NYCAPIService(cacheManager);

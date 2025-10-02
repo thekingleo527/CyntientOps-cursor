@@ -146,8 +146,8 @@ export const useUnifiedNovaAI = (props: UnifiedNovaProps) => {
   // Voice Recognition Hook
   const {
     isListening: voiceListening,
-    startListening,
-    stopListening,
+    startListening: startVoiceListening,
+    stopListening: stopVoiceListening,
     recognizedText,
     voiceError
   } = useNovaVoiceRecognition({
@@ -332,8 +332,8 @@ export const useUnifiedNovaAI = (props: UnifiedNovaProps) => {
       emotionalState: 'alert'
     }));
 
-    startListening();
-  }, [finalConfig.enableVoice, startListening]);
+    startVoiceListening();
+  }, [finalConfig.enableVoice, startVoiceListening]);
 
   // Stop Listening
   const stopListening = useCallback(() => {
@@ -344,8 +344,8 @@ export const useUnifiedNovaAI = (props: UnifiedNovaProps) => {
       statusText: 'Nova AI Ready'
     }));
 
-    stopListening();
-  }, [stopListening]);
+    stopVoiceListening();
+  }, [stopVoiceListening]);
 
   // Toggle Holographic Mode
   const toggleHolographicMode = useCallback(() => {
@@ -501,4 +501,3 @@ export const UnifiedNovaAI: React.FC<UnifiedNovaProps> = (props) => {
 };
 
 export default UnifiedNovaAI;
-

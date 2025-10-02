@@ -33,13 +33,15 @@ export interface PropertyValueUpdateResult {
   totalAssessedValue: number;
 }
 
+import { CacheManager } from '@cyntientops/business-core';
+
 export class PropertyValueService {
   private dofClient: DOFAPIClient;
-  private cache: Map<string, { data: BuildingPropertyValue; timestamp: number }> = new Map();
-  private readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours (assessments change annually)
+  private cacheManager: CacheManager;
 
-  constructor() {
-    this.dofClient = new DOFAPIClient(new NYCAPIService());
+  constructor(dofClient: DOFAPIClient, cacheManager: CacheManager) {
+    this.dofClient = dofClient;
+    this.cacheManager = cacheManager;
   }
 
   /**
@@ -47,10 +49,10 @@ export class PropertyValueService {
    */
   async getBuildingPropertyValue(buildingId: string): Promise<BuildingPropertyValue | null> {
     const cacheKey = `property_value_${buildingId}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<BuildingPropertyValue>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
@@ -74,10 +76,7 @@ export class PropertyValueService {
         lastUpdated: new Date(),
       };
 
-      this.cache.set(cacheKey, {
-        data: propertyValue,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, propertyValue, 86400000); // 24 hour cache
 
       return propertyValue;
     } catch (error) {
@@ -236,24 +235,14 @@ export class PropertyValueService {
     };
   }
 
-  /**
-   * Clear cache
-   */
-  clearCache(): void {
-    this.cache.clear();
-    console.log('🧹 Property value cache cleared');
-  }
 
-  /**
-   * Get cache statistics
-   */
-  getCacheStats(): { size: number; keys: string[] } {
-    return {
-      size: this.cache.size,
-      keys: Array.from(this.cache.keys()),
-    };
-  }
 }
 
+import { DatabaseManager } from '@cyntientops/database';
+import { CacheManager } from '@cyntientops/business-core';
+import { dofAPIClient } from '../nyc/DOFAPIClient';
+
 // Export singleton instance
-export const propertyValueService = new PropertyValueService();
+const databaseManager = DatabaseManager.getInstance();
+const cacheManager = CacheManager.getInstance(databaseManager);
+export const propertyValueService = new PropertyValueService(dofAPIClient, cacheManager);

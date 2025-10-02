@@ -9,6 +9,8 @@
  * - NYC Open Data APIs
  */
 
+import { CacheManager } from './CacheManager';
+
 export interface PropertyDetails {
   id: string;
   name: string;
@@ -471,11 +473,37 @@ export const propertyData: Record<string, PropertyDetails> = {
 };
 
 export class PropertyDataService {
+  private static cacheManager: CacheManager | null = null;
+
   /**
-   * Get property details by building ID
+   * Set cache manager for static methods
    */
-  static getPropertyDetails(buildingId: string): PropertyDetails | null {
-    return propertyData[buildingId] || null;
+  static setCacheManager(cacheManager: CacheManager): void {
+    PropertyDataService.cacheManager = cacheManager;
+  }
+
+  /**
+   * Get property details by building ID with caching
+   */
+  static async getPropertyDetails(buildingId: string): Promise<PropertyDetails | null> {
+    const cacheKey = `property_details_${buildingId}`;
+    
+    // Try cache first
+    if (PropertyDataService.cacheManager) {
+      const cached = await PropertyDataService.cacheManager.get<PropertyDetails>(cacheKey);
+      if (cached) {
+        return cached;
+      }
+    }
+    
+    const data = propertyData[buildingId] || null;
+    
+    // Cache the result for 24 hours
+    if (data && PropertyDataService.cacheManager) {
+      await PropertyDataService.cacheManager.set(cacheKey, data, 24 * 60 * 60 * 1000);
+    }
+    
+    return data;
   }
 
   /**

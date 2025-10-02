@@ -16,6 +16,7 @@
 import React from 'react';
 const { useState, useEffect, useRef, useCallback } = React;
 const { Animated, Vibration, Platform } = require('react-native');
+import * as Speech from 'expo-speech';
 import { NovaAPIService } from './NovaAPIService';
 import { useNovaImageLoader, NovaImageInfo, HolographicEffectOptions } from './NovaImageLoader';
 import { useNovaGestureHandler, NovaGestureHandler } from './NovaGestureHandler';
@@ -158,68 +159,20 @@ const triggerHapticFeedback = (type: HapticFeedbackType) => {
 const speakText = async (text: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
-      // For React Native, we'll use a cross-platform approach
-      if (Platform.OS === 'ios') {
-        // iOS Speech Synthesis
-        const utterance = new (globalThis as any).SpeechSynthesisUtterance(text);
-        utterance.rate = 0.8;
-        utterance.pitch = 1.0;
-        utterance.volume = 0.8;
-        utterance.voice = null; // Use default voice
-        
-        utterance.onend = () => {
+      // Use Speech mock shim for cross-platform TTS in dev
+      const speakPromise = Speech?.speak
+        ? Promise.resolve(Speech.speak(text))
+        : Promise.resolve(console.log('🔊 Speaking (simulated):', text));
+
+      speakPromise
+        .then(() => {
           console.log('🔊 Speech synthesis completed');
           resolve();
-        };
-        
-        utterance.onerror = (event: any) => {
-          console.error('❌ Speech synthesis error:', event.error);
-          reject(new Error(`Speech synthesis failed: ${event.error}`));
-        };
-        
-        (globalThis as any).speechSynthesis.speak(utterance);
-      } else if (Platform.OS === 'android') {
-        // Android Text-to-Speech
-        const Tts = require('react-native-tts');
-        
-        Tts.setDefaultRate(0.8);
-        Tts.setDefaultPitch(1.0);
-        Tts.setDefaultLanguage('en-US');
-        
-        Tts.speak(text, {
-          androidParams: {
-            KEY_PARAM_PAN: -1,
-            KEY_PARAM_VOLUME: 0.8,
-            KEY_PARAM_STREAM: 'STREAM_MUSIC',
-          },
+        })
+        .catch((err: any) => {
+          console.error('❌ Speech synthesis error:', err);
+          reject(err instanceof Error ? err : new Error(String(err)));
         });
-        
-        // Listen for completion
-        const onTtsFinish = () => {
-          Tts.removeListener('tts-finish', onTtsFinish);
-          console.log('🔊 Speech synthesis completed');
-          resolve();
-        };
-        
-        const onTtsError = (error: any) => {
-          Tts.removeListener('tts-finish', onTtsFinish);
-          Tts.removeListener('tts-error', onTtsError);
-          console.error('❌ Speech synthesis error:', error);
-          reject(new Error(`Speech synthesis failed: ${error}`));
-        };
-        
-        Tts.addEventListener('tts-finish', onTtsFinish);
-        Tts.addEventListener('tts-error', onTtsError);
-      } else {
-        // Fallback for other platforms or when TTS is not available
-        console.log('🔊 Speaking (simulated):', text);
-        // Simulate speaking duration based on text length
-        const duration = Math.max(1000, text.length * 50);
-        setTimeout(() => {
-          console.log('🔊 Speech synthesis completed (simulated)');
-          resolve();
-        }, duration);
-      }
     } catch (error) {
       console.warn('⚠️ Speech synthesis not available, using fallback:', error);
       // Fallback to console log

@@ -28,12 +28,12 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from '../mocks/expo-blur';
-import * as LocalAuthentication from '../mocks/expo-local-authentication';
-import * as SecureStore from '../mocks/expo-secure-store';
-import * as FileSystem from '../mocks/expo-file-system';
-import * as Crypto from '../mocks/expo-crypto';
-import * as Haptics from '../mocks/expo-haptics';
+import { BlurView } from 'expo-blur';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
+import * as FileSystem from 'expo-file-system';
+import * as Crypto from 'expo-crypto';
+import * as Haptics from 'expo-haptics';
 import { AppState, AppStateStatus } from 'react-native';
 
 // Types
@@ -317,7 +317,7 @@ export const useSecurityManager = () => {
   }, [securityConfig]);
 
   // Set passcode
-  const setPasscode = useCallback(async (passcode: string): Promise<boolean> => {
+  const setPasscodeAction = useCallback(async (passcode: string): Promise<boolean> => {
     try {
       await SecureStore.setItemAsync('user_passcode', passcode);
       
@@ -575,7 +575,7 @@ export const useSecurityManager = () => {
     saveSecurityConfig,
     authenticateWithBiometrics,
     authenticateWithPasscode,
-    setPasscode,
+    setPasscode: setPasscodeAction,
     encryptPhoto,
     decryptPhoto,
     logout,
@@ -593,14 +593,14 @@ export const SecurityManager: React.FC = () => {
     saveSecurityConfig,
     authenticateWithBiometrics,
     authenticateWithPasscode,
-    setPasscode,
+    setPasscode: setSecurityPasscode,
     encryptPhoto,
     decryptPhoto,
     logout,
   } = useSecurityManager();
 
   const [showPasscodeModal, setShowPasscodeModal] = useState(false);
-  const [passcode, setPasscode] = useState('');
+  const [passcodeInput, setPasscodeInput] = useState('');
   const [showSettings, setShowSettings] = useState(false);
 
   const handleBiometricAuth = useCallback(async () => {
@@ -611,20 +611,20 @@ export const SecurityManager: React.FC = () => {
   }, [authenticateWithBiometrics]);
 
   const handlePasscodeAuth = useCallback(async () => {
-    const success = await authenticateWithPasscode(passcode);
+    const success = await authenticateWithPasscode(passcodeInput);
     if (success) {
       setShowPasscodeModal(false);
-      setPasscode('');
+      setPasscodeInput('');
     }
-  }, [authenticateWithPasscode, passcode]);
+  }, [authenticateWithPasscode, passcodeInput]);
 
   const handleSetPasscode = useCallback(async () => {
-    const success = await setPasscode(passcode);
+    const success = await setSecurityPasscode(passcodeInput);
     if (success) {
       setShowPasscodeModal(false);
-      setPasscode('');
+      setPasscodeInput('');
     }
-  }, [setPasscode, passcode]);
+  }, [setSecurityPasscode, passcodeInput]);
 
   const handleConfigChange = useCallback(async (key: keyof SecurityConfig, value: any) => {
     await saveSecurityConfig({ [key]: value });
@@ -747,8 +747,8 @@ export const SecurityManager: React.FC = () => {
             <TextInput
               style={styles.passcodeInput}
               placeholder="Enter passcode"
-              value={passcode}
-              onChangeText={setPasscode}
+              value={passcodeInput}
+              onChangeText={setPasscodeInput}
               secureTextEntry
               keyboardType="numeric"
             />

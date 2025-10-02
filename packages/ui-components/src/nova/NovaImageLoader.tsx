@@ -15,8 +15,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Image, View, Text, StyleSheet, ImageSourcePropType, ImageStyle, ViewStyle } from 'react-native';
-import { Asset } from '../mocks/expo-asset';
-import * as FileSystem from '../mocks/expo-file-system';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
 
 // Types
 export interface NovaImageInfo {
@@ -184,10 +184,10 @@ export const useNovaImageLoader = () => {
   };
 
   // Load image from assets
-  const loadImageFromAssets = async (imageName: string): Promise<NovaImageInfo | null> => {
+  const loadImageFromAssets = async (_imageName: string): Promise<NovaImageInfo | null> => {
     try {
-      // Try different asset loading methods
-      const asset = Asset.fromModule(require(`../../assets/images/${imageName}.png`));
+      // Metro requires static requires; resolve to canonical assistant image
+      const asset = Asset.fromModule(require('../../../apps/mobile-rn/assets/images/AIAssistant.png'));
       await asset.downloadAsync();
       
       if (asset.localUri) {
@@ -200,7 +200,7 @@ export const useNovaImageLoader = () => {
     } catch (error) {
       // Try alternative loading methods
       try {
-        const uri = `file://${FileSystem.documentDirectory}${imageName}.png`;
+        const uri = `file://${FileSystem.documentDirectory}AIAssistant.png`;
         const exists = await FileSystem.getInfoAsync(uri);
         
         if (exists.exists) {

@@ -10,10 +10,10 @@
     "test": "jest"
   },
   "dependencies": {
-    "@cyntientops/domain-schema": "workspace:*",
-    "@cyntientops/database": "workspace:*",
-    "@cyntientops/managers": "workspace:*",
-    "@cyntientops/intelligence-services": "workspace:*",
+    "@cyntientops/domain-schema": "1.0.0",
+    "@cyntientops/database": "1.0.0",
+    "@cyntientops/managers": "1.0.0",
+    "@cyntientops/intelligence-services": "1.0.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

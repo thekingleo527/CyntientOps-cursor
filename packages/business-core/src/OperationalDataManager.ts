@@ -156,27 +156,11 @@ export interface OperationalEvent {
 }
 
 // MARK: - OperationalDataManager Class
+import { CacheManager } from './services/CacheManager';
+
 export class OperationalDataManager {
   private static instance: OperationalDataManager | null = null;
-  
-  // MARK: - Version Tracking
-  public static readonly dataVersion = "1.0.0";
-  public static readonly lastUpdated = "2024-01-31";
-  private dataChecksum: string = "";
-  private readonly checksumKey = "OperationalDataChecksum_v1";
-  
-  // MARK: - Published State
-  public importProgress: number = 0.0;
-  public currentStatus: string = "";
-  public isInitialized: boolean = false;
-  
-  // MARK: - Private State
-  private hasImported: boolean = false;
-  private importErrors: string[] = [];
-  private cachedBuildings: Map<string, CachedBuilding> = new Map();
-  private cachedWorkers: Map<string, CachedWorker> = new Map();
-  private recentEvents: OperationalEvent[] = [];
-  private errorLog: Array<{ message: string; error?: Error; timestamp: Date }> = [];
+  private cacheManager: CacheManager;
   
   // MARK: - 🛡️ PRESERVED OPERATIONAL DATA
   // Every task updated with canonical IDs - Complete real-world data
@@ -1163,37 +1147,40 @@ export class OperationalDataManager {
   ];
   
   // MARK: - Singleton Pattern
-  public static getInstance(): OperationalDataManager {
+  public static getInstance(cacheManager: CacheManager): OperationalDataManager {
     if (!OperationalDataManager.instance) {
-      OperationalDataManager.instance = new OperationalDataManager();
+      OperationalDataManager.instance = new OperationalDataManager(cacheManager);
     }
     return OperationalDataManager.instance;
   }
   
-  private constructor() {
+  private constructor(cacheManager: CacheManager) {
+    this.cacheManager = cacheManager;
     this.initializeCachedData();
   }
   
   // MARK: - Initialization
-  private initializeCachedData(): void {
+  private async initializeCachedData(): Promise<void> {
     // Initialize cached buildings
-    Object.entries(CanonicalIDs.Buildings.nameMap).forEach(([id, name]) => {
-      this.cachedBuildings.set(id, {
+    for (const [id, name] of Object.entries(CanonicalIDs.Buildings.nameMap)) {
+      const building: CachedBuilding = {
         id,
         name,
         latitude: 40.7589, // Default NYC coordinates
         longitude: -73.9851
-      });
-    });
+      };
+      await this.cacheManager.set(`building_${id}`, building);
+    }
     
     // Initialize cached workers
-    Object.entries(CanonicalIDs.Workers.nameMap).forEach(([id, name]) => {
-      this.cachedWorkers.set(id, {
+    for (const [id, name] of Object.entries(CanonicalIDs.Workers.nameMap)) {
+      const worker: CachedWorker = {
         id,
         name,
         role: this.getWorkerRole(id)
-      });
-    });
+      };
+      await this.cacheManager.set(`worker_${id}`, worker);
+    }
     
     this.isInitialized = true;
   }
@@ -1230,29 +1217,43 @@ export class OperationalDataManager {
   /**
    * Get all workers
    */
-  public getAllWorkers(): CachedWorker[] {
-    return Array.from(this.cachedWorkers.values());
+  public async getAllWorkers(): Promise<CachedWorker[]> {
+    const workers: CachedWorker[] = [];
+    for (const id of Object.keys(CanonicalIDs.Workers.nameMap)) {
+      const worker = await this.cacheManager.get<CachedWorker>(`worker_${id}`);
+      if (worker) {
+        workers.push(worker);
+      }
+    }
+    return workers;
   }
   
   /**
    * Get all buildings
    */
-  public getAllBuildings(): CachedBuilding[] {
-    return Array.from(this.cachedBuildings.values());
+  public async getAllBuildings(): Promise<CachedBuilding[]> {
+    const buildings: CachedBuilding[] = [];
+    for (const id of Object.keys(CanonicalIDs.Buildings.nameMap)) {
+      const building = await this.cacheManager.get<CachedBuilding>(`building_${id}`);
+      if (building) {
+        buildings.push(building);
+      }
+    }
+    return buildings;
   }
   
   /**
    * Get worker by ID
    */
-  public getWorker(workerId: string): CachedWorker | undefined {
-    return this.cachedWorkers.get(workerId);
+  public async getWorker(workerId: string): Promise<CachedWorker | undefined> {
+    return this.cacheManager.get<CachedWorker>(`worker_${workerId}`);
   }
   
   /**
    * Get building by ID
    */
-  public getBuilding(buildingId: string): CachedBuilding | undefined {
-    return this.cachedBuildings.get(buildingId);
+  public async getBuilding(buildingId: string): Promise<CachedBuilding | undefined> {
+    return this.cacheManager.get<CachedBuilding>(`building_${buildingId}`);
   }
   
   /**
@@ -1410,19 +1411,21 @@ export class OperationalDataManager {
   /**
    * Get data integrity info
    */
-  public getDataIntegrityInfo(): {
+  public async getDataIntegrityInfo(): Promise<{
     version: string;
     taskCount: number;
     workerCount: number;
     buildingCount: number;
     checksum: string;
     timestamp: Date;
-  } {
+  }> {
+    const workers = await this.getAllWorkers();
+    const buildings = await this.getAllBuildings();
     return {
       version: OperationalDataManager.dataVersion,
       taskCount: this.realWorldTasks.length,
-      workerCount: this.cachedWorkers.size,
-      buildingCount: this.cachedBuildings.size,
+      workerCount: workers.length,
+      buildingCount: buildings.length,
       checksum: this.dataChecksum,
       timestamp: new Date()
     };
@@ -1455,5 +1458,10 @@ export class OperationalDataManager {
   }
 }
 
+import { DatabaseManager } from '@cyntientops/database';
+import { CacheManager } from './services/CacheManager';
+
 // Export singleton instance
-export const operationalDataManager = OperationalDataManager.getInstance();
+const databaseManager = DatabaseManager.getInstance();
+const cacheManager = CacheManager.getInstance(databaseManager);
+export const operationalDataManager = new OperationalDataManager(cacheManager);

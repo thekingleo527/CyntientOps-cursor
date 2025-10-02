@@ -11,12 +11,10 @@ Centralized reference for implementation reports, audits, and guides.
 
 ## Implementation & Status
 
-- CONTINUITY_REPORT.md — feature-by-feature parity and status
-- FINAL_IMPLEMENTATION_STATUS_REPORT.md — latest implementation summary
+- **CONTINUITY_REPORT.md** — **MAIN STATUS REPORT** (consolidated from PROJECT_STATUS.md and FINAL_IMPLEMENTATION_STATUS_REPORT.md)
 - SWIFTUI_GUIDED_IMPLEMENTATION_REPORT.md — SwiftUI mapping to RN
 - COMPREHENSIVE_IMPLEMENTATION_GAPS_REPORT.md — gaps and follow-ups
 - CODE_REVIEW_OCT1_2025.md — focused code review
-- PROJECT_STATUS.md — high-level project milestones
 - TESTING_OPTIMIZATION_REPORT.md — testing system and optimizations
 
 ## Compliance & Security

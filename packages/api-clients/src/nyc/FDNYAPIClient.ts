@@ -151,10 +151,11 @@ export enum FDNYSafetyRating {
   CRITICAL = 'critical', // Below 60%
 }
 
+import { CacheManager } from '@cyntientops/business-core';
+
 export class FDNYAPIClient {
   private apiService: NYCAPIService;
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
-  private readonly CACHE_DURATION = 300000; // 5 minutes
+  private cacheManager: CacheManager;
 
   // FDNY API endpoints
   private readonly ENDPOINTS = {
@@ -164,27 +165,25 @@ export class FDNYAPIClient {
     COMPLIANCE_SUMMARY: 'https://data.cityofnewyork.us/resource/8m42-w767.json',
   };
 
-  constructor(apiService: NYCAPIService) {
+  constructor(apiService: NYCAPIService, cacheManager: CacheManager) {
     this.apiService = apiService;
+    this.cacheManager = cacheManager;
   }
 
   // Get FDNY inspections for a building
   async getBuildingInspections(buildingId: string, limit: number = 50): Promise<FDNYInspection[]> {
     const cacheKey = `fdny_inspections_${buildingId}_${limit}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<FDNYInspection[]>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       // Simulate API call with realistic FDNY data
       const inspections = this.generateMockInspections(buildingId, limit);
       
-      this.cache.set(cacheKey, {
-        data: inspections,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, inspections, 300000); // 5 minute cache
 
       return inspections;
     } catch (error) {
@@ -196,19 +195,16 @@ export class FDNYAPIClient {
   // Get active violations for a building
   async getActiveViolations(buildingId: string): Promise<FDNYViolation[]> {
     const cacheKey = `fdny_violations_${buildingId}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<FDNYViolation[]>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const violations = this.generateMockViolations(buildingId);
       
-      this.cache.set(cacheKey, {
-        data: violations,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, violations, 300000); // 5 minute cache
 
       return violations;
     } catch (error) {
@@ -220,19 +216,16 @@ export class FDNYAPIClient {
   // Get emergency response history for a building
   async getEmergencyResponses(buildingId: string, days: number = 365): Promise<FDNYEmergencyResponse[]> {
     const cacheKey = `fdny_emergency_${buildingId}_${days}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<FDNYEmergencyResponse[]>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const responses = this.generateMockEmergencyResponses(buildingId, days);
       
-      this.cache.set(cacheKey, {
-        data: responses,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, responses, 300000); // 5 minute cache
 
       return responses;
     } catch (error) {
@@ -244,19 +237,16 @@ export class FDNYAPIClient {
   // Get compliance summary for a building
   async getComplianceSummary(buildingId: string): Promise<FDNYComplianceSummary> {
     const cacheKey = `fdny_compliance_${buildingId}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<FDNYComplianceSummary>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const summary = this.generateMockComplianceSummary(buildingId);
       
-      this.cache.set(cacheKey, {
-        data: summary,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, summary, 300000); // 5 minute cache
 
       return summary;
     } catch (error) {
@@ -516,19 +506,14 @@ export class FDNYAPIClient {
     });
   }
 
-  // Clear cache
-  clearCache(): void {
-    this.cache.clear();
-  }
 
-  // Get cache statistics
-  getCacheStats(): { size: number; keys: string[] } {
-    return {
-      size: this.cache.size,
-      keys: Array.from(this.cache.keys()),
-    };
-  }
 }
 
+import { DatabaseManager } from '@cyntientops/database';
+import { CacheManager } from '@cyntientops/business-core';
+
 // Export singleton instance
-export const fdnyAPIClient = new FDNYAPIClient(new NYCAPIService());
+const databaseManager = DatabaseManager.getInstance();
+const cacheManager = CacheManager.getInstance(databaseManager);
+const nycAPIService = new NYCAPIService(cacheManager);
+export const fdnyAPIClient = new FDNYAPIClient(nycAPIService, cacheManager);

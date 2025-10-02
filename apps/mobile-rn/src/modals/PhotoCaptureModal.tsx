@@ -6,11 +6,10 @@
 
 import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Alert, Modal, Dimensions } from 'react-native';
-import { Camera, CameraView, CameraType, FlashMode } from '../mocks/expo-camera';
-import * as ImagePicker from '../mocks/expo-image-picker';
-import { MediaTypeOptions } from '../mocks/expo-image-picker';
+import { Camera, CameraView, CameraType, FlashMode } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
+import { MediaTypeOptions } from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { DatabaseManager } from '../mocks/database';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 
 interface PhotoCaptureModalProps {

@@ -33,9 +33,7 @@ import { OperationalDataService } from './services/OperationalDataService';
 import { AuthService } from './services/AuthService';
 import { RealTimeOrchestrator } from './services/RealTimeOrchestrator';
 import { RouteManager } from './services/RouteManager';
-import { NovaAPIService } from './services/NovaAPIService';
 import { PerformanceOptimizer } from './services/PerformanceOptimizer';
-import { AnalyticsEngine } from './services/AnalyticsEngine';
 import { SecurityManager } from './services/SecurityManager';
 import { ProductionManager } from './services/ProductionManager';
 import { SentryService } from './services/SentryService';
@@ -47,6 +45,9 @@ import { DatabaseIntegrationService } from './services/DatabaseIntegrationServic
 import { SessionManager } from './services/SessionManager';
 import { RealTimeCommunicationService } from './services/RealTimeCommunicationService';
 import { NovaAIBrainService } from './services/NovaAIBrainService';
+import { CacheManager } from './services/CacheManager';
+import { PropertyDataService } from './services/PropertyDataService';
+import { WeatherTriggeredTaskManager } from './services/WeatherTriggeredTaskManager';
 
 // Types
 import { 
@@ -89,6 +90,7 @@ export class ServiceContainer {
   private _realTimeCommunication: RealTimeCommunicationService | null = null;
   private _routeManager: RouteManager | null = null;
   private _novaAIBrain: NovaAIBrainService | null = null;
+  private _cacheManager: CacheManager | null = null;
   private _performanceOptimizer: PerformanceOptimizer | null = null;
   private _analyticsService: AnalyticsService | null = null;
   private _securityManager: SecurityManager | null = null;
@@ -130,6 +132,7 @@ export class ServiceContainer {
   private _notifications: NotificationManager | null = null;
   private _photoEvidence: PhotoEvidenceManager | null = null;
   private _weatherTasks: WeatherTaskManager | null = null;
+  private _weatherTriggeredTasks: WeatherTriggeredTaskManager | null = null;
   private _offlineQueue: OfflineManager | null = null;
   
   // MARK: - API Clients
@@ -175,6 +178,10 @@ export class ServiceContainer {
     try {
       // Initialize Sentry first for error tracking
       await this.sentryService.initialize();
+      
+      // Initialize cache manager and set it for static services
+      this._cacheManager = CacheManager.getInstance(this.database);
+      PropertyDataService.setCacheManager(this._cacheManager);
       this.sentryService.addBreadcrumb('ServiceContainer initialization started', 'system');
       console.log('✅ Sentry initialized');
       
@@ -315,11 +322,11 @@ export class ServiceContainer {
     return this._novaAIBrain;
   }
 
-  public get novaAPI(): NovaAPIService {
-    if (!this._novaAPI) {
-      this._novaAPI = NovaAPIService.getInstance(this.database);
+  public get cacheManager(): CacheManager {
+    if (!this._cacheManager) {
+      this._cacheManager = CacheManager.getInstance(this.database);
     }
-    return this._novaAPI;
+    return this._cacheManager;
   }
 
   public get performanceOptimizer(): PerformanceOptimizer {
@@ -327,13 +334,6 @@ export class ServiceContainer {
       this._performanceOptimizer = PerformanceOptimizer.getInstance(this.database);
     }
     return this._performanceOptimizer;
-  }
-
-  public get analyticsEngine(): AnalyticsEngine {
-    if (!this._analyticsEngine) {
-      this._analyticsEngine = AnalyticsEngine.getInstance(this.database);
-    }
-    return this._analyticsEngine;
   }
 
   public get securityManager(): SecurityManager {
@@ -891,7 +891,7 @@ export class ServiceContainer {
 
   public get nyc(): NYCService {
     if (!this._nyc) {
-      this._nyc = NYCService.getInstance();
+      this._nyc = NYCService.getInstance(this.cacheManager);
     }
     return this._nyc;
   }
@@ -962,6 +962,13 @@ export class ServiceContainer {
       this._weatherTasks = WeatherTaskManager.getInstance();
     }
     return this._weatherTasks;
+  }
+
+  public get weatherTriggeredTasks(): WeatherTriggeredTaskManager {
+    if (!this._weatherTriggeredTasks) {
+      this._weatherTriggeredTasks = new WeatherTriggeredTaskManager(this, this.cacheManager);
+    }
+    return this._weatherTriggeredTasks;
   }
   
   public get offlineQueue(): OfflineManager {

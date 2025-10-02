@@ -5,6 +5,7 @@
  * Sync queues and offline-first architecture
  */
 
+import { OfflineManager } from './OfflineManager';
 export { OfflineManager } from './OfflineManager';
 
 export type { 
@@ -25,5 +26,5 @@ export async function initializeOfflineManager(
   );
 }
 
-// Default export
+// Default export with a local binding (helps Babel scope tracking)
 export default OfflineManager;

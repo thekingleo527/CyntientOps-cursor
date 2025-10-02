@@ -11,6 +11,7 @@ import { OperationalDataTaskAssignment, TaskCategory, TaskPriority } from '@cynt
 import { ServiceContainer } from '../ServiceContainer';
 import { WeatherAPIClient } from '@cyntientops/api-clients';
 import { Logger } from './LoggingService';
+import { CacheManager } from './CacheManager';
 
 export interface WeatherTriggeredTask {
   id: string;
@@ -294,6 +295,7 @@ export enum DeliveryMethod {
 export class WeatherTriggeredTaskManager extends EventEmitter {
   private container: ServiceContainer;
   private weatherAPI: WeatherAPIClient;
+  private cacheManager: CacheManager;
   private activeTasks: Map<string, WeatherTriggeredTask> = new Map();
   private weatherConditions: Map<string, WeatherCondition> = new Map();
   private emergencyProtocols: Map<string, EmergencyProtocol> = new Map();
@@ -302,9 +304,10 @@ export class WeatherTriggeredTaskManager extends EventEmitter {
   private monitoringInterval: NodeJS.Timeout | null = null;
   private readonly MONITORING_INTERVAL = 300000; // 5 minutes
 
-  constructor(container: ServiceContainer) {
+  constructor(container: ServiceContainer, cacheManager: CacheManager) {
     super();
     this.container = container;
+    this.cacheManager = cacheManager;
     this.weatherAPI = new WeatherAPIClient(
       process.env.WEATHER_API_KEY || '',
       40.7128, // NYC latitude
@@ -483,8 +486,23 @@ export class WeatherTriggeredTaskManager extends EventEmitter {
 
   private async checkWeatherConditions(): Promise<void> {
     try {
-      const currentWeather = await this.weatherAPI.getCurrentWeather();
-      const forecast = await this.weatherAPI.getWeatherForecast(7);
+      // Try cache first for weather data
+      const currentWeatherCacheKey = 'current_weather_nyc';
+      const forecastCacheKey = 'weather_forecast_7day_nyc';
+      
+      let currentWeather = await this.cacheManager.get<WeatherSnapshot>(currentWeatherCacheKey);
+      let forecast = await this.cacheManager.get<WeatherForecast[]>(forecastCacheKey);
+      
+      // Fetch from API if not cached
+      if (!currentWeather) {
+        currentWeather = await this.weatherAPI.getCurrentWeather();
+        await this.cacheManager.set(currentWeatherCacheKey, currentWeather, 30 * 60 * 1000); // 30 minutes
+      }
+      
+      if (!forecast) {
+        forecast = await this.weatherAPI.getWeatherForecast(7);
+        await this.cacheManager.set(forecastCacheKey, forecast, 60 * 60 * 1000); // 1 hour
+      }
       const alerts = await this.weatherAPI.getWeatherAlerts();
 
       // Check for weather-triggered tasks

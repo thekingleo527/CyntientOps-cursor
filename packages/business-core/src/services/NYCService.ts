@@ -6,6 +6,7 @@
 import { BuildingService } from './BuildingService';
 import { NYCAPIService, DSNYViolationsService, PropertyValueService } from '@cyntientops/api-clients';
 import { Logger } from './LoggingService';
+import { CacheManager } from './CacheManager';
 
 export class NYCService {
   private static instance: NYCService;
@@ -13,17 +14,19 @@ export class NYCService {
   private nycAPIService: NYCAPIService;
   private dsnyViolationsService: DSNYViolationsService;
   private propertyValueService: PropertyValueService;
+  private cacheManager: CacheManager;
 
-  private constructor() {
+  private constructor(cacheManager: CacheManager) {
     this.buildingService = new BuildingService();
-    this.nycAPIService = new NYCAPIService();
+    this.nycAPIService = new NYCAPIService(cacheManager);
     this.dsnyViolationsService = new DSNYViolationsService();
     this.propertyValueService = new PropertyValueService();
+    this.cacheManager = cacheManager;
   }
 
-  public static getInstance(): NYCService {
+  public static getInstance(cacheManager: CacheManager): NYCService {
     if (!NYCService.instance) {
-      NYCService.instance = new NYCService();
+      NYCService.instance = new NYCService(cacheManager);
     }
     return NYCService.instance;
   }
@@ -101,11 +104,22 @@ export class NYCService {
     }
     
     try {
-      return await this.nycAPIService.getBuildingComplianceData(
-        building.bbl, 
-        building.bin, 
-        building.address
-      );
+      // Load all data in parallel for faster performance
+      const [violations, permits, emissions, dsnyViolations] = await Promise.allSettled([
+        this.getHPDViolations(buildingId),
+        this.getDOBPermits(buildingId),
+        this.getLL97Emissions(buildingId),
+        this.getDSNYViolations(buildingId)
+      ]);
+
+      return {
+        bbl: building.bbl,
+        violations: violations.status === 'fulfilled' ? violations.value : [],
+        permits: permits.status === 'fulfilled' ? permits.value : [],
+        emissions: emissions.status === 'fulfilled' ? emissions.value : [],
+        dsnyViolations: dsnyViolations.status === 'fulfilled' ? dsnyViolations.value : { isEmpty: true, summons: [] },
+        lastUpdated: new Date()
+      };
     } catch (error) {
       console.error(`Failed to fetch comprehensive data for building ${buildingId}:`, error);
       return {

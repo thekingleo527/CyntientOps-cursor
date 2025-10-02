@@ -210,10 +210,11 @@ export enum DOFTaxPaymentStatus {
   EXEMPT = 'exempt',
 }
 
+import { CacheManager } from '@cyntientops/business-core';
+
 export class DOFAPIClient {
   private apiService: NYCAPIService;
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
-  private readonly CACHE_DURATION = 600000; // 10 minutes (assessments change less frequently)
+  private cacheManager: CacheManager;
 
   // DOF API endpoints
   private readonly ENDPOINTS = {
@@ -223,26 +224,24 @@ export class DOFAPIClient {
     PAYMENTS: 'https://data.cityofnewyork.us/resource/8y4t-faws.json',
   };
 
-  constructor(apiService: NYCAPIService) {
+  constructor(apiService: NYCAPIService, cacheManager: CacheManager) {
     this.apiService = apiService;
+    this.cacheManager = cacheManager;
   }
 
   // Get property assessment for a building
   async getPropertyAssessment(buildingId: string): Promise<DOFPropertyAssessment> {
     const cacheKey = `dof_assessment_${buildingId}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<DOFPropertyAssessment>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const assessment = this.generateMockPropertyAssessment(buildingId);
       
-      this.cache.set(cacheKey, {
-        data: assessment,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, assessment, 600000); // 10 minute cache
 
       return assessment;
     } catch (error) {
@@ -254,19 +253,16 @@ export class DOFAPIClient {
   // Get property assessment history
   async getAssessmentHistory(buildingId: string, years: number = 10): Promise<DOFAssessmentHistory[]> {
     const cacheKey = `dof_history_${buildingId}_${years}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<DOFAssessmentHistory[]>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const history = this.generateMockAssessmentHistory(buildingId, years);
       
-      this.cache.set(cacheKey, {
-        data: history,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, history, 600000); // 10 minute cache
 
       return history;
     } catch (error) {
@@ -278,19 +274,16 @@ export class DOFAPIClient {
   // Get tax bills for a property
   async getTaxBills(buildingId: string, years: number = 5): Promise<DOFTaxBill[]> {
     const cacheKey = `dof_tax_bills_${buildingId}_${years}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<DOFTaxBill[]>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const taxBills = this.generateMockTaxBills(buildingId, years);
       
-      this.cache.set(cacheKey, {
-        data: taxBills,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, taxBills, 600000); // 10 minute cache
 
       return taxBills;
     } catch (error) {
@@ -302,19 +295,16 @@ export class DOFAPIClient {
   // Get exemptions for a property
   async getExemptions(buildingId: string): Promise<DOFExemption[]> {
     const cacheKey = `dof_exemptions_${buildingId}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<DOFExemption[]>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const exemptions = this.generateMockExemptions(buildingId);
       
-      this.cache.set(cacheKey, {
-        data: exemptions,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, exemptions, 600000); // 10 minute cache
 
       return exemptions;
     } catch (error) {
@@ -326,19 +316,16 @@ export class DOFAPIClient {
   // Get property summary
   async getPropertySummary(buildingId: string): Promise<DOFPropertySummary> {
     const cacheKey = `dof_summary_${buildingId}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<DOFPropertySummary>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const summary = this.generateMockPropertySummary(buildingId);
       
-      this.cache.set(cacheKey, {
-        data: summary,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, summary, 600000); // 10 minute cache
 
       return summary;
     } catch (error) {
@@ -350,19 +337,16 @@ export class DOFAPIClient {
   // Get DOF analytics
   async getDOFAnalytics(): Promise<DOFAnalytics> {
     const cacheKey = 'dof_analytics';
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<DOFAnalytics>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const analytics = this.generateMockDOFAnalytics();
       
-      this.cache.set(cacheKey, {
-        data: analytics,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, analytics, 600000); // 10 minute cache
 
       return analytics;
     } catch (error) {
@@ -713,19 +697,14 @@ export class DOFAPIClient {
     return descriptionMap[exemptionType] || 'Other Exemption';
   }
 
-  // Clear cache
-  clearCache(): void {
-    this.cache.clear();
-  }
 
-  // Get cache statistics
-  getCacheStats(): { size: number; keys: string[] } {
-    return {
-      size: this.cache.size,
-      keys: Array.from(this.cache.keys()),
-    };
-  }
 }
 
+import { DatabaseManager } from '@cyntientops/database';
+import { CacheManager } from '@cyntientops/business-core';
+
 // Export singleton instance
-export const dofAPIClient = new DOFAPIClient(new NYCAPIService());
+const databaseManager = DatabaseManager.getInstance();
+const cacheManager = CacheManager.getInstance(databaseManager);
+const nycAPIService = new NYCAPIService(cacheManager);
+export const dofAPIClient = new DOFAPIClient(nycAPIService, cacheManager);

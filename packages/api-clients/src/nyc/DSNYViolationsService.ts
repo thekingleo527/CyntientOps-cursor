@@ -6,6 +6,7 @@
  */
 
 import fetch from 'node-fetch';
+import { CacheManager } from '@cyntientops/business-core';
 
 // API Configuration
 const GEOC_API = 'https://api.cityofnewyork.us/geoclient/v1/address.json';
@@ -261,17 +262,22 @@ export function shouldShowDemoData(address: string): boolean {
 /**
  * Main service class for DSNY violations
  */
+import { CacheManager } from '@cyntientops/business-core';
+
 export class DSNYViolationsService {
-  private cache: Map<string, { data: DSNYViolationsResult; timestamp: number }> = new Map();
-  private readonly CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+  private cacheManager: CacheManager;
+
+  constructor(cacheManager: CacheManager) {
+    this.cacheManager = cacheManager;
+  }
 
   async getViolationsForAddress(address: string, useDemoData = false): Promise<DSNYViolationsResult> {
     const cacheKey = `dsny_${address.toLowerCase()}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<DSNYViolationsResult>(cacheKey);
     
     // Check cache first
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     let result: DSNYViolationsResult;
@@ -286,10 +292,7 @@ export class DSNYViolationsService {
     }
 
     // Cache the result
-    this.cache.set(cacheKey, {
-      data: result,
-      timestamp: Date.now()
-    });
+    await this.cacheManager.set(cacheKey, result, 1800000); // 30 minute cache
 
     return result;
   }
@@ -315,13 +318,13 @@ export class DSNYViolationsService {
     return results;
   }
 
-  /**
-   * Clear cache
-   */
-  clearCache(): void {
-    this.cache.clear();
-  }
+
 }
 
+import { DatabaseManager } from '@cyntientops/database';
+import { CacheManager } from '@cyntientops/business-core';
+
 // Export singleton instance
-export const dsnyViolationsService = new DSNYViolationsService();
+const databaseManager = DatabaseManager.getInstance();
+const cacheManager = CacheManager.getInstance(databaseManager);
+export const dsnyViolationsService = new DSNYViolationsService(cacheManager);

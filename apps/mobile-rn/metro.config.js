@@ -1,21 +1,105 @@
-// Metro config for monorepo setups with Expo
+// BULLETPROOF Metro config for CyntientOps monorepo
 const { getDefaultConfig } = require('@expo/metro-config');
 const path = require('path');
 
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, '../..');
 
+// Get default config
 const config = getDefaultConfig(projectRoot);
 
-// Allow Metro to resolve symlinked workspaces
-config.resolver.unstable_enableSymlinks = true;
+// CRITICAL: Set the correct project root
+config.projectRoot = projectRoot;
 
-// Ensure Metro looks into the workspace node_modules as a fallback
-config.watchFolders = [workspaceRoot];
+// Watch folders - only essential directories
+config.watchFolders = [
+  projectRoot,
+  path.resolve(workspaceRoot, 'packages/ui-components'),
+  path.resolve(workspaceRoot, 'packages/business-core'),
+  path.resolve(workspaceRoot, 'packages/domain-schema'),
+];
+
+// Node modules resolution
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-module.exports = config;
+// Enable symlinks for monorepo
+config.resolver.unstable_enableSymlinks = true;
 
+// Asset extensions
+config.resolver.assetExts = [
+  ...config.resolver.assetExts,
+  'db', 'mp3', 'ttf', 'obj', 'otf', 'woff', 'woff2'
+];
+
+// Source extensions
+config.resolver.sourceExts = [
+  ...config.resolver.sourceExts,
+  'ts', 'tsx', 'js', 'jsx', 'json'
+];
+
+// Platform extensions
+config.resolver.platforms = ['ios', 'android', 'native', 'web'];
+
+// Transformer configuration
+config.transformer = {
+  ...config.transformer,
+  // Disable minification in development for speed
+  minifierConfig: {
+    keep_fnames: true,
+    mangle: false,
+    compress: false,
+  },
+  // Asset plugins
+  assetPlugins: ['expo-asset/tools/hashAssetFiles'],
+};
+
+// Development optimizations
+if (process.env.NODE_ENV === 'development') {
+  // Disable source maps for speed
+  config.transformer.minifierConfig.sourceMap = false;
+  
+  // Inline requires for faster startup
+  config.transformer.getTransformOptions = async () => ({
+    transform: {
+      experimentalImportSupport: false,
+      inlineRequires: true,
+    },
+  });
+}
+
+// Worker configuration
+config.maxWorkers = Math.max(1, Math.floor(require('os').cpus().length / 2));
+
+// Cache configuration - simplified for reliability
+config.cacheStores = [
+  {
+    get: async () => null,
+    set: async () => {},
+    clear: async () => {},
+  },
+];
+
+// Serializer configuration
+config.serializer = {
+  ...config.serializer,
+  // Custom serializer options for development build
+  getModulesRunBeforeMainModule: () => [
+    require.resolve('react-native/Libraries/Core/InitializeCore'),
+  ],
+  // Fix TurboModule issues
+  customSerializer: (entryPoint, preModules, graph, options) => {
+    const defaultSerializer = require('metro/src/DeltaBundler/Serializers/baseJSBundle');
+    return defaultSerializer(entryPoint, preModules, graph, options);
+  },
+};
+
+// Server configuration
+config.server = {
+  ...config.server,
+  port: parseInt(process.env.RCT_METRO_PORT || '8081', 10),
+};
+
+module.exports = config;

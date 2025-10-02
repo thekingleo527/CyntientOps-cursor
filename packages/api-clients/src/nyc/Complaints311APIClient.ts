@@ -136,10 +136,11 @@ export enum Complaint311Trend {
   FLUCTUATING = 'fluctuating',
 }
 
+import { CacheManager } from '@cyntientops/business-core';
+
 export class Complaints311APIClient {
   private apiService: NYCAPIService;
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
-  private readonly CACHE_DURATION = 300000; // 5 minutes
+  private cacheManager: CacheManager;
 
   // 311 API endpoints
   private readonly ENDPOINTS = {
@@ -148,26 +149,24 @@ export class Complaints311APIClient {
     AGENCIES: 'https://data.cityofnewyork.us/resource/fhrw-4uyv.json',
   };
 
-  constructor(apiService: NYCAPIService) {
+  constructor(apiService: NYCAPIService, cacheManager: CacheManager) {
     this.apiService = apiService;
+    this.cacheManager = cacheManager;
   }
 
   // Get complaints for a building
   async getBuildingComplaints(buildingId: string, limit: number = 50): Promise<Complaint311[]> {
     const cacheKey = `311_complaints_${buildingId}_${limit}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<Complaint311[]>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const complaints = this.generateMockComplaints(buildingId, limit);
       
-      this.cache.set(cacheKey, {
-        data: complaints,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, complaints, 300000); // 5 minute cache
 
       return complaints;
     } catch (error) {
@@ -179,19 +178,16 @@ export class Complaints311APIClient {
   // Get complaints by type
   async getComplaintsByType(complaintType: Complaint311Type, limit: number = 50): Promise<Complaint311[]> {
     const cacheKey = `311_complaints_type_${complaintType}_${limit}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<Complaint311[]>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const complaints = this.generateMockComplaintsByType(complaintType, limit);
       
-      this.cache.set(cacheKey, {
-        data: complaints,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, complaints, 300000); // 5 minute cache
 
       return complaints;
     } catch (error) {
@@ -203,19 +199,16 @@ export class Complaints311APIClient {
   // Get complaint summary for a building
   async getComplaintSummary(buildingId: string): Promise<Complaint311Summary> {
     const cacheKey = `311_summary_${buildingId}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<Complaint311Summary>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const summary = this.generateMockComplaintSummary(buildingId);
       
-      this.cache.set(cacheKey, {
-        data: summary,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, summary, 300000); // 5 minute cache
 
       return summary;
     } catch (error) {
@@ -227,19 +220,16 @@ export class Complaints311APIClient {
   // Get complaint analytics
   async getComplaintAnalytics(days: number = 365): Promise<Complaint311Analytics> {
     const cacheKey = `311_analytics_${days}`;
-    const cached = this.cache.get(cacheKey);
+    const cached = await this.cacheManager.get<Complaint311Analytics>(cacheKey);
     
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
+    if (cached) {
+      return cached;
     }
 
     try {
       const analytics = this.generateMockComplaintAnalytics(days);
       
-      this.cache.set(cacheKey, {
-        data: analytics,
-        timestamp: Date.now(),
-      });
+      await this.cacheManager.set(cacheKey, analytics, 300000); // 5 minute cache
 
       return analytics;
     } catch (error) {
@@ -623,19 +613,14 @@ export class Complaints311APIClient {
     return descriptionMap[complaintType] || 'Service request or complaint';
   }
 
-  // Clear cache
-  clearCache(): void {
-    this.cache.clear();
-  }
 
-  // Get cache statistics
-  getCacheStats(): { size: number; keys: string[] } {
-    return {
-      size: this.cache.size,
-      keys: Array.from(this.cache.keys()),
-    };
-  }
 }
 
+import { DatabaseManager } from '@cyntientops/database';
+import { CacheManager } from '@cyntientops/business-core';
+
 // Export singleton instance
-export const complaints311APIClient = new Complaints311APIClient(new NYCAPIService());
+const databaseManager = DatabaseManager.getInstance();
+const cacheManager = CacheManager.getInstance(databaseManager);
+const nycAPIService = new NYCAPIService(cacheManager);
+export const complaints311APIClient = new Complaints311APIClient(nycAPIService, cacheManager);

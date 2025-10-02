@@ -18,24 +18,26 @@ These files have been **superseded by consolidated reports** in the root directo
 - `PROPERTY_VALUES_FINAL_REPORT.md`
 - `PROPERTY_DATA_INTEGRATION_GUIDE.md`
 
-### Project Status (consolidated → PROJECT_STATUS.md)
-- `CONTINUITY_REPORT.md`
+### Project Status (consolidated → CONTINUITY_REPORT.md)
+- `PROJECT_STATUS.md` — moved to archive (December 19, 2024)
+- `FINAL_IMPLEMENTATION_STATUS_REPORT.md` — moved to archive (December 19, 2024)
+- `CONTINUITY_REPORT.md` (duplicate) — removed from archive (December 19, 2024)
 - `CONTINUITY_REPORT_CLEAN.md`
 - `INTEGRATION_GUIDE.md`
 - `FORENSIC_AUDIT_REPORT.md`
 
 ## Current Documentation (Root Directory)
 
-Use these **3 consolidated reports** instead:
+Use these **consolidated reports** instead:
 
-1. **COMPLIANCE_VIOLATIONS_COMPLETE.md** - All violation and compliance data
-2. **PROPERTY_FINANCIALS.md** - All property values and financial analysis
-3. **PROJECT_STATUS.md** - Current project status and architecture
+1. **CONTINUITY_REPORT.md** - **MAIN STATUS REPORT** (consolidated from PROJECT_STATUS.md and FINAL_IMPLEMENTATION_STATUS_REPORT.md)
+2. **COMPLIANCE_VIOLATIONS_COMPLETE.md** - All violation and compliance data
+3. **PROPERTY_FINANCIALS.md** - All property values and financial analysis
 
 Plus:
 4. **README.md** - Main project README
 
 ---
 
-**Archived:** October 1, 2025
-**Reason:** Documentation consolidation
+**Archived:** October 1, 2025 (initial), December 19, 2024 (status reports)
+**Reason:** Documentation consolidation and redundancy elimination

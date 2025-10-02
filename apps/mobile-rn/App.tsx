@@ -3,6 +3,8 @@
  * Main application entry point with navigation and state management
  */
 
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';

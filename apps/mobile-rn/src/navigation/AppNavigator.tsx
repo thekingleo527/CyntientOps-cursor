@@ -262,7 +262,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             <Stack.Screen
               name="Profile"
               children={() => (
-                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
                   <ProfileScreen />
                 </Suspense>
               )}
@@ -277,7 +277,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             <Stack.Screen 
               name="BuildingDetail" 
               children={() => (
-                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
                   <BuildingDetailScreen />
                 </Suspense>
               )}
@@ -288,7 +288,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             <Stack.Screen 
               name="TaskTimeline" 
               children={() => (
-                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
                   <TaskTimelineScreen />
                 </Suspense>
               )}
@@ -302,7 +302,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             <Stack.Screen 
               name="MultisiteDeparture" 
               children={() => (
-                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
                   <MultisiteDepartureScreen />
                 </Suspense>
               )}
@@ -316,7 +316,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             <Stack.Screen 
               name="WeeklyRoutine" 
               children={() => (
-                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
                   <WeeklyRoutineScreen />
                 </Suspense>
               )}
@@ -330,7 +330,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             <Stack.Screen 
               name="DailyRoutine" 
               children={() => (
-                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
                   <DailyRoutineScreen />
                 </Suspense>
               )}

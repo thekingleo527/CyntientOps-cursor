@@ -203,6 +203,9 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           <WorkerDashboardMainView
+            workerId={workerId}
+            workerName={userName}
+            userRole={userRole}
             state={viewModel.getState()}
             onClockIn={handleClockIn}
             onClockOut={handleClockOut}
@@ -212,7 +215,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
             onNavigateToBuilding={onNavigateToBuilding}
             onHeaderRoute={(route: any) => {
               if (route === 'profile') {
-                navigation.navigate('Profile', { userName, userRole, onLogout });
+                navigation.navigate('Profile', { userName, userRole, userId: workerId, onLogout });
               }
             }}
           />

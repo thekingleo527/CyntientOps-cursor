@@ -23,6 +23,8 @@ import RealDataService from '@cyntientops/business-core/src/services/RealDataSer
 import { NYCService } from '@cyntientops/business-core/src/services/NYCService';
 import { useServices } from '../providers/AppProvider';
 import { ViolationDataService } from '../services/ViolationDataService';
+import config from '../config/app.config';
+import { DSNYAPIClient } from '@cyntientops/api-clients/src/nyc/DSNYAPIClient';
 import { PropertyDataService } from '@cyntientops/business-core';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
@@ -212,11 +214,39 @@ export const BuildingDetailScreen: React.FC = () => {
       try {
         // Primary: derive schedule from app routines (no network)
         const local = deriveCollectionFromRoutines(building.id, building.name, building.address);
-        if (local) {
-          setSchedule(local);
-        } else {
-          setSchedule(null);
+        let finalSchedule = local;
+
+        // Supplemental: compare with DSNY API (holidays/changes). Only if API key configured.
+        if (config.dsnyApiKey && building.address) {
+          try {
+            const dsny = new DSNYAPIClient(config.dsnyApiKey);
+            const city = await dsny.getCollectionSchedule(building.address);
+            if (city && local) {
+              const toSet = new Set<string>();
+              const compare = (a: string, arr: string[]) => arr.includes(a) ? '' : 'mismatch';
+              // Compare days; if mismatch across any type, add advisory
+              const cityRefuse = city.refuseDays || [];
+              const cityRecycling = city.recyclingDays || [];
+              const cityOrganics = city.organicsDays || [];
+              const cityBulk = city.bulkDays || [];
+              if (!cityRefuse.includes(local.regularCollectionDay)) toSet.add('Trash');
+              if (!cityRecycling.includes(local.recyclingDay)) toSet.add('Recycling');
+              if (!cityOrganics.includes(local.organicsDay)) toSet.add('Organics');
+              if (!cityBulk.includes(local.bulkPickupDay)) toSet.add('Bulk');
+              if (toSet.size > 0) {
+                finalSchedule = {
+                  ...local,
+                  specialInstructions: [
+                    ...local.specialInstructions,
+                    `City advisory: ${Array.from(toSet).join(', ')} schedule differs from DSNY — verify before set-out`,
+                  ],
+                };
+              }
+            }
+          } catch {}
         }
+
+        setSchedule(finalSchedule);
       } catch (err) {
         setSchedule(null);
       } finally {

@@ -100,6 +100,60 @@ export const PhotoCaptureModal: React.FC = () => {
         <TouchableOpacity style={[styles.button, isBusy && styles.buttonDisabled]} onPress={handleAttach} disabled={isBusy}>
           <Text style={styles.buttonText}>{isBusy ? 'Saving…' : 'Pick From Library'}</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.secondaryButton, isBusy && styles.buttonDisabled]}
+          onPress={async () => {
+            try {
+              setIsBusy(true);
+              const db = DatabaseManager.getInstance({ path: 'cyntientops.db' });
+              await db.initialize();
+              const manager = PhotoEvidenceManager.getInstance(db);
+              const taskRow = await db.getFirst(
+                'SELECT assigned_building_id as buildingId, assigned_worker_id as workerId, name as taskName FROM tasks WHERE id = ?',
+                [taskId]
+              );
+              const buildingId = taskRow?.buildingId || 'unknown_building';
+              const workerId = taskRow?.workerId || 'unknown_worker';
+              const taskName = taskRow?.taskName || 'Task';
+
+              // Dynamic ImagePicker camera capture
+              const ImagePicker: any = require('expo-image-picker');
+              const perm = await ImagePicker.requestCameraPermissionsAsync();
+              if (!perm?.granted) {
+                Alert.alert('Permission', 'Camera permission is required');
+                setIsBusy(false);
+                return;
+              }
+              const result = await ImagePicker.launchCameraAsync({
+                allowsEditing: false,
+                quality: 0.8,
+              });
+              if (result.canceled || !result.assets || result.assets.length === 0) {
+                setIsBusy(false);
+                return;
+              }
+              const imageUri = result.assets[0].uri;
+              await manager.addPhoto({
+                buildingId,
+                workerId,
+                taskId,
+                imageUri,
+                category: 'general',
+                notes: 'Captured via camera',
+                source: 'camera',
+                metadata: { taskName, buildingName: buildingId },
+              } as any);
+              Alert.alert('Photo Attached', 'Photo evidence saved.');
+            } catch (err) {
+              Alert.alert('Failed', 'Unable to capture photo.');
+            } finally {
+              setIsBusy(false);
+            }
+          }}
+          disabled={isBusy}
+        >
+          <Text style={styles.buttonText}>{isBusy ? 'Saving…' : 'Take Photo'}</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -113,6 +167,7 @@ const styles = StyleSheet.create({
   button: { backgroundColor: '#10b981', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 },
   buttonDisabled: { opacity: 0.7 },
   buttonText: { color: '#000', fontWeight: '700' },
+  secondaryButton: { backgroundColor: '#3b82f6', marginTop: 12, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10 },
 });
 
 export default PhotoCaptureModal;

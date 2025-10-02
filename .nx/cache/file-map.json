@@ -43,376 +43,152 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "cyntientops/app/(tabs)/index.tsx",
-        "hash": "17812125799166988204"
-      },
-      {
-        "file": "docs/audit-reports/real-violations-found-2025-10-01.json",
-        "hash": "17498079912214683134"
-      },
-      {
-        "file": "docs/CODE_REVIEW_OCT1_2025.md",
-        "hash": "5215014326681403904"
-      },
-      {
-        "file": "docs/archive/COMPREHENSIVE_VIOLATION_REPORT.md",
-        "hash": "16208375430041993691"
-      },
-      {
-        "file": "ios/CyntientOps/SplashScreen.storyboard",
-        "hash": "3712750258388040087"
-      },
-      {
-        "file": "cyntientops/app/modal.tsx",
-        "hash": "5215039661340215217"
-      },
-      {
-        "file": "scripts/verify-real-violations.js",
-        "hash": "13636786178309419446"
-      },
-      {
-        "file": "scripts/start-dev-build.sh",
-        "hash": "732148113537515061"
-      },
-      {
-        "file": "scripts/setup-jest-configs.js",
-        "hash": "16206366320795113098"
-      },
-      {
-        "file": "cyntientops/tsconfig.json",
-        "hash": "13453316570448027213"
-      },
-      {
-        "file": "cyntientops/app/(tabs)/_layout.tsx",
-        "hash": "2851667513797808631"
-      },
-      {
-        "file": "cyntientops/assets/images/react-logo@2x.png",
-        "hash": "10620144842436275618"
-      },
-      {
-        "file": "ios/Podfile.properties.json",
-        "hash": "14370278724857276346"
-      },
-      {
-        "file": "cyntientops/components/haptic-tab.tsx",
-        "hash": "5533600884243926710"
-      },
-      {
-        "file": "docs/archive/FORENSIC_AUDIT_REPORT.md",
-        "hash": "2756624284400228467"
-      },
-      {
-        "file": ".vscode/launch.json",
-        "hash": "16586355814837684456"
-      },
-      {
-        "file": "docs/audit-reports/real-violation-data-2025-10-01.json",
-        "hash": "6971707312211082030"
-      },
-      {
-        "file": "update-mobile-views-with-real-data.js",
-        "hash": "18164486227812464591"
-      },
-      {
-        "file": "cyntientops/assets/images/android-icon-foreground.png",
-        "hash": "15383051144788430570"
-      },
-      {
-        "file": "cyntientops/package-lock.json",
-        "hash": "10225409962541780890"
-      },
-      {
-        "file": "docs/SWIFTUI_GUIDED_IMPLEMENTATION_REPORT.md",
-        "hash": "5109620465805099436"
-      },
-      {
-        "file": "ios/CyntientOps/Info.plist",
-        "hash": "18205896689388700396"
-      },
-      {
-        "file": "cyntientops/assets/images/splash-icon.png",
-        "hash": "16102135492459408350"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "11723292966620445974"
-      },
-      {
-        "file": "cyntientops/.gitignore",
-        "hash": "16038804918140058741"
-      },
-      {
-        "file": "cyntientops/assets/images/favicon.png",
-        "hash": "17921061654045018263"
-      },
-      {
-        "file": "cyntientops/assets/images/android-icon-monochrome.png",
-        "hash": "3343180278029361732"
-      },
-      {
-        "file": "scripts/get-real-violations-corrected.js",
-        "hash": "6075087929754905640"
-      },
-      {
-        "file": "docs/archive/VIOLATIONS_TICKETS_REPORT.md",
-        "hash": "2465538969912928048"
-      },
-      {
-        "file": "cyntientops/app/(tabs)/explore.tsx",
-        "hash": "15019459809040828822"
-      },
-      {
-        "file": "ios/CyntientOps/CyntientOps-Bridging-Header.h",
-        "hash": "11108490452811459790"
-      },
-      {
-        "file": "cyntientops/components/ui/collapsible.tsx",
-        "hash": "11100610072791393598"
-      },
-      {
-        "file": "yarn.lock",
-        "hash": "9225685480079811819"
-      },
-      {
-        "file": "scripts/setup-tsconfigs.js",
-        "hash": "14530017827863588642"
-      },
-      {
-        "file": "cyntientops/hooks/use-color-scheme.ts",
-        "hash": "9854634842886202740"
-      },
-      {
-        "file": "cyntientops/assets/images/partial-react-logo.png",
-        "hash": "17138856618252336249"
-      },
-      {
-        "file": "README.md",
-        "hash": "9876143666367618842"
-      },
-      {
-        "file": "scripts/generate-audit-report.js",
-        "hash": "2444177884168269084"
-      },
-      {
-        "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/SplashScreenLegacy.png",
-        "hash": "16458076089051556537"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "2675220573733747715"
-      },
-      {
-        "file": "scripts/config-fastssd-env.sh",
-        "hash": "12374551940718948925"
-      },
-      {
-        "file": "scripts/deploy-beta.sh",
-        "hash": "18369429933956874309"
-      },
-      {
-        "file": "scripts/search-real-violations.js",
-        "hash": "7887821485660958739"
-      },
-      {
-        "file": "SECURITY_FIXES_PROGRESS_REPORT.md",
-        "hash": "12431582225034134883"
-      },
-      {
-        "file": "docs/TYPESCRIPT_FIX_GUIDE.md",
-        "hash": "12184477986195294646"
-      },
-      {
-        "file": "docs/audit-reports/property-values-2025-10-01.json",
-        "hash": "6854965070299053216"
-      },
-      {
-        "file": "cyntientops/components/ui/icon-symbol.tsx",
-        "hash": "6398962000459802437"
-      },
-      {
-        "file": "docs/archive/PROPERTY_VALUES_FINAL_REPORT.md",
-        "hash": "8472550722176365860"
-      },
-      {
-        "file": "docs/audit-reports/all-violations-2025-10-01.json",
-        "hash": "15648335372962463753"
-      },
-      {
-        "file": "cyntientops/assets/images/react-logo.png",
-        "hash": "12800764183471362565"
-      },
-      {
-        "file": "cyntientops/constants/theme.ts",
-        "hash": "9635815210840157046"
-      },
-      {
-        "file": "docs/FORENSIC_SECURITY_ANALYSIS_REPORT.md",
-        "hash": "15135500007419307471"
-      },
-      {
-        "file": "scripts/get-aggregated-condo-values.js",
-        "hash": "2895537114765630100"
-      },
-      {
-        "file": "cyntientops/components/themed-text.tsx",
-        "hash": "4529078811461968752"
-      },
-      {
-        "file": "docs/audit-reports/comprehensive-audit-2025-10-01.json",
-        "hash": "4065655639254371527"
-      },
-      {
-        "file": "cyntientops/hooks/use-theme-color.ts",
-        "hash": "1262650047820739010"
-      },
-      {
-        "file": "REAL_CONTACT_INFORMATION.md",
-        "hash": "1471312516977159523"
-      },
-      {
-        "file": "cyntientops/README.md",
-        "hash": "1168506559928181538"
-      },
-      {
-        "file": "scripts/test-nyc-api.js",
-        "hash": "13456664842036950277"
-      },
-      {
-        "file": "cyntientops/.vscode/extensions.json",
-        "hash": "46217408025352634"
-      },
-      {
-        "file": "ios/Podfile",
-        "hash": "13887488911525007119"
-      },
-      {
-        "file": "scripts/setup-nx-projects.js",
-        "hash": "8665214159614902254"
-      },
-      {
-        "file": "cyntientops/components/themed-view.tsx",
-        "hash": "13974678473966001793"
-      },
-      {
-        "file": "docs/CONTINUITY_REPORT.md",
-        "hash": "11257327213025301257"
-      },
-      {
-        "file": "docs/TESTING_OPTIMIZATION_REPORT.md",
-        "hash": "5598883032314153330"
-      },
-      {
-        "file": "docs/archive/VIOLATION_AUDIT_CORRECTED.md",
-        "hash": "14715404709710208563"
-      },
-      {
-        "file": "cyntientops/components/parallax-scroll-view.tsx",
-        "hash": "13725485128001258518"
-      },
-      {
-        "file": "docs/archive/VIOLATION_AUDIT_RESULTS.md",
-        "hash": "8034670395957409206"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "2599607768644681757"
-      },
-      {
-        "file": "docs/REAL_CLIENT_STRUCTURE.md",
-        "hash": "565560515854112281"
-      },
-      {
-        "file": "cyntientops/.vscode/settings.json",
-        "hash": "13604069932680302502"
-      },
-      {
-        "file": "docs/audit-reports/aggregated-condo-values-2025-10-01.json",
-        "hash": "1706329474553998497"
-      },
-      {
-        "file": "docs/README.md",
-        "hash": "17826561505007620618"
-      },
-      {
-        "file": "docs/archive/PROJECT_STATUS.md",
-        "hash": "14130864258461292908"
-      },
-      {
-        "file": "docs/audit-reports/BUNDLING_HANG_RESOLUTION_REPORT.md",
-        "hash": "7825607157645382594"
-      },
-      {
-        "file": "ios/CyntientOps/Supporting/Expo.plist",
-        "hash": "10413995919263799517"
-      },
-      {
-        "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/Contents.json",
-        "hash": "13815763773876365727"
-      },
-      {
-        "file": "docs/archive/INTEGRATION_GUIDE.md",
-        "hash": "13181294225062865473"
-      },
-      {
-        "file": "scripts/search-oath-violations.js",
-        "hash": "12866675065534162852"
-      },
-      {
-        "file": "docs/archive/FINAL_IMPLEMENTATION_STATUS_REPORT.md",
-        "hash": "14050968419003737435"
-      },
-      {
-        "file": "cyntientops/assets/images/react-logo@3x.png",
-        "hash": "12902748134652534090"
-      },
-      {
-        "file": "docs/PROPERTY_FINANCIALS.md",
-        "hash": "16120635217493720514"
+        "file": "docs/JM_REALTY_PORTFOLIO_VALUES.md",
+        "hash": "1890454847623766653"
       },
       {
         "file": "cyntientops/hooks/use-color-scheme.web.ts",
         "hash": "14806177383020038067"
       },
       {
-        "file": "docs/audit-reports/building-bins-2025-10-01.json",
-        "hash": "1364117136246909573"
+        "file": "ios/.gitignore",
+        "hash": "7693209614351072706"
       },
       {
-        "file": "docs/audit-reports/complete-violations-2025-10-01.json",
-        "hash": "1890836218056226174"
+        "file": "ios/CyntientOps/Images.xcassets/Contents.json",
+        "hash": "3228211763563848421"
       },
       {
-        "file": "docs/archive/ALL_BUILDING_VIOLATIONS.md",
-        "hash": "9174359138025311459"
+        "file": "ios/CyntientOps/Images.xcassets/AppIcon.appiconset/Contents.json",
+        "hash": "17425444470188619154"
       },
       {
-        "file": "cyntientops/package.json",
-        "hash": "2543772847886932074"
+        "file": "docs/COMPLIANCE_VIOLATIONS_COMPLETE.md",
+        "hash": "2049713448964294860"
       },
       {
-        "file": "ios/.xcode.env",
-        "hash": "2240437479405059044"
+        "file": "README.md",
+        "hash": "9876143666367618842"
       },
       {
-        "file": "scripts/get-real-violations.js",
-        "hash": "14740819087544439930"
+        "file": "scripts/get-all-violations.js",
+        "hash": "328558214076170583"
       },
       {
-        "file": "scripts/migrate-dev-storage-to-fastssd.sh",
-        "hash": "2928656756153422133"
+        "file": "scripts/config-fastssd-env.sh",
+        "hash": "12374551940718948925"
       },
       {
-        "file": ".eslintrc.js",
-        "hash": "7314996331690118274"
+        "file": "cyntientops/scripts/reset-project.js",
+        "hash": "912029883397838943"
       },
       {
-        "file": "cyntientops/eslint.config.js",
-        "hash": "1050212160588093330"
+        "file": "docs/audit-reports/aggregated-condo-values-2025-10-01.json",
+        "hash": "1706329474553998497"
       },
       {
-        "file": "app.json",
-        "hash": "7498021603126664166"
+        "file": "cyntientops/components/themed-text.tsx",
+        "hash": "4529078811461968752"
+      },
+      {
+        "file": "docs/SWIFTUI_GUIDED_IMPLEMENTATION_REPORT.md",
+        "hash": "5109620465805099436"
+      },
+      {
+        "file": "docs/CONTINUITY_REPORT.md",
+        "hash": "11257327213025301257"
+      },
+      {
+        "file": "scripts/hash-passwords.js",
+        "hash": "1797758744274771708"
+      },
+      {
+        "file": "scripts/cleanup-dev-caches.sh",
+        "hash": "2588536987847264489"
+      },
+      {
+        "file": "scripts/search-real-violations.js",
+        "hash": "7887821485660958739"
+      },
+      {
+        "file": "docs/archive/VIOLATION_AUDIT_SUMMARY.md",
+        "hash": "5759366074674657681"
+      },
+      {
+        "file": "scripts/generate-audit-report.js",
+        "hash": "2444177884168269084"
+      },
+      {
+        "file": "ios/CyntientOps/Supporting/Expo.plist",
+        "hash": "10413995919263799517"
+      },
+      {
+        "file": "FORENSIC_ARCHITECTURE_REVIEW_2025.md",
+        "hash": "3769988973624525587"
+      },
+      {
+        "file": "cyntientops/app/(tabs)/index.tsx",
+        "hash": "17812125799166988204"
+      },
+      {
+        "file": "docs/archive/PROPERTY_DATA_INTEGRATION_GUIDE.md",
+        "hash": "234926653031507790"
+      },
+      {
+        "file": "cyntientops/components/ui/icon-symbol.ios.tsx",
+        "hash": "12801160683556705757"
+      },
+      {
+        "file": "scripts/deploy-production.sh",
+        "hash": "17832835238698879198"
+      },
+      {
+        "file": "cyntientops/.gitignore",
+        "hash": "16038804918140058741"
+      },
+      {
+        "file": "cyntientops/assets/images/react-logo@3x.png",
+        "hash": "12902748134652534090"
+      },
+      {
+        "file": "ios/CyntientOps.xcodeproj/project.pbxproj",
+        "hash": "16355037579801196343"
+      },
+      {
+        "file": "scripts/setup-jest-configs.js",
+        "hash": "16206366320795113098"
+      },
+      {
+        "file": "ios/Podfile",
+        "hash": "13887488911525007119"
+      },
+      {
+        "file": "ios/CyntientOps/SplashScreen.storyboard",
+        "hash": "3712750258388040087"
+      },
+      {
+        "file": "cyntientops/assets/images/android-icon-monochrome.png",
+        "hash": "3343180278029361732"
+      },
+      {
+        "file": "scripts/start-dev-build.sh",
+        "hash": "732148113537515061"
+      },
+      {
+        "file": "cyntientops/README.md",
+        "hash": "1168506559928181538"
+      },
+      {
+        "file": "cyntientops/tsconfig.json",
+        "hash": "13453316570448027213"
+      },
+      {
+        "file": ".vscode/launch.json",
+        "hash": "16586355814837684456"
+      },
+      {
+        "file": "scripts/search-oath-violations.js",
+        "hash": "12866675065534162852"
       },
       {
         "file": "scripts/audit-with-bbl.js",
@@ -423,184 +199,408 @@
         "hash": "11872069641359971350"
       },
       {
-        "file": "scripts/get-building-bins.js",
-        "hash": "5338506992391592856"
+        "file": "cyntientops/assets/images/react-logo@2x.png",
+        "hash": "10620144842436275618"
       },
       {
-        "file": "scripts/get-complete-violations.js",
-        "hash": "6689666032531809653"
-      },
-      {
-        "file": "scripts/monitor-metro.sh",
-        "hash": "9412031149781760536"
-      },
-      {
-        "file": "docs/archive/README.md",
-        "hash": "14779719046537855166"
-      },
-      {
-        "file": "scripts/find-real-buildings.js",
-        "hash": "7847875134185247886"
-      },
-      {
-        "file": "ios/CyntientOps/Images.xcassets/Contents.json",
-        "hash": "3228211763563848421"
-      },
-      {
-        "file": "scripts/audit-violations.js",
-        "hash": "11571655211078692118"
-      },
-      {
-        "file": "docs/audit-reports/CACHE_MANAGER_INTEGRATION_ANALYSIS.md",
-        "hash": "6436049348511339965"
+        "file": "cyntientops/components/themed-view.tsx",
+        "hash": "13974678473966001793"
       },
       {
         "file": "nx.json",
         "hash": "1817247490336913443"
       },
       {
-        "file": "scripts/get-property-values.js",
-        "hash": "4338738746953052827"
+        "file": "REAL_CONTACT_INFORMATION.md",
+        "hash": "1471312516977159523"
       },
       {
-        "file": "eas.json",
-        "hash": "13814192779559226588"
-      },
-      {
-        "file": "docs/audit-reports/LOADING_ERRORS_ANALYSIS.md",
-        "hash": "4724071393809185715"
-      },
-      {
-        "file": "ios/CyntientOps.xcodeproj/project.pbxproj",
-        "hash": "16355037579801196343"
-      },
-      {
-        "file": "cyntientops/scripts/reset-project.js",
-        "hash": "912029883397838943"
-      },
-      {
-        "file": "docs/JM_REALTY_PORTFOLIO_VALUES.md",
-        "hash": "1890454847623766653"
-      },
-      {
-        "file": "ios/CyntientOps/AppDelegate.swift",
-        "hash": "16837202117940929849"
-      },
-      {
-        "file": "docs/audit-reports/real-building-data-2025-10-01.json",
-        "hash": "4998734286000080745"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "12436176626517919613"
-      },
-      {
-        "file": "package.json",
-        "hash": "5775769117541787185"
-      },
-      {
-        "file": "ios/.gitignore",
-        "hash": "7693209614351072706"
+        "file": "scripts/get-real-violations.js",
+        "hash": "14740819087544439930"
       },
       {
         "file": "ios/CyntientOps.xcodeproj/xcshareddata/xcschemes/CyntientOps.xcscheme",
         "hash": "4307072582965261544"
       },
       {
-        "file": "scripts/deploy-production.sh",
-        "hash": "17832835238698879198"
-      },
-      {
-        "file": "docs/COMPREHENSIVE_IMPLEMENTATION_GAPS_REPORT.md",
-        "hash": "8567425716829939201"
-      },
-      {
-        "file": "docs/archive/VIOLATION_AUDIT_SUMMARY.md",
-        "hash": "5759366074674657681"
-      },
-      {
-        "file": "scripts/hash-passwords.js",
-        "hash": "1797758744274771708"
-      },
-      {
-        "file": "docs/COMPLIANCE_VIOLATIONS_COMPLETE.md",
-        "hash": "2049713448964294860"
-      },
-      {
-        "file": "scripts/test-real-data.js",
-        "hash": "16073794901179864619"
-      },
-      {
-        "file": "scripts/cleanup-dev-caches.sh",
-        "hash": "2588536987847264489"
-      },
-      {
-        "file": ".nvmrc",
-        "hash": "14743000810602433389"
-      },
-      {
-        "file": "scripts/get-market-values.js",
-        "hash": "1636369109901327033"
-      },
-      {
-        "file": "cyntientops/components/hello-wave.tsx",
-        "hash": "16939909605063346780"
-      },
-      {
         "file": "cyntientops/app.json",
         "hash": "700054979924827838"
       },
       {
-        "file": "FORENSIC_ARCHITECTURE_REVIEW_2025.md",
-        "hash": "3769988973624525587"
+        "file": "update-mobile-views-with-real-data.js",
+        "hash": "18164486227812464591"
       },
       {
-        "file": "cyntientops/app/_layout.tsx",
-        "hash": "8160418511204357676"
+        "file": "docs/archive/FINAL_IMPLEMENTATION_STATUS_REPORT.md",
+        "hash": "14050968419003737435"
       },
       {
-        "file": "tsconfig.json",
-        "hash": "12496562632034889801"
+        "file": "tsconfig.base.json",
+        "hash": "2675220573733747715"
       },
       {
-        "file": "docs/archive/PROPERTY_DATA_INTEGRATION_GUIDE.md",
-        "hash": "234926653031507790"
+        "file": "docs/audit-reports/real-violation-data-2025-10-01.json",
+        "hash": "6971707312211082030"
       },
       {
-        "file": "docs/audit-reports/comprehensive-audit-2025-10-01.md",
-        "hash": "459852104885484446"
+        "file": "cyntientops/hooks/use-theme-color.ts",
+        "hash": "1262650047820739010"
       },
       {
-        "file": "cyntientops/components/ui/icon-symbol.ios.tsx",
-        "hash": "12801160683556705757"
+        "file": "cyntientops/.vscode/settings.json",
+        "hash": "13604069932680302502"
       },
       {
-        "file": "scripts/replace-console-logs.js",
-        "hash": "6267755915445276377"
+        "file": "scripts/get-real-violations-corrected.js",
+        "hash": "6075087929754905640"
+      },
+      {
+        "file": "docs/archive/VIOLATION_AUDIT_CORRECTED.md",
+        "hash": "14715404709710208563"
+      },
+      {
+        "file": "cyntientops/components/parallax-scroll-view.tsx",
+        "hash": "13725485128001258518"
+      },
+      {
+        "file": "scripts/get-property-values.js",
+        "hash": "4338738746953052827"
+      },
+      {
+        "file": "docs/audit-reports/building-bins-2025-10-01.json",
+        "hash": "1364117136246909573"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "12436176626517919613"
+      },
+      {
+        "file": "docs/README.md",
+        "hash": "17826561505007620618"
+      },
+      {
+        "file": "eas.json",
+        "hash": "13814192779559226588"
+      },
+      {
+        "file": "ios/Podfile.properties.json",
+        "hash": "14370278724857276346"
+      },
+      {
+        "file": "docs/audit-reports/all-violations-2025-10-01.json",
+        "hash": "15648335372962463753"
+      },
+      {
+        "file": "docs/archive/CONTINUITY_REPORT_CLEAN.md",
+        "hash": "5204996774266439482"
+      },
+      {
+        "file": "scripts/setup-tsconfigs.js",
+        "hash": "14530017827863588642"
+      },
+      {
+        "file": "docs/archive/README.md",
+        "hash": "14779719046537855166"
+      },
+      {
+        "file": "docs/audit-reports/complete-violations-2025-10-01.json",
+        "hash": "1890836218056226174"
+      },
+      {
+        "file": "cyntientops/components/ui/icon-symbol.tsx",
+        "hash": "6398962000459802437"
+      },
+      {
+        "file": "scripts/get-building-bins.js",
+        "hash": "5338506992391592856"
+      },
+      {
+        "file": "docs/archive/PROJECT_STATUS.md",
+        "hash": "14130864258461292908"
+      },
+      {
+        "file": "docs/audit-reports/BUNDLING_HANG_RESOLUTION_REPORT.md",
+        "hash": "7825607157645382594"
       },
       {
         "file": "cyntientops/assets/images/android-icon-background.png",
         "hash": "10994153683116332424"
       },
       {
-        "file": "cyntientops/components/external-link.tsx",
-        "hash": "15289246464661451666"
+        "file": "scripts/verify-real-violations.js",
+        "hash": "13636786178309419446"
+      },
+      {
+        "file": "docs/audit-reports/LOADING_ERRORS_ANALYSIS.md",
+        "hash": "4724071393809185715"
+      },
+      {
+        "file": "scripts/deploy-beta.sh",
+        "hash": "18369429933956874309"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "11723292966620445974"
+      },
+      {
+        "file": "SECURITY_FIXES_PROGRESS_REPORT.md",
+        "hash": "12431582225034134883"
+      },
+      {
+        "file": "cyntientops/package.json",
+        "hash": "2543772847886932074"
+      },
+      {
+        "file": "cyntientops/constants/theme.ts",
+        "hash": "9635815210840157046"
+      },
+      {
+        "file": "docs/audit-reports/property-values-2025-10-01.json",
+        "hash": "6854965070299053216"
+      },
+      {
+        "file": "cyntientops/assets/images/partial-react-logo.png",
+        "hash": "17138856618252336249"
+      },
+      {
+        "file": "scripts/test-nyc-api.js",
+        "hash": "13456664842036950277"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "12496562632034889801"
+      },
+      {
+        "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/SplashScreenLegacy.png",
+        "hash": "16458076089051556537"
+      },
+      {
+        "file": "cyntientops/app/modal.tsx",
+        "hash": "5215039661340215217"
       },
       {
         "file": "docs/audit-reports/market-values-2025-10-01.json",
         "hash": "18438147523315707720"
       },
       {
-        "file": "ios/CyntientOps/Images.xcassets/AppIcon.appiconset/Contents.json",
-        "hash": "17425444470188619154"
+        "file": "cyntientops/assets/images/android-icon-foreground.png",
+        "hash": "15383051144788430570"
       },
       {
-        "file": "scripts/get-all-violations.js",
-        "hash": "328558214076170583"
+        "file": "docs/archive/INTEGRATION_GUIDE.md",
+        "hash": "13181294225062865473"
       },
       {
-        "file": "docs/archive/CONTINUITY_REPORT_CLEAN.md",
-        "hash": "5204996774266439482"
+        "file": "ios/.xcode.env",
+        "hash": "2240437479405059044"
+      },
+      {
+        "file": "cyntientops/assets/images/favicon.png",
+        "hash": "17921061654045018263"
+      },
+      {
+        "file": "cyntientops/.vscode/extensions.json",
+        "hash": "46217408025352634"
+      },
+      {
+        "file": "docs/archive/PROPERTY_VALUES_FINAL_REPORT.md",
+        "hash": "8472550722176365860"
+      },
+      {
+        "file": "docs/TESTING_OPTIMIZATION_REPORT.md",
+        "hash": "5598883032314153330"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "2599607768644681757"
+      },
+      {
+        "file": "scripts/monitor-metro.sh",
+        "hash": "9412031149781760536"
+      },
+      {
+        "file": "cyntientops/app/_layout.tsx",
+        "hash": "8160418511204357676"
+      },
+      {
+        "file": "docs/archive/ALL_BUILDING_VIOLATIONS.md",
+        "hash": "9174359138025311459"
+      },
+      {
+        "file": "docs/archive/FORENSIC_AUDIT_REPORT.md",
+        "hash": "2756624284400228467"
+      },
+      {
+        "file": "scripts/test-real-data.js",
+        "hash": "16073794901179864619"
+      },
+      {
+        "file": ".nvmrc",
+        "hash": "14743000810602433389"
+      },
+      {
+        "file": "scripts/get-aggregated-condo-values.js",
+        "hash": "2895537114765630100"
+      },
+      {
+        "file": "cyntientops/components/hello-wave.tsx",
+        "hash": "16939909605063346780"
+      },
+      {
+        "file": "scripts/migrate-dev-storage-to-fastssd.sh",
+        "hash": "2928656756153422133"
+      },
+      {
+        "file": "app.json",
+        "hash": "7498021603126664166"
+      },
+      {
+        "file": "docs/PROPERTY_FINANCIALS.md",
+        "hash": "16120635217493720514"
+      },
+      {
+        "file": "cyntientops/package-lock.json",
+        "hash": "10225409962541780890"
+      },
+      {
+        "file": "docs/audit-reports/real-building-data-2025-10-01.json",
+        "hash": "4998734286000080745"
+      },
+      {
+        "file": "docs/COMPREHENSIVE_IMPLEMENTATION_GAPS_REPORT.md",
+        "hash": "8567425716829939201"
+      },
+      {
+        "file": "docs/archive/COMPREHENSIVE_VIOLATION_REPORT.md",
+        "hash": "16208375430041993691"
+      },
+      {
+        "file": "cyntientops/assets/images/splash-icon.png",
+        "hash": "16102135492459408350"
+      },
+      {
+        "file": "docs/audit-reports/comprehensive-audit-2025-10-01.md",
+        "hash": "459852104885484446"
+      },
+      {
+        "file": "docs/audit-reports/CACHE_MANAGER_INTEGRATION_ANALYSIS.md",
+        "hash": "6436049348511339965"
+      },
+      {
+        "file": "scripts/replace-console-logs.js",
+        "hash": "6267755915445276377"
+      },
+      {
+        "file": "cyntientops/components/haptic-tab.tsx",
+        "hash": "5533600884243926710"
+      },
+      {
+        "file": "cyntientops/eslint.config.js",
+        "hash": "1050212160588093330"
+      },
+      {
+        "file": "scripts/get-market-values.js",
+        "hash": "1636369109901327033"
+      },
+      {
+        "file": "cyntientops/hooks/use-color-scheme.ts",
+        "hash": "9854634842886202740"
+      },
+      {
+        "file": "scripts/find-real-buildings.js",
+        "hash": "7847875134185247886"
+      },
+      {
+        "file": "scripts/setup-nx-projects.js",
+        "hash": "8665214159614902254"
+      },
+      {
+        "file": "yarn.lock",
+        "hash": "9225685480079811819"
+      },
+      {
+        "file": "ios/CyntientOps/AppDelegate.swift",
+        "hash": "16837202117940929849"
+      },
+      {
+        "file": "docs/audit-reports/real-violations-found-2025-10-01.json",
+        "hash": "17498079912214683134"
+      },
+      {
+        "file": "ios/CyntientOps/Info.plist",
+        "hash": "18205896689388700396"
+      },
+      {
+        "file": "cyntientops/app/(tabs)/_layout.tsx",
+        "hash": "2851667513797808631"
+      },
+      {
+        "file": "docs/archive/VIOLATIONS_TICKETS_REPORT.md",
+        "hash": "2465538969912928048"
+      },
+      {
+        "file": "cyntientops/assets/images/react-logo.png",
+        "hash": "12800764183471362565"
+      },
+      {
+        "file": "docs/TYPESCRIPT_FIX_GUIDE.md",
+        "hash": "12184477986195294646"
+      },
+      {
+        "file": "docs/REAL_CLIENT_STRUCTURE.md",
+        "hash": "565560515854112281"
+      },
+      {
+        "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/Contents.json",
+        "hash": "13815763773876365727"
+      },
+      {
+        "file": "package.json",
+        "hash": "5310418468585457432"
+      },
+      {
+        "file": "docs/archive/VIOLATION_AUDIT_RESULTS.md",
+        "hash": "8034670395957409206"
+      },
+      {
+        "file": "cyntientops/app/(tabs)/explore.tsx",
+        "hash": "15019459809040828822"
+      },
+      {
+        "file": "ios/CyntientOps/CyntientOps-Bridging-Header.h",
+        "hash": "11108490452811459790"
+      },
+      {
+        "file": "docs/audit-reports/comprehensive-audit-2025-10-01.json",
+        "hash": "4065655639254371527"
+      },
+      {
+        "file": ".eslintrc.js",
+        "hash": "7314996331690118274"
+      },
+      {
+        "file": "scripts/audit-violations.js",
+        "hash": "11571655211078692118"
+      },
+      {
+        "file": "cyntientops/components/external-link.tsx",
+        "hash": "15289246464661451666"
+      },
+      {
+        "file": "docs/CODE_REVIEW_OCT1_2025.md",
+        "hash": "5215014326681403904"
+      },
+      {
+        "file": "cyntientops/components/ui/collapsible.tsx",
+        "hash": "11100610072791393598"
+      },
+      {
+        "file": "scripts/get-complete-violations.js",
+        "hash": "6689666032531809653"
+      },
+      {
+        "file": "docs/FORENSIC_SECURITY_ANALYSIS_REPORT.md",
+        "hash": "15135500007419307471"
       }
     ],
     "projectFileMap": {

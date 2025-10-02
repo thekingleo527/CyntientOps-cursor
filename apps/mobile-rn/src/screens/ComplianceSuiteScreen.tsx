@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import config from '../config/app.config';
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
@@ -97,7 +98,7 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
       setIsLoading(true);
 
       const databaseManager = DatabaseManager.getInstance({
-        path: 'cyntientops.db'
+        path: config.databasePath
       });
       await databaseManager.initialize();
 

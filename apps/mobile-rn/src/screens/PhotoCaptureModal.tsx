@@ -4,6 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import config from '../config/app.config';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -45,7 +46,7 @@ export const PhotoCaptureModal: React.FC = () => {
   const handleAttach = async () => {
     try {
       setIsBusy(true);
-      const db = DatabaseManager.getInstance({ path: 'cyntientops.db' });
+      const db = DatabaseManager.getInstance({ path: config.databasePath });
       await db.initialize();
 
       const manager = PhotoEvidenceManager.getInstance(db);
@@ -206,7 +207,7 @@ export const PhotoCaptureModal: React.FC = () => {
             onPress={async () => {
               try {
                 setIsBusy(true);
-                const db = DatabaseManager.getInstance({ path: 'cyntientops.db' });
+                const db = DatabaseManager.getInstance({ path: config.databasePath });
                 await db.initialize();
                 const manager = PhotoEvidenceManager.getInstance(db);
                 const bId = buildingId || routeBuildingId || 'unknown_building';

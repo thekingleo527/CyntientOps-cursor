@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import config from '../config/app.config';
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert, TextInput, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
@@ -50,7 +51,7 @@ export const WorkerManagementScreen: React.FC<WorkerManagementScreenProps> = ({ 
       setIsLoading(true);
       
       const databaseManager = DatabaseManager.getInstance({
-        path: 'cyntientops.db'
+        path: config.databasePath
       });
       await databaseManager.initialize();
 
@@ -68,7 +69,7 @@ export const WorkerManagementScreen: React.FC<WorkerManagementScreenProps> = ({ 
   const loadWorkerDetail = async (worker: WorkerProfile) => {
     try {
       const databaseManager = DatabaseManager.getInstance({
-        path: 'cyntientops.db'
+        path: config.databasePath
       });
       await databaseManager.initialize();
 

@@ -5,6 +5,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import config from '../config/app.config';
 import { View, StyleSheet, ScrollView, Text, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
@@ -36,7 +37,7 @@ export const TaskTimelineScreen: React.FC = () => {
       setError(null);
 
       const databaseManager = DatabaseManager.getInstance({
-        path: 'cyntientops.db'
+        path: config.databasePath
       });
       await databaseManager.initialize();
 
@@ -68,7 +69,7 @@ export const TaskTimelineScreen: React.FC = () => {
 
     try {
       const databaseManager = DatabaseManager.getInstance({
-        path: 'cyntientops.db'
+        path: config.databasePath
       });
       await databaseManager.updateTaskStatus(task.id, newStatus);
       setTask({ ...task, status: newStatus } as any);

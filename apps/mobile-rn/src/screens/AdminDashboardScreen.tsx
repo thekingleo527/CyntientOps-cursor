@@ -5,6 +5,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import config from '../config/app.config';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -70,7 +71,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
 
       // Initialize all required services
       const databaseManager = DatabaseManager.getInstance({
-        path: 'cyntientops.db'
+        path: config.databasePath
       });
       await databaseManager.initialize();
 

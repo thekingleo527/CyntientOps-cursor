@@ -63,24 +63,25 @@ export class DatabaseSchema {
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         address TEXT NOT NULL,
-        latitude REAL NOT NULL,
-        longitude REAL NOT NULL,
+        latitude REAL NOT NULL CHECK (latitude >= -90 AND latitude <= 90),
+        longitude REAL NOT NULL CHECK (longitude >= -180 AND longitude <= 180),
         image_asset_name TEXT,
-        number_of_units INTEGER,
-        year_built INTEGER,
-        square_footage INTEGER,
+        number_of_units INTEGER CHECK (number_of_units > 0),
+        year_built INTEGER CHECK (year_built >= 1800 AND year_built <= 2030),
+        square_footage INTEGER CHECK (square_footage > 0),
         management_company TEXT,
         primary_contact TEXT,
-        contact_phone TEXT,
-        is_active INTEGER DEFAULT 1,
+        contact_phone TEXT CHECK (length(contact_phone) >= 10),
+        is_active INTEGER DEFAULT 1 CHECK (is_active IN (0, 1)),
         normalized_name TEXT,
         aliases TEXT,
-        borough TEXT,
-        compliance_score REAL DEFAULT 0.0,
+        borough TEXT CHECK (borough IN ('Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island')),
+        compliance_score REAL DEFAULT 0.0 CHECK (compliance_score >= 0.0 AND compliance_score <= 100.0),
         client_id TEXT,
         special_notes TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL
       );
     `;
   }
@@ -89,15 +90,15 @@ export class DatabaseSchema {
     return `
       CREATE TABLE IF NOT EXISTS workers (
         id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        role TEXT NOT NULL,
-        status TEXT DEFAULT 'Available',
-        phone TEXT,
-        email TEXT,
+        name TEXT NOT NULL CHECK (length(name) >= 2),
+        role TEXT NOT NULL CHECK (role IN ('admin', 'worker', 'manager', 'supervisor')),
+        status TEXT DEFAULT 'Available' CHECK (status IN ('Available', 'Busy', 'Off', 'On Break')),
+        phone TEXT CHECK (length(phone) >= 10),
+        email TEXT CHECK (email LIKE '%@%.%'),
         skills TEXT, -- JSON array of skills
         certifications TEXT, -- JSON array of certifications
-        hourly_rate REAL,
-        is_active INTEGER DEFAULT 1,
+        hourly_rate REAL CHECK (hourly_rate >= 0.0),
+        is_active INTEGER DEFAULT 1 CHECK (is_active IN (0, 1)),
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       );
@@ -108,24 +109,24 @@ export class DatabaseSchema {
     return `
       CREATE TABLE IF NOT EXISTS tasks (
         id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
+        name TEXT NOT NULL CHECK (length(name) >= 3),
         description TEXT,
-        category TEXT NOT NULL,
-        priority TEXT DEFAULT 'normal',
-        status TEXT DEFAULT 'Pending',
+        category TEXT NOT NULL CHECK (category IN ('Maintenance', 'Cleaning', 'Sanitation', 'Operations', 'Inspection', 'Emergency')),
+        priority TEXT DEFAULT 'normal' CHECK (priority IN ('low', 'normal', 'high', 'urgent', 'critical', 'emergency')),
+        status TEXT DEFAULT 'Pending' CHECK (status IN ('Pending', 'In Progress', 'Completed', 'Cancelled', 'On Hold')),
         assigned_building_id TEXT,
         assigned_worker_id TEXT,
-        due_date TEXT,
-        completed_at TEXT,
-        estimated_duration INTEGER, -- minutes
-        actual_duration INTEGER, -- minutes
-        requires_photo INTEGER DEFAULT 0,
+        due_date TEXT CHECK (due_date IS NULL OR datetime(due_date) IS NOT NULL),
+        completed_at TEXT CHECK (completed_at IS NULL OR datetime(completed_at) IS NOT NULL),
+        estimated_duration INTEGER CHECK (estimated_duration > 0), -- minutes
+        actual_duration INTEGER CHECK (actual_duration >= 0), -- minutes
+        requires_photo INTEGER DEFAULT 0 CHECK (requires_photo IN (0, 1)),
         photo_evidence TEXT, -- JSON array of photo paths
         notes TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (assigned_building_id) REFERENCES buildings(id),
-        FOREIGN KEY (assigned_worker_id) REFERENCES workers(id)
+        FOREIGN KEY (assigned_building_id) REFERENCES buildings(id) ON DELETE CASCADE,
+        FOREIGN KEY (assigned_worker_id) REFERENCES workers(id) ON DELETE SET NULL
       );
     `;
   }
@@ -574,6 +575,7 @@ export class DatabaseSchema {
         cache_key TEXT UNIQUE NOT NULL,
         cache_value TEXT NOT NULL,
         expires_at TEXT,
+        encrypted INTEGER DEFAULT 0 CHECK (encrypted IN (0, 1)),
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )

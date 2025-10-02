@@ -7,6 +7,8 @@
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole } from '@cyntientops/domain-schema';
 import { Logger } from './LoggingService';
+import * as bcrypt from 'bcryptjs';
+import * as CryptoJS from 'crypto-js';
 
 export interface SecurityPolicy {
   id: string;
@@ -257,6 +259,11 @@ export class SecurityManager {
 
   // MARK: - Authentication & Authorization
 
+  public async hashPassword(password: string): Promise<string> {
+    const saltRounds = 12;
+    return await bcrypt.hash(password, saltRounds);
+  }
+
   public async authenticateUser(userId: string, password: string): Promise<boolean> {
     try {
       // Load canonical worker data
@@ -268,8 +275,8 @@ export class SecurityManager {
         return false;
       }
       
-      // In a real implementation, this would use proper password hashing
-      const isValid = worker.password === password;
+      // Use bcrypt to compare password with stored hash
+      const isValid = await bcrypt.compare(password, worker.password);
       
       this.logSecurityEvent(userId, 'authentication', 'login_attempt', isValid ? 'success' : 'failure');
       
@@ -508,16 +515,36 @@ export class SecurityManager {
 
   // MARK: - Data Protection
 
+  private getEncryptionKey(): string {
+    // In production, this should come from secure key management
+    const key = process.env.ENCRYPTION_KEY || 'CyntientOps-Default-Key-2025-Secure';
+    return CryptoJS.SHA256(key).toString();
+  }
+
   public async encryptSensitiveData(data: any): Promise<string> {
-    // In a real implementation, this would use proper encryption
-    Logger.debug('Encrypting sensitive data...', undefined, 'SecurityManager');
-    return Buffer.from(JSON.stringify(data)).toString('base64');
+    try {
+      Logger.debug('Encrypting sensitive data with AES-256...', undefined, 'SecurityManager');
+      const key = this.getEncryptionKey();
+      const dataString = JSON.stringify(data);
+      const encrypted = CryptoJS.AES.encrypt(dataString, key).toString();
+      return encrypted;
+    } catch (error) {
+      Logger.error('Encryption failed:', undefined, 'SecurityManager');
+      throw new Error('Failed to encrypt sensitive data');
+    }
   }
 
   public async decryptSensitiveData(encryptedData: string): Promise<any> {
-    // In a real implementation, this would use proper decryption
-    Logger.debug('Decrypting sensitive data...', undefined, 'SecurityManager');
-    return JSON.parse(Buffer.from(encryptedData, 'base64').toString());
+    try {
+      Logger.debug('Decrypting sensitive data with AES-256...', undefined, 'SecurityManager');
+      const key = this.getEncryptionKey();
+      const decrypted = CryptoJS.AES.decrypt(encryptedData, key);
+      const dataString = decrypted.toString(CryptoJS.enc.Utf8);
+      return JSON.parse(dataString);
+    } catch (error) {
+      Logger.error('Decryption failed:', undefined, 'SecurityManager');
+      throw new Error('Failed to decrypt sensitive data');
+    }
   }
 
   public async backupData(): Promise<void> {

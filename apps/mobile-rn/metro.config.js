@@ -89,11 +89,6 @@ config.serializer = {
   getModulesRunBeforeMainModule: () => [
     require.resolve('react-native/Libraries/Core/InitializeCore'),
   ],
-  // Fix TurboModule issues
-  customSerializer: (entryPoint, preModules, graph, options) => {
-    const defaultSerializer = require('metro/src/DeltaBundler/Serializers/baseJSBundle');
-    return defaultSerializer(entryPoint, preModules, graph, options);
-  },
 };
 
 // Server configuration

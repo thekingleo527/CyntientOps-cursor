@@ -28,14 +28,18 @@ export class NYCAPIService {
   private config: APIConfig;
   private cacheManager: CacheManager;
   private lastRequestTime: number = 0;
+  private requestCount: number = 0;
+  private requestHistory: Array<{timestamp: number, endpoint: string}> = [];
+  private readonly MAX_REQUESTS_PER_MINUTE = 60;
+  private readonly MAX_REQUESTS_PER_HOUR = 1000;
 
-  // Hardcoded API keys from Swift Credentials.swift
+  // API keys from environment variables
   private readonly API_KEYS = {
-    DSNY_API_TOKEN: "P1XfR3qQk9vN2wB8yH4mJ7pL5sK6tG9zC0dF2aE8",
-    HPD_API_KEY: "d4f7b6c9e2a1f8h5k3j9m6n0q2w8r7t5y1u4i8o6",
-    HPD_API_SECRET: "hpd_secret_key_2024_violations_access",
-    DOB_SUBSCRIBER_KEY: "3e9f1a5d7c2b8h6k4j0m9n3q5w7r1t8y2u6i4o0p",
-    DOB_ACCESS_TOKEN: "dob_access_token_2024_permits_inspections",
+    DSNY_API_TOKEN: process.env.DSNY_API_TOKEN || '',
+    HPD_API_KEY: process.env.HPD_API_KEY || '',
+    HPD_API_SECRET: process.env.HPD_API_SECRET || '',
+    DOB_SUBSCRIBER_KEY: process.env.DOB_SUBSCRIBER_KEY || '',
+    DOB_ACCESS_TOKEN: process.env.DOB_ACCESS_TOKEN || '',
   };
 
   private readonly API_CONFIG = {
@@ -70,15 +74,64 @@ export class NYCAPIService {
     this.cacheManager = cacheManager;
   }
 
-  // Generic fetch method with caching and rate limiting
+  // Input validation methods
+  private validateBIN(bin: string): boolean {
+    return /^\d{7}$/.test(bin);
+  }
+
+  private validateBBL(bbl: string): boolean {
+    return /^\d{10}$/.test(bbl);
+  }
+
+  private validateAddress(address: string): boolean {
+    return address && address.length >= 5 && address.length <= 200;
+  }
+
+  private sanitizeInput(input: string): string {
+    return input.replace(/[<>\"'&]/g, '');
+  }
+
+  // Rate limiting methods
+  private async checkRateLimit(): Promise<void> {
+    const now = Date.now();
+    const oneMinuteAgo = now - 60000;
+    const oneHourAgo = now - 3600000;
+
+    // Clean old requests
+    this.requestHistory = this.requestHistory.filter(req => req.timestamp > oneHourAgo);
+
+    // Check minute limit
+    const recentRequests = this.requestHistory.filter(req => req.timestamp > oneMinuteAgo);
+    if (recentRequests.length >= this.MAX_REQUESTS_PER_MINUTE) {
+      throw new Error('Rate limit exceeded: Too many requests per minute');
+    }
+
+    // Check hour limit
+    if (this.requestHistory.length >= this.MAX_REQUESTS_PER_HOUR) {
+      throw new Error('Rate limit exceeded: Too many requests per hour');
+    }
+
+    // Add current request to history
+    this.requestHistory.push({ timestamp: now, endpoint: 'api_call' });
+  }
+
+  // Generic fetch method with caching, rate limiting, and validation
   async fetch<T>(endpoint: APIEndpoint): Promise<T> {
+    // Validate endpoint
+    if (!endpoint.url || !endpoint.cacheKey) {
+      throw new Error('Invalid endpoint configuration');
+    }
+
+    // Check rate limits
+    await this.checkRateLimit();
+
     // Check cache first
     const cached = await this.cacheManager.get<T>(endpoint.cacheKey);
     if (cached) {
       return cached;
     }
 
-    // Rate limiting
+    // Rate limiting delay
     const now = Date.now();
     const timeSinceLastRequest = now - this.lastRequestTime;
     if (timeSinceLastRequest < this.config.rateLimitDelay) {
@@ -86,11 +139,18 @@ export class NYCAPIService {
     }
 
     try {
+      // Validate URL
+      const url = new URL(endpoint.url);
+      if (!url.protocol.startsWith('https:')) {
+        throw new Error('Only HTTPS URLs are allowed');
+      }
+
       const response = await fetch(endpoint.url, {
         method: endpoint.method,
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'User-Agent': 'CyntientOps/1.0',
         },
         signal: AbortSignal.timeout(this.config.timeout),
       });
@@ -101,10 +161,16 @@ export class NYCAPIService {
 
       const data = await response.json();
       
+      // Validate response data
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid response format');
+      }
+      
       // Cache the result
       await this.cacheManager.set(endpoint.cacheKey, data, 300000); // 5 minute cache
 
       this.lastRequestTime = Date.now();
+      this.requestCount++;
       return data;
     } catch (error) {
       console.error('NYC API fetch error:', error);
@@ -114,9 +180,14 @@ export class NYCAPIService {
 
   // DSNY Collection Schedule API
   async getDSNYCollectionSchedule(bin: string): Promise<DSNYRoute> {
+    if (!this.validateBIN(bin)) {
+      throw new Error('Invalid BIN format');
+    }
+
+    const sanitizedBin = this.sanitizeInput(bin);
     const endpoint: APIEndpoint = {
-      url: `${this.API_CONFIG.DSNY.baseURL}/dsny-collection-schedule.json?$where=bin='${bin}'`,
-      cacheKey: `dsny_${bin}`,
+      url: `${this.API_CONFIG.DSNY.baseURL}/dsny-collection-schedule.json?$where=bin='${sanitizedBin}'`,
+      cacheKey: `dsny_${sanitizedBin}`,
       method: 'GET',
     };
 
@@ -126,9 +197,14 @@ export class NYCAPIService {
 
   // HPD Violations API
   async getHPDViolations(bbl: string): Promise<HPDViolation[]> {
+    if (!this.validateBBL(bbl)) {
+      throw new Error('Invalid BBL format');
+    }
+
+    const sanitizedBBL = this.sanitizeInput(bbl);
     const endpoint: APIEndpoint = {
-      url: `${this.API_CONFIG.HPD.baseURL}/wvxf-dwi5.json?$where=bbl='${bbl}'&$limit=100`,
-      cacheKey: `hpd_violations_${bbl}`,
+      url: `${this.API_CONFIG.HPD.baseURL}/wvxf-dwi5.json?$where=bbl='${sanitizedBBL}'&$limit=100`,
+      cacheKey: `hpd_violations_${sanitizedBBL}`,
       method: 'GET',
     };
 

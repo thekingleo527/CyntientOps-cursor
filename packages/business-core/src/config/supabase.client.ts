@@ -4,7 +4,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { getSupabaseConfig } from './supabase.config';
+import { getSupabaseConfig, validateSupabaseConfig } from './supabase.config';
 
 let supabaseClient: SupabaseClient | null = null;
 
@@ -21,11 +21,7 @@ export const getSupabaseClient = (): SupabaseClient => {
   const config = getSupabaseConfig();
 
   // Validate configuration
-  if (!config.url || !config.anonKey) {
-    throw new Error(
-      'Supabase configuration is invalid. Please ensure SUPABASE_URL and SUPABASE_ANON_KEY are set in your environment variables.'
-    );
-  }
+  validateSupabaseConfig();
 
   // Create the client
   supabaseClient = createClient(config.url, config.anonKey, {

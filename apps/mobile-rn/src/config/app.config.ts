@@ -47,13 +47,13 @@ export const config: AppConfig = {
   databasePath: getEnvVar('DATABASE_PATH', 'cyntientops.db'),
 
   // WebSocket - Disabled for testing, will be enabled when backend is ready
-  websocketUrl: getEnvVar('WEBSOCKET_URL', ''),
+  websocketUrl: getEnvVar('WEBSOCKET_URL'),
 
   // NYC APIs - Using public data sources, no API keys needed
-  dsnyApiKey: getEnvVar('DSNY_API_KEY', ''),
-  hpdApiKey: getEnvVar('HPD_API_KEY', ''),
-  dobApiKey: getEnvVar('DOB_API_KEY', ''),
-  weatherApiKey: getEnvVar('WEATHER_API_KEY', ''),
+  dsnyApiKey: getEnvVar('DSNY_API_KEY'),
+  hpdApiKey: getEnvVar('HPD_API_KEY'),
+  dobApiKey: getEnvVar('DOB_API_KEY'),
+  weatherApiKey: getEnvVar('WEATHER_API_KEY'),
 
   // Feature Flags - Optimized for testing
   enableOfflineMode: getBoolEnvVar('ENABLE_OFFLINE_MODE', true),
@@ -62,11 +62,11 @@ export const config: AppConfig = {
   enableWeatherIntegration: getBoolEnvVar('ENABLE_WEATHER_INTEGRATION', true),
 
   // Debug
-  debug: getBoolEnvVar('DEBUG', __DEV__),
-  logLevel: (getEnvVar('LOG_LEVEL', 'info') as AppConfig['logLevel']),
+  debug: getBoolEnvVar('DEBUG', false),
+  logLevel: (getEnvVar('LOG_LEVEL', 'warn') as AppConfig['logLevel']),
 
   // Environment
-  env: (getEnvVar('ENV', __DEV__ ? 'development' : 'production') as AppConfig['env']),
+  env: (getEnvVar('ENV', 'production') as AppConfig['env']),
 };
 
 export default config;

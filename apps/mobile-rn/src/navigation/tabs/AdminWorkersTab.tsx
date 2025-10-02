@@ -15,10 +15,10 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
 import { WorkerProfile } from '@cyntientops/domain-schema';
-import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
+import { RealDataService } from '@cyntientops/business-core';
 import { Logger } from '@cyntientops/business-core';
 
 // Types

@@ -53,6 +53,7 @@ export { VendorAccessService } from './services/VendorAccessService';
 export { SystemService } from './services/SystemService';
 export { PropertyDataService } from './services/PropertyDataService';
 export type { PropertyDetails } from './services/PropertyDataService';
+export { RealDataService } from './services/RealDataService';
 
 // Managers
 export { ClockInManager } from './managers/ClockInManager';

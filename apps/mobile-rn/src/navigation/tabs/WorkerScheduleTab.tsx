@@ -16,9 +16,9 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
-import { TaskService, TaskSchedule } from '@cyntientops/business-core/src/services/TaskService';
+import { TaskService, TaskSchedule } from '@cyntientops/business-core';
 import { WeatherRibbonView } from '@cyntientops/ui-components/src/weather/WeatherRibbonView';
 import { TaskTimelineView } from '@cyntientops/ui-components/src/timeline/TaskTimelineView';
 import { OperationalDataTaskAssignment, WeatherSnapshot, WeatherForecast } from '@cyntientops/domain-schema';

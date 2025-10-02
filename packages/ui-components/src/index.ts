@@ -265,6 +265,9 @@ export default {
   SYSTEM_REQUIREMENTS,
   DEV_UTILITIES,
 };
+// Glass Components
+export { GlassCard, GlassButton, GlassOverlay, GlassIntensity, CornerRadius } from './glass';
+
 // Compliance & Property Cards
 export { PortfolioValueCard } from './compliance/PortfolioValueCard';
 export type { PortfolioValueCardProps } from './compliance/PortfolioValueCard';

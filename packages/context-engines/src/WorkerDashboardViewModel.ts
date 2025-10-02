@@ -477,6 +477,55 @@ export class WorkerDashboardViewModel {
   public getViewModel() {
     return useWorkerDashboardViewModel(this.container, this.workerId);
   }
+
+  // Required methods for WorkerDashboardScreen compatibility
+  public async initialize(workerId: string): Promise<void> {
+    // Implementation would go here - for now just return
+    return Promise.resolve();
+  }
+
+  public async clockIn(buildingId: string, location: { latitude: number; longitude: number; accuracy: number }): Promise<boolean> {
+    // Implementation would go here - for now just return true
+    return Promise.resolve(true);
+  }
+
+  public async clockOut(): Promise<boolean> {
+    // Implementation would go here - for now just return true
+    return Promise.resolve(true);
+  }
+
+  public async updateTaskStatus(taskId: string, status: string): Promise<boolean> {
+    // Implementation would go here - for now just return true
+    return Promise.resolve(true);
+  }
+
+  public async markNotificationAsRead(notificationId: string): Promise<void> {
+    // Implementation would go here - for now just return
+    return Promise.resolve();
+  }
+
+  public getState() {
+    // Return a basic state object for now
+    return {
+      userRole: 'worker' as any,
+      isLoading: false,
+      selectedTab: 'Priorities' as any,
+      uiState: {
+        isDarkMode: true,
+        showWeatherStrip: true,
+        compactMode: false
+      },
+      assignedBuildings: [],
+      allBuildings: [],
+      currentBuilding: null,
+      tasks: [],
+      notifications: [],
+      dashboardUpdates: [],
+      lastUpdateTime: new Date(),
+      completionRate: 0,
+      hasUrgentTasks: false
+    };
+  }
 }
 
 export function useWorkerDashboardViewModel(

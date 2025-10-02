@@ -25,7 +25,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing, DashboardGradients } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { ServiceContainer } from '@cyntientops/business-core';
-// import { useBuildingDetailViewModel } from '@cyntientops/context-engines';
+import { useBuildingDetailViewModel } from '@cyntientops/context-engines';
 
 // MARK: - Types (matching SwiftUI exactly)
 
@@ -46,6 +46,7 @@ export interface BuildingDetailOverviewProps {
   buildingName: string;
   buildingAddress: string;
   container: ServiceContainer;
+  userRole?: 'worker' | 'admin' | 'client';
   onBack?: () => void;
   onPhotoCapture?: (category: string) => void;
   onCallContact?: (contact: any) => void;
@@ -60,6 +61,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   buildingName,
   buildingAddress,
   container,
+  userRole,
   onBack,
   onPhotoCapture,
   onCallContact,
@@ -77,77 +79,9 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   const [showingCallMenu, setShowingCallMenu] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
 
-  // Use the comprehensive ViewModel
-  // const viewModel = useBuildingDetailViewModel(container, buildingId, buildingName, buildingAddress);
-  
-  // Mock viewModel for now since useBuildingDetailViewModel is not available
-  const viewModel = {
-    buildingData: {
-      id: buildingId,
-      name: buildingName,
-      address: buildingAddress,
-      type: 'Commercial',
-      size: 'Large',
-      yearBuilt: 1985,
-      contractType: 'Standard',
-      rating: 'A',
-      totalTasks: 25,
-      dailyTasks: 8,
-      weeklyTasks: 15,
-      tasksByCategory: {
-        cleaning: 10,
-        maintenance: 8,
-        operations: 7
-      },
-      tasksByWorker: {
-        'Greg Hutson': 12,
-        'Edwin Lema': 8,
-        'Kevin Dutan': 5
-      },
-      latitude: 40.7589,
-      longitude: -73.9851,
-      // Additional properties needed by the component
-      buildingImage: 'https://example.com/building.jpg',
-      buildingType: 'Commercial',
-      buildingSize: 'Large',
-      buildingTasks: [],
-      completionPercentage: 75,
-      workersOnSite: 3,
-      complianceStatus: 'compliant',
-      residentialUnits: 0,
-      commercialUnits: 50,
-      violations: 0,
-      todaysTasks: [],
-      workersPresent: ['Greg Hutson', 'Edwin Lema', 'Kevin Dutan'],
-      nextCriticalTask: null,
-      efficiencyScore: 85,
-      complianceScore: 'A',
-      openIssues: 2,
-      inventorySummary: {
-        cleaningLow: 1,
-        maintenanceLow: 0,
-        totalLow: 1
-      },
-      recentActivities: [],
-      primaryContact: {
-        name: 'Building Manager',
-        phone: '(555) 123-4567',
-        email: 'manager@building.com'
-      }
-    },
-    isLoading: false,
-    errorMessage: null,
-    userRole: 'worker',
-    loadInitialData: () => {},
-    loadBuildingData: () => {},
-    refreshData: () => {},
-    updateBuildingDetails: () => {},
-    reportIssue: () => {},
-    requestSupplies: () => {},
-    capturePhoto: () => {},
-    callContact: () => {},
-    messageContact: () => {},
-  } as any; // Use 'as any' to bypass TypeScript strict checking for mock data
+  // Use the comprehensive ViewModel (real data)
+  const viewModel = useBuildingDetailViewModel(container, buildingId, buildingName, buildingAddress);
+  const role: 'worker' | 'admin' | 'client' = userRole ?? (viewModel.userRole as any) ?? 'worker';
 
   // MARK: - Effects
   useEffect(() => {
@@ -177,7 +111,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
     switch (tab) {
       case BuildingDetailTab.INVENTORY:
       case BuildingDetailTab.SPACES:
-        return viewModel.userRole !== 'client';
+        return role !== 'client';
       default:
         return true;
     }
@@ -503,34 +437,36 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderOverviewTab() {
     return (
       <View style={styles.tabSection}>
-        {/* Building Information */}
-        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-          <Text style={styles.cardTitle}>🏢 Building Information</Text>
-          <View style={styles.buildingInfo}>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoIcon}>🏠</Text>
-              <Text style={styles.infoLabel}>Residential Units</Text>
-              <Text style={styles.infoValue}>{viewModel.residentialUnits}</Text>
+        {/* Building Information (hidden for worker role) */}
+        {role !== 'worker' && (
+          <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
+            <Text style={styles.cardTitle}>🏢 Building Information</Text>
+            <View style={styles.buildingInfo}>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoIcon}>🏠</Text>
+                <Text style={styles.infoLabel}>Residential Units</Text>
+                <Text style={styles.infoValue}>{viewModel.residentialUnits}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoIcon}>🏪</Text>
+                <Text style={styles.infoLabel}>Commercial Units</Text>
+                <Text style={styles.infoValue}>{viewModel.commercialUnits}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoIcon}>⚠️</Text>
+                <Text style={styles.infoLabel}>Active Violations</Text>
+                <Text style={[styles.infoValue, { color: viewModel.violations > 5 ? Colors.critical : Colors.success }]}>
+                  {viewModel.violations}
+                </Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoIcon}>ℹ️</Text>
+                <Text style={styles.infoLabel}>Building Type</Text>
+                <Text style={styles.infoValue}>{viewModel.buildingType}</Text>
+              </View>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoIcon}>🏪</Text>
-              <Text style={styles.infoLabel}>Commercial Units</Text>
-              <Text style={styles.infoValue}>{viewModel.commercialUnits}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoIcon}>⚠️</Text>
-              <Text style={styles.infoLabel}>Active Violations</Text>
-              <Text style={[styles.infoValue, { color: viewModel.violations > 5 ? Colors.critical : Colors.success }]}>
-                {viewModel.violations}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoIcon}>ℹ️</Text>
-              <Text style={styles.infoLabel}>Building Type</Text>
-              <Text style={styles.infoValue}>{viewModel.buildingType}</Text>
-            </View>
-          </View>
-        </GlassCard>
+          </GlassCard>
+        )}
 
         {/* Today's Snapshot */}
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
@@ -576,12 +512,14 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
             <Text style={styles.metricTrend}>↗️</Text>
           </GlassCard>
           
-          <GlassCard style={styles.metricCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-            <Text style={styles.metricIcon}>✅</Text>
-            <Text style={styles.metricValue}>{viewModel.complianceScore}</Text>
-            <Text style={styles.metricLabel}>Compliance</Text>
-            <Text style={styles.metricTrend}>➡️</Text>
-          </GlassCard>
+          {role !== 'worker' && (
+            <GlassCard style={styles.metricCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
+              <Text style={styles.metricIcon}>✅</Text>
+              <Text style={styles.metricValue}>{viewModel.complianceScore}</Text>
+              <Text style={styles.metricLabel}>Compliance</Text>
+              <Text style={styles.metricTrend}>➡️</Text>
+            </GlassCard>
+          )}
           
           <GlassCard style={styles.metricCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
             <Text style={styles.metricIcon}>⚠️</Text>

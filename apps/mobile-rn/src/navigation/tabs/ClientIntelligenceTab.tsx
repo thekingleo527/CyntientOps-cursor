@@ -16,12 +16,12 @@ import {
   Alert,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
 import { LegacyAnalyticsDashboard, AnalyticsData } from '@cyntientops/ui-components/src/analytics/components/AnalyticsDashboard';
 import { BuildingProfile, ClientProfile } from '@cyntientops/domain-schema';
-import buildingsData from '@cyntientops/data-seed/buildings.json';
-import clientsData from '@cyntientops/data-seed/clients.json';
+import { buildings as buildingsData } from '@cyntientops/data-seed';
+import { clients as clientsData } from '@cyntientops/data-seed';
 import { Logger } from '@cyntientops/business-core';
 
 // Types

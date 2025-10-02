@@ -12,6 +12,7 @@ export { NYCDataCoordinator, nycDataCoordinator } from './nyc/NYCDataCoordinator
 export { FDNYAPIClient, fdnyAPIClient } from './nyc/FDNYAPIClient';
 export { Complaints311APIClient, complaints311APIClient } from './nyc/Complaints311APIClient';
 export { DOFAPIClient, dofAPIClient } from './nyc/DOFAPIClient';
+export { DSNYAPIClient } from './nyc/DSNYAPIClient';
 
 // Weather API Client
 export { WeatherAPIClient } from './weather/WeatherAPIClient';
@@ -68,6 +69,9 @@ import { DOBAPIClient } from './nyc/DOBAPIClient';
 import { DSNYAPIClient } from './nyc/DSNYAPIClient';
 import { WeatherAPIClient } from './weather/WeatherAPIClient';
 import { QuickBooksAPIClient } from './quickbooks/QuickBooksAPIClient';
+import { nycAPIService } from './nyc/NYCAPIService';
+import { nycComplianceService } from './nyc/NYCComplianceService';
+import { nycDataCoordinator } from './nyc/NYCDataCoordinator';
 
 // API Client Manager
 export class APIClientManager {

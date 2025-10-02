@@ -14,13 +14,12 @@ import {
   Dimensions,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
-import { MapRevealContainer } from '@cyntientops/ui-components/src/maps/MapRevealContainer';
-import { BuildingMapView } from '@cyntientops/ui-components/src/maps/BuildingMapView';
-import { TaskService } from '@cyntientops/business-core/src/services/TaskService';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
+import { MapRevealContainer } from '@cyntientops/ui-components';
+import { BuildingMapView } from '@cyntientops/ui-components';
+import { TaskService } from '@cyntientops/business-core';
 import { Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
-import buildingsData from '@cyntientops/data-seed/buildings.json';
-import workersData from '@cyntientops/data-seed/workers.json';
+import { buildingsData, workersData } from '@cyntientops/data-seed';
 import { Logger } from '@cyntientops/business-core';
 
 const { width, height } = Dimensions.get('window');

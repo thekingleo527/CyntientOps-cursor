@@ -27,7 +27,8 @@
     "react-native-gesture-handler": "^2.14.0",
     "react-native-reanimated": "^3.6.0",
     "@cyntientops/design-tokens": "workspace:*",
-    "@cyntientops/business-core": "workspace:*"
+    "@cyntientops/business-core": "workspace:*",
+    "@cyntientops/context-engines": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",

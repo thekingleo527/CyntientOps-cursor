@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { DatabaseManager } from '@cyntientops/database';
-import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
+import { RealDataService } from '@cyntientops/business-core';
 import { OperationalDataTaskAssignment, WorkerProfile } from '@cyntientops/domain-schema';
 import { Logger } from '@cyntientops/business-core';
 

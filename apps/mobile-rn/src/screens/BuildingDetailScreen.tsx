@@ -16,15 +16,15 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
-import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
-import { NYCService } from '@cyntientops/business-core/src/services/NYCService';
+import { GlassCard, GlassIntensity, CornerRadius, BuildingDetailOverview } from '@cyntientops/ui-components';
+import { RealDataService } from '@cyntientops/business-core';
+import { NYCService } from '@cyntientops/business-core';
 import { useServices } from '../providers/AppProvider';
 import { ViolationDataService } from '../services/ViolationDataService';
 import config from '../config/app.config';
-import { DSNYAPIClient } from '@cyntientops/api-clients/src/nyc/DSNYAPIClient';
+import { DSNYAPIClient } from '@cyntientops/api-clients';
 import { PropertyDataService } from '@cyntientops/business-core';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
@@ -166,6 +166,7 @@ type BuildingDetailRoute = RouteProp<RootStackParamList, 'BuildingDetail'>;
 export const BuildingDetailScreen: React.FC = () => {
   const route = useRoute<BuildingDetailRoute>();
   const { buildingId, userRole } = route.params;
+  const navigation = useNavigation();
 
   const services = useServices();
   const [isLoading, setIsLoading] = useState(true);
@@ -323,57 +324,17 @@ export const BuildingDetailScreen: React.FC = () => {
 
   const complianceScore = Math.round((building.compliance_score ?? violationSummary.score / 100) * 100);
 
-  // Only show property/financial details to admins and clients, not workers
-  const canViewPropertyDetails = userRole === 'admin' || userRole === 'client';
-
-              return (
+  // Render unified Building Detail Overview with banner + tabs
+  return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {cityAdvisory && (
-          <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={[styles.sectionCard, { borderLeftWidth: 3, borderLeftColor: Colors.warning }] }>
-            <Text style={{ color: Colors.text.primary, ...Typography.bodyMedium }}>{cityAdvisory}</Text>
-          </GlassCard>
-        )}
-        {renderHero(building, complianceScore)}
-
-        {canViewPropertyDetails && propertyDetails && (
-          <View style={styles.sectionGroup}>
-            {renderSectionHeader('Property Information')}
-            {renderPropertyDetailsCard(propertyDetails)}
-          </View>
-        )}
-
-        <View style={styles.sectionGroup}>
-          {renderSectionHeader('Compliance Overview')}
-          {renderComplianceCard(violationSummary, complianceScore)}
-        </View>
-        
-        {inventory.length > 0 && (
-          <View style={styles.sectionGroup}>
-            {renderSectionHeader('Inventory Overview')}
-            {renderInventoryCard(inventory)}
-          </View>
-        )}
-        
-        {schedule && (
-          <View style={styles.sectionGroup}>
-            {renderSectionHeader('Sanitation Schedule')}
-            {renderScheduleCard(schedule)}
-              </View>
-        )}
-
-        <View style={styles.sectionGroup}>
-          {renderSectionHeader('Assigned Team')}
-          {workers.length > 0 ? workers.map(renderWorkerCard) : renderEmptyMessage('No active worker assignments')}
-        </View>
-        
-        <View style={styles.sectionGroup}>
-          {renderSectionHeader('Routine Tasks')}
-          {routineSummaries.length > 0
-            ? routineSummaries.map(renderRoutineCard)
-            : renderEmptyMessage('No routines defined for this building')}
-              </View>
-      </ScrollView>
+      <BuildingDetailOverview
+        buildingId={buildingId}
+        buildingName={building?.name ?? 'Building'}
+        buildingAddress={building?.address ?? ''}
+        container={services}
+        userRole={(userRole as any) ?? 'worker'}
+        onBack={() => (navigation as any).goBack?.()}
+      />
     </SafeAreaView>
   );
 };

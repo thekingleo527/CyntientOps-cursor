@@ -9,10 +9,10 @@ import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert, ScrollView 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
 import { WorkerProfile } from '@cyntientops/domain-schema';
-import { AuthenticationService, AuthenticatedUser } from '@cyntientops/business-core/src/services/AuthenticationService';
+import { AuthenticationService, AuthenticatedUser } from '@cyntientops/business-core';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { Logger } from '@cyntientops/business-core';
 
 interface LoginScreenProps {

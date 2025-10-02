@@ -251,10 +251,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
               name="BuildingDetail" 
               component={BuildingDetailScreen}
               options={{
-                headerShown: true,
-                headerStyle: { backgroundColor: '#0f0f0f' },
-                headerTintColor: '#ffffff',
-                headerTitleStyle: { color: '#ffffff' },
+                headerShown: false,
               }}
             />
             <Stack.Screen 

@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { ServiceContainer } from '@cyntientops/business-core';
-import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
+import { RealDataService } from '@cyntientops/business-core';
 import type { RootStackParamList } from '../navigation/AppNavigator';
 
 type ClockInRoute = RouteProp<RootStackParamList, 'ClockInModal'>;

@@ -5,23 +5,27 @@
 
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AppProvider } from './src/providers/AppProvider';
 import { ErrorBoundary } from '@cyntientops/ui-components';
+import { enableScreens } from 'react-native-screens';
+
+enableScreens(true);
 
 export default function App() {
   return (
     <ErrorBoundary context="App">
-      <SafeAreaProvider>
-        <AppProvider>
-          <View style={styles.container}>
+      <GestureHandlerRootView style={styles.container}>
+        <SafeAreaProvider>
+          <AppProvider>
             <StatusBar style="light" backgroundColor="#0a0a0a" />
             <AppNavigator />
-          </View>
-        </AppProvider>
-      </SafeAreaProvider>
+          </AppProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     </ErrorBoundary>
   );
 }

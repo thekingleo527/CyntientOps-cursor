@@ -1,47 +1,21 @@
-const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
+// Metro config for monorepo setups with Expo
+const { getDefaultConfig } = require('@expo/metro-config');
+const path = require('path');
 
-const config = getDefaultConfig(__dirname);
+const projectRoot = __dirname;
+const workspaceRoot = path.resolve(projectRoot, '../..');
 
-// Add support for additional file extensions
-config.resolver.sourceExts.push('cjs', 'mjs');
+const config = getDefaultConfig(projectRoot);
 
-// Configure transformer for better performance
-config.transformer.minifierConfig = {
-  keep_fnames: true,
-  mangle: {
-    keep_fnames: true,
-  },
-};
+// Allow Metro to resolve symlinked workspaces
+config.resolver.unstable_enableSymlinks = true;
 
-// Configure resolver for monorepo
+// Ensure Metro looks into the workspace node_modules as a fallback
+config.watchFolders = [workspaceRoot];
 config.resolver.nodeModulesPaths = [
-  require('path').resolve(__dirname, 'node_modules'),
-  require('path').resolve(__dirname, '../../node_modules'),
+  path.resolve(projectRoot, 'node_modules'),
+  path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-// Configure watchman for better file watching
-config.watchFolders = [
-  require('path').resolve(__dirname, '../../packages'),
-];
+module.exports = config;
 
-// Enable Hermes for better performance
-config.transformer.hermesParser = true;
-
-// Configure asset extensions
-config.resolver.assetExts.push(
-  'db',
-  'mp3',
-  'ttf',
-  'obj',
-  'png',
-  'jpg',
-  'jpeg',
-  'gif',
-  'webp',
-  'svg',
-  'pdf',
-  'zip'
-);
-
-module.exports = withNativeWind(config, { input: './global.css' });

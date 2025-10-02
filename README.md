@@ -6,7 +6,18 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 [![React Native](https://img.shields.io/badge/React%20Native-Expo-black.svg)](https://expo.dev/)
 [![Nx](https://img.shields.io/badge/Nx-Monorepo-lightgrey.svg)](https://nx.dev/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-Private%20Development-red.svg)](#-project-status)
+
+## ⚠️ Project Status
+
+**This is a private development repository.** 
+
+- **No external contributions** are being accepted at this time
+- **No licensing** is available for commercial or personal use
+- **Access is restricted** to authorized development team members only
+- **All code and intellectual property** remains proprietary
+
+This repository is maintained exclusively by the CyntientOps development team and authorized AI assistants for internal development purposes only.
 
 ---
 
@@ -134,6 +145,8 @@ cyntientops-mp/
 
 ## 🚀 Getting Started
 
+**⚠️ Internal Development Only - Repository access required**
+
 ### Prerequisites
 
 - **Node.js**: >= 18.0.0
@@ -141,13 +154,14 @@ cyntientops-mp/
 - **Xcode**: >= 15.0 (for iOS development)
 - **Android Studio**: >= 2023.1.1 (for Android development)
 - **Expo CLI**: Installed globally (`npm install -g expo-cli`)
+- **Repository Access**: Authorized team member with private repository access
 
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/cyntientops/cursor.git
-cd cyntientops-mp
+# Clone the repository (requires authorized access)
+git clone https://github.com/thekingleo527/CyntientOps-cursor.git
+cd CyntientOps-MP
 
 # Install all dependencies
 npm install
@@ -498,26 +512,34 @@ npm run start
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these guidelines:
+**This is a private repository. External contributions are not accepted.**
 
-1. **Fork the repository** and create a feature branch
-2. **Follow TypeScript strict mode** conventions
-3. **Write tests** for new features
-4. **Update documentation** (CONTINUITY_REPORT.md and package READMEs)
-5. **Run linting and tests** before submitting
-6. **Submit a Pull Request** with a clear description
+### Internal Development Guidelines
+
+For authorized team members and AI assistants:
+
+1. **Follow TypeScript strict mode** conventions
+2. **Write tests** for new features
+3. **Update documentation** (CONTINUITY_REPORT.md and package READMEs)
+4. **Run linting and tests** before committing
+5. **Use conventional commit messages** for clear history
 
 ### Code Style
 - Use TypeScript strict mode
 - Follow ESLint rules (`.eslintrc.js`)
 - Use Prettier for formatting
 - Write meaningful commit messages (Conventional Commits)
+- Maintain code quality and documentation standards
 
 ---
 
 ## 📄 License
 
-MIT License - see [LICENSE](./LICENSE) for details.
+**All Rights Reserved - Private Development**
+
+This software and all associated intellectual property is proprietary and confidential. No license is granted for use, modification, or distribution. All rights are reserved by CyntientOps.
+
+**Unauthorized use, copying, or distribution is strictly prohibited.**
 
 ---
 
@@ -543,11 +565,12 @@ MIT License - see [LICENSE](./LICENSE) for details.
 
 ## 📞 Support
 
-For questions, issues, or feature requests:
+**This is a private repository. Support is not available to external users.**
 
-- **GitHub Issues**: [Create an issue](https://github.com/cyntientops/cursor/issues)
-- **Email**: support@cyntientops.com
-- **Documentation**: [docs.cyntientops.com](https://docs.cyntientops.com)
+For authorized team members:
+- **Internal Documentation**: See `docs/` directory
+- **Development Issues**: Contact project lead directly
+- **Technical Questions**: Use internal communication channels
 
 ---
 

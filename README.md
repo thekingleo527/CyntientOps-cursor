@@ -25,7 +25,7 @@ This project is the **multiplatform successor** to the SwiftUI version located a
 - **Enhanced offline support**: YJS-based CRDT synchronization with conflict resolution
 - **Rich developer experience**: Nx workspace with comprehensive tooling
 
-Refer to [`CONTINUITY_REPORT.md`](./CONTINUITY_REPORT.md) (1,141 lines) for detailed feature-by-feature implementation status.
+Refer to [`docs/CONTINUITY_REPORT.md`](./docs/CONTINUITY_REPORT.md) for detailed feature-by-feature implementation status. See the consolidated Documentation Index under [`docs/`](./docs/).
 
 ---
 
@@ -36,11 +36,11 @@ Refer to [`CONTINUITY_REPORT.md`](./CONTINUITY_REPORT.md) (1,141 lines) for deta
 - **Predictive Maintenance**: ML-based failure prediction using historical data, seasonal patterns, and building characteristics
 - **Smart Scheduling**: AI-driven route optimization and task prioritization
 - **Natural Language Processing**: Context-aware task creation and parsing
-- **Weather Intelligence**: Automatic task generation based on weather conditions and forecasts
+- **Weather Intelligence**: Automatic task generation based on weather conditions and forecasts (Open‑Meteo via WeatherAPIClient)
 
 ### 📱 Field Operations
 - **Real-time Task Management**: NOW/NEXT/TODAY/URGENT task categorization with intelligent prioritization
-- **Photo-Verified Completion**: Camera integration for compliance documentation
+- **Photo Evidence + Intelligent Tagging**: Guided capture flow with space selection, suggested/common tags, compression, and smart location verification
 - **Multi-Site Departure Mode**: Batch task completion across multiple buildings
 - **Offline-First Architecture**: Full functionality without network connectivity
 - **Background Sync**: Automatic data synchronization with conflict resolution
@@ -49,7 +49,7 @@ Refer to [`CONTINUITY_REPORT.md`](./CONTINUITY_REPORT.md) (1,141 lines) for deta
 - **Building Markers**: Interactive map with 18 NYC building locations
 - **Asset Coverage Visualization**: Heatmaps and cluster views
 - **Route Optimization**: AI-powered multi-stop routing
-- **Geofencing**: Location-based task triggers and notifications
+- **Geofencing + On‑Site Intelligence**: Location-based task triggers, and on‑site status pill (clock‑in + geofence proximity)
 - **Map Reveal Animations**: Smooth MapKit-inspired interactions
 
 ### 📊 Role-Based Dashboards
@@ -190,6 +190,48 @@ npm run build:database
 npm run build:managers
 npm run build:intelligence
 ```
+
+---
+
+## ✨ Recent Highlights (Oct 2025)
+
+- Building Detail
+  - Banner header (full‑width building image), compact weather ribbon (worker dashboard)
+  - Spaces tab: curated list with search, category/floor/flagged filters, intelligent ordering
+  - Gallery modal: pinch‑to‑zoom (Reanimated + RNGH), swipe, share, rich metadata
+  - Sanitation tab: routine‑derived schedule + optional DSNY overlay advisory
+  - Tasks/Routes/Maintenance: fully wired; tap‑through actions
+  - Emergency: quick actions (911, Open Map) + contacts limited to client manager + Shawn
+
+- Photo Evidence
+  - Tagging flow with space selection (GPS‑based suggestion), suggested + common tags
+  - Auto compression + thumbnails via IntelligentPhotoStorageService
+  - Smart location saved; specifyWorkerArea() to verify location; space galleries aggregate correctly
+
+- Intelligence
+  - On‑Site pill: clock‑in status + geofence proximity
+  - Weather: Open‑Meteo via WeatherAPIClient (risk guidance for WorkerDashboard)
+
+- Docs
+  - All documentation consolidated under `docs/` (with `docs/audit-reports/`)
+
+---
+
+## 📸 Photo Evidence & Spaces
+
+Flow
+- Pick or Use Camera → Confirm Location & Tags → Save
+- Space suggestion: nearest space by GPS vs. space coordinates (permission-gated)
+- Tags: context suggestions (task/space/building) + common tags (sidewalk, lobby, elevator, roof, trash_area, bathroom, laundry_area, boiler_room, electrical_room, storage_room, supplies, workshop, stairwell, basement, backyard, roof_drains, backyard_drains)
+- Save: compresses & stores with smartLocation and tags; marks location_verified via specifyWorkerArea()
+
+Aggregation
+- Spaces tab pulls via `getPhotosForSpace(spaceId)` and displays tags, worker, and timestamps
+- Curated ordering prioritizes flagged spaces (no photos or stale evidence), then recent updates
+
+Gesture Zoom
+- Gallery uses a ZoomableImage (Reanimated + RNGH) component for smooth pinch‑to‑zoom + pan
+- Works cross‑platform in Expo
 
 ---
 

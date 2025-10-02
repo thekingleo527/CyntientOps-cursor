@@ -208,10 +208,10 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
           <PortfolioValueCard
             marketValue={portfolioStats.totalMarketValue}
             assessedValue={portfolioStats.totalAssessedValue}
-            unitsResidential={portfolioStats.totalResidentialUnits}
-            unitsCommercial={portfolioStats.totalCommercialUnits}
-            totalSquareFeet={portfolioStats.totalBuildingArea}
-            buildingCount={portfolioStats.buildingCount}
+            unitsResidential={portfolioStats.totalUnitsResidential}
+            unitsCommercial={portfolioStats.totalUnitsCommercial}
+            totalSquareFeet={portfolioStats.totalSquareFeet}
+            buildingCount={portfolioStats.totalBuildings}
           />
 
           <ComplianceSummaryCard

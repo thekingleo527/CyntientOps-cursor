@@ -459,28 +459,16 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Real-time updates subscription: shows banner triggers or future hooks */}
-      {/* This subscribes to orchestrator updates and could drive re-fetch logic */}
+      {/* Real-time updates subscription placeholder for future hooks */}
       {React.useEffect(() => {
         const id = `tabs-${userRole}-${userId}`;
         try {
-          services.realTimeOrchestrator.addUpdateListener(id, () => {
-            // No-op for now; placeholder for refresh hooks
-          });
+          services.realTimeOrchestrator.addUpdateListener(id, () => {});
         } catch {}
         return () => {
           try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
         };
       }, [services.realTimeOrchestrator, userRole, userId])}
-      {weatherAlerts.length > 0 && (
-        <WeatherAlertBanner
-          alerts={weatherAlerts}
-          onAlertPress={handleWeatherAlert}
-          autoDismiss
-          dismissDelay={5000}
-        />
-      )}
-
       <Tab.Navigator
         screenOptions={{
           headerShown: false,

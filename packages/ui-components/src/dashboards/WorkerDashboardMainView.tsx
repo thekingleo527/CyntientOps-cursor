@@ -736,6 +736,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         nextTaskName={dashboardData?.urgentTasks?.[0]?.name || undefined}
         showClockPill={true}
         isNovaProcessing={false}
+        clockedIn={dashboardData.worker.clockedIn}
         onRoute={handleHeaderRoute}
       />
 
@@ -746,8 +747,52 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.baseScreenContent}
       >
-        {/* Hero Cards - ~200px */}
-        {renderHeroCard()}
+        {/* Hero Cards - Two square cards side by side */}
+        <View style={{ flexDirection: 'row', paddingHorizontal: Spacing.lg, marginTop: Spacing.lg }}>
+          <GlassCard style={{ flex: 1, marginRight: Spacing.sm, aspectRatio: 1 }} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
+            <View style={{ flex: 1, justifyContent: 'space-between' }}>
+              <View>
+                <Text style={styles.workerName}>{dashboardData.worker.name}</Text>
+                <Text style={styles.workerRole}>{String(dashboardData.worker.role).toUpperCase()}</Text>
+                {dashboardData.currentBuilding && (
+                  <Text style={styles.currentBuilding}>📍 {dashboardData.currentBuilding.name}</Text>
+                )}
+              </View>
+              <View style={{ alignItems: 'flex-start' }}>
+                <View style={[styles.clockIndicator, { backgroundColor: dashboardData.worker.clockedIn ? Colors.status.success + '33' : Colors.status.warning + '33' }]}>
+                  <Text style={styles.clockText}>{dashboardData.worker.clockedIn ? 'Clocked In' : 'Clocked Out'}</Text>
+                </View>
+              </View>
+            </View>
+          </GlassCard>
+
+          <GlassCard style={{ flex: 1, marginLeft: Spacing.sm, aspectRatio: 1 }} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
+            <View style={{ flex: 1, justifyContent: 'space-between' }}>
+              <View>
+                <Text style={styles.sectionTitle}>Today</Text>
+                <View style={styles.performanceMetrics}>
+                  <View style={styles.metricItem}>
+                    <Text style={styles.metricValue}>{dashboardData.todaysTasks.length}</Text>
+                    <Text style={styles.metricLabel}>Tasks</Text>
+                  </View>
+                  <View style={styles.metricItem}>
+                    <Text style={styles.metricValue}>{dashboardData.urgentTasks.length}</Text>
+                    <Text style={styles.metricLabel}>Urgent</Text>
+                  </View>
+                  <View style={styles.metricItem}>
+                    <Text style={styles.metricValue}>{dashboardData.worker.completionRate}%</Text>
+                    <Text style={styles.metricLabel}>Complete</Text>
+                  </View>
+                </View>
+              </View>
+              {dashboardData.urgentTasks[0] && (
+                <TouchableOpacity onPress={() => onTaskPress?.(dashboardData.urgentTasks[0])}>
+                  <Text style={styles.currentBuilding}>Next: {dashboardData.urgentTasks[0].name}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </GlassCard>
+        </View>
         
         {/* Weather Hybrid Card - ~150px */}
         {dashboardData.weather && (
@@ -761,6 +806,14 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
               longitude: dashboardData.currentBuilding.longitude
             } : undefined}
           />
+        )}
+        {/* Compact Weather Alert ribbon tethered to weather card */}
+        {!!(dashboardData as any)?.weather?.alerts?.length && (
+          <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={{ marginHorizontal: Spacing.lg, marginTop: Spacing.sm, paddingVertical: Spacing.xs, paddingHorizontal: Spacing.sm }}>
+            <Text style={{ ...Typography.caption, color: Colors.text.primary }} numberOfLines={1}>
+              {(dashboardData as any).weather.alerts[0]}
+            </Text>
+          </GlassCard>
         )}
       </ScrollView>
 

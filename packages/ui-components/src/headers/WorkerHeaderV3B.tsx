@@ -17,6 +17,7 @@ export interface WorkerHeaderV3BProps {
   showClockPill: boolean;
   isNovaProcessing: boolean;
   onRoute: (route: WorkerHeaderRoute) => void;
+  clockedIn?: boolean;
 }
 
 export enum WorkerHeaderRoute {
@@ -34,6 +35,7 @@ export const WorkerHeaderV3B: React.FC<WorkerHeaderV3BProps> = ({
   showClockPill,
   isNovaProcessing,
   onRoute,
+  clockedIn,
 }) => {
   return (
     <View style={styles.container}>
@@ -59,28 +61,39 @@ export const WorkerHeaderV3B: React.FC<WorkerHeaderV3BProps> = ({
         )}
       </TouchableOpacity>
 
-      {/* Right: Profile Pill */}
-      <TouchableOpacity
-        style={styles.profilePill}
-        onPress={() => onRoute(WorkerHeaderRoute.profile)}
-        activeOpacity={0.7}
-      >
-        <View style={styles.profileAvatar}>
-          {photoURL ? (
-            <Image source={{ uri: photoURL }} style={styles.profileImage} />
-          ) : (
-            <Text style={styles.profileInitials}>{initials}</Text>
-          )}
-        </View>
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>{name}</Text>
-          {nextTaskName && (
-            <Text style={styles.nextTask} numberOfLines={1}>
-              Next: {nextTaskName}
-            </Text>
-          )}
-        </View>
-      </TouchableOpacity>
+      {/* Right: Profile + Clock Pill */}
+      <View style={styles.rightGroup}>
+        {showClockPill && (
+          <TouchableOpacity
+            style={[styles.clockPill, clockedIn ? styles.clockOut : styles.clockIn]}
+            onPress={() => onRoute(WorkerHeaderRoute.clockAction)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.clockPillText}>{clockedIn ? 'Clock Out' : 'Clock In'}</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          style={styles.profilePill}
+          onPress={() => onRoute(WorkerHeaderRoute.profile)}
+          activeOpacity={0.7}
+        >
+          <View style={styles.profileAvatar}>
+            {photoURL ? (
+              <Image source={{ uri: photoURL }} style={styles.profileImage} />
+            ) : (
+              <Text style={styles.profileInitials}>{initials}</Text>
+            )}
+          </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>{name}</Text>
+            {nextTaskName && (
+              <Text style={styles.nextTask} numberOfLines={1}>
+                Next: {nextTaskName}
+              </Text>
+            )}
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -155,8 +168,29 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: Colors.glass.regular,
-    flex: 1,
     marginLeft: Spacing.sm,
+  },
+  rightGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  clockPill: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.glass.regular,
+  },
+  clockIn: {
+    backgroundColor: Colors.status.success + '33',
+  },
+  clockOut: {
+    backgroundColor: Colors.status.warning + '33',
+  },
+  clockPillText: {
+    ...Typography.caption,
+    color: Colors.text.primary,
+    fontWeight: '700',
   },
   profileAvatar: {
     width: 32,

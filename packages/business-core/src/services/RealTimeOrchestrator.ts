@@ -7,10 +7,10 @@
 import { ServiceContainer } from '../ServiceContainer';
 import { DatabaseManager } from '@cyntientops/database';
 import { WebSocketManager } from '@cyntientops/realtime-sync';
-import { 
 import { Logger } from './LoggingService';
-  DashboardUpdate, 
-  DashboardUpdateSource, 
+import {
+  DashboardUpdate,
+  DashboardUpdateSource,
   DashboardUpdateType,
   UserRole,
   ContextualTask,

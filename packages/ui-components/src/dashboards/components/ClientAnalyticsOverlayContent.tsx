@@ -188,7 +188,7 @@ export const ClientAnalyticsOverlayContent: React.FC<ClientAnalyticsOverlayConte
           </View>
           
           <View style={styles.complianceTrendItem}>
-            <Text style={styles.complianceTrendLabel}>Needs Attention (<90%)</Text>
+            <Text style={styles.complianceTrendLabel}>Needs Attention {'(<90%)'}</Text>
             <View style={styles.complianceTrendBar}>
               <View style={[styles.complianceTrendFill, { width: '5%', backgroundColor: Colors.status.error }]} />
             </View>

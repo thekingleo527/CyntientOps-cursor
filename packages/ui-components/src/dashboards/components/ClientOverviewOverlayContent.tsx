@@ -159,7 +159,7 @@ export const ClientOverviewOverlayContent: React.FC<ClientOverviewOverlayContent
           <View style={styles.complianceItem}>
             <View style={[styles.complianceBar, { backgroundColor: Colors.status.error, width: '5%' }]} />
             <Text style={styles.complianceItemText}>
-              Needs Attention (<90%): {Math.floor(totalBuildings * 0.05)} buildings
+              Needs Attention {'(<90%)'}: {Math.floor(totalBuildings * 0.05)} buildings
             </Text>
           </View>
         </View>

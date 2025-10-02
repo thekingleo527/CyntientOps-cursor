@@ -151,13 +151,14 @@ export const WeatherBasedHybridCard: React.FC<WeatherBasedHybridCardProps> = ({
           weatherImpact: {
             level: 'high',
             description: 'Prevents water damage and slip hazards',
-          urgency: 'immediate',
-          timeWindow: 'Next 2 hours',
-        },
-        actionable: true,
+            urgency: 'immediate',
+            timeWindow: 'Next 2 hours',
+          },
+          actionable: true,
           category: 'Maintenance',
           buildingId: building?.id,
-      });
+        });
+      }
 
       // Post-rain cleanup (if rain just ended)
       if (weatherData.outdoorWorkRisk === 'low' && weatherData.condition === 'rainy') {

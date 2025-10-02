@@ -190,7 +190,7 @@ export const AdminBuildingsOverlayContent: React.FC<AdminBuildingsOverlayContent
           <View style={styles.complianceItem}>
             <View style={[styles.complianceBar, { backgroundColor: Colors.status.error, width: '5%' }]} />
             <Text style={styles.complianceItemText}>
-              Needs Attention (<90%): {buildings.filter(b => b.compliance < 90).length} buildings
+              Needs Attention {'(<90%)'}: {buildings.filter(b => b.compliance < 90).length} buildings
             </Text>
           </View>
         </View>

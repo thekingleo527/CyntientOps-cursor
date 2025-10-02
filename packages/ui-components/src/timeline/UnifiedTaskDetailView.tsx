@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Alert, ActivityIndicator } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { OperationalDataTaskAssignment, TaskUrgency, TaskStatus, UserRole } from '@cyntientops/domain-schema';
 
 export interface UnifiedTaskDetailViewProps {

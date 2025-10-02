@@ -8,7 +8,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 
 export interface ChartDataPoint {
   x: string | number;

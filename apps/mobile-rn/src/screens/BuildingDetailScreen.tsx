@@ -334,6 +334,35 @@ export const BuildingDetailScreen: React.FC = () => {
         container={services}
         userRole={(userRole as any) ?? 'worker'}
         onBack={() => (navigation as any).goBack?.()}
+        onPhotoCapture={() => (navigation as any).navigate?.('PhotoCaptureModal', { buildingId })}
+        onTaskPress={(taskId: string) => (navigation as any).navigate?.('TaskTimeline', { taskId })}
+        onRoutePress={() => {
+          const { Linking } = require('react-native');
+          const addr = encodeURIComponent(building?.address || 'New York, NY');
+          Linking.openURL(`maps://?address=${addr}`);
+        }}
+        onSpacePress={() => (navigation as any).navigate?.('PhotoCaptureModal', { buildingId })}
+        onEmergencyAction={(action) => {
+          if (action === 'call911') {
+            const { Linking } = require('react-native');
+            Linking.openURL('tel:911');
+          } else if (action === 'openMap') {
+            const { Linking } = require('react-native');
+            const addr = encodeURIComponent(building?.address || 'New York, NY');
+            Linking.openURL(`maps://?address=${addr}`);
+          }
+        }}
+        onReorderItem={async (item: any) => {
+          try {
+            await services.supplyRequestCatalog.requestSupplies({
+              buildingId,
+              workerId: 'unknown_worker',
+              itemName: item.name,
+              quantity: Math.max(item.minThreshold * 2 - item.quantity, item.minThreshold),
+              urgency: item.quantity <= item.minThreshold ? 'high' : 'medium',
+            });
+          } catch (e) {}
+        }}
       />
     </SafeAreaView>
   );

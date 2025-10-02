@@ -16,7 +16,7 @@ import {
   Dimensions
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { PerformanceChart, ChartDataPoint, ChartConfig } from './PerformanceChart';
 
 export interface KPICard {

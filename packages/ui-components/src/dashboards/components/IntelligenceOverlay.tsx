@@ -19,7 +19,7 @@ import {
   State,
 } from 'react-native-gesture-handler';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 
 const { height } = Dimensions.get('window');
 

@@ -2,7 +2,7 @@
   {
     "id": "1",
     "name": "Greg Hutson",
-    "email": "greg.hutson@francomanagement.com",
+    "email": "greg.hutson@cyntientops.test",
     "password": "password",
     "role": "worker",
     "phone": "+1-555-0101",
@@ -20,7 +20,7 @@
   {
     "id": "2",
     "name": "Edwin Lema",
-    "email": "edwin.lema@francomanagement.com",
+    "email": "edwin.lema@cyntientops.test",
     "password": "password",
     "role": "worker",
     "phone": "+1-555-0102",
@@ -38,7 +38,7 @@
   {
     "id": "4",
     "name": "Kevin Dutan",
-    "email": "kevin.dutan@francomanagement.com",
+    "email": "kevin.dutan@cyntientops.test",
     "password": "password",
     "role": "worker",
     "phone": "+1-555-0104",
@@ -57,7 +57,7 @@
   {
     "id": "5",
     "name": "Mercedes Inamagua",
-    "email": "mercedes.inamagua@francomanagement.com",
+    "email": "mercedes.inamagua@cyntientops.test",
     "password": "password",
     "role": "worker",
     "phone": "+1-555-0105",
@@ -75,7 +75,7 @@
   {
     "id": "6",
     "name": "Luis Lopez",
-    "email": "luis.lopez@francomanagement.com",
+    "email": "luis.lopez@cyntientops.test",
     "password": "password",
     "role": "worker",
     "phone": "+1-555-0106",
@@ -93,7 +93,7 @@
   {
     "id": "7",
     "name": "Angel Guirachocha",
-    "email": "angel.guirachocha@francomanagement.com",
+    "email": "angel.guirachocha@cyntientops.test",
     "password": "password",
     "role": "worker",
     "phone": "+1-555-0107",
@@ -111,7 +111,7 @@
   {
     "id": "8",
     "name": "Shawn Magloire",
-    "email": "shawn.magloire@francomanagement.com",
+    "email": "shawn.magloire@cyntientops.test",
     "password": "password",
     "role": "admin",
     "phone": "+1-555-0108",

@@ -46,18 +46,18 @@ export const config: AppConfig = {
   // Database
   databasePath: getEnvVar('DATABASE_PATH', 'cyntientops.db'),
 
-  // WebSocket
-  websocketUrl: getEnvVar('WEBSOCKET_URL', 'ws://localhost:8080/ws'),
+  // WebSocket - Disabled for testing, will be enabled when backend is ready
+  websocketUrl: getEnvVar('WEBSOCKET_URL', ''),
 
-  // NYC APIs
-  dsnyApiKey: getEnvVar('DSNY_API_KEY', 'P1XfR3qQk9vN2wB8yH4mJ7pL5sK6tG9zC0dF2aE8'),
-  hpdApiKey: getEnvVar('HPD_API_KEY', 'd4f7b6c9e2a1f8h5k3j9m6n0q2w8r7t5y1u4i8o6'),
-  dobApiKey: getEnvVar('DOB_API_KEY', '3e9f1a5d7c2b8h6k4j0m9n3q5w7r1t8y2u6i4o0p'),
+  // NYC APIs - Using public data sources, no API keys needed
+  dsnyApiKey: getEnvVar('DSNY_API_KEY', ''),
+  hpdApiKey: getEnvVar('HPD_API_KEY', ''),
+  dobApiKey: getEnvVar('DOB_API_KEY', ''),
   weatherApiKey: getEnvVar('WEATHER_API_KEY', ''),
 
-  // Feature Flags
+  // Feature Flags - Optimized for testing
   enableOfflineMode: getBoolEnvVar('ENABLE_OFFLINE_MODE', true),
-  enableRealTimeSync: getBoolEnvVar('ENABLE_REALTIME_SYNC', true),
+  enableRealTimeSync: getBoolEnvVar('ENABLE_REALTIME_SYNC', false),
   enableIntelligence: getBoolEnvVar('ENABLE_INTELLIGENCE', true),
   enableWeatherIntegration: getBoolEnvVar('ENABLE_WEATHER_INTEGRATION', true),
 

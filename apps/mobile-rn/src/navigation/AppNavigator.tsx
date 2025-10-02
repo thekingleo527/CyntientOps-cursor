@@ -49,7 +49,7 @@ export type RootStackParamList = {
   BuildingDetail: { buildingId: string; userRole?: 'worker' | 'client' | 'admin' };
   TaskTimeline: { taskId: string };
   ClockInModal: { workerId: string };
-  PhotoCaptureModal: { taskId: string };
+  PhotoCaptureModal: { taskId?: string; buildingId?: string };
   Profile: { userId?: string; userName?: string; userRole?: 'worker' | 'client' | 'admin'; onLogout?: () => void } | undefined;
   MultisiteDeparture: undefined;
   WeeklyRoutine: undefined;

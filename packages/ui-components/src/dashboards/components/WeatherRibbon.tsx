@@ -8,7 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../../../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { WeatherSnapshot, OutdoorWorkRisk } from '@cyntientops/domain-schema';
 import { APIClientManager } from '@cyntientops/api-clients';
 

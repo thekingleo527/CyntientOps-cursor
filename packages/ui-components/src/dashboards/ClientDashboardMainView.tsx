@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ClientHeaderV3B } from '../headers/ClientHeaderV3B';
 // Mock components for development

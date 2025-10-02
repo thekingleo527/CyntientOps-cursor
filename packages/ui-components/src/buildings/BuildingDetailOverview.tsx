@@ -19,11 +19,15 @@ import {
   Image,
   Dimensions,
   Alert,
-  Linking
+  Linking,
+  TextInput,
+  Modal,
+  Share
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import ZoomableImage from '../effects/ZoomableImage';
 import { Colors, Typography, Spacing, DashboardGradients } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { ServiceContainer } from '@cyntientops/business-core';
 import { useBuildingDetailViewModel } from '@cyntientops/context-engines';
 
@@ -49,6 +53,11 @@ export interface BuildingDetailOverviewProps {
   userRole?: 'worker' | 'admin' | 'client';
   onBack?: () => void;
   onPhotoCapture?: (category: string) => void;
+  onTaskPress?: (taskId: string) => void;
+  onRoutePress?: (route: any) => void;
+  onSpacePress?: (space: any) => void;
+  onReorderItem?: (item: any) => void;
+  onEmergencyAction?: (action: 'call911' | 'openMap') => void;
   onCallContact?: (contact: any) => void;
   onMessageContact?: (contact: any) => void;
   onReportIssue?: () => void;
@@ -64,6 +73,11 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   userRole,
   onBack,
   onPhotoCapture,
+  onTaskPress,
+  onRoutePress,
+  onSpacePress,
+  onReorderItem,
+  onEmergencyAction,
   onCallContact,
   onMessageContact,
   onReportIssue,
@@ -78,6 +92,25 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   const [showingMessageComposer, setShowingMessageComposer] = useState(false);
   const [showingCallMenu, setShowingCallMenu] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
+  const [assignedWorkers, setAssignedWorkers] = useState<Array<{ id: string; name: string; role?: string; isOnSite: boolean }>>([]);
+  const [emergencyContacts, setEmergencyContacts] = useState<Array<{ id: string; name: string; role: string; phone?: string; email?: string }>>([]);
+  const [inventoryItems, setInventoryItems] = useState<Array<any>>([]);
+  const [spaces, setSpaces] = useState<Array<any>>([]);
+  const [routesToday, setRoutesToday] = useState<Array<any>>([]);
+  const [sanitation, setSanitation] = useState<{
+    refuseDay?: string; recyclingDay?: string; organicsDay?: string; bulkDay?: string;
+    nextRefuse?: Date | null; nextRecycling?: Date | null; nextOrganics?: Date | null; nextBulk?: Date | null;
+    advisory?: string | null;
+  }>({});
+  const [spaceItems, setSpaceItems] = useState<Array<any>>([]);
+  const [spaceQuery, setSpaceQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedFloor, setSelectedFloor] = useState<string>('All');
+  const [flaggedOnly, setFlaggedOnly] = useState(false);
+  const [galleryVisible, setGalleryVisible] = useState(false);
+  const [gallerySpace, setGallerySpace] = useState<any | null>(null);
+  const [galleryPhotos, setGalleryPhotos] = useState<Array<any>>([]);
+  const [galleryIndex, setGalleryIndex] = useState(0);
 
   // Use the comprehensive ViewModel (real data)
   const viewModel = useBuildingDetailViewModel(container, buildingId, buildingName, buildingAddress);
@@ -98,6 +131,216 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
 
   const loadInitialData = useCallback(async () => {
     await viewModel.loadBuildingData();
+    try {
+      const workers = await container.buildingWorkersCatalog.getBuildingWorkers(buildingId);
+      const geofence = container.location?.getGeofence?.(buildingId);
+      const buildingLat = (viewModel as any)?.buildingData?.latitude;
+      const buildingLon = (viewModel as any)?.buildingData?.longitude;
+
+      const toRad = (v: number) => (v * Math.PI) / 180;
+      const distance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        const R = 6371e3;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+        return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      };
+
+      const enriched = (workers || []).map((w: any) => {
+        const session = container.clockIn?.getActiveSession?.(w.id);
+        let isOnSite = !!session && session.buildingId === buildingId;
+        if (buildingLat && buildingLon) {
+          const loc = container.location?.getCurrentLocation?.(w.id);
+          if (loc) {
+            const dist = distance(loc.latitude, loc.longitude, buildingLat, buildingLon);
+            const radius = geofence?.radius ?? 100;
+            isOnSite = isOnSite && dist <= radius;
+          }
+        }
+        return { id: w.id, name: w.name, role: w.role, isOnSite };
+      });
+      setAssignedWorkers(enriched);
+    } catch {
+      setAssignedWorkers([]);
+    }
+
+    // Load inventory items from catalog
+    try {
+      const inv = await container.buildingInventoryCatalog.getBuildingInventory(buildingId);
+      setInventoryItems(inv || []);
+    } catch {
+      setInventoryItems([]);
+    }
+
+    // Load spaces
+    try {
+      const s = await container.photoEvidence.getBuildingSpaces(buildingId);
+      setSpaces(s || []);
+    } catch {
+      setSpaces([]);
+    }
+
+    // Build space view models with photo counts and last updated
+    try {
+      const vm: Array<any> = [];
+      const s = await container.photoEvidence.getBuildingSpaces(buildingId);
+      for (const sp of (s || [])) {
+        try {
+          const photos = await container.photoEvidence.getPhotosForSpace(sp.id);
+          const count = photos.length;
+          const lastUpdated = count > 0 ? new Date(Math.max(...photos.map((p: any) => p.timestamp))) : null;
+          const daysSince = lastUpdated ? (Date.now() - lastUpdated.getTime()) / (1000*60*60*24) : Infinity;
+          const flagged = count === 0 || daysSince > 30;
+          vm.push({ ...sp, photoCount: count, lastUpdated, flagged });
+        } catch {
+          vm.push({ ...sp, photoCount: 0, lastUpdated: null, flagged: true });
+        }
+      }
+      vm.sort((a, b) => {
+        if (a.flagged !== b.flagged) return a.flagged ? -1 : 1;
+        const at = a.lastUpdated ? a.lastUpdated.getTime() : 0;
+        const bt = b.lastUpdated ? b.lastUpdated.getTime() : 0;
+        return bt - at;
+      });
+      setSpaceItems(vm);
+    } catch {
+      setSpaceItems([]);
+    }
+
+    // Build today's route sequence from tasks
+    try {
+      const tasks = (viewModel as any)?.buildingTasks || [];
+      const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+      const todaySeq = tasks
+        .filter((t: any) => {
+          const d = `${t.daysOfWeek || ''}`;
+          return d ? d.split(',').map((x: string) => x.trim()).includes(dayName) : false;
+        })
+        .sort((a: any, b: any) => (a.startHour || 0) - (b.startHour || 0));
+      setRoutesToday(todaySeq);
+    } catch {
+      setRoutesToday([]);
+    }
+
+    // Derive sanitation schedule and DSNY advisory
+    try {
+      const tasks = (viewModel as any)?.buildingTasks || [];
+      const daySets: Record<string, Set<string>> = {
+        refuse: new Set<string>(), recycling: new Set<string>(), organics: new Set<string>(), bulk: new Set<string>()
+      };
+      const ensureDays = (val: any) => {
+        const s = `${val || ''}`;
+        if (!s) return [] as string[];
+        return s.split(',').map((x: string) => x.trim()).filter(Boolean);
+      };
+      tasks.forEach((t: any) => {
+        const name = `${t.title || t.name || ''}`.toLowerCase();
+        const cat = `${t.category || ''}`.toLowerCase();
+        const days = ensureDays(t.daysOfWeek);
+        const add = (k: 'refuse'|'recycling'|'organics'|'bulk') => days.forEach(d => daySets[k].add(d));
+        if (name.includes('recycling')) add('recycling');
+        else if (name.includes('organics') || name.includes('compost')) add('organics');
+        else if (name.includes('bulk')) add('bulk');
+        else if (cat.includes('sanitation') || name.includes('trash') || name.includes('dsny')) add('refuse');
+      });
+
+      const nextFor = (day: string | undefined): Date | null => {
+        if (!day) return null;
+        const dayMap: Record<string, number> = { Sunday:0, Monday:1, Tuesday:2, Wednesday:3, Thursday:4, Friday:5, Saturday:6 };
+        const target = dayMap[day];
+        if (target === undefined) return null;
+        const today = new Date();
+        for (let i = 0; i < 14; i++) {
+          const d = new Date(today);
+          d.setDate(today.getDate() + i);
+          if (d.getDay() === target) return d;
+        }
+        return null;
+      };
+
+      const refuseDay = Array.from(daySets.refuse)[0];
+      const recyclingDay = Array.from(daySets.recycling)[0];
+      const organicsDay = Array.from(daySets.organics)[0];
+      const bulkDay = Array.from(daySets.bulk)[0];
+
+      const derived: any = {
+        refuseDay,
+        recyclingDay,
+        organicsDay,
+        bulkDay,
+        nextRefuse: nextFor(refuseDay),
+        nextRecycling: nextFor(recyclingDay),
+        nextOrganics: nextFor(organicsDay),
+        nextBulk: nextFor(bulkDay),
+        advisory: null,
+      };
+
+      try {
+        const dsny = (container as any).apiClients?.dsny;
+        if (dsny && buildingAddress) {
+          const sched = await dsny.getCollectionSchedule(buildingAddress);
+          if (sched) {
+            const mismatches: string[] = [];
+            if (refuseDay && !sched.refuseDays.includes(refuseDay)) mismatches.push('Trash');
+            if (recyclingDay && !sched.recyclingDays.includes(recyclingDay)) mismatches.push('Recycling');
+            if (organicsDay && !sched.organicsDays.includes(organicsDay)) mismatches.push('Organics');
+            if (bulkDay && !sched.bulkDays.includes(bulkDay)) mismatches.push('Bulk');
+            if (mismatches.length > 0) {
+              derived.advisory = `${mismatches.join(', ')} differ from DSNY — verify set‑out`;
+            }
+          }
+        }
+      } catch {}
+
+      setSanitation(derived);
+    } catch {
+      setSanitation({});
+    }
+
+    // Load emergency contacts: client manager + Shawn (admin)
+    try {
+      const clientId = (viewModel as any)?.buildingData?.clientId || (viewModel as any)?.buildingData?.client_id;
+      const contacts: Array<{ id: string; name: string; role: string; phone?: string; email?: string }> = [];
+
+      if (clientId && container.client?.getClientById) {
+        const client = container.client.getClientById(clientId);
+        if (client) {
+          contacts.push({
+            id: `${buildingId}-client-mgr`,
+            name: client.manager_name || client.name,
+            role: client.manager_title || 'Client Manager',
+            phone: client.contact_phone,
+            email: client.contact_email,
+          });
+        }
+      }
+
+      try {
+        // Prefer seeded worker data for Shawn
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const dataSeed = require('@cyntientops/data-seed');
+        const shawn = (dataSeed.workers || []).find((w: any) => (w.name || '').toLowerCase().includes('shawn magloire'));
+        contacts.push({
+          id: `${buildingId}-admin-shawn`,
+          name: 'Shawn Magloire',
+          role: 'Admin',
+          phone: shawn?.phone || '(555) 100-0008',
+          email: shawn?.email || 'shawn.magloire@francomanagement.com',
+        });
+      } catch {
+        contacts.push({
+          id: `${buildingId}-admin-shawn`,
+          name: 'Shawn Magloire',
+          role: 'Admin',
+          phone: '(555) 100-0008',
+          email: 'shawn.magloire@francomanagement.com',
+        });
+      }
+
+      setEmergencyContacts(contacts);
+    } catch {
+      setEmergencyContacts([]);
+    }
   }, [viewModel]);
 
   const withAnimation = (callback: () => void) => {
@@ -592,19 +835,54 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
     return (
       <View style={styles.tabSection}>
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-          <Text style={styles.cardTitle}>🗺️ Routes</Text>
-          <Text style={styles.comingSoonText}>Routes functionality coming soon</Text>
+          <Text style={styles.cardTitle}>🗺️ Today’s Route</Text>
+          {routesToday.length === 0 ? (
+            <Text style={styles.emptyText}>No scheduled route today</Text>
+          ) : (
+            <View style={{ gap: 12 }}>
+              {routesToday.map((t: any) => (
+                <TouchableOpacity key={t.id} style={styles.routeRow} onPress={() => onRoutePress && onRoutePress(t)}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.routeTitle}>{t.title}</Text>
+                    <Text style={styles.routeMeta}>
+                      {t.startHour ? `${t.startHour}:00` : '—'} • {t.estimatedDuration || 60}m • {t.assignedWorker || 'Unassigned'}
+                    </Text>
+                  </View>
+                  <Text style={styles.routeStatus}>{(t.status || 'pending').replace('_',' ')}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </GlassCard>
       </View>
     );
   }
 
   function renderTasksTab() {
+    const tasks = (viewModel as any)?.buildingTasks || [];
     return (
       <View style={styles.tabSection}>
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>📋 Tasks</Text>
-          <Text style={styles.comingSoonText}>Tasks functionality coming soon</Text>
+          {tasks.length === 0 ? (
+            <Text style={styles.emptyText}>No active tasks</Text>
+          ) : (
+            <View style={{ gap: 12 }}>
+              {tasks.map((task: any) => (
+                <TouchableOpacity key={task.id} style={styles.taskRow} onPress={() => onTaskPress && onTaskPress(task.id)}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.taskTitle}>{task.title}</Text>
+                    <Text style={styles.taskMeta}>
+                      {task.priority || 'medium'} • {task.status} • {task.assignedWorker || '—'}
+                    </Text>
+                  </View>
+                  {task.dueDate ? (
+                    <Text style={styles.taskDue}>Due {new Date(task.dueDate).toLocaleDateString()}</Text>
+                  ) : null}
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </GlassCard>
       </View>
     );
@@ -614,19 +892,53 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
     return (
       <View style={styles.tabSection}>
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-          <Text style={styles.cardTitle}>👥 Workers</Text>
-          <Text style={styles.comingSoonText}>Workers functionality coming soon</Text>
+          <Text style={styles.cardTitle}>👥 Assigned Workers</Text>
+          {assignedWorkers.length === 0 ? (
+            <Text style={styles.emptyText}>No workers assigned</Text>
+          ) : (
+            <View style={{ gap: 12 }}>
+              {assignedWorkers.map((w) => (
+                <View key={w.id} style={styles.workerRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.workerName}>{w.name}</Text>
+                    {w.role ? <Text style={styles.workerRole}>{w.role}</Text> : null}
+                  </View>
+                  <View style={[styles.onsitePill, { backgroundColor: w.isOnSite ? Colors.success + '20' : Colors.glassOverlay }]}>
+                    <Text style={[styles.onsitePillText, { color: w.isOnSite ? Colors.success : Colors.secondaryText }]}>
+                      {w.isOnSite ? 'On‑Site' : 'Off‑Site'}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
         </GlassCard>
       </View>
     );
   }
 
   function renderMaintenanceTab() {
+    const tasks = (viewModel as any)?.buildingTasks || [];
+    const maint = tasks.filter((t: any) => `${t.category || ''}`.toLowerCase().includes('maintenance') || `${t.category || ''}`.toLowerCase().includes('repair'));
     return (
       <View style={styles.tabSection}>
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🔧 Maintenance</Text>
-          <Text style={styles.comingSoonText}>Maintenance functionality coming soon</Text>
+          {maint.length === 0 ? (
+            <Text style={styles.emptyText}>No open maintenance tasks</Text>
+          ) : (
+            <View style={{ gap: 12 }}>
+              {maint.map((t: any) => (
+                <TouchableOpacity key={t.id} style={styles.taskRow} onPress={() => onTaskPress && onTaskPress(t.id)}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.taskTitle}>{t.title}</Text>
+                    <Text style={styles.taskMeta}>{t.status} • {t.assignedWorker || '—'}</Text>
+                  </View>
+                  {t.dueDate ? <Text style={styles.taskDue}>Due {new Date(t.dueDate).toLocaleDateString()}</Text> : null}
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </GlassCard>
       </View>
     );
@@ -635,32 +947,195 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderSanitationTab() {
     return (
       <View style={styles.tabSection}>
+        {sanitation.advisory && (
+          <GlassCard style={[styles.card, { borderLeftWidth: 3, borderLeftColor: Colors.warning }]} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
+            <Text style={styles.snapshotValue}>{sanitation.advisory}</Text>
+          </GlassCard>
+        )}
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-          <Text style={styles.cardTitle}>🗑️ Sanitation</Text>
-          <Text style={styles.comingSoonText}>Sanitation functionality coming soon</Text>
+          <Text style={styles.cardTitle}>🗑️ Next Pickups</Text>
+          <View style={{ gap: 10 }}>
+            <Text style={styles.snapshotLabel}>Trash: <Text style={styles.snapshotValue}>{sanitation.refuseDay || '—'}</Text> {sanitation.nextRefuse ? `• ${sanitation.nextRefuse.toLocaleDateString()}` : ''}</Text>
+            <Text style={styles.snapshotLabel}>Recycling: <Text style={styles.snapshotValue}>{sanitation.recyclingDay || '—'}</Text> {sanitation.nextRecycling ? `• ${sanitation.nextRecycling.toLocaleDateString()}` : ''}</Text>
+            <Text style={styles.snapshotLabel}>Organics: <Text style={styles.snapshotValue}>{sanitation.organicsDay || '—'}</Text> {sanitation.nextOrganics ? `• ${sanitation.nextOrganics.toLocaleDateString()}` : ''}</Text>
+            <Text style={styles.snapshotLabel}>Bulk: <Text style={styles.snapshotValue}>{sanitation.bulkDay || '—'}</Text> {sanitation.nextBulk ? `• ${sanitation.nextBulk.toLocaleDateString()}` : ''}</Text>
+          </View>
         </GlassCard>
       </View>
     );
   }
 
   function renderInventoryTab() {
+    const isLow = (q: number, min: number) => q <= min;
     return (
       <View style={styles.tabSection}>
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>📦 Inventory</Text>
-          <Text style={styles.comingSoonText}>Inventory functionality coming soon</Text>
+          {inventoryItems.length === 0 ? (
+            <Text style={styles.emptyText}>No inventory items</Text>
+          ) : (
+            <View style={{ gap: 12 }}>
+              {inventoryItems.map((it: any) => (
+                <View key={it.id} style={styles.inventoryRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.inventoryName}>{it.name}</Text>
+                    <Text style={styles.inventoryMeta}>{it.category} • {it.location || 'Storage'}</Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Text style={[styles.inventoryQty, { color: isLow(it.quantity, it.minThreshold) ? Colors.warning : Colors.primaryText }]}>
+                      {it.quantity} {it.unit}
+                    </Text>
+                    <Text style={styles.inventoryThreshold}>Min {it.minThreshold}</Text>
+                  </View>
+                  <TouchableOpacity style={styles.reorderButton} onPress={async () => {
+                    if (onReorderItem) { onReorderItem(it); return; }
+                    try {
+                      await container.supplyRequestCatalog.requestSupplies({
+                        buildingId,
+                        workerId: 'unknown_worker',
+                        itemName: it.name,
+                        quantity: Math.max(it.minThreshold * 2 - it.quantity, it.minThreshold),
+                        urgency: isLow(it.quantity, it.minThreshold) ? 'high' : 'medium',
+                      });
+                      Alert.alert('Request Submitted', `Reorder requested for ${it.name}`);
+                    } catch (e) {
+                      Alert.alert('Error', 'Failed to submit reorder request');
+                    }
+                  }}>
+                    <Text style={styles.reorderText}>Request</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
         </GlassCard>
       </View>
     );
   }
 
   function renderSpacesTab() {
+    const categories = ['All', 'Utility', 'Mechanical', 'Storage', 'Electrical', 'Access', 'Common', 'Exterior'];
+    const floors = ['All', ...Array.from(new Set(spaceItems.map((s: any) => s.floor).filter((f: any) => f !== undefined))).map(String)];
+
+    const filtered = spaceItems.filter((s: any) => {
+      if (selectedCategory !== 'All' && `${s.category || ''}`.toLowerCase() !== selectedCategory.toLowerCase()) return false;
+      if (selectedFloor !== 'All' && String(s.floor) !== selectedFloor) return false;
+      if (flaggedOnly && !s.flagged) return false;
+      if (spaceQuery && !(`${s.name || ''}`.toLowerCase().includes(spaceQuery.toLowerCase()))) return false;
+      return true;
+    });
+
+    const openGallery = async (space: any) => {
+      try {
+        const photos = await container.photoEvidence.getPhotosForSpace(space.id);
+        setGallerySpace(space);
+        setGalleryPhotos(photos.sort((a: any, b: any) => b.timestamp - a.timestamp));
+        setGalleryIndex(0);
+        setGalleryVisible(true);
+      } catch {
+        Alert.alert('Gallery', 'No photos found for this space');
+      }
+    };
+
     return (
       <View style={styles.tabSection}>
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-          <Text style={styles.cardTitle}>🔑 Spaces</Text>
-          <Text style={styles.comingSoonText}>Spaces functionality coming soon</Text>
+          <Text style={styles.cardTitle}>🔎 Find a Space</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search: Lobby, roof, …"
+            placeholderTextColor={Colors.secondaryText}
+            value={spaceQuery}
+            onChangeText={setSpaceQuery}
+          />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {categories.map(cat => (
+                <TouchableOpacity key={cat} style={[styles.chip, selectedCategory === cat && styles.chipSelected]} onPress={() => setSelectedCategory(cat)}>
+                  <Text style={[styles.chipText, selectedCategory === cat && styles.chipTextSelected]}>{cat}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {floors.map(f => (
+                <TouchableOpacity key={f} style={[styles.chip, selectedFloor === f && styles.chipSelected]} onPress={() => setSelectedFloor(f)}>
+                  <Text style={[styles.chipText, selectedFloor === f && styles.chipTextSelected]}>{f === 'All' ? 'All Floors' : `Floor ${f}`}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity style={[styles.chip, flaggedOnly && styles.chipSelected]} onPress={() => setFlaggedOnly(!flaggedOnly)}>
+                <Text style={[styles.chipText, flaggedOnly && styles.chipTextSelected]}>Flagged</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </GlassCard>
+
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
+          <Text style={styles.cardTitle}>🔑 Spaces</Text>
+          {filtered.length === 0 ? (
+            <Text style={styles.emptyText}>No spaces match filters</Text>
+          ) : (
+            <View style={{ gap: 12 }}>
+              {filtered.map((s: any) => (
+                <View key={s.id} style={styles.spaceRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.spaceName}>{s.name}</Text>
+                    <Text style={styles.spaceMeta}>{s.category || 'area'}{s.floor !== undefined ? ` • Floor ${s.floor}` : ''} • Photos {s.photoCount}</Text>
+                    <Text style={styles.spaceMeta}>{s.lastUpdated ? `Last updated ${new Date(s.lastUpdated).toLocaleDateString()}` : 'No photos yet'}</Text>
+                  </View>
+                  <View style={{ gap: 6, alignItems: 'flex-end' }}>
+                    <TouchableOpacity style={styles.secondaryBtn} onPress={() => openGallery(s)}>
+                      <Text style={styles.secondaryBtnText}>Open Gallery</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.secondaryBtn} onPress={() => onSpacePress && onSpacePress(s)}>
+                      <Text style={styles.secondaryBtnText}>Capture</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+        </GlassCard>
+
+        <Modal visible={galleryVisible} animationType="slide" onRequestClose={() => setGalleryVisible(false)}>
+          <View style={styles.galleryContainer}>
+            <View style={styles.galleryHeader}>
+              <TouchableOpacity onPress={() => setGalleryVisible(false)}><Text style={styles.galleryHeaderText}>Close</Text></TouchableOpacity>
+              <Text style={[styles.galleryHeaderText, { flex: 1, textAlign: 'center' }]}>
+                {gallerySpace?.name || 'Gallery'} {galleryPhotos.length > 0 ? `(${galleryIndex + 1}/${galleryPhotos.length})` : ''}
+              </Text>
+              <TouchableOpacity onPress={async () => { try { await Share.share({ message: galleryPhotos[galleryIndex]?.imageUri || '' }); } catch {} }}>
+                <Text style={styles.galleryHeaderText}>Share</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.galleryBody}>
+              {galleryPhotos.length === 0 ? (
+                <Text style={styles.emptyText}>No photos</Text>
+              ) : (
+                <ZoomableImage uri={galleryPhotos[galleryIndex].imageUri} />
+              )}
+            </View>
+            {galleryPhotos.length > 0 && (
+              <View style={styles.galleryMeta}>
+                <Text style={styles.galleryMetaText}>
+                  {new Date(galleryPhotos[galleryIndex].timestamp).toLocaleString()} • {galleryPhotos[galleryIndex].metadata?.workerName || 'Unknown'}
+                </Text>
+                <Text style={styles.galleryMetaText}>
+                  {galleryPhotos[galleryIndex].smartLocation?.detectedSpace || gallerySpace?.name}
+                  {galleryPhotos[galleryIndex].smartLocation?.detectedFloor !== undefined ? ` • Floor ${galleryPhotos[galleryIndex].smartLocation.detectedFloor}` : ''}
+                </Text>
+                <Text style={styles.galleryMetaText}>
+                  {(galleryPhotos[galleryIndex].tags || []).map((t: string) => `#${t}`).join(' ')}
+                </Text>
+              </View>
+            )}
+            <View style={styles.galleryFooter}>
+              <TouchableOpacity onPress={() => setGalleryIndex(Math.max(0, galleryIndex - 1))}><Text style={styles.galleryNavText}>‹ Prev</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => setGalleryIndex(Math.min(galleryPhotos.length - 1, galleryIndex + 1))}><Text style={styles.galleryNavText}>Next ›</Text></TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -669,9 +1144,44 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
     return (
       <View style={styles.tabSection}>
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
-          <Text style={styles.cardTitle}>🚨 Emergency</Text>
-          <Text style={styles.comingSoonText}>Emergency functionality coming soon</Text>
-      </GlassCard>
+          <Text style={styles.cardTitle}>⚠️ Quick Actions</Text>
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <TouchableOpacity style={styles.emergencyButton} onPress={() => {
+              if (onEmergencyAction) onEmergencyAction('call911'); else callNumber('911');
+            }}>
+              <Text style={styles.emergencyButtonText}>Call 911</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.emergencyButton} onPress={() => {
+              if (onEmergencyAction) onEmergencyAction('openMap'); else openInMaps();
+            }}>
+              <Text style={styles.emergencyButtonText}>Open Map</Text>
+            </TouchableOpacity>
+          </View>
+        </GlassCard>
+        <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
+          <Text style={styles.cardTitle}>🚨 Emergency Contacts</Text>
+          {emergencyContacts.length === 0 ? (
+            <Text style={styles.emptyText}>No emergency contacts found</Text>
+          ) : (
+            <View style={{ gap: 12 }}>
+              {emergencyContacts.map((c) => (
+                <View key={c.id} style={styles.contactRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.contactName}>{c.name}</Text>
+                    <Text style={styles.contactRole}>{c.role}</Text>
+                    {c.phone ? <Text style={styles.contactPhone}>{c.phone}</Text> : null}
+                    {c.email ? <Text style={styles.contactEmail}>{c.email}</Text> : null}
+                  </View>
+                  {c.phone && (
+                    <TouchableOpacity style={styles.contactAction} onPress={() => callNumber(c.phone!)}>
+                      <Text style={styles.contactActionText}>Call</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ))}
+            </View>
+          )}
+        </GlassCard>
       </View>
     );
   }
@@ -680,7 +1190,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
   function renderFloatingActionButton() {
     return (
       <View style={styles.fabContainer}>
-        <TouchableOpacity style={styles.fab} onPress={() => setShowingPhotoCapture(true)}>
+        <TouchableOpacity style={styles.fab} onPress={() => { if (onPhotoCapture) { onPhotoCapture('general'); } else { setShowingPhotoCapture(true); } }}>
           <Text style={styles.fabText}>+</Text>
         </TouchableOpacity>
       </View>
@@ -980,6 +1490,63 @@ const styles = StyleSheet.create({
   tabSection: {
     gap: 20,
   },
+  // Simple rows for routes/tasks/spaces
+  routeRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  routeTitle: { ...Typography.subheadline, color: Colors.primaryText, fontWeight: '600' },
+  routeMeta: { ...Typography.caption, color: Colors.secondaryText },
+  routeStatus: { ...Typography.caption, color: Colors.secondaryText },
+  taskRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  taskTitle: { ...Typography.subheadline, color: Colors.primaryText, fontWeight: '600' },
+  taskMeta: { ...Typography.caption, color: Colors.secondaryText },
+  taskDue: { ...Typography.caption, color: Colors.secondaryText },
+  spaceRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  spaceName: { ...Typography.subheadline, color: Colors.primaryText, fontWeight: '600' },
+  spaceMeta: { ...Typography.caption, color: Colors.secondaryText },
+  secondaryBtn: {
+    backgroundColor: Colors.glassOverlay,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+  secondaryBtnText: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  searchInput: {
+    backgroundColor: Colors.glassOverlay,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    color: Colors.primaryText,
+    marginTop: 6,
+  },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: Colors.glassOverlay,
+  },
+  chipSelected: {
+    backgroundColor: Colors.primaryAction + '20',
+  },
+  chipText: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  chipTextSelected: {
+    color: Colors.primaryAction,
+    fontWeight: '600',
+  },
+  galleryContainer: { flex: 1, backgroundColor: Colors.baseBackground },
+  galleryHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 12 },
+  galleryHeaderText: { ...Typography.caption, color: Colors.primaryText, fontWeight: '600' },
+  galleryBody: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  galleryImage: { width: '100%', height: '100%' },
+  galleryMeta: { padding: 12 },
+  galleryMetaText: { ...Typography.caption, color: Colors.secondaryText },
+  galleryFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 12 },
+  galleryNavText: { ...Typography.caption, color: Colors.primaryText, fontWeight: '700' },
   
   // Cards
   card: {
@@ -1102,6 +1669,35 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     color: Colors.info,
   },
+  contactEmail: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  contactName: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  contactRole: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  contactAction: {
+    backgroundColor: Colors.primaryAction + '20',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+  contactActionText: {
+    ...Typography.caption,
+    color: Colors.primaryAction,
+    fontWeight: '600',
+  },
   
   // Coming Soon
   comingSoonText: {
@@ -1115,6 +1711,75 @@ const styles = StyleSheet.create({
     color: Colors.tertiaryText,
     textAlign: 'center',
     paddingVertical: 20,
+  },
+  workerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  workerName: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  workerRole: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  onsitePill: {
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  onsitePillText: {
+    ...Typography.caption,
+    fontWeight: '600',
+  },
+  // Inventory rows
+  inventoryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  inventoryName: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  inventoryMeta: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  inventoryQty: {
+    ...Typography.subheadline,
+    fontWeight: '700',
+  },
+  inventoryThreshold: {
+    ...Typography.caption,
+    color: Colors.secondaryText,
+  },
+  reorderButton: {
+    backgroundColor: Colors.primaryAction + '20',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    marginLeft: 12,
+  },
+  reorderText: {
+    ...Typography.caption,
+    color: Colors.primaryAction,
+    fontWeight: '600',
+  },
+  emergencyButton: {
+    backgroundColor: Colors.critical + '20',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  emergencyButtonText: {
+    ...Typography.caption,
+    color: Colors.critical,
+    fontWeight: '700',
   },
   
   // Floating Action Button

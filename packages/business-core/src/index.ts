@@ -54,6 +54,7 @@ export { SystemService } from './services/SystemService';
 export { PropertyDataService } from './services/PropertyDataService';
 export type { PropertyDetails } from './services/PropertyDataService';
 export { RealDataService } from './services/RealDataService';
+export { TagSuggestionService } from './services/TagSuggestionService';
 
 // Managers
 export { ClockInManager } from './managers/ClockInManager';

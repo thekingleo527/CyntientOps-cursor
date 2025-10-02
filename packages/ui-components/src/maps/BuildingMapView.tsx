@@ -19,7 +19,7 @@ import {
 import MapView, { Marker, Polyline, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { Building, OperationalDataTaskAssignment, Worker } from '@cyntientops/domain-schema';
 
 const { width, height } = Dimensions.get('window');

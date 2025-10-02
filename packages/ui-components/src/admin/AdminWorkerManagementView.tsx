@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { UserRole, NamedCoordinate } from '@cyntientops/domain-schema';
 import { RouteManager, RouteOptimization } from '@cyntientops/business-core';
 import { GlassStatusBadge } from '../glass/GlassStatusBadge';

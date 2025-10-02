@@ -9,7 +9,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../../../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { NamedCoordinate, OperationalDataTaskAssignment, UserRole } from '@cyntientops/domain-schema';
 import { TaskTimelineView } from '../timeline/TaskTimelineView';
 import { GlassStatusBadge } from '../glass/GlassStatusBadge';

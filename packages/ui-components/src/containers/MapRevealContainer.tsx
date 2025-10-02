@@ -78,7 +78,7 @@ const Circle = ({ center, radius, fillColor, strokeColor, ...props }: any) => (
 const PROVIDER_GOOGLE = 'google';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
+import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { NamedCoordinate, WeatherSnapshot, UserRole, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import MapClusteringService, { BuildingMarker, ClusteredMarker } from '../maps/services/MapClusteringService';
 import { ClusterMarker } from '../maps/components/ClusterMarker';

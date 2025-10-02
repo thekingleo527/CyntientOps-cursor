@@ -5,6 +5,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { Logger } from './LoggingService';
+import { OperationalDataService } from './OperationalDataService';
 
 export interface InventoryItem {
   id: string;
@@ -88,37 +89,74 @@ export class InventoryService {
   async getInventory(buildingId: string): Promise<InventoryItem[]> {
     Logger.debug('Fetching inventory for building:', undefined, 'InventoryService');
 
-    // Mock data for demonstration
-    return [
-      {
-        id: '1',
-        buildingId,
-        name: 'All-Purpose Cleaner',
-        category: 'cleaning',
-        quantity: 8,
-        unit: 'bottles',
-        minThreshold: 5,
-        maxThreshold: 20,
-        location: 'Supply Closet A',
-        lastRestocked: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        buildingId,
-        name: 'Paper Towels',
-        category: 'cleaning',
-        quantity: 15,
-        unit: 'rolls',
-        minThreshold: 10,
-        maxThreshold: 50,
-        location: 'Supply Closet A',
-        lastRestocked: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ];
+    // Ensure operational data is available for light intelligence
+    const ops = OperationalDataService.getInstance();
+    try { await ops.initialize(); } catch {}
+
+    const b = ops.getBuildingById(buildingId);
+    const sf = b?.squareFootage || 0;
+    const clientId = b?.client_id || b?.clientId;
+
+    // Intelligence: detect carpets/mats from routines
+    const tasks = ops.getTasksForBuilding(buildingId) || [];
+    const hasCarpetsOrMats = tasks.some((t: any) => {
+      const s = `${t.title || t.name || ''}`.toLowerCase();
+      return s.includes('carpet') || s.includes('mat');
+    });
+
+    // Intelligence: bathrooms for these buildings (per requirements)
+    const bathroomBuildings = new Set<string>(['1', '3', '10']); // 12 W 18th, 135-139 W 17th, 131 Perry
+    const hasBathrooms = bathroomBuildings.has(String(buildingId));
+
+    const bagSize = sf > 12000 ? '65 gal' : '55 gal';
+    const now = new Date().toISOString();
+    const closet = 'Supply Closet A';
+    const makeId = (slug: string) => `inv_${buildingId}_${slug}`;
+    const item = (
+      name: string,
+      category: InventoryItem['category'],
+      quantity: number,
+      unit: string,
+      min: number,
+      max: number,
+      loc = closet
+    ): InventoryItem => ({
+      id: makeId(name.toLowerCase().replace(/[^a-z0-9]+/g, '_')),
+      buildingId,
+      name,
+      category,
+      quantity,
+      unit,
+      minThreshold: min,
+      maxThreshold: max,
+      location: loc,
+      lastRestocked: now,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    const items: InventoryItem[] = [];
+
+    // Core list (as requested)
+    items.push(item('Black Nitrile Gloves', 'safety', 4, 'boxes', 2, 12));
+    items.push(item('Paper Towels', 'cleaning', 24, 'rolls', 12, 48));
+    items.push(item('Windex (Glass Cleaner)', 'cleaning', 6, 'bottles', 3, 18));
+    items.push(item('Fantastik Spray (All‑Purpose)', 'cleaning', 6, 'bottles', 3, 18));
+    items.push(item('Cherry Deodorant Floor Cleaner (5 gal)', 'cleaning', 1, 'pail', 1, 4));
+    items.push(item(`Black Garbage Bags (${bagSize})`, 'cleaning', 120, 'bags', 60, 240));
+    items.push(item(`Clear Bags (${bagSize})`, 'cleaning', 80, 'bags', 40, 200));
+    items.push(item('TimeMist Air Freshener Spray', 'cleaning', 8, 'cans', 4, 16));
+
+    // Conditional items
+    if (hasCarpetsOrMats) {
+      items.push(item('Resolve Carpet Spray', 'cleaning', 4, 'bottles', 2, 8));
+    }
+    if (hasBathrooms) {
+      // Use larger baseline for toilet paper
+      items.push(item('Toilet Paper', 'cleaning', 96, 'rolls', 48, 192));
+    }
+
+    return items;
   }
 
   /**

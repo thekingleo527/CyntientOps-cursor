@@ -18,6 +18,65 @@ export enum BuildingAccessType {
   UNKNOWN = 'unknown'
 }
 
+// MARK: - Type Definitions for any types
+
+export interface WeatherData {
+  temperature: number;
+  condition: string;
+  description: string;
+  icon: string;
+  location: string;
+  timestamp: string;
+  humidity: number;
+  windSpeed: number;
+  outdoorWorkRisk: string;
+  weatherHint?: string;
+}
+
+export interface LocationData {
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  timestamp: Date;
+  address?: string;
+}
+
+export interface MapRegion {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
+
+export interface HeroNextTask {
+  id: string;
+  title: string;
+  description: string;
+  buildingId: string;
+  buildingName: string;
+  estimatedDuration: number;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  category: string;
+  dueTime?: Date;
+  weatherImpact?: string;
+}
+
+export interface NovaInsight {
+  id: string;
+  type: 'recommendation' | 'alert' | 'prediction' | 'optimization';
+  title: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  category: 'performance' | 'safety' | 'efficiency' | 'compliance' | 'weather' | 'route';
+  confidence: number;
+  actionable: boolean;
+  timestamp: Date;
+  workerId?: string;
+  buildingId?: string;
+  taskId?: string;
+  data: Record<string, any>;
+}
+
 export interface BuildingPin {
   id: string;
   name: string;
@@ -339,7 +398,7 @@ export interface WorkerDashboardViewModelState {
   
   // Weather Data
   weatherSnapshot: WorkerWeatherSnapshot;
-  weatherData?: any;
+  weatherData?: WeatherData;
   outdoorWorkRisk: string;
   
   // Vendor Access
@@ -363,7 +422,7 @@ export interface WorkerDashboardViewModelState {
   // Clock In/Out State
   isClockedIn: boolean;
   clockInTime?: Date;
-  clockInLocation?: any;
+  clockInLocation?: LocationData;
   hoursWorkedToday: number;
   
   // Performance Metrics
@@ -375,14 +434,14 @@ export interface WorkerDashboardViewModelState {
   dashboardSyncStatus: string;
   
   // Hero Tile Properties
-  heroNextTask?: any;
+  heroNextTask?: HeroNextTask;
   weatherHint?: string;
   buildingsForMap: BuildingPin[];
-  mapRegion: any;
+  mapRegion: MapRegion;
   
   // Intelligence Panel
   intelligencePanelExpanded: boolean;
-  currentInsights: any[];
+  currentInsights: NovaInsight[];
   
   // Real-time Updates
   dashboardUpdates: DashboardUpdate[];
@@ -401,14 +460,14 @@ export interface WorkerDashboardViewModelActions {
   
   // Task Management
   startTask: (taskId: string) => Promise<void>;
-  completeTask: (taskId: string, evidence?: any) => Promise<void>;
+  completeTask: (taskId: string, evidence?: Record<string, any>) => Promise<void>;
   updateTaskStatus: (taskId: string, status: string) => Promise<void>;
   toggleTaskCompletion: (taskId: string) => Promise<void>;
   getPhotoRequirement: (taskId: string) => boolean;
-  createPhotoEvidenceForTask: (taskId: string, photoURLs: string[]) => any;
+  createPhotoEvidenceForTask: (taskId: string, photoURLs: string[]) => Record<string, any>;
   
   // Building Management
-  clockIn: (buildingId: string, location?: any) => Promise<boolean>;
+  clockIn: (buildingId: string, location?: LocationData) => Promise<boolean>;
   clockOut: () => Promise<boolean>;
   reportIssue: (building?: BuildingSummary) => void;
   emergencyCall: () => void;
@@ -446,7 +505,7 @@ export interface WorkerDashboardViewModelActions {
   
   // Map Management
   updateMapRegion: () => void;
-  setMapRegion: (region: any) => void;
+  setMapRegion: (region: MapRegion) => void;
   
   // UI State
   toggleCompactMode: () => void;
@@ -480,28 +539,183 @@ export class WorkerDashboardViewModel {
 
   // Required methods for WorkerDashboardScreen compatibility
   public async initialize(workerId: string): Promise<void> {
-    // Implementation would go here - for now just return
-    return Promise.resolve();
+    try {
+      // Initialize worker data and state (mirrors SwiftUI loadInitialData)
+      this.workerId = workerId;
+      
+      console.log(`🔄 WorkerDashboardVM: Loading initial data for worker ${workerId}`);
+
+      // Load worker profile
+      const worker = await this.container.workers.getWorkerById(workerId);
+      if (!worker) {
+        throw new Error(`Worker with ID ${workerId} not found`);
+      }
+
+      // Load context and sync state (mirrors SwiftUI container.workerContext.loadContext)
+      try {
+        await this.container.workerContext?.loadContext?.(workerId);
+        await this.syncStateFromContextEngine();
+      } catch (contextError) {
+        console.warn('Context loading failed, continuing with basic initialization:', contextError);
+      }
+
+      // Load core data (mirrors SwiftUI loadTodaysTasks, loadAssignedBuildings, etc.)
+      const [buildings, tasks, weatherData, clockInStatus] = await Promise.all([
+        this.loadAssignedBuildings(),
+        this.loadTodaysTasks(),
+        this.loadWeatherData(),
+        this.loadClockInStatus(workerId)
+      ]);
+      
+      // Initialize state
+      this.setState({
+        userRole: worker.role as any,
+        assignedBuildings: buildings,
+        tasks: tasks,
+        weatherData: weatherData,
+        isClockedIn: clockInStatus.isClockedIn,
+        clockInTime: clockInStatus.clockInTime,
+        currentBuilding: clockInStatus.currentBuilding,
+        isLoading: false,
+        lastUpdateTime: new Date()
+      });
+
+      // Calculate metrics (mirrors SwiftUI calculateMetrics)
+      await this.calculateMetrics();
+      await this.loadBuildingMetrics();
+      await this.calculateHoursWorkedToday();
+
+      console.log(`✅ WorkerDashboardVM: Initial data loaded - tasks: ${tasks.length}, buildings: ${buildings.length}`);
+    } catch (error) {
+      console.error('Failed to initialize worker:', error);
+      throw error;
+    }
   }
 
   public async clockIn(buildingId: string, location: { latitude: number; longitude: number; accuracy: number }): Promise<boolean> {
-    // Implementation would go here - for now just return true
-    return Promise.resolve(true);
+    try {
+      if (!this.workerId) {
+        throw new Error('No worker ID available for clock in');
+      }
+
+      // Get building information (mirrors SwiftUI CoreTypes.NamedCoordinate)
+      const building = this.state.assignedBuildings.find(b => b.id === buildingId);
+      if (!building) {
+        throw new Error('Building not found in assigned buildings');
+      }
+
+      // Use ClockInService wrapper (mirrors SwiftUI container.clockIn.clockIn)
+      await this.container.clockIn.clockIn(this.workerId, buildingId);
+      
+      // Update state (mirrors SwiftUI updateClockInState)
+      this.setState({
+        isClockedIn: true,
+        clockInTime: new Date(),
+        clockInLocation: location,
+        currentBuilding: buildingId
+      });
+      
+      // Load weather and tasks for the building (mirrors SwiftUI loadWeatherData, loadBuildingTasks)
+      await Promise.all([
+        this.loadWeatherDataForBuilding(building),
+        this.loadBuildingTasks(this.workerId, buildingId)
+      ]);
+      
+      // Broadcast update (mirrors SwiftUI broadcastClockIn)
+      this.broadcastClockIn(this.workerId, building, location);
+      
+      console.log(`✅ Clocked in at ${building.name}`);
+      return true;
+    } catch (error) {
+      console.error('Clock in failed:', error);
+      return false;
+    }
   }
 
   public async clockOut(): Promise<boolean> {
-    // Implementation would go here - for now just return true
-    return Promise.resolve(true);
+    try {
+      if (!this.workerId || !this.state.isClockedIn || !this.state.currentBuilding) {
+        throw new Error('Worker is not currently clocked in');
+      }
+
+      const building = this.state.assignedBuildings.find(b => b.id === this.state.currentBuilding);
+      if (!building) {
+        throw new Error('Current building not found');
+      }
+
+      // Calculate session summary (mirrors SwiftUI calculateSessionSummary)
+      const sessionSummary = this.calculateSessionSummary(building);
+      
+      // Use ClockInService wrapper (mirrors SwiftUI container.clockIn.clockOut)
+      await this.container.clockIn.clockOut(this.workerId);
+      
+      // Reset state (mirrors SwiftUI resetClockInState)
+      this.setState({
+        isClockedIn: false,
+        clockInTime: undefined,
+        clockInLocation: undefined,
+        currentBuilding: null,
+        hoursWorkedToday: sessionSummary.hoursWorked
+      });
+      
+      // Broadcast summary (mirrors SwiftUI broadcastClockOut)
+      this.broadcastClockOut(this.workerId, building, sessionSummary);
+      
+      console.log(`✅ Clocked out from ${building.name}`);
+      return true;
+    } catch (error) {
+      console.error('Clock out failed:', error);
+      return false;
+    }
   }
 
   public async updateTaskStatus(taskId: string, status: string): Promise<boolean> {
-    // Implementation would go here - for now just return true
-    return Promise.resolve(true);
+    try {
+      // Validate task ownership
+      const task = await this.container.tasks.getTaskById(taskId);
+      if (!task || task.assignedWorkerId !== this.workerId) {
+        throw new Error('Task not found or not assigned to this worker');
+      }
+
+      // Update task status
+      const updateResult = await this.container.tasks.updateTaskStatus(taskId, status);
+      
+      if (updateResult.success) {
+        // Update local state
+        const updatedTasks = this.state.tasks.map(t => 
+          t.id === taskId ? { ...t, status } : t
+        );
+        
+        this.setState({ tasks: updatedTasks });
+        
+        console.log(`Task ${taskId} status updated to ${status}`);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Task status update failed:', error);
+      return false;
+    }
   }
 
   public async markNotificationAsRead(notificationId: string): Promise<void> {
-    // Implementation would go here - for now just return
-    return Promise.resolve();
+    try {
+      // Mark notification as read
+      await this.container.notifications.markAsRead(notificationId);
+      
+      // Update local state
+      const updatedNotifications = this.state.notifications.map(n => 
+        n.id === notificationId ? { ...n, isRead: true } : n
+      );
+      
+      this.setState({ notifications: updatedNotifications });
+      
+      console.log(`Notification ${notificationId} marked as read`);
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+      throw error;
+    }
   }
 
   public getState() {
@@ -525,6 +739,147 @@ export class WorkerDashboardViewModel {
       completionRate: 0,
       hasUrgentTasks: false
     };
+  }
+
+  // MARK: - Helper Methods (mirrors SwiftUI implementation)
+
+  private async syncStateFromContextEngine(): Promise<void> {
+    // Sync state from context engine (mirrors SwiftUI syncStateFromContextEngine)
+    try {
+      // Implementation would sync state from the context engine
+      console.log('Syncing state from context engine');
+    } catch (error) {
+      console.warn('Failed to sync state from context engine:', error);
+    }
+  }
+
+  private async loadAssignedBuildings(): Promise<any[]> {
+    // Load assigned buildings (mirrors SwiftUI loadAssignedBuildings)
+    try {
+      return await this.container.buildings.getBuildingsByWorkerId(this.workerId);
+    } catch (error) {
+      console.error('Failed to load assigned buildings:', error);
+      return [];
+    }
+  }
+
+  private async loadTodaysTasks(): Promise<any[]> {
+    // Load today's tasks (mirrors SwiftUI loadTodaysTasks)
+    try {
+      return await this.container.tasks.getTasksForWorker(this.workerId, new Date());
+    } catch (error) {
+      console.error('Failed to load today\'s tasks:', error);
+      return [];
+    }
+  }
+
+  private async loadWeatherData(): Promise<WeatherData | null> {
+    // Load weather data (mirrors SwiftUI loadWeatherData)
+    try {
+      // Implementation would load weather data
+      return null;
+    } catch (error) {
+      console.error('Failed to load weather data:', error);
+      return null;
+    }
+  }
+
+  private async loadClockInStatus(workerId: string): Promise<{isClockedIn: boolean, clockInTime?: Date, currentBuilding?: string}> {
+    // Load clock in status (mirrors SwiftUI loadClockInStatus)
+    try {
+      const status = await this.container.clockIn.getClockInStatus(workerId);
+      return {
+        isClockedIn: status.isClockedIn,
+        clockInTime: status.clockInTime,
+        currentBuilding: status.buildingId
+      };
+    } catch (error) {
+      console.error('Failed to load clock in status:', error);
+      return { isClockedIn: false };
+    }
+  }
+
+  private async calculateMetrics(): Promise<void> {
+    // Calculate metrics (mirrors SwiftUI calculateMetrics)
+    try {
+      // Implementation would calculate various metrics
+      console.log('Calculating metrics');
+    } catch (error) {
+      console.error('Failed to calculate metrics:', error);
+    }
+  }
+
+  private async loadBuildingMetrics(): Promise<void> {
+    // Load building metrics (mirrors SwiftUI loadBuildingMetrics)
+    try {
+      // Implementation would load building metrics
+      console.log('Loading building metrics');
+    } catch (error) {
+      console.error('Failed to load building metrics:', error);
+    }
+  }
+
+  private async calculateHoursWorkedToday(): Promise<void> {
+    // Calculate hours worked today (mirrors SwiftUI calculateHoursWorkedToday)
+    try {
+      // Implementation would calculate hours worked
+      console.log('Calculating hours worked today');
+    } catch (error) {
+      console.error('Failed to calculate hours worked:', error);
+    }
+  }
+
+  private async loadWeatherDataForBuilding(building: any): Promise<void> {
+    // Load weather data for specific building (mirrors SwiftUI loadWeatherData)
+    try {
+      // Implementation would load weather data for the building
+      console.log(`Loading weather data for building ${building.name}`);
+    } catch (error) {
+      console.error('Failed to load weather data for building:', error);
+    }
+  }
+
+  private async loadBuildingTasks(workerId: string, buildingId: string): Promise<void> {
+    // Load building tasks (mirrors SwiftUI loadBuildingTasks)
+    try {
+      const tasks = await this.container.tasks.getTasksForWorkerAndBuilding(workerId, buildingId);
+      // Update state with building-specific tasks
+      console.log(`Loaded ${tasks.length} tasks for building ${buildingId}`);
+    } catch (error) {
+      console.error('Failed to load building tasks:', error);
+    }
+  }
+
+  private calculateSessionSummary(building: any): {hoursWorked: number, tasksCompleted: number} {
+    // Calculate session summary (mirrors SwiftUI calculateSessionSummary)
+    const clockInTime = this.state.clockInTime;
+    const now = new Date();
+    const hoursWorked = clockInTime ? (now.getTime() - clockInTime.getTime()) / (1000 * 60 * 60) : 0;
+    
+    return {
+      hoursWorked: Math.round(hoursWorked * 100) / 100,
+      tasksCompleted: this.state.tasks.filter(t => t.isCompleted).length
+    };
+  }
+
+  private broadcastClockIn(workerId: string, building: any, location: LocationData): void {
+    // Broadcast clock in (mirrors SwiftUI broadcastClockIn)
+    try {
+      // Implementation would broadcast clock in event
+      console.log(`Broadcasting clock in for worker ${workerId} at ${building.name}`);
+    } catch (error) {
+      console.error('Failed to broadcast clock in:', error);
+    }
+  }
+
+  private broadcastClockOut(workerId: string, building: any, summary: any): void {
+    // Broadcast clock out (mirrors SwiftUI broadcastClockOut)
+    try {
+      // Implementation would broadcast clock out event
+      console.log(`Broadcasting clock out for worker ${workerId} from ${building.name}`);
+    } catch (error) {
+      console.error('Failed to broadcast clock out:', error);
+    }
   }
 }
 
@@ -724,7 +1079,7 @@ export function useWorkerDashboardViewModel(
     }
   }, [container, workerId, currentBuilding]);
 
-  const completeTask = useCallback(async (taskId: string, evidence?: any) => {
+  const completeTask = useCallback(async (taskId: string, evidence?: Record<string, any>) => {
     try {
       await container.tasks.completeTask(taskId, evidence);
       
@@ -1215,7 +1570,7 @@ export function useWorkerDashboardViewModel(
     }));
   }, [state.assignedBuildings]);
 
-  const setMapRegion = useCallback((region: any) => {
+  const setMapRegion = useCallback((region: MapRegion) => {
     setState(prev => ({ ...prev, mapRegion: region }));
   }, []);
 

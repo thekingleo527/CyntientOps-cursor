@@ -5,7 +5,9 @@
   "private": true,
   "workspaces": [],
   "scripts": {
-    "mobile:setup": "cd apps/mobile-rn && rm -rf node_modules && npx expo install --fix",
+    "mobile:prewarm-expo": "cd apps/mobile-rn && npx -y expo@latest --version",
+    "mobile:setup": "cd apps/mobile-rn && rm -rf node_modules && (npx -y expo@latest install --non-interactive || npm i)",
+    "mobile:setup:force": "cd apps/mobile-rn && rm -rf node_modules package-lock.json && npm i --legacy-peer-deps",
     "mobile:doctor": "cd apps/mobile-rn && npx expo doctor",
     "mobile:clean": "cd apps/mobile-rn && rm -rf node_modules && rm -rf $TMPDIR/metro-cache && rm -rf $TMPDIR/react-* || true",
     "mobile:start": "cd apps/mobile-rn && npm run start",

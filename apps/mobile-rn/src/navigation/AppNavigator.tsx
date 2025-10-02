@@ -50,7 +50,7 @@ export type RootStackParamList = {
   TaskTimeline: { taskId: string };
   ClockInModal: { workerId: string };
   PhotoCaptureModal: { taskId: string };
-  Profile: { userName?: string; userRole?: 'worker' | 'client' | 'admin'; onLogout?: () => void } | undefined;
+  Profile: { userId?: string; userName?: string; userRole?: 'worker' | 'client' | 'admin'; onLogout?: () => void } | undefined;
   MultisiteDeparture: undefined;
   WeeklyRoutine: undefined;
   DailyRoutine: undefined;

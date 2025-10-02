@@ -34,13 +34,13 @@ export const ProfileScreen: React.FC = () => {
 
         <View style={styles.profileContent}>
           {userRole === 'worker' && userId && (
-            <WorkerProfileView workerId={userId} />
+            <WorkerProfileView workerId={userId} onLogout={onLogout} />
           )}
           {userRole === 'client' && userId && (
-            <ClientProfileView clientId={userId} />
+            <ClientProfileView clientId={userId} onLogout={onLogout} />
           )}
           {userRole === 'admin' && userId && (
-            <AdminProfileView adminId={userId} />
+            <AdminProfileView adminId={userId} onLogout={onLogout} />
           )}
         </View>
 

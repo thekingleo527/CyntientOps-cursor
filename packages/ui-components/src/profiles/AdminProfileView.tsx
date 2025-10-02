@@ -13,9 +13,10 @@ interface AdminProfileViewProps {
   adminId: string;
   onManageWorkers?: () => void;
   onSystemSettings?: () => void;
+  onLogout?: () => void;
 }
 
-export const AdminProfileView: React.FC<AdminProfileViewProps> = ({ adminId, onManageWorkers, onSystemSettings }) => {
+export const AdminProfileView: React.FC<AdminProfileViewProps> = ({ adminId, onManageWorkers, onSystemSettings, onLogout }) => {
   const [admin, setAdmin] = useState<any | null>(null);
   const [metrics, setMetrics] = useState({ totalWorkers: 0, totalBuildings: 0, avgCompliance: 0 });
 
@@ -67,6 +68,14 @@ export const AdminProfileView: React.FC<AdminProfileViewProps> = ({ adminId, onM
           </TouchableOpacity>
         </View>
       </GlassCard>
+
+      {!!onLogout && (
+        <View style={{ paddingHorizontal: Spacing.md }}>
+          <TouchableOpacity onPress={onLogout} style={{ backgroundColor: Colors.error, paddingVertical: 14, borderRadius: 12, alignItems: 'center' }}>
+            <Text style={{ ...Typography.subheadline, color: Colors.text.primary, fontWeight: '700' }}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -89,4 +98,3 @@ const styles = StyleSheet.create({
 });
 
 export default AdminProfileView;
-

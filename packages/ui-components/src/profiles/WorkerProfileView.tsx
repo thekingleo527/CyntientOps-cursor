@@ -34,6 +34,7 @@ export interface WorkerProfileViewProps {
   onViewTimesheet?: () => void;
   onViewPerformance?: () => void;
   onViewCalendar?: () => void;
+  onLogout?: () => void;
 }
 
 export enum ProfileTab {
@@ -50,7 +51,8 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
   onRequestTimeOff,
   onViewTimesheet,
   onViewPerformance,
-  onViewCalendar
+  onViewCalendar,
+  onLogout
 }) => {
   const [worker, setWorker] = useState<WorkerProfile | null>(null);
   const [selectedTab, setSelectedTab] = useState<ProfileTab>(ProfileTab.OVERVIEW);
@@ -576,6 +578,15 @@ export const WorkerProfileView: React.FC<WorkerProfileViewProps> = ({
 
         {/* Tab Content */}
         {renderTabContent()}
+
+        {/* Persistent Logout CTA */}
+        {!!onLogout && (
+          <View style={{ paddingHorizontal: Spacing.md, paddingVertical: Spacing.lg }}>
+            <TouchableOpacity onPress={onLogout} style={{ backgroundColor: Colors.error, padding: 14, borderRadius: 12, alignItems: 'center' }}>
+              <Text style={{ ...Typography.subheadline, color: Colors.text.primary, fontWeight: '700' }}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

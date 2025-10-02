@@ -14,9 +14,10 @@ interface ClientProfileViewProps {
   clientId: string;
   onViewPortfolio?: (clientId: string) => void;
   onContact?: (email: string) => void;
+  onLogout?: () => void;
 }
 
-export const ClientProfileView: React.FC<ClientProfileViewProps> = ({ clientId, onViewPortfolio, onContact }) => {
+export const ClientProfileView: React.FC<ClientProfileViewProps> = ({ clientId, onViewPortfolio, onContact, onLogout }) => {
   const [portfolio, setPortfolio] = useState<any | null>(null);
   const [client, setClient] = useState<any | null>(null);
   const services = ServiceContainer.getInstance();
@@ -97,6 +98,14 @@ export const ClientProfileView: React.FC<ClientProfileViewProps> = ({ clientId, 
         <Text style={styles.contactText}>Phone: {client.contact_phone || '—'}</Text>
         {client.address && <Text style={styles.contactText}>Address: {client.address}</Text>}
       </GlassCard>
+
+      {!!onLogout && (
+        <View style={{ paddingHorizontal: Spacing.md }}>
+          <TouchableOpacity onPress={onLogout} style={{ backgroundColor: Colors.error, paddingVertical: 14, borderRadius: 12, alignItems: 'center' }}>
+            <Text style={{ ...Typography.subheadline, color: Colors.text.primary, fontWeight: '700' }}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -126,4 +135,3 @@ const styles = StyleSheet.create({
 });
 
 export default ClientProfileView;
-

@@ -216,6 +216,8 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
             onHeaderRoute={(route: any) => {
               if (route === 'profile') {
                 navigation.navigate('Profile', { userName, userRole, userId: workerId, onLogout });
+              } else if (route === 'clockAction') {
+                navigation.navigate('ClockInModal', { workerId });
               }
             }}
           />

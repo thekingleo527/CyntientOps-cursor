@@ -2,6 +2,7 @@
   "name": "@cyntientops/cursor",
   "version": "1.0.0",
   "description": "CyntientOps TypeScript/React Native implementation with complete data parity",
+  "main": "index.js",
   "private": true,
   "workspaces": [
     "apps/*",

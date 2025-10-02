@@ -15,7 +15,7 @@
  * - When a session is missing/invalid, app shows the `Login` screen.
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet, ActivityIndicator } from 'react-native';
@@ -23,17 +23,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 // Defer secure storage load to runtime to reduce initial bundle weight
 
 // Screens
-import { BuildingDetailScreen } from '../screens/BuildingDetailScreen';
-import { TaskTimelineScreen } from '../screens/TaskTimelineScreen';
 import { LoginScreen } from '../screens/LoginScreen';
-import { MultisiteDepartureScreen } from '../screens/MultisiteDepartureScreen';
-import { WeeklyRoutineScreen } from '../screens/WeeklyRoutineScreen';
-import { DailyRoutineScreen } from '../screens/DailyRoutineScreen';
-import { PhotoCaptureModal } from '../screens/PhotoCaptureModal';
-import { ProfileScreen } from '../screens/ProfileScreen';
+// Lazy-load heavy screens to reduce initial bundle
+const BuildingDetailScreen = React.lazy(() => import('../screens/BuildingDetailScreen'));
+const TaskTimelineScreen = React.lazy(() => import('../screens/TaskTimelineScreen'));
+const MultisiteDepartureScreen = React.lazy(() => import('../screens/MultisiteDepartureScreen'));
+const WeeklyRoutineScreen = React.lazy(() => import('../screens/WeeklyRoutineScreen'));
+const DailyRoutineScreen = React.lazy(() => import('../screens/DailyRoutineScreen'));
+const PhotoCaptureModal = React.lazy(() => import('../screens/PhotoCaptureModal'));
+const ProfileScreen = React.lazy(() => import('../screens/ProfileScreen'));
 
 // Enhanced Tab Navigator
-import { EnhancedTabNavigator } from './EnhancedTabNavigator';
+const EnhancedTabNavigator = React.lazy(() => import('./EnhancedTabNavigator'));
 
 // Types
 import type { AuthUser } from '@cyntientops/business-core/src/services/AuthService';
@@ -136,12 +137,14 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
     const { userRole, userId, userName } = route.params;
 
     return (
-      <EnhancedTabNavigator
-        userRole={userRole}
-        userId={userId}
-        userName={userName}
-        onLogout={handleLogout}
-      />
+      <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
+        <EnhancedTabNavigator
+          userRole={userRole}
+          userId={userId}
+          userName={userName}
+          onLogout={handleLogout}
+        />
+      </Suspense>
     );
   };
 
@@ -241,7 +244,12 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             />
             <Stack.Screen
               name="PhotoCaptureModal"
-              component={PhotoCaptureModal}
+              // Wrap lazy component in a function so we can provide Suspense
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
+                  <PhotoCaptureModal />
+                </Suspense>
+              )}
               options={{
                 headerShown: true,
                 headerStyle: { backgroundColor: '#0f0f0f' },
@@ -253,7 +261,11 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             />
             <Stack.Screen
               name="Profile"
-              component={ProfileScreen}
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                  <ProfileScreen />
+                </Suspense>
+              )}
               options={{
                 headerShown: true,
                 headerStyle: { backgroundColor: '#0f0f0f' },
@@ -264,14 +276,22 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             />
             <Stack.Screen 
               name="BuildingDetail" 
-              component={BuildingDetailScreen}
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                  <BuildingDetailScreen />
+                </Suspense>
+              )}
               options={{
                 headerShown: false,
               }}
             />
             <Stack.Screen 
               name="TaskTimeline" 
-              component={TaskTimelineScreen}
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                  <TaskTimelineScreen />
+                </Suspense>
+              )}
               options={{
                 headerShown: true,
                 headerStyle: { backgroundColor: '#0f0f0f' },
@@ -281,7 +301,11 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             />
             <Stack.Screen 
               name="MultisiteDeparture" 
-              component={MultisiteDepartureScreen}
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                  <MultisiteDepartureScreen />
+                </Suspense>
+              )}
               options={{
                 headerShown: true,
                 headerStyle: { backgroundColor: '#0f0f0f' },
@@ -291,7 +315,11 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             />
             <Stack.Screen 
               name="WeeklyRoutine" 
-              component={WeeklyRoutineScreen}
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                  <WeeklyRoutineScreen />
+                </Suspense>
+              )}
               options={{
                 headerShown: true,
                 headerStyle: { backgroundColor: '#0f0f0f' },
@@ -301,7 +329,11 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
             />
             <Stack.Screen 
               name="DailyRoutine" 
-              component={DailyRoutineScreen}
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size=\"large\" color=\"#10b981\" />}>
+                  <DailyRoutineScreen />
+                </Suspense>
+              )}
               options={{
                 headerShown: true,
                 headerStyle: { backgroundColor: '#0f0f0f' },

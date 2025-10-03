@@ -125,7 +125,7 @@ export const BuildingOverviewTab: React.FC<BuildingOverviewTabProps> = ({
   const loadBuildingInfrastructure = async (buildingId: string): Promise<BuildingInfrastructure> => {
     try {
       // Load from hardcoded building data
-      const buildings = require('@cyntientops/data-seed/buildings.json');
+      const buildings = require('@cyntientops/data-seed/src/buildings.json');
       const buildingData = buildings.find((b: any) => b.id === buildingId);
       
       if (!buildingData) {

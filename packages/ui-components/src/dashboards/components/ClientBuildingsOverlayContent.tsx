@@ -41,7 +41,7 @@ export const ClientBuildingsOverlayContent: React.FC<ClientBuildingsOverlayConte
   };
 
   // Import REAL data from data-seed package - NO MOCK DATA ANYWHERE
-  const buildingsData = require('@cyntientops/data-seed/buildings.json');
+  const buildingsData = require('@cyntientops/data-seed/src/buildings.json');
   
   // Filter buildings by clientId to show only client-specific data
   const buildings = buildingsData

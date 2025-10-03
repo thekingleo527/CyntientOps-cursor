@@ -7,7 +7,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard } from '../../glass';
+import { GlassCard } from '../glass';
 import { ServiceContainer } from '@cyntientops/business-core';
 
 interface ClientProfileViewProps {

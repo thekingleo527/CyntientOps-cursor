@@ -8,7 +8,12 @@
 
 import React from 'react';
 import { TouchableOpacity, Text, ViewStyle, TextStyle, StyleSheet } from 'react-native';
-import { Colors, Spacing, BorderRadius, ComponentShadows, Typography, GlassIntensity, GlassIntensityConfigs } from '../tokens';
+import { Colors } from '../tokens/colors';
+import { Spacing } from '../tokens/spacing';
+import { BorderRadius } from '../tokens/spacing';
+import { ComponentShadows } from '../tokens/shadows';
+import { Typography } from '../tokens/typography';
+import { GlassIntensity, GlassIntensityConfigs } from '../tokens/glassmorphism';
 
 // MARK: - Glass Button Style (matching SwiftUI exactly)
 export enum GlassButtonStyle {

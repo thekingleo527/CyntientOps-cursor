@@ -3,6 +3,7 @@
     "name": "CyntientOps",
     "slug": "cyntientops-mobile",
     "version": "1.0.0",
+    "main": "apps/mobile-rn/index.js",
     "orientation": "portrait",
     "icon": "./apps/mobile-rn/assets/images/icon.png",
     "userInterfaceStyle": "dark",
@@ -213,7 +214,6 @@
           }
         }
       ],
-      "expo-sqlite",
       "expo-asset",
       "expo-secure-store"
     ],

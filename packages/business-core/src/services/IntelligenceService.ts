@@ -3,7 +3,7 @@
  * Provides portfolio insights and analytics
  */
 
-import { OperationalDataService } from '../data/OperationalDataService';
+import { OperationalDataService } from './OperationalDataService';
 import { BuildingService } from './BuildingService';
 import { WorkerService } from './WorkerService';
 import { TaskService } from './TaskService';

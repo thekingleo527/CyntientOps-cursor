@@ -7,8 +7,8 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { WorkerProfile } from '@cyntientops/domain-schema';
-import workersData from '@cyntientops/data-seed/workers.json';
-import clientsData from '@cyntientops/data-seed/clients.json';
+import workersData from '@cyntientops/data-seed/src/workers.json';
+import clientsData from '@cyntientops/data-seed/src/clients.json';
 import { Logger } from './LoggingService';
 
 // Types

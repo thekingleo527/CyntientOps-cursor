@@ -6,7 +6,6 @@
  */
 
 import fetch from 'node-fetch';
-import { CacheManager } from '@cyntientops/business-core';
 
 // API Configuration
 const GEOC_API = 'https://api.cityofnewyork.us/geoclient/v1/address.json';
@@ -262,13 +261,10 @@ export function shouldShowDemoData(address: string): boolean {
 /**
  * Main service class for DSNY violations
  */
-import { CacheManager } from '@cyntientops/business-core';
 
 export class DSNYViolationsService {
-  private cacheManager: CacheManager;
 
-  constructor(cacheManager: CacheManager) {
-    this.cacheManager = cacheManager;
+  constructor() {
   }
 
   async getViolationsForAddress(address: string, useDemoData = false): Promise<DSNYViolationsResult> {
@@ -322,9 +318,6 @@ export class DSNYViolationsService {
 }
 
 import { DatabaseManager } from '@cyntientops/database';
-import { CacheManager } from '@cyntientops/business-core';
 
 // Export singleton instance
-const databaseManager = DatabaseManager.getInstance();
-const cacheManager = CacheManager.getInstance(databaseManager);
-export const dsnyViolationsService = new DSNYViolationsService(cacheManager);
+export const dsnyViolationsService = new DSNYViolationsService();

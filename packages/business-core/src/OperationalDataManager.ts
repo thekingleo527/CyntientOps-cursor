@@ -156,11 +156,9 @@ export interface OperationalEvent {
 }
 
 // MARK: - OperationalDataManager Class
-import { CacheManager } from './services/CacheManager';
 
 export class OperationalDataManager {
   private static instance: OperationalDataManager | null = null;
-  private cacheManager: CacheManager;
   
   // MARK: - 🛡️ PRESERVED OPERATIONAL DATA
   // Every task updated with canonical IDs - Complete real-world data
@@ -1147,15 +1145,14 @@ export class OperationalDataManager {
   ];
   
   // MARK: - Singleton Pattern
-  public static getInstance(cacheManager: CacheManager): OperationalDataManager {
+  public static getInstance(): OperationalDataManager {
     if (!OperationalDataManager.instance) {
-      OperationalDataManager.instance = new OperationalDataManager(cacheManager);
+      OperationalDataManager.instance = new OperationalDataManager();
     }
     return OperationalDataManager.instance;
   }
   
-  private constructor(cacheManager: CacheManager) {
-    this.cacheManager = cacheManager;
+  private constructor() {
     this.initializeCachedData();
   }
   
@@ -1459,9 +1456,6 @@ export class OperationalDataManager {
 }
 
 import { DatabaseManager } from '@cyntientops/database';
-import { CacheManager } from './services/CacheManager';
 
 // Export singleton instance
-const databaseManager = DatabaseManager.getInstance();
-const cacheManager = CacheManager.getInstance(databaseManager);
-export const operationalDataManager = new OperationalDataManager(cacheManager);
+export const operationalDataManager = OperationalDataManager.getInstance();

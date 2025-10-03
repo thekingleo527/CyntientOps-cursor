@@ -41,7 +41,7 @@ export const AdminBuildingsOverlayContent: React.FC<AdminBuildingsOverlayContent
   };
 
   // Import REAL data from data-seed package - NO MOCK DATA ANYWHERE
-  const buildingsData = require('@cyntientops/data-seed/buildings.json');
+  const buildingsData = require('@cyntientops/data-seed/src/buildings.json');
   
   // Admin has system-wide access to all buildings
   const buildings = buildingsData.map((building: any) => ({

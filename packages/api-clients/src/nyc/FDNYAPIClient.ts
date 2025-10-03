@@ -151,11 +151,9 @@ export enum FDNYSafetyRating {
   CRITICAL = 'critical', // Below 60%
 }
 
-import { CacheManager } from '@cyntientops/business-core';
 
 export class FDNYAPIClient {
   private apiService: NYCAPIService;
-  private cacheManager: CacheManager;
 
   // FDNY API endpoints
   private readonly ENDPOINTS = {
@@ -165,9 +163,8 @@ export class FDNYAPIClient {
     COMPLIANCE_SUMMARY: 'https://data.cityofnewyork.us/resource/8m42-w767.json',
   };
 
-  constructor(apiService: NYCAPIService, cacheManager: CacheManager) {
+  constructor(apiService: NYCAPIService) {
     this.apiService = apiService;
-    this.cacheManager = cacheManager;
   }
 
   // Get FDNY inspections for a building
@@ -510,10 +507,7 @@ export class FDNYAPIClient {
 }
 
 import { DatabaseManager } from '@cyntientops/database';
-import { CacheManager } from '@cyntientops/business-core';
 
 // Export singleton instance
-const databaseManager = DatabaseManager.getInstance();
-const cacheManager = CacheManager.getInstance(databaseManager);
-const nycAPIService = new NYCAPIService(cacheManager);
-export const fdnyAPIClient = new FDNYAPIClient(nycAPIService, cacheManager);
+const nycAPIService = new NYCAPIService();
+export const fdnyAPIClient = new FDNYAPIClient(nycAPIService);

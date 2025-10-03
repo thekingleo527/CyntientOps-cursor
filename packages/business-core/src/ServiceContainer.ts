@@ -45,7 +45,6 @@ import { DatabaseIntegrationService } from './services/DatabaseIntegrationServic
 import { SessionManager } from './services/SessionManager';
 import { RealTimeCommunicationService } from './services/RealTimeCommunicationService';
 import { NovaAIBrainService } from './services/NovaAIBrainService';
-import { CacheManager } from './services/CacheManager';
 import { PropertyDataService } from './services/PropertyDataService';
 import { WeatherTriggeredTaskManager } from './services/WeatherTriggeredTaskManager';
 
@@ -90,7 +89,6 @@ export class ServiceContainer {
   private _realTimeCommunication: RealTimeCommunicationService | null = null;
   private _routeManager: RouteManager | null = null;
   private _novaAIBrain: NovaAIBrainService | null = null;
-  private _cacheManager: CacheManager | null = null;
   private _performanceOptimizer: PerformanceOptimizer | null = null;
   private _analyticsService: AnalyticsService | null = null;
   private _securityManager: SecurityManager | null = null;
@@ -179,9 +177,8 @@ export class ServiceContainer {
       // Initialize Sentry first for error tracking
       await this.sentryService.initialize();
       
-      // Initialize cache manager and set it for static services
-      this._cacheManager = CacheManager.getInstance(this.database);
-      PropertyDataService.setCacheManager(this._cacheManager);
+      // Initialize property data service
+      PropertyDataService.initialize();
       this.sentryService.addBreadcrumb('ServiceContainer initialization started', 'system');
       console.log('✅ Sentry initialized');
       
@@ -322,12 +319,6 @@ export class ServiceContainer {
     return this._novaAIBrain;
   }
 
-  public get cacheManager(): CacheManager {
-    if (!this._cacheManager) {
-      this._cacheManager = CacheManager.getInstance(this.database);
-    }
-    return this._cacheManager;
-  }
 
   public get performanceOptimizer(): PerformanceOptimizer {
     if (!this._performanceOptimizer) {

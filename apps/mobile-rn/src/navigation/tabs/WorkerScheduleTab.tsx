@@ -19,8 +19,8 @@ import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TaskService, TaskSchedule } from '@cyntientops/business-core';
-import { WeatherRibbonView } from '@cyntientops/ui-components/src/weather/WeatherRibbonView';
-import { TaskTimelineView } from '@cyntientops/ui-components/src/timeline/TaskTimelineView';
+import { WeatherRibbonView } from '@cyntientops/ui-components';
+import { TaskTimelineView } from '@cyntientops/ui-components';
 import { OperationalDataTaskAssignment, WeatherSnapshot, WeatherForecast } from '@cyntientops/domain-schema';
 import { Logger } from '@cyntientops/business-core';
 

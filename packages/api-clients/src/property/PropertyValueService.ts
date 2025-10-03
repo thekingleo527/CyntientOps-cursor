@@ -33,15 +33,12 @@ export interface PropertyValueUpdateResult {
   totalAssessedValue: number;
 }
 
-import { CacheManager } from '@cyntientops/business-core';
 
 export class PropertyValueService {
   private dofClient: DOFAPIClient;
-  private cacheManager: CacheManager;
 
-  constructor(dofClient: DOFAPIClient, cacheManager: CacheManager) {
+  constructor(dofClient: DOFAPIClient) {
     this.dofClient = dofClient;
-    this.cacheManager = cacheManager;
   }
 
   /**
@@ -239,10 +236,7 @@ export class PropertyValueService {
 }
 
 import { DatabaseManager } from '@cyntientops/database';
-import { CacheManager } from '@cyntientops/business-core';
-import { dofAPIClient } from '../nyc/DOFAPIClient';
 
 // Export singleton instance
-const databaseManager = DatabaseManager.getInstance();
-const cacheManager = CacheManager.getInstance(databaseManager);
-export const propertyValueService = new PropertyValueService(dofAPIClient, cacheManager);
+const dofAPIClient = new DOFAPIClient();
+export const propertyValueService = new PropertyValueService(dofAPIClient);

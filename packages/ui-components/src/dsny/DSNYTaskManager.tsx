@@ -209,7 +209,7 @@ export const useDSNYTaskManager = () => {
   const loadCollectionSchedules = useCallback(async () => {
     try {
       // Load real building data
-      const buildingsData = require('@cyntientops/data-seed/buildings.json');
+      const buildingsData = require('@cyntientops/data-seed/src/buildings.json');
 
       // Generate schedules for all buildings (in production, this would come from database)
       const schedules: DSNYCollectionSchedule[] = buildingsData.map((building: any, index: number) => {
@@ -243,9 +243,9 @@ export const useDSNYTaskManager = () => {
   const loadDSNYTasks = useCallback(async () => {
     try {
       // Load real data
-      const buildingsData = require('@cyntientops/data-seed/buildings.json');
-      const workersData = require('@cyntientops/data-seed/workers.json');
-      const routinesData = require('@cyntientops/data-seed/routines.json');
+      const buildingsData = require('@cyntientops/data-seed/src/buildings.json');
+      const workersData = require('@cyntientops/data-seed/src/workers.json');
+      const routinesData = require('@cyntientops/data-seed/src/routines.json');
 
       // Generate tasks from schedules (in production, this would come from database)
       const tasks: DSNYTask[] = collectionSchedules.slice(0, 5).map((schedule, index) => {
@@ -293,7 +293,7 @@ export const useDSNYTaskManager = () => {
   const loadViolations = useCallback(async () => {
     try {
       // Load real building data
-      const buildingsData = require('@cyntientops/data-seed/buildings.json');
+      const buildingsData = require('@cyntientops/data-seed/src/buildings.json');
 
       // Generate sample violations (in production, this would come from database)
       // For now, empty or minimal violations
@@ -310,7 +310,7 @@ export const useDSNYTaskManager = () => {
   const loadComplianceStatus = useCallback(async () => {
     try {
       // Load real building data
-      const buildingsData = require('@cyntientops/data-seed/buildings.json');
+      const buildingsData = require('@cyntientops/data-seed/src/buildings.json');
 
       // Generate compliance status for all buildings
       const complianceData: DSNYComplianceStatus[] = buildingsData.map((building: any) => ({
@@ -335,7 +335,7 @@ export const useDSNYTaskManager = () => {
   const loadWorkerAssignments = useCallback(async () => {
     try {
       // Load real worker data
-      const workersData = require('@cyntientops/data-seed/workers.json');
+      const workersData = require('@cyntientops/data-seed/src/workers.json');
 
       // Generate worker assignments from real data
       const assignments: DSNYWorkerAssignment[] = workersData.map((worker: any) => {

@@ -1131,14 +1131,14 @@ export class RealTimeOrchestrator {
 
   private getWorkerName(workerId: string): string {
     // Get worker name from database
-    const workers = require('@cyntientops/data-seed/workers.json');
+    const workers = require('@cyntientops/data-seed/src/workers.json');
     const worker = workers.find((w: any) => w.id === workerId);
     return worker?.name || 'Unknown Worker';
   }
 
   private getBuildingName(buildingId: string): string {
     // Get building name from database
-    const buildings = require('@cyntientops/data-seed/buildings.json');
+    const buildings = require('@cyntientops/data-seed/src/buildings.json');
     const building = buildings.find((b: any) => b.id === buildingId);
     return building?.name || 'Unknown Building';
   }

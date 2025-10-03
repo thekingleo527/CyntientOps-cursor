@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard } from '../../glass';
+import { GlassCard } from '../glass';
 import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
 
 interface AdminProfileViewProps {

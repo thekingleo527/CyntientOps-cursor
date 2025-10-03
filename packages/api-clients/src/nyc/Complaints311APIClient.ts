@@ -136,11 +136,9 @@ export enum Complaint311Trend {
   FLUCTUATING = 'fluctuating',
 }
 
-import { CacheManager } from '@cyntientops/business-core';
 
 export class Complaints311APIClient {
   private apiService: NYCAPIService;
-  private cacheManager: CacheManager;
 
   // 311 API endpoints
   private readonly ENDPOINTS = {
@@ -149,9 +147,8 @@ export class Complaints311APIClient {
     AGENCIES: 'https://data.cityofnewyork.us/resource/fhrw-4uyv.json',
   };
 
-  constructor(apiService: NYCAPIService, cacheManager: CacheManager) {
+  constructor(apiService: NYCAPIService) {
     this.apiService = apiService;
-    this.cacheManager = cacheManager;
   }
 
   // Get complaints for a building
@@ -617,10 +614,7 @@ export class Complaints311APIClient {
 }
 
 import { DatabaseManager } from '@cyntientops/database';
-import { CacheManager } from '@cyntientops/business-core';
 
 // Export singleton instance
-const databaseManager = DatabaseManager.getInstance();
-const cacheManager = CacheManager.getInstance(databaseManager);
-const nycAPIService = new NYCAPIService(cacheManager);
-export const complaints311APIClient = new Complaints311APIClient(nycAPIService, cacheManager);
+const nycAPIService = new NYCAPIService();
+export const complaints311APIClient = new Complaints311APIClient(nycAPIService);

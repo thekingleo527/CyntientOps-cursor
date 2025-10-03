@@ -688,7 +688,7 @@ export class PhotoEvidenceManager {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const workers = require('@cyntientops/data-seed/workers.json');
+      const workers = require('@cyntientops/data-seed/src/workers.json');
       const worker = workers.find((w: any) => w.id === workerId);
       return worker?.name || 'Unknown Worker';
     } catch (error) {
@@ -700,7 +700,7 @@ export class PhotoEvidenceManager {
   private getBuildingName(buildingId: string): string {
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const buildings = require('@cyntientops/data-seed/buildings.json');
+      const buildings = require('@cyntientops/data-seed/src/buildings.json');
       const building = buildings.find((b: any) => b.id === buildingId);
       return building?.name || 'Unknown Building';
     } catch (error) {

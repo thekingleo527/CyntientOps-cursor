@@ -52,7 +52,6 @@ export { PropertyDataService } from './services/PropertyDataService';
 export type { PropertyDetails } from './services/PropertyDataService';
 export { RealDataService } from './services/RealDataService';
 export { TagSuggestionService } from './services/TagSuggestionService';
-export { CacheManager } from './services/CacheManager';
 
 // Service Container
 export { ServiceContainer } from './ServiceContainer';

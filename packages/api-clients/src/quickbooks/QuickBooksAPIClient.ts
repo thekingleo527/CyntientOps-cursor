@@ -4,7 +4,6 @@
  * Purpose: Payroll integration and financial data management
  */
 
-import { APIClient } from '../base/APIClient';
 
 export interface QuickBooksCredentials {
   clientId: string;
@@ -64,13 +63,12 @@ export interface QuickBooksPayrollData {
   netPay: number;
 }
 
-export class QuickBooksAPIClient extends APIClient {
+export class QuickBooksAPIClient {
   private credentials: QuickBooksCredentials;
   private baseURL = 'https://sandbox-quickbooks.api.intuit.com/v3/company';
   private authURL = 'https://appcenter.intuit.com/connect/oauth2';
 
   constructor(credentials: QuickBooksCredentials) {
-    super();
     this.credentials = credentials;
   }
 

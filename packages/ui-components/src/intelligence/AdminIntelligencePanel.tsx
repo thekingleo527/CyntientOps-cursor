@@ -97,7 +97,7 @@ export const AdminIntelligencePanel: React.FC<AdminIntelligencePanelProps> = ({
 
   const calculateMetrics = () => {
     // Load real buildings data
-    const buildingsData = require('@cyntientops/data-seed/buildings.json');
+    const buildingsData = require('@cyntientops/data-seed/src/buildings.json');
 
     const newMetrics: AdminMetrics = {
       totalActiveWorkers: activeWorkers.length,

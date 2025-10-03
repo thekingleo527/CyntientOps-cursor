@@ -210,11 +210,9 @@ export enum DOFTaxPaymentStatus {
   EXEMPT = 'exempt',
 }
 
-import { CacheManager } from '@cyntientops/business-core';
 
 export class DOFAPIClient {
   private apiService: NYCAPIService;
-  private cacheManager: CacheManager;
 
   // DOF API endpoints
   private readonly ENDPOINTS = {
@@ -224,9 +222,8 @@ export class DOFAPIClient {
     PAYMENTS: 'https://data.cityofnewyork.us/resource/8y4t-faws.json',
   };
 
-  constructor(apiService: NYCAPIService, cacheManager: CacheManager) {
+  constructor(apiService: NYCAPIService) {
     this.apiService = apiService;
-    this.cacheManager = cacheManager;
   }
 
   // Get property assessment for a building
@@ -701,10 +698,7 @@ export class DOFAPIClient {
 }
 
 import { DatabaseManager } from '@cyntientops/database';
-import { CacheManager } from '@cyntientops/business-core';
 
 // Export singleton instance
-const databaseManager = DatabaseManager.getInstance();
-const cacheManager = CacheManager.getInstance(databaseManager);
-const nycAPIService = new NYCAPIService(cacheManager);
-export const dofAPIClient = new DOFAPIClient(nycAPIService, cacheManager);
+const nycAPIService = new NYCAPIService();
+export const dofAPIClient = new DOFAPIClient(nycAPIService);

@@ -7,9 +7,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import type { RootStackParamList } from '../navigation/AppNavigator';
-import { WorkerProfileView } from '@cyntientops/ui-components/src/profiles/WorkerProfileView';
-import { ClientProfileView } from '@cyntientops/ui-components/src/profiles/ClientProfileView';
-import { AdminProfileView } from '@cyntientops/ui-components/src/profiles/AdminProfileView';
+import { WorkerProfileView, ClientProfileView, AdminProfileView } from '@cyntientops/ui-components';
 
 type ProfileRoute = RouteProp<RootStackParamList, 'Profile'>;
 

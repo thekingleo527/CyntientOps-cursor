@@ -77,7 +77,7 @@ export const BuildingMarker: React.FC<BuildingMarkerProps> = ({
                   borderRadius: (innerSize * 0.8) / 2,
                 }
               ]}
-              defaultSource={require('../../../apps/mobile-rn/assets/images/icon.png')}
+              defaultSource={require('../../../../apps/mobile-rn/assets/images/icon.png')}
             />
           ) : (
             /* Building Type Icon Fallback */

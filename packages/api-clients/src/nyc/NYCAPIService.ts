@@ -7,8 +7,8 @@ import {
   LL97Emission,
   DSNYViolation,
   NYCComplianceData 
-} from './NYCDataModels.js';
-import { dsnyViolationsService, DSNYViolationsResult } from './DSNYViolationsService.js';
+} from './NYCDataModels';
+import { dsnyViolationsService, DSNYViolationsResult } from './DSNYViolationsService';
 
 export interface APIConfig {
   baseURL: string;

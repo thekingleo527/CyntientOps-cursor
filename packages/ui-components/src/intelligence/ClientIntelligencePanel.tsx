@@ -83,7 +83,7 @@ export const ClientIntelligencePanel: React.FC<ClientIntelligencePanelProps> = (
 
   const calculateMetrics = () => {
     // Load real buildings data
-    const buildingsData = require('@cyntientops/data-seed/buildings.json');
+    const buildingsData = require('@cyntientops/data-seed/src/buildings.json');
     const clientBuildings = buildingsData.filter((b: any) => b.client_id === 'JMR'); // Default client
 
     const criticalIssues = complianceIssues.filter(issue => issue.severity === 'critical');

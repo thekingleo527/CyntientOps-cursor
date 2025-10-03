@@ -284,3 +284,17 @@ export type { PropertyOverviewCardProps } from './compliance/PropertyOverviewCar
 export { ComplianceStatusCard } from './compliance/ComplianceStatusCard';
 export type { ComplianceStatusCardProps } from './compliance/ComplianceStatusCard';
 
+// Profile Components
+export { WorkerProfileView } from './profiles/WorkerProfileView';
+export { ClientProfileView } from './profiles/ClientProfileView';
+export { AdminProfileView } from './profiles/AdminProfileView';
+
+// Timeline Components
+export { TaskTimelineView } from './timeline/TaskTimelineView';
+
+// Map Components
+export { BuildingMapView } from './maps/BuildingMapView';
+
+// Analytics Components
+export { AnalyticsDashboard } from './analytics/components/AnalyticsDashboard';
+

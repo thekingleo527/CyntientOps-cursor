@@ -9,6 +9,20 @@ const config = getDefaultConfig(projectRoot);
 // Ensure root is the project
 config.projectRoot = projectRoot;
 
+// Set the entry point for the mobile app
+config.resolver.mainFields = ['react-native', 'browser', 'main'];
+config.resolver.alias = {
+  ...config.resolver.alias,
+  '@cyntientops/design-tokens': path.resolve(projectRoot, 'packages/design-tokens/src'),
+  '@cyntientops/ui-components': path.resolve(projectRoot, 'packages/ui-components/src'),
+  '@cyntientops/business-core': path.resolve(projectRoot, 'packages/business-core/src'),
+  '@cyntientops/domain-schema': path.resolve(projectRoot, 'packages/domain-schema/src'),
+  '@cyntientops/database': path.resolve(projectRoot, 'packages/database/src'),
+  '@cyntientops/intelligence-services': path.resolve(projectRoot, 'packages/intelligence-services/src'),
+  '@cyntientops/managers': path.resolve(projectRoot, 'packages/managers/src'),
+  '@cyntientops/data-seed': path.resolve(projectRoot, 'packages/data-seed'),
+};
+
 // Watch only essential app and packages
 config.watchFolders = [
   path.resolve(projectRoot, 'apps/mobile-rn'),
@@ -18,6 +32,7 @@ config.watchFolders = [
   path.resolve(projectRoot, 'packages/database'),
   path.resolve(projectRoot, 'packages/intelligence-services'),
   path.resolve(projectRoot, 'packages/managers'),
+  path.resolve(projectRoot, 'packages/data-seed'),
 ];
 
 // Resolve node_modules from root and app
@@ -26,16 +41,7 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'apps/mobile-rn/node_modules'),
 ];
 
-// Package aliases for src resolution
-config.resolver.alias = {
-  '@cyntientops/design-tokens': path.resolve(projectRoot, 'packages/design-tokens/src'),
-  '@cyntientops/ui-components': path.resolve(projectRoot, 'packages/ui-components/src'),
-  '@cyntientops/business-core': path.resolve(projectRoot, 'packages/business-core/src'),
-  '@cyntientops/domain-schema': path.resolve(projectRoot, 'packages/domain-schema/src'),
-  '@cyntientops/database': path.resolve(projectRoot, 'packages/database/src'),
-  '@cyntientops/intelligence-services': path.resolve(projectRoot, 'packages/intelligence-services/src'),
-  '@cyntientops/managers': path.resolve(projectRoot, 'packages/managers/src'),
-};
+// Package aliases are now configured above
 
 config.resolver.unstable_enableSymlinks = true;
 

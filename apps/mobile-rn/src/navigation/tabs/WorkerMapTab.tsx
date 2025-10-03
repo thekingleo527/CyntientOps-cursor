@@ -15,8 +15,7 @@ import {
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
-import { MapRevealContainer } from '@cyntientops/ui-components/src/maps/MapRevealContainer';
-import { BuildingMapView } from '@cyntientops/ui-components/src/maps/BuildingMapView';
+import { MapRevealContainer, BuildingMapView } from '@cyntientops/ui-components';
 import { TaskService } from '@cyntientops/business-core';
 import { Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 import { buildings as buildingsData } from '@cyntientops/data-seed';

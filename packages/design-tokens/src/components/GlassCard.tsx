@@ -8,7 +8,10 @@
 
 import React from 'react';
 import { View, ViewStyle, StyleSheet, TouchableOpacity, TouchableOpacityProps } from 'react-native';
-import { Colors, Spacing, BorderRadius, ComponentShadows } from '../tokens';
+import { Colors } from '../tokens/colors';
+import { Spacing } from '../tokens/spacing';
+import { BorderRadius } from '../tokens/spacing';
+import { ComponentShadows } from '../tokens/shadows';
 
 // MARK: - Glass Intensity (matching SwiftUI exactly)
 export enum GlassIntensity {

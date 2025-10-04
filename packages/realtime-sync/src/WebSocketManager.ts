@@ -371,6 +371,206 @@ export class WebSocketManager extends EventEmitter {
   private generateMessageId(): string {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
+
+  /**
+   * 🔧 Enhanced Error Handling and Testing Methods
+   */
+
+  /**
+   * Test WebSocket connection with comprehensive error handling
+   */
+  public async testConnection(): Promise<{
+    isConnected: boolean;
+    latency: number;
+    error?: string;
+    connectionQuality: 'excellent' | 'good' | 'poor' | 'failed';
+  }> {
+    const startTime = Date.now();
+    
+    try {
+      if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+        return {
+          isConnected: false,
+          latency: 0,
+          error: 'WebSocket not connected',
+          connectionQuality: 'failed'
+        };
+      }
+
+      // Send test ping
+      const testMessage = {
+        type: 'system',
+        event: 'ping',
+        data: { timestamp: Date.now() }
+      };
+
+      this.ws.send(JSON.stringify(testMessage));
+      
+      const latency = Date.now() - startTime;
+      
+      let connectionQuality: 'excellent' | 'good' | 'poor' | 'failed';
+      if (latency < 100) {
+        connectionQuality = 'excellent';
+      } else if (latency < 300) {
+        connectionQuality = 'good';
+      } else if (latency < 1000) {
+        connectionQuality = 'poor';
+      } else {
+        connectionQuality = 'failed';
+      }
+
+      return {
+        isConnected: true,
+        latency,
+        connectionQuality
+      };
+    } catch (error) {
+      return {
+        isConnected: false,
+        latency: Date.now() - startTime,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        connectionQuality: 'failed'
+      };
+    }
+  }
+
+  /**
+   * Enhanced error handling for connection failures
+   */
+  private handleConnectionError(error: Event): void {
+    console.error('🔌 WebSocket connection error:', error);
+    
+    // Emit error event with detailed information
+    this.emit('error', {
+      type: 'connection_error',
+      message: 'WebSocket connection failed',
+      timestamp: new Date(),
+      error: error
+    });
+
+    // Attempt reconnection with exponential backoff
+    this.scheduleReconnection();
+  }
+
+  /**
+   * Enhanced reconnection logic with exponential backoff
+   */
+  private scheduleReconnection(): void {
+    if (this.reconnectAttempts >= this.config.maxReconnectAttempts) {
+      console.error('❌ Max reconnection attempts reached');
+      this.emit('max_reconnect_attempts_reached');
+      return;
+    }
+
+    const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000); // Max 30 seconds
+    console.log(`🔄 Scheduling reconnection attempt ${this.reconnectAttempts + 1} in ${delay}ms`);
+
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectAttempts++;
+      this.connect();
+    }, delay);
+  }
+
+  /**
+   * Health check for WebSocket connection
+   */
+  public async performHealthCheck(): Promise<{
+    isHealthy: boolean;
+    issues: string[];
+    recommendations: string[];
+  }> {
+    const issues: string[] = [];
+    const recommendations: string[] = [];
+
+    // Check connection status
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      issues.push('WebSocket not connected');
+      recommendations.push('Attempt to reconnect');
+    }
+
+    // Check message queue
+    if (this.messageQueue.length > 100) {
+      issues.push('Message queue is large');
+      recommendations.push('Process queued messages');
+    }
+
+    // Check connection count
+    const activeConnections = Array.from(this.connections.values())
+      .filter(conn => conn.isConnected).length;
+    
+    if (activeConnections === 0) {
+      issues.push('No active connections');
+      recommendations.push('Check connection registration');
+    }
+
+    // Check subscription count
+    if (this.subscriptions.size === 0) {
+      issues.push('No active subscriptions');
+      recommendations.push('Subscribe to relevant events');
+    }
+
+    return {
+      isHealthy: issues.length === 0,
+      issues,
+      recommendations
+    };
+  }
+
+  /**
+   * Force reconnection with cleanup
+   */
+  public async forceReconnect(): Promise<boolean> {
+    try {
+      console.log('🔄 Forcing WebSocket reconnection...');
+      
+      // Clean up existing connection
+      this.disconnect();
+      
+      // Reset reconnection attempts
+      this.reconnectAttempts = 0;
+      
+      // Wait a moment before reconnecting
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Attempt new connection
+      await this.connect();
+      
+      console.log('✅ Force reconnection completed');
+      return true;
+    } catch (error) {
+      console.error('❌ Force reconnection failed:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get detailed connection diagnostics
+   */
+  public getConnectionDiagnostics(): {
+    connectionState: string;
+    config: WebSocketConfig;
+    stats: {
+      totalConnections: number;
+      activeConnections: number;
+      subscriptions: number;
+      messageQueue: number;
+    };
+    health: Promise<ReturnType<WebSocketManager['performHealthCheck']>>;
+    test: Promise<ReturnType<WebSocketManager['testConnection']>>;
+  } {
+    return {
+      connectionState: this.ws ? this.ws.readyState.toString() : 'DISCONNECTED',
+      config: this.config,
+      stats: {
+        totalConnections: this.connections.size,
+        activeConnections: Array.from(this.connections.values()).filter(conn => conn.isConnected).length,
+        subscriptions: this.subscriptions.size,
+        messageQueue: this.messageQueue.length
+      },
+      health: this.performHealthCheck(),
+      test: this.testConnection()
+    };
+  }
 }
 
 // Default configuration

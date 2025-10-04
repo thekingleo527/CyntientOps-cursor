@@ -9,11 +9,10 @@ import React from 'react';
 const { useEffect, useState } = React;
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard } from '../glass';
-import { GlassIntensity, CornerRadius } from '@cyntientops/design-tokens';
+import { GlassCard, GlassIntensity, CornerRadius } from '../glass';
 import { OperationalDataTaskAssignment, NamedCoordinate, WeatherSnapshot, UserRole } from '@cyntientops/domain-schema';
 import { TaskTimelineView } from '../timeline/TaskTimelineView';
-import { WeatherBasedHybridCard } from '../weather/WeatherBasedHybridCard';
+import { WeatherDashboard } from '../weather/WeatherDashboard';
 import { BuildingMapView } from '../maps/BuildingMapView';
 import { EmergencySystem } from '../emergency/EmergencySystem';
 import { WorkerHeaderV3B, WorkerHeaderRoute } from '../headers/WorkerHeaderV3B';
@@ -410,12 +409,12 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
   const generateWeatherData = (workerId?: string): WeatherSnapshot => {
     // Generate weather conditions that will trigger meaningful suggestions
     const weatherScenarios = [
-      { condition: 'rainy', description: 'Light Rain', temperature: 45, humidity: 85, windSpeed: 12 },
-      { condition: 'stormy', description: 'Heavy Rain', temperature: 42, humidity: 90, windSpeed: 25 },
-      { condition: 'snowy', description: 'Light Snow', temperature: 28, humidity: 75, windSpeed: 8 },
-      { condition: 'sunny', description: 'Clear Sky', temperature: 68, humidity: 45, windSpeed: 6 },
-      { condition: 'cloudy', description: 'Overcast', temperature: 55, humidity: 60, windSpeed: 10 },
-      { condition: 'partly_cloudy', description: 'Partly Cloudy', temperature: 62, humidity: 50, windSpeed: 8 },
+      { condition: 'rainy', description: 'Light Rain', temperature: 45, humidity: 85, windSpeed: 12, weatherCode: 500, outdoorWorkRisk: 'high' as const },
+      { condition: 'stormy', description: 'Heavy Rain', temperature: 42, humidity: 90, windSpeed: 25, weatherCode: 502, outdoorWorkRisk: 'extreme' as const },
+      { condition: 'snowy', description: 'Light Snow', temperature: 28, humidity: 75, windSpeed: 8, weatherCode: 600, outdoorWorkRisk: 'high' as const },
+      { condition: 'sunny', description: 'Clear Sky', temperature: 68, humidity: 45, windSpeed: 6, weatherCode: 800, outdoorWorkRisk: 'low' as const },
+      { condition: 'cloudy', description: 'Overcast', temperature: 55, humidity: 60, windSpeed: 10, weatherCode: 804, outdoorWorkRisk: 'medium' as const },
+      { condition: 'partly_cloudy', description: 'Partly Cloudy', temperature: 62, humidity: 50, windSpeed: 8, weatherCode: 801, outdoorWorkRisk: 'low' as const },
     ];
     
     // Use worker ID to create consistent weather per worker (for demo purposes)
@@ -424,17 +423,11 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
     
     return {
       temperature: scenario.temperature,
-      condition: scenario.condition,
+      weatherCode: scenario.weatherCode,
       description: scenario.description,
-      icon: scenario.condition === 'sunny' ? '☀️' : 
-            scenario.condition === 'cloudy' ? '☁️' : 
-            scenario.condition === 'rainy' ? '🌧️' : 
-            scenario.condition === 'stormy' ? '⛈️' :
-            scenario.condition === 'snowy' ? '❄️' : '⛅',
-      location: 'New York, NY',
-      timestamp: new Date().toISOString(),
-      humidity: scenario.humidity,
       windSpeed: scenario.windSpeed,
+      timestamp: new Date(),
+      outdoorWorkRisk: scenario.outdoorWorkRisk,
     };
   };
 
@@ -556,7 +549,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
 
     // Get DSNY tasks for today
     const dsnyTasks = dashboardData.todaysTasks.filter(task => 
-      task.category === 'DSNY' || task.name.toLowerCase().includes('dsny') || task.name.toLowerCase().includes('collection')
+      task.category === 'DSNY' || task.taskName.toLowerCase().includes('dsny') || task.taskName.toLowerCase().includes('collection')
     );
 
     if (dsnyTasks.length === 0) return null;
@@ -578,14 +571,14 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
             
             <View style={styles.dsnyContent}>
               {dsnyTasks.slice(0, 2).map(task => (
-                <View key={task.id} style={styles.dsnyTaskItem}>
+                <View key={task.taskName} style={styles.dsnyTaskItem}>
                   <View style={styles.dsnyTaskInfo}>
-                    <Text style={styles.dsnyTaskName}>{task.name}</Text>
-                    <Text style={styles.dsnyTaskLocation}>📍 {task.buildingName}</Text>
+                    <Text style={styles.dsnyTaskName}>{task.taskName}</Text>
+                    <Text style={styles.dsnyTaskLocation}>📍 {task.building}</Text>
                   </View>
                   <View style={styles.dsnyTaskTime}>
                     <Text style={styles.dsnyTaskTimeText}>
-                      {new Date(task.due_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </Text>
                   </View>
                 </View>
@@ -733,7 +726,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         name={workerName}
         initials={workerName.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()}
         photoURL={undefined}
-        nextTaskName={dashboardData?.urgentTasks?.[0]?.name || undefined}
+        nextTaskName={dashboardData?.urgentTasks?.[0]?.taskName || undefined}
         showClockPill={true}
         isNovaProcessing={false}
         clockedIn={dashboardData.worker.clockedIn}
@@ -787,24 +780,41 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
               </View>
               {dashboardData.urgentTasks[0] && (
                 <TouchableOpacity onPress={() => onTaskPress?.(dashboardData.urgentTasks[0])}>
-                  <Text style={styles.currentBuilding}>Next: {dashboardData.urgentTasks[0].name}</Text>
+                  <Text style={styles.currentBuilding}>Next: {dashboardData.urgentTasks[0].taskName}</Text>
                 </TouchableOpacity>
               )}
             </View>
           </GlassCard>
         </View>
         
-        {/* Weather Hybrid Card - ~150px */}
+        {/* Weather Dashboard - Enhanced weather functionality */}
         {dashboardData.weather && (
-          <WeatherBasedHybridCard
-            weather={dashboardData.weather}
-            building={dashboardData.currentBuilding}
-            suggestedTasks={dashboardData.urgentTasks}
-            onTaskPress={onTaskPress}
-            currentLocation={dashboardData.currentBuilding ? {
-              latitude: dashboardData.currentBuilding.latitude,
-              longitude: dashboardData.currentBuilding.longitude
-            } : undefined}
+          <WeatherDashboard
+            building={dashboardData.currentBuilding || {
+              id: 'default',
+              name: 'Current Location',
+              latitude: 40.7128,
+              longitude: -74.0060
+            }}
+            onTaskTap={(task) => {
+              // Convert WeatherTask to OperationalDataTaskAssignment format
+              const operationalTask: OperationalDataTaskAssignment = {
+                building: dashboardData.currentBuilding?.name || 'Current Location',
+                taskName: task.name,
+                assignedWorker: workerName,
+                category: task.category,
+                skillLevel: 'Basic',
+                recurrence: 'Daily',
+                startHour: 8,
+                endHour: 17,
+                daysOfWeek: 'Mon,Tue,Wed,Thu,Fri',
+                workerId: workerId,
+                buildingId: dashboardData.currentBuilding?.id || 'default',
+                requiresPhoto: task.riskLevel === 'high',
+                estimatedDuration: task.estimatedDuration
+              };
+              onTaskPress?.(operationalTask);
+            }}
           />
         )}
         {/* Compact Weather Alert ribbon tethered to weather card */}
@@ -830,13 +840,15 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         <IntelligenceOverlay
           visible={true}
           onClose={() => setSelectedIntelligenceTab(null)}
-          title="Routines & Tasks"
+          title="Schedule & Routines"
           tabId="routines"
         >
           <RoutinesOverlayContent
             workerId={workerId}
             workerName={workerName}
             onTaskPress={onTaskPress}
+            dashboardData={dashboardData}
+            buildingData={dashboardData.currentBuilding}
           />
         </IntelligenceOverlay>
       )}
@@ -851,7 +863,11 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
           <QuickActionsOverlayContent
             workerId={workerId}
             workerName={workerName}
+            currentBuilding={dashboardData.currentBuilding}
+            urgentTasks={dashboardData.urgentTasks}
             onActionPress={(actionId) => console.log('Action pressed:', actionId)}
+            onTaskPress={onTaskPress}
+            onBuildingPress={onBuildingPress}
           />
         </IntelligenceOverlay>
       )}
@@ -860,7 +876,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         <IntelligenceOverlay
           visible={true}
           onClose={() => setSelectedIntelligenceTab(null)}
-          title="Nova AI Insights"
+          title="Insights & Alerts"
           tabId="insights"
         >
           <InsightsOverlayContent
@@ -868,6 +884,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
             workerName={workerName}
             novaInsights={dashboardData.novaInsights}
             currentBuilding={dashboardData.currentBuilding}
+            alerts={dashboardData.novaInsights?.alerts || []}
             analytics={{
               tasksCompleted: dashboardData.worker.completedTasks,
               avgCompletionTime: analyticsData.performanceMetrics.averageTaskTime,
@@ -879,28 +896,17 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         </IntelligenceOverlay>
       )}
 
-      {selectedIntelligenceTab === 'alerts' && (
+      {selectedIntelligenceTab === 'sitedeparture' && (
         <IntelligenceOverlay
           visible={true}
           onClose={() => setSelectedIntelligenceTab(null)}
-          title="Alerts & Notifications"
-          tabId="alerts"
+          title="Site Departure"
+          tabId="sitedeparture"
         >
-          <AlertsOverlayContent
-            workerId={workerId}
-            workerName={workerName}
-            urgentTasks={dashboardData.urgentTasks}
-            alerts={dashboardData.novaInsights.alerts?.map((alert, index) => ({
-              id: `alert-${index}`,
-              type: 'system' as const,
-              title: alert,
-              message: alert,
-              timestamp: new Date().toISOString(),
-              priority: 'medium' as const,
-              icon: '⚠️',
-            })) || []}
-            onTaskPress={onTaskPress}
-          />
+          <View style={styles.overlayContent}>
+            <Text style={styles.overlayText}>Site Departure Workflow</Text>
+            <Text style={styles.overlayText}>End of day summary and clock out process</Text>
+          </View>
         </IntelligenceOverlay>
       )}
 
@@ -912,9 +918,11 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
           tabId="portfolio"
         >
           <MapOverlayContent
-            buildings={jmrBuildings}
+            buildings={dashboardData.assignedBuildings || jmrBuildings}
             workers={workersData}
-            tasks={routinesData}
+            tasks={dashboardData.todaysTasks}
+            currentBuilding={dashboardData.currentBuilding}
+            workerId={workerId}
             onBuildingSelect={(building) => onBuildingPress?.(building.id)}
             onWorkerSelect={(worker) => console.log('Worker selected:', worker)}
             userRole="worker"

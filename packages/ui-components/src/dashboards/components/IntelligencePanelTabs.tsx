@@ -25,13 +25,13 @@ export interface IntelligenceTab {
   color: string;
 }
 
-// Default Worker tabs
+// Streamlined Worker tabs - Consolidated and reordered for better UX
 const WORKER_TABS: IntelligenceTab[] = [
-  { id: 'routines', title: 'Routines', icon: '🔄', color: Colors.role.worker.primary },
   { id: 'portfolio', title: 'Portfolio', icon: '🗺️', color: Colors.status.info },
-  { id: 'insights', title: 'Insights', icon: '💡', color: Colors.status.info },
-  { id: 'alerts', title: 'Alerts', icon: '⚠️', color: Colors.status.warning },
+  { id: 'routines', title: 'Schedule', icon: '📅', color: Colors.role.worker.primary },
   { id: 'quickactions', title: 'Actions', icon: '⚡', color: Colors.role.worker.accent },
+  { id: 'insights', title: 'Insights', icon: '💡', color: Colors.status.info },
+  { id: 'sitedeparture', title: 'Departure', icon: '🚪', color: Colors.status.warning },
 ];
 
 // Client tabs

@@ -16930,11 +16930,6 @@
       },
       {
         "source": "business-core",
-        "target": "npm:@cyntientops/api-clients",
-        "type": "static"
-      },
-      {
-        "source": "business-core",
         "target": "npm:@cyntientops/managers",
         "type": "static"
       },

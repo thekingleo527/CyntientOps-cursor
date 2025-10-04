@@ -7,6 +7,9 @@ import { UserRole, WorkerProfile, ClientProfile } from '@cyntientops/domain-sche
 import { DatabaseManager } from '@cyntientops/database';
 import { OperationalDataService } from './OperationalDataService';
 import { Logger } from './LoggingService';
+import { PasswordSecurityService } from '../security/PasswordSecurityService';
+import { AdvancedSecurityManager } from '../security/AdvancedSecurityManager';
+import { SecureStorageService } from '../security/SecureStorageService';
 
 export interface AuthUser {
   id: string;
@@ -34,12 +37,18 @@ export interface AuthState {
 export class AuthService {
   private static instance: AuthService;
   private database: DatabaseManager;
+  private passwordSecurity: PasswordSecurityService;
+  private securityManager: AdvancedSecurityManager;
+  private secureStorage: SecureStorageService;
   private currentUser: AuthUser | null = null;
   private sessionTimeout: NodeJS.Timeout | null = null;
   private readonly SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
   private constructor(database: DatabaseManager) {
     this.database = database;
+    this.securityManager = AdvancedSecurityManager.getInstance(database, {});
+    this.secureStorage = SecureStorageService.getInstance(database, process.env.ENCRYPTION_KEY || 'default-key');
+    this.passwordSecurity = PasswordSecurityService.getInstance(database, this.securityManager, this.secureStorage);
   }
 
   public static getInstance(database: DatabaseManager): AuthService {
@@ -334,17 +343,23 @@ export class AuthService {
     ];
   }
 
-  private async passwordMatches(input: string, stored?: string | null): Promise<boolean> {
+  private async passwordMatches(input: string, stored?: string | null, userId?: string): Promise<boolean> {
     if (!stored) {
       return false;
     }
 
     try {
+      // If we have a userId, use the enhanced password security service
+      if (userId) {
+        return await this.passwordSecurity.verifyPassword(input, userId);
+      }
+
+      // Fallback to legacy password verification for backward compatibility
       // Check if stored password is already hashed (starts with $2a$ or $2b$)
       if (stored.startsWith('$2a$') || stored.startsWith('$2b$')) {
         const bcrypt = require('bcryptjs');
         return await bcrypt.compare(input, stored);
-    }
+      }
       
       // For backward compatibility with plain text passwords (migration phase)
       // TODO: Remove this after all passwords are migrated to hashed format

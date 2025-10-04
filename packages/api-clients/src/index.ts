@@ -108,7 +108,16 @@ export class APIClientManager {
   public static getInstance(config?: APIConfiguration): APIClientManager {
     if (!APIClientManager.instance) {
       if (!config) {
-        throw new Error('APIConfiguration required for first initialization');
+        // Provide default configuration for development/testing
+        config = {
+          dsnyApiKey: process.env.DSNY_API_KEY || '',
+          hpdApiKey: process.env.HPD_API_KEY || '',
+          dobApiKey: process.env.DOB_API_KEY || '',
+          weatherApiKey: process.env.WEATHER_API_KEY || '',
+          weatherLatitude: 40.7128,
+          weatherLongitude: -74.0060,
+        };
+        console.warn('APIClientManager initialized with default configuration. Some features may not work without proper API keys.');
       }
       APIClientManager.instance = new APIClientManager(config);
     }

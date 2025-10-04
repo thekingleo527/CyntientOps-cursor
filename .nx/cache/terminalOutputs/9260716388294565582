@@ -1,0 +1,23 @@
+[2m> [22mnpx expo export --platform ios --output-dir ../../dist/apps/mobile-rn
+
+[1G[0K[2mStarting Metro Bundler[22m
+[1miOS[22m [0m[2mapps/mobile-rn/[22m[0m[1mindex.js[22m [47m[37m░░░░░░░░░░░░░░░░[39m[49m[1m  0.0% [22m[2m(0/1)[22m
+[80D[1A[31mSyntaxError: index.js: Cannot find module 'react-native-reanimated/plugin'[39m
+[31mRequire stack:[39m
+[31m- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@babel/core/lib/config/files/plugins.js[39m
+[31m- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@babel/core/lib/config/files/index.js[39m
+[31m- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@babel/core/lib/index.js[39m
+[31m- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@expo/metro-config/build/transform-worker/metro-transform-worker.js[39m
+[31m- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@expo/metro-config/build/transform-worker/transform-worker.js[39m
+[31m- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@expo/metro/node_modules/metro/src/DeltaBundler/Worker.flow.js[39m
+[31m- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/@expo/metro/node_modules/metro/src/DeltaBundler/Worker.js[39m
+[31m- /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/node_modules/jest-worker/build/workers/processChild.js[39m
+[31m[39m
+[31mMake sure that all the Babel plugins and presets you are using[39m
+[31mare defined as dependencies or devDependencies in your package.json[39m
+[31mfile. It's possible that the missing plugin is loaded by a preset[39m
+[31myou are using that forgot to add the plugin to its dependencies: you[39m
+[31mcan workaround this problem by explicitly adding the missing package[39m
+[31mto your top-level package.json.[39m
+[31m[39m
+[1G[0K⠙[1G[0K

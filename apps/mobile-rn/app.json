@@ -196,9 +196,6 @@
         }
       ],
       [
-        "expo-dev-client"
-      ],
-      [
         "expo-build-properties",
         {
           "ios": {

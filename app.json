@@ -197,9 +197,6 @@
         }
       ],
       [
-        "expo-dev-client"
-      ],
-      [
         "expo-build-properties",
         {
           "ios": {
@@ -226,6 +223,11 @@
       },
       "eas": {
         "projectId": "e59805da-6423-4c79-ba1a-d277633f0875"
+      },
+      "supabase": {
+        "url": "https://usrbeyixadqwwkzolhzv.supabase.co",
+        "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzcmJleWl4YWRxd3drem9saHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MzkwODYsImV4cCI6MjA3MDAxNTA4Nn0.0lWwOUVpp-2WLQgOYGXW-VZlSGXgJwchSmMHNugg_9c",
+        "serviceRoleKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzcmJleWl4YWRxd3drem9saHp2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQzOTA4NiwiZXhwIjoyMDcwMDE1MDg2fQ.21HiaOb_s7nA6Wy9TAohpMiYJ9avvOxcBrsS_eqjCW8"
       }
     },
     "runtimeVersion": {

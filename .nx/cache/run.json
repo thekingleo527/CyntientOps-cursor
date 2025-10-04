@@ -1,106 +1,18 @@
 {
   "run": {
-    "command": "nx run-many --target=build --projects=design-tokens,database,managers,ui-components,context-engines,intelligence-services,api-clients,business-core",
-    "startTime": "2025-10-04T01:55:22.671Z",
-    "endTime": "2025-10-04T01:55:33.587Z",
+    "command": "nx build business-core --verbose",
+    "startTime": "2025-10-04T12:17:06.701Z",
+    "endTime": "2025-10-04T12:17:15.570Z",
     "inner": false
   },
   "tasks": [
     {
-      "taskId": "domain-schema:build",
-      "target": "build",
-      "projectName": "domain-schema",
-      "hash": "4572159248335303236",
-      "startTime": "2025-10-04T01:55:22.677Z",
-      "endTime": "2025-10-04T01:55:23.299Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "database:build",
-      "target": "build",
-      "projectName": "database",
-      "hash": "13488942411319721666",
-      "startTime": "2025-10-04T01:55:22.677Z",
-      "endTime": "2025-10-04T01:55:23.364Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
       "taskId": "business-core:build",
       "target": "build",
       "projectName": "business-core",
-      "hash": "7185342639372577370",
-      "startTime": "2025-10-04T01:55:22.677Z",
-      "endTime": "2025-10-04T01:55:23.535Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "api-clients:build",
-      "target": "build",
-      "projectName": "api-clients",
-      "hash": "8298932736069919277",
-      "startTime": "2025-10-04T01:55:23.300Z",
-      "endTime": "2025-10-04T01:55:24.329Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "managers:build",
-      "target": "build",
-      "projectName": "managers",
-      "hash": "14870823574849978058",
-      "startTime": "2025-10-04T01:55:23.365Z",
-      "endTime": "2025-10-04T01:55:24.461Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "intelligence-services:build",
-      "target": "build",
-      "projectName": "intelligence-services",
-      "hash": "17802536491131293241",
-      "startTime": "2025-10-04T01:55:24.329Z",
-      "endTime": "2025-10-04T01:55:25.032Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "design-tokens:build",
-      "target": "build",
-      "projectName": "design-tokens",
-      "hash": "11907779914709096028",
-      "startTime": "2025-10-04T01:55:23.536Z",
-      "endTime": "2025-10-04T01:55:25.540Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "context-engines:build",
-      "target": "build",
-      "projectName": "context-engines",
-      "hash": "1699421607939199786",
-      "startTime": "2025-10-04T01:55:25.033Z",
-      "endTime": "2025-10-04T01:55:25.716Z",
-      "params": "",
-      "cacheStatus": "cache-miss",
-      "status": 0
-    },
-    {
-      "taskId": "ui-components:build",
-      "target": "build",
-      "projectName": "ui-components",
-      "hash": "14138993118397218820",
-      "startTime": "2025-10-04T01:55:25.716Z",
-      "endTime": "2025-10-04T01:55:33.586Z",
+      "hash": "14222062717626672217",
+      "startTime": "2025-10-04T12:17:06.706Z",
+      "endTime": "2025-10-04T12:17:15.570Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 0

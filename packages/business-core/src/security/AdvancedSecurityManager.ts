@@ -7,6 +7,8 @@
 import { DatabaseManager } from '@cyntientops/database';
 import { ServiceContainer } from '../ServiceContainer';
 import { UserRole } from '@cyntientops/domain-schema';
+import { AESEncryption } from './AESEncryption';
+import { ExpoAESEncryption } from './ExpoAESEncryption';
 
 export interface SecurityConfig {
   enableEncryption: boolean;
@@ -70,29 +72,47 @@ export class AdvancedSecurityManager {
     this.config = config;
   }
 
+  /**
+   * Initialize the security manager with expo-crypto encryption key
+   */
+  async initialize(): Promise<void> {
+    try {
+      // Generate encryption key if not provided
+      if (!this.config.encryptionKey) {
+        this.config.encryptionKey = await ExpoAESEncryption.generateKey();
+        console.log('✅ Generated encryption key with expo-crypto');
+      }
+      
+      console.log('✅ AdvancedSecurityManager initialized with expo-crypto');
+    } catch (error) {
+      console.error('❌ Failed to initialize AdvancedSecurityManager:', error);
+      throw error;
+    }
+  }
+
   public static getInstance(
     database: DatabaseManager,
     serviceContainer: ServiceContainer,
     config?: Partial<SecurityConfig>
   ): AdvancedSecurityManager {
     if (!AdvancedSecurityManager.instance) {
-      const defaultConfig: SecurityConfig = {
-        enableEncryption: true,
-        enableAuditLogging: true,
-        enableAccessControl: true,
-        enableSecurityMonitoring: true,
-        encryptionKey: 'default-encryption-key',
-        auditRetentionDays: 365,
-        sessionTimeout: 8 * 60 * 60 * 1000, // 8 hours
-        maxLoginAttempts: 5,
-        passwordPolicy: {
-          minLength: 8,
-          requireUppercase: true,
-          requireLowercase: true,
-          requireNumbers: true,
-          requireSpecialChars: true
-        }
-      };
+const defaultConfig: SecurityConfig = {
+  enableEncryption: true,
+  enableAuditLogging: true,
+  enableAccessControl: true,
+  enableSecurityMonitoring: true,
+  encryptionKey: process.env.ENCRYPTION_KEY || '', // Will be generated with expo-crypto
+  auditRetentionDays: 365,
+  sessionTimeout: 8 * 60 * 60 * 1000, // 8 hours
+  maxLoginAttempts: 5,
+  passwordPolicy: {
+    minLength: 8,
+    requireUppercase: true,
+    requireLowercase: true,
+    requireNumbers: true,
+    requireSpecialChars: true
+  }
+};
 
       AdvancedSecurityManager.instance = new AdvancedSecurityManager(
         database,
@@ -129,10 +149,21 @@ export class AdvancedSecurityManager {
 
   async encryptData(data: string): Promise<string> {
     if (!this.config.enableEncryption) return data;
-    
+
     try {
-      // In a real implementation, use proper encryption like AES-256
-      return Buffer.from(data).toString('base64');
+      // Use expo-crypto AES-256-GCM encryption for React Native
+      const result = await ExpoAESEncryption.encrypt(data, this.config.encryptionKey);
+
+      // Store encrypted data with metadata
+      const encryptedPackage = {
+        data: result.encryptedData,
+        iv: result.iv,
+        tag: result.tag,
+        algorithm: result.algorithm,
+        timestamp: Date.now()
+      };
+
+      return JSON.stringify(encryptedPackage);
     } catch (error) {
       console.error('Failed to encrypt data:', error);
       throw error;
@@ -143,8 +174,22 @@ export class AdvancedSecurityManager {
     if (!this.config.enableEncryption) return encryptedData;
     
     try {
-      // In a real implementation, use proper decryption
-      return Buffer.from(encryptedData, 'base64').toString('utf-8');
+      // Parse encrypted package
+      const encryptedPackage = JSON.parse(encryptedData);
+
+      // Decrypt using expo-crypto AES-256-GCM
+      const result = await ExpoAESEncryption.decrypt(
+        encryptedPackage.data,
+        this.config.encryptionKey,
+        encryptedPackage.iv,
+        encryptedPackage.tag
+      );
+
+      if (!result.success) {
+        throw new Error('Decryption failed - data may be corrupted or key may be incorrect');
+      }
+
+      return result.decryptedData;
     } catch (error) {
       console.error('Failed to decrypt data:', error);
       throw error;

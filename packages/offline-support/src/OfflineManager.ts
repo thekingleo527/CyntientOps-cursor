@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { CommandChainManager } from '@cyntientops/command-chains';
+import NetInfo from '@react-native-community/netinfo';
 
 export interface SyncOperation {
   id: string;
@@ -64,7 +65,7 @@ export class OfflineManager {
   private networkStatus: NetworkStatus;
   private config: OfflineConfig;
   private syncInterval: NodeJS.Timeout | null = null;
-  private isOnline: boolean = true;
+  private isOnline: boolean = false; // Will be updated by NetInfo
   private listeners: Set<(status: NetworkStatus) => void> = new Set();
 
   private constructor(
@@ -75,9 +76,9 @@ export class OfflineManager {
     this.commandChainManager = commandChainManager;
     
     this.networkStatus = {
-      isOnline: true,
-      connectionType: 'wifi',
-      quality: 'excellent',
+      isOnline: false, // Will be updated by NetInfo
+      connectionType: 'unknown',
+      quality: 'poor',
       lastChecked: new Date()
     };
     
@@ -136,10 +137,10 @@ export class OfflineManager {
    * Start network monitoring
    */
   private startNetworkMonitoring(): void {
-    // Simulate network monitoring
-    setInterval(() => {
-      this.checkNetworkStatus();
-    }, 5000);
+    // Use NetInfo for real network monitoring
+    NetInfo.addEventListener(state => {
+      this.updateNetworkStatus(state);
+    });
   }
 
   /**
@@ -147,7 +148,17 @@ export class OfflineManager {
    */
   private checkNetworkStatus(): void {
     const wasOnline = this.isOnline;
-    this.isOnline = navigator.onLine; // This would be more sophisticated in a real app
+    // React Native does not provide navigator.onLine; be defensive.
+    try {
+      // @ts-ignore
+      const online = (typeof navigator !== 'undefined' && typeof navigator.onLine !== 'undefined')
+        // @ts-ignore
+        ? !!navigator.onLine
+        : true; // default to online in RN; real apps should use NetInfo
+      this.isOnline = online;
+    } catch {
+      this.isOnline = true;
+    }
     
     if (this.isOnline !== wasOnline) {
       this.networkStatus = {
@@ -164,6 +175,73 @@ export class OfflineManager {
       } else if (!this.isOnline) {
         this.stopAutoSync();
       }
+    }
+  }
+
+  /**
+   * Update network status from NetInfo
+   */
+  private updateNetworkStatus(netInfo: any): void {
+    const wasOnline = this.isOnline;
+    const isOnline = netInfo.isConnected && netInfo.isInternetReachable;
+    const connectionType = this.mapConnectionType(netInfo.type);
+    const quality = this.mapConnectionQuality(netInfo);
+
+    this.isOnline = isOnline;
+    this.networkStatus = {
+      isOnline,
+      connectionType,
+      quality,
+      lastChecked: new Date()
+    };
+
+    if (wasOnline !== this.isOnline) {
+      this.notifyNetworkListeners();
+      
+      if (this.isOnline && this.config.autoSync) {
+        this.startAutoSync();
+      } else if (!this.isOnline) {
+        this.stopAutoSync();
+      }
+      
+      console.log(`🌐 Network status changed: ${this.isOnline ? 'Online' : 'Offline'} (${connectionType})`);
+    }
+  }
+
+  /**
+   * Map NetInfo connection type to our interface
+   */
+  private mapConnectionType(netInfoType: string): 'wifi' | 'cellular' | 'ethernet' | 'unknown' {
+    switch (netInfoType) {
+      case 'wifi':
+        return 'wifi';
+      case 'cellular':
+        return 'cellular';
+      case 'ethernet':
+        return 'ethernet';
+      default:
+        return 'unknown';
+    }
+  }
+
+  /**
+   * Map NetInfo connection to quality
+   */
+  private mapConnectionQuality(netInfo: any): 'excellent' | 'good' | 'fair' | 'poor' {
+    if (!netInfo.isConnected || !netInfo.isInternetReachable) {
+      return 'poor';
+    }
+
+    // You can enhance this based on signal strength or other metrics
+    switch (netInfo.type) {
+      case 'wifi':
+        return 'excellent';
+      case 'cellular':
+        return 'good';
+      case 'ethernet':
+        return 'excellent';
+      default:
+        return 'fair';
     }
   }
 

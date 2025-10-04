@@ -46,6 +46,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       // Initialize ServiceContainer with configuration
       const serviceContainer = bc.ServiceContainer.getInstance({
         databasePath: config.databasePath,
+        supabaseUrl: config.supabaseUrl,
+        supabaseAnonKey: config.supabaseAnonKey,
+        supabaseServiceRoleKey: config.supabaseServiceRoleKey,
         enableOfflineMode: config.enableOfflineMode,
         enableRealTimeSync: config.enableRealTimeSync,
         enableIntelligence: config.enableIntelligence,

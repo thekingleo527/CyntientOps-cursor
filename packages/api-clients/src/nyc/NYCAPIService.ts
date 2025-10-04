@@ -145,6 +145,10 @@ export class NYCAPIService {
         throw new Error('Only HTTPS URLs are allowed');
       }
 
+      // Create a timeout signal for React Native compatibility
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
+      
       const response = await fetch(endpoint.url, {
         method: endpoint.method,
         headers: {
@@ -152,8 +156,10 @@ export class NYCAPIService {
           'Content-Type': 'application/json',
           'User-Agent': 'CyntientOps/1.0',
         },
-        signal: AbortSignal.timeout(this.config.timeout),
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status} ${response.statusText}`);

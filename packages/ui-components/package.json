@@ -25,7 +25,7 @@
     "react-native-camera": "^4.2.1",
     "react-native-permissions": "^3.10.1",
     "react-native-gesture-handler": "^2.14.0",
-    "react-native-reanimated": "^3.6.0",
+    "react-native-reanimated": "3.6.0",
     "@cyntientops/design-tokens": "1.0.0",
     "@cyntientops/business-core": "1.0.0",
     "@cyntientops/context-engines": "1.0.0"

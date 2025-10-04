@@ -2,7 +2,10 @@
  * 💼 QuickBooks API Client
  * Mirrors: CyntientOps/Services/QuickBooks/QuickBooksOAuthManager.swift
  * Purpose: Payroll integration and financial data management
+ * Security: Uses secure credential management for API keys
  */
+
+import { CredentialManager } from '@cyntientops/business-core';
 
 
 export interface QuickBooksCredentials {
@@ -65,11 +68,27 @@ export interface QuickBooksPayrollData {
 
 export class QuickBooksAPIClient {
   private credentials: QuickBooksCredentials;
+  private credentialManager: CredentialManager;
   private baseURL = 'https://sandbox-quickbooks.api.intuit.com/v3/company';
   private authURL = 'https://appcenter.intuit.com/connect/oauth2';
 
-  constructor(credentials: QuickBooksCredentials) {
-    this.credentials = credentials;
+  constructor(credentialManager: CredentialManager) {
+    this.credentialManager = credentialManager;
+    this.credentials = { clientId: '', clientSecret: '' }; // Will be loaded securely
+  }
+
+  /**
+   * Initialize the client with secure credentials
+   */
+  async initialize(): Promise<void> {
+    try {
+      const creds = await this.credentialManager.getQuickBooksCredentials();
+      this.credentials = creds;
+      console.log('✅ QuickBooks API Client initialized with secure credentials');
+    } catch (error) {
+      console.error('❌ Failed to initialize QuickBooks API Client:', error);
+      throw error;
+    }
   }
 
   /**
@@ -367,8 +386,17 @@ export class QuickBooksAPIClient {
   }
 }
 
-// Default QuickBooks credentials from Swift app
-export const DEFAULT_QUICKBOOKS_CREDENTIALS: QuickBooksCredentials = {
-  clientId: 'ABAQSi9dc27v4DHpdawcoZpHgmRHOnXMdCXTDTv5fTv3PWOiS',
-  clientSecret: 'plfYbZc7hhwnATBtPqIVcB7Ak9bxAtz6IUYSQfD7',
+// QuickBooks credentials should be loaded from environment variables
+export const getQuickBooksCredentials = (): QuickBooksCredentials => {
+  const clientId = process.env.QUICKBOOKS_CLIENT_ID;
+  const clientSecret = process.env.QUICKBOOKS_CLIENT_SECRET;
+  
+  if (!clientId || !clientSecret) {
+    throw new Error('QuickBooks credentials not found in environment variables. Please set QUICKBOOKS_CLIENT_ID and QUICKBOOKS_CLIENT_SECRET');
+  }
+  
+  return {
+    clientId,
+    clientSecret,
+  };
 };

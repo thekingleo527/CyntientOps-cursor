@@ -5,7 +5,8 @@
  * 2. Fallback: CityPay web scraping (when needed)
  */
 
-import fetch from 'node-fetch';
+// Use global fetch (available in React Native)
+const fetch = globalThis.fetch;
 
 // API Configuration
 const GEOC_API = 'https://api.cityofnewyork.us/geoclient/v1/address.json';

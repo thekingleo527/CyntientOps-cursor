@@ -9,6 +9,11 @@ interface AppConfig {
   // Database
   databasePath: string;
 
+  // Supabase
+  supabaseUrl: string;
+  supabaseAnonKey: string;
+  supabaseServiceRoleKey: string;
+
   // WebSocket
   websocketUrl: string;
 
@@ -45,6 +50,11 @@ const getBoolEnvVar = (key: string, defaultValue: boolean = false): boolean => {
 export const config: AppConfig = {
   // Database
   databasePath: getEnvVar('DATABASE_PATH', 'cyntientops.db'),
+
+  // Supabase - Get from app.json extra configuration
+  supabaseUrl: getEnvVar('SUPABASE_URL', Constants.expoConfig?.extra?.supabase?.url || ''),
+  supabaseAnonKey: getEnvVar('SUPABASE_ANON_KEY', Constants.expoConfig?.extra?.supabase?.anonKey || ''),
+  supabaseServiceRoleKey: getEnvVar('SUPABASE_SERVICE_ROLE_KEY', Constants.expoConfig?.extra?.supabase?.serviceRoleKey || ''),
 
   // WebSocket - Disabled for testing, will be enabled when backend is ready
   websocketUrl: getEnvVar('WEBSOCKET_URL'),

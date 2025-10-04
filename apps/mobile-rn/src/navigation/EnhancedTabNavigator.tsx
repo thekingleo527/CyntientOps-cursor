@@ -17,7 +17,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
-import { Ionicons } from '@cyntientops/ui-components';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@cyntientops/design-tokens';
 import { RealDataService } from '@cyntientops/business-core';
 import { useServices } from '../providers/AppProvider';

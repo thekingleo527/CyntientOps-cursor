@@ -101,6 +101,12 @@
 - **Emergency Line:** (212) 555-EMERGENCY
 - **After Hours:** (212) 555-AFTERHOURS
 
+### **J&M Realty Emergency Contact**
+- **Emergency Email:** Repairs@jmrealty.org
+- **Emergency Phone:** (212) 721-0424
+- **Service Hours:** 24/7 Emergency Response
+- **Contact Person:** Emergency Repair Coordinator
+
 ---
 
 ## 📋 **UPDATE CHECKLIST**

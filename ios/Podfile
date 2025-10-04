@@ -38,6 +38,15 @@ target 'CyntientOps' do
 
   config = use_native_modules!(config_command)
 
+  # Ensure Expo dev launcher finds the ReactAppDependencyProvider pod even though we're on RN 0.76.
+  react_app_dependency_provider_spec = File.expand_path(
+    '../packages/ui-components/node_modules/react-native-maps/ios/generated/ReactAppDependencyProvider.podspec',
+    __dir__
+  )
+  if File.exist?(react_app_dependency_provider_spec)
+    pod 'ReactAppDependencyProvider', :podspec => react_app_dependency_provider_spec
+  end
+
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
   use_frameworks! :linkage => ENV['USE_FRAMEWORKS'].to_sym if ENV['USE_FRAMEWORKS']
 

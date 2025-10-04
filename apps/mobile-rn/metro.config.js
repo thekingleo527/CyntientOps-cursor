@@ -1,4 +1,3 @@
-// BULLETPROOF Metro config for CyntientOps monorepo
 const { getDefaultConfig } = require('@expo/metro-config');
 const path = require('path');
 
@@ -8,15 +7,20 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 // Get default config
 const config = getDefaultConfig(projectRoot);
 
-// CRITICAL: Set the correct project root
+// Set the correct project root
 config.projectRoot = projectRoot;
 
-// Watch folders - only essential directories
+// Add workspace packages to watch folders
 config.watchFolders = [
-  projectRoot,
+  ...config.watchFolders, // Include Expo's default watch folders
+  path.resolve(workspaceRoot, 'packages/design-tokens'),
   path.resolve(workspaceRoot, 'packages/ui-components'),
   path.resolve(workspaceRoot, 'packages/business-core'),
   path.resolve(workspaceRoot, 'packages/domain-schema'),
+  path.resolve(workspaceRoot, 'packages/database'),
+  path.resolve(workspaceRoot, 'packages/intelligence-services'),
+  path.resolve(workspaceRoot, 'packages/managers'),
+  path.resolve(workspaceRoot, 'packages/data-seed'),
 ];
 
 // Node modules resolution
@@ -34,10 +38,8 @@ config.resolver.alias = {
   '@cyntientops/database': path.resolve(workspaceRoot, 'packages/database/src'),
   '@cyntientops/intelligence-services': path.resolve(workspaceRoot, 'packages/intelligence-services/src'),
   '@cyntientops/managers': path.resolve(workspaceRoot, 'packages/managers/src'),
+  '@cyntientops/data-seed': path.resolve(workspaceRoot, 'packages/data-seed/src'),
 };
-
-// Enable symlinks for monorepo
-config.resolver.unstable_enableSymlinks = true;
 
 // Asset extensions
 config.resolver.assetExts = [
@@ -57,22 +59,17 @@ config.resolver.platforms = ['ios', 'android', 'native', 'web'];
 // Transformer configuration
 config.transformer = {
   ...config.transformer,
-  // Disable minification in development for speed
   minifierConfig: {
     keep_fnames: true,
     mangle: false,
     compress: false,
   },
-  // Asset plugins
   assetPlugins: ['expo-asset/tools/hashAssetFiles'],
 };
 
 // Development optimizations
 if (process.env.NODE_ENV === 'development') {
-  // Disable source maps for speed
   config.transformer.minifierConfig.sourceMap = false;
-  
-  // Inline requires for faster startup
   config.transformer.getTransformOptions = async () => ({
     transform: {
       experimentalImportSupport: false,
@@ -83,24 +80,6 @@ if (process.env.NODE_ENV === 'development') {
 
 // Worker configuration
 config.maxWorkers = Math.max(1, Math.floor(require('os').cpus().length / 2));
-
-// Cache configuration - simplified for reliability
-config.cacheStores = [
-  {
-    get: async () => null,
-    set: async () => {},
-    clear: async () => {},
-  },
-];
-
-// Serializer configuration
-config.serializer = {
-  ...config.serializer,
-  // Custom serializer options for development build
-  getModulesRunBeforeMainModule: () => [
-    require.resolve('react-native/Libraries/Core/InitializeCore'),
-  ],
-};
 
 // Server configuration
 config.server = {

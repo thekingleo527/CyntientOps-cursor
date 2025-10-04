@@ -1,7 +1,7 @@
 const { getDefaultConfig } = require('@expo/metro-config');
 const path = require('path');
 
-const projectRoot = __dirname; // repo root
+const projectRoot = __dirname;
 const workspaceRoot = projectRoot;
 
 const config = getDefaultConfig(projectRoot);
@@ -11,8 +11,9 @@ config.projectRoot = projectRoot;
 
 // Set the entry point for the mobile app
 config.resolver.mainFields = ['react-native', 'browser', 'main'];
+
+// Package aliases for workspace packages
 config.resolver.alias = {
-  ...config.resolver.alias,
   '@cyntientops/design-tokens': path.resolve(projectRoot, 'packages/design-tokens/src'),
   '@cyntientops/ui-components': path.resolve(projectRoot, 'packages/ui-components/src'),
   '@cyntientops/business-core': path.resolve(projectRoot, 'packages/business-core/src'),
@@ -23,7 +24,7 @@ config.resolver.alias = {
   '@cyntientops/data-seed': path.resolve(projectRoot, 'packages/data-seed'),
 };
 
-// Watch only essential app and packages
+// Watch essential app and packages
 config.watchFolders = [
   path.resolve(projectRoot, 'apps/mobile-rn'),
   path.resolve(projectRoot, 'packages/ui-components'),
@@ -40,10 +41,6 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(projectRoot, 'apps/mobile-rn/node_modules'),
 ];
-
-// Package aliases are now configured above
-
-config.resolver.unstable_enableSymlinks = true;
 
 // Asset & source extensions
 config.resolver.assetExts = [...config.resolver.assetExts, 'db', 'mp3', 'ttf', 'obj', 'otf', 'woff', 'woff2'];
@@ -91,4 +88,3 @@ config.server = {
 };
 
 module.exports = config;
-

@@ -7,6 +7,40 @@
 import { DatabaseManager } from '@cyntientops/database';
 import { ClockStatus } from '@cyntientops/domain-schema';
 
+// QuickBooks Integration Interface
+interface QuickBooksClient {
+  syncTimeEntry(entry: TimeEntry): Promise<boolean>;
+  syncPayrollData(payroll: PayrollData): Promise<boolean>;
+  getWorkerRate(workerId: string): Promise<number>;
+}
+
+interface TimeEntry {
+  workerId: string;
+  buildingId: string;
+  clockInTime: Date;
+  clockOutTime?: Date;
+  totalHours: number;
+  rate: number;
+  totalPay: number;
+  location: {
+    latitude: number;
+    longitude: number;
+    accuracy?: number;
+  };
+  notes?: string;
+}
+
+interface PayrollData {
+  workerId: string;
+  workerName: string;
+  totalHours: number;
+  baseRate: number;
+  totalPay: number;
+  deductions: number;
+  netPay: number;
+  period: string;
+}
+
 export interface ClockInData {
   workerId: string;
   buildingId: string;
@@ -51,16 +85,18 @@ export interface ClockInValidation {
 export class ClockInManager {
   private static instance: ClockInManager;
   private databaseManager: DatabaseManager;
+  private quickBooksClient?: QuickBooksClient;
   private activeSessions: Map<string, ClockSession> = new Map();
   private geofenceRadius: number = 100; // meters
 
-  private constructor(databaseManager: DatabaseManager) {
+  private constructor(databaseManager: DatabaseManager, quickBooksClient?: QuickBooksClient) {
     this.databaseManager = databaseManager;
+    this.quickBooksClient = quickBooksClient;
   }
 
-  public static getInstance(databaseManager: DatabaseManager): ClockInManager {
+  public static getInstance(databaseManager: DatabaseManager, quickBooksClient?: QuickBooksClient): ClockInManager {
     if (!ClockInManager.instance) {
-      ClockInManager.instance = new ClockInManager(databaseManager);
+      ClockInManager.instance = new ClockInManager(databaseManager, quickBooksClient);
     }
     return ClockInManager.instance;
   }
@@ -132,6 +168,30 @@ export class ClockInManager {
         notes: clockInData.notes
       });
 
+      // Sync to QuickBooks
+      if (this.quickBooksClient) {
+        try {
+          const workerRate = await this.quickBooksClient.getWorkerRate(clockInData.workerId);
+          const timeEntry: TimeEntry = {
+            workerId: clockInData.workerId,
+            buildingId: clockInData.buildingId,
+            clockInTime: clockInData.timestamp,
+            totalHours: 0, // Will be updated on clock out
+            rate: workerRate,
+            totalPay: 0, // Will be calculated on clock out
+            location: {
+              latitude: clockInData.latitude,
+              longitude: clockInData.longitude,
+              accuracy: clockInData.accuracy
+            },
+            notes: clockInData.notes
+          };
+          await this.quickBooksClient.syncTimeEntry(timeEntry);
+        } catch (error) {
+          console.warn('QuickBooks sync failed for clock in:', error);
+        }
+      }
+
       return {
         success: true,
         sessionId,
@@ -197,6 +257,44 @@ export class ClockInManager {
         timestamp: clockOutData.timestamp,
         notes: clockOutData.notes
       });
+
+      // Sync to QuickBooks
+      if (this.quickBooksClient) {
+        try {
+          const workerRate = await this.quickBooksClient.getWorkerRate(clockOutData.workerId);
+          const totalPay = totalHours * workerRate;
+          
+          const timeEntry: TimeEntry = {
+            workerId: clockOutData.workerId,
+            buildingId: session.buildingId,
+            clockInTime: session.clockInTime,
+            clockOutTime: clockOutData.timestamp,
+            totalHours,
+            rate: workerRate,
+            totalPay,
+            location: session.location,
+            notes: clockOutData.notes || session.notes
+          };
+          
+          await this.quickBooksClient.syncTimeEntry(timeEntry);
+          
+          // Sync payroll data
+          const payrollData: PayrollData = {
+            workerId: clockOutData.workerId,
+            workerName: await this.getWorkerName(clockOutData.workerId),
+            totalHours,
+            baseRate: workerRate,
+            totalPay,
+            deductions: 0, // Will be calculated based on tax rules
+            netPay: totalPay,
+            period: this.getCurrentPayPeriod()
+          };
+          
+          await this.quickBooksClient.syncPayrollData(payrollData);
+        } catch (error) {
+          console.warn('QuickBooks sync failed for clock out:', error);
+        }
+      }
 
       return {
         success: true,
@@ -398,5 +496,50 @@ export class ClockInManager {
    */
   public getGeofenceRadius(): number {
     return this.geofenceRadius;
+  }
+
+  /**
+   * Get worker name for QuickBooks sync
+   */
+  private async getWorkerName(workerId: string): Promise<string> {
+    try {
+      const worker = await this.databaseManager.get('workers', workerId);
+      return worker?.name || 'Unknown Worker';
+    } catch (error) {
+      console.warn('Failed to get worker name:', error);
+      return 'Unknown Worker';
+    }
+  }
+
+  /**
+   * Get current pay period for QuickBooks sync
+   */
+  private getCurrentPayPeriod(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    
+    // Weekly pay period (Monday to Sunday)
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(day - now.getDay() + 1);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
+    return `${startOfWeek.toISOString().split('T')[0]} to ${endOfWeek.toISOString().split('T')[0]}`;
+  }
+
+  /**
+   * Set QuickBooks client
+   */
+  public setQuickBooksClient(quickBooksClient: QuickBooksClient): void {
+    this.quickBooksClient = quickBooksClient;
+  }
+
+  /**
+   * Get QuickBooks sync status
+   */
+  public isQuickBooksEnabled(): boolean {
+    return this.quickBooksClient !== undefined;
   }
 }

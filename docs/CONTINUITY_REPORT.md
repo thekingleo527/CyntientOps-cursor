@@ -64,6 +64,12 @@
   - Security file protection system implemented with proper git exclusion
   - Emergency contact information updated for J&M Realty (Repairs@jmrealty.org, 212-721-0424)
   - Disaster recovery procedures
+- **Expo Simulator Reliability (October 2025)**
+  - Aligned every workspace on `react-native-reanimated@3.x`, matching Expo SDK 54 support
+  - Removed the unused `react-native-worklets` peer that pulled the incompatible 4.x plugin
+  - Locked the Babel plugin back to the supported Reanimated entry point (`react-native-reanimated/plugin`)
+  - Normalized scripts so `mobile:setup` and `mobile:doctor` use `yarn`/`npx expo-doctor`
+  - Result: Metro no longer crashes looking for `react-native-worklets/plugin`, and Expo CLI boots without manual workarounds
 
 ---
 

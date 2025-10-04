@@ -56,11 +56,11 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
           if (t.includes('building') || t.includes('compliance') || t.includes('critical') || t.includes('task')) {
             void refreshDashboard();
           }
-        } catch {}
+        } catch { /* TODO: Implement */ }
       });
-    } catch {}
+    } catch { /* TODO: Implement */ }
     return () => {
-      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
+      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch { /* TODO: Implement */ }
     };
   }, []);
 

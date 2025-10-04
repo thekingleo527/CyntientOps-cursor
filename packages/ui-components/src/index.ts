@@ -53,7 +53,7 @@ export { default as WorkerDashboard } from './dashboards/WorkerDashboard';
 export { default as WorkerDashboardMainView } from './dashboards/WorkerDashboardMainView';
 
 // Weather Components
-export { default as WeatherBasedHybridCard } from './weather/WeatherBasedHybridCard';
+export { default as WeatherDashboard } from './weather/WeatherDashboard';
 export { default as WeatherRibbonView } from './weather/WeatherRibbonView';
 
 // Effects Components

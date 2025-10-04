@@ -539,7 +539,7 @@ export class CrossContextCommunication extends EventEmitter {
       this.applyChannelSettings(message, channel);
 
       // Send message
-      await this.sendMessage(message, channel);
+      await this.sendMessageInternal(message, channel);
 
       // Update message status
       message.status = 'sent';
@@ -640,7 +640,7 @@ export class CrossContextCommunication extends EventEmitter {
   /**
    * Send message through channel
    */
-  private async sendMessage(message: CrossContextMessage, channel: CommunicationChannel): Promise<void> {
+  private async sendMessageInternal(message: CrossContextMessage, channel: CommunicationChannel): Promise<void> {
     // Simulate message sending
     await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -833,7 +833,7 @@ export class CrossContextCommunication extends EventEmitter {
   /**
    * Send a cross-context message
    */
-  public async sendMessage(message: Omit<CrossContextMessage, 'id' | 'timestamp' | 'status'>): Promise<string> {
+  async sendMessage(message: Partial<CrossContextMessage>): Promise<string> {
     const crossContextMessage: CrossContextMessage = {
       ...message,
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,

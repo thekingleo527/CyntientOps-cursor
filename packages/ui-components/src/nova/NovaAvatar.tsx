@@ -415,7 +415,7 @@ export const NovaAvatar: React.FC<NovaAvatarProps> = ({
   const renderAiAssistantImage = () => {
     return (
       <Image
-          source={require('../../../../apps/mobile-rn/assets/images/AIAssistant.png')}
+          source={{ uri: 'https://via.placeholder.com/100x100/4A90E2/FFFFFF?text=AI' }}
         style={[
           styles.aiAssistantImage,
           {

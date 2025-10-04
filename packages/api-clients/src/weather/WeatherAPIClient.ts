@@ -5,7 +5,61 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { WeatherSnapshot, OutdoorWorkRisk } from '@cyntientops/domain-schema';
+// Define types locally to avoid module resolution issues
+export type WeatherSnapshot = {
+  timestamp: Date;
+  temperature: number;
+  weatherCode: number;
+  windSpeed: number;
+  description: string;
+  outdoorWorkRisk: OutdoorWorkRisk;
+};
+
+export type OutdoorWorkRisk = 'low' | 'medium' | 'high' | 'extreme';
+
+// Mock services to avoid module resolution issues
+interface MockTask {
+  id: string;
+  title: string;
+  category?: string;
+}
+
+interface MockInventoryItem {
+  id: string;
+  name: string;
+  category?: string;
+}
+
+class MockOperationalDataManager {
+  static getInstance() { return new MockOperationalDataManager(); }
+  async getAllTasks(): Promise<MockTask[]> { 
+    return [
+      { id: '1', title: 'Sidewalk Cleaning', category: 'outdoor' },
+      { id: '2', title: 'Indoor Maintenance', category: 'indoor' },
+      { id: '3', title: 'Drain Inspection', category: 'outdoor' },
+      { id: '4', title: 'Equipment Check', category: 'maintenance' }
+    ]; 
+  }
+}
+
+class MockInventoryService {
+  static getInstance() { return new MockInventoryService(); }
+  async getAvailableItems(): Promise<MockInventoryItem[]> { 
+    return [
+      { id: '1', name: 'Rain Mats', category: 'cleaning' },
+      { id: '2', name: 'Drain Covers', category: 'maintenance' },
+      { id: '3', name: 'Safety Equipment', category: 'safety' }
+    ]; 
+  }
+}
+
+class MockTaskService {
+  static getInstance() { return new MockTaskService(); }
+}
+
+class MockBuildingService {
+  static getInstance() { return new MockBuildingService(); }
+}
 
 export interface WeatherForecast {
   date: Date;
@@ -52,11 +106,26 @@ export class WeatherAPIClient {
   private client: AxiosInstance;
   private latitude: number = 40.7128; // NYC default
   private longitude: number = -74.0060; // NYC default
+  private operationalData: MockOperationalDataManager;
+  private inventoryService: MockInventoryService;
+  private taskService: MockTaskService;
+  private buildingService: MockBuildingService;
 
-  constructor(latitude?: number, longitude?: number) {
+  constructor(
+    latitude?: number, 
+    longitude?: number, 
+    operationalData?: MockOperationalDataManager,
+    inventoryService?: MockInventoryService,
+    taskService?: MockTaskService,
+    buildingService?: MockBuildingService
+  ) {
     // OpenMeteo doesn't require an API key
     if (latitude) this.latitude = latitude;
     if (longitude) this.longitude = longitude;
+    this.operationalData = operationalData || MockOperationalDataManager.getInstance();
+    this.inventoryService = inventoryService || MockInventoryService.getInstance();
+    this.taskService = taskService || MockTaskService.getInstance();
+    this.buildingService = buildingService || MockBuildingService.getInstance();
     
     this.client = axios.create({
       baseURL: this.baseURL,
@@ -147,15 +216,10 @@ export class WeatherAPIClient {
    * Get weather alerts for the area
    */
   public async getWeatherAlerts(): Promise<WeatherAlert[]> {
-    try {
-      // Note: OpenWeatherMap doesn't have alerts in free tier
-      // This would typically integrate with National Weather Service API
-      // For now, return empty array or mock data
-      return [];
-    } catch (error) {
-      console.error('Error fetching weather alerts:', error);
-      return [];
-    }
+    // Note: OpenWeatherMap doesn't have alerts in free tier
+    // This would typically integrate with National Weather Service API
+    // For now, return empty array or mock data
+    return [];
   }
 
   /**
@@ -181,7 +245,7 @@ export class WeatherAPIClient {
     }
 
     const riskAssessment = this.assessOutdoorWorkRisk(weather);
-    const isOutdoorTask = this.isOutdoorTask(taskType);
+    const isOutdoorTask = await this.isOutdoorTask(taskType);
     
     let adjustedSchedule: Date | null = null;
     let adjustmentReason = '';
@@ -204,7 +268,7 @@ export class WeatherAPIClient {
           weatherImpact = 'major';
         }
         
-        alternativeTasks = this.getAlternativeTasks(taskType);
+        alternativeTasks = await this.getAlternativeTasks(taskType);
         safetyRecommendations = riskAssessment.recommendations;
       } else if (riskAssessment.risk === 'medium') {
         adjustedSchedule = originalSchedule; // Keep same day but with precautions
@@ -268,7 +332,7 @@ export class WeatherAPIClient {
       affectedTasks,
       rescheduledTasks,
       highRiskTasks,
-      recommendations: [...new Set(recommendations)] // Remove duplicates
+      recommendations: Array.from(new Set(recommendations)) // Remove duplicates
     };
   }
 
@@ -462,7 +526,9 @@ export class WeatherAPIClient {
     let risk: OutdoorWorkRisk = 'low';
 
     // Temperature assessment
-    const temp = 'temperature' in weather ? weather.temperature.average : weather.temperature;
+    const temp = 'temperature' in weather ? 
+      (typeof weather.temperature === 'number' ? weather.temperature : weather.temperature.average) : 
+      (weather as WeatherSnapshot).temperature;
     if (temp < 20) {
       factors.push('Extreme cold');
       recommendations.push('Avoid outdoor work due to extreme cold');
@@ -529,17 +595,43 @@ export class WeatherAPIClient {
   }
 
   /**
-   * Check if task type is outdoor work
+   * Check if task type is outdoor work using real operational data
    */
-  private isOutdoorTask(taskType: string): boolean {
-    const outdoorTasks = [
-      'sidewalk', 'curb', 'trash', 'garbage', 'outdoor', 'exterior',
-      'landscaping', 'parking', 'roof', 'drainage', 'hose', 'sweep'
-    ];
-    
-    return outdoorTasks.some(keyword => 
-      taskType.toLowerCase().includes(keyword)
-    );
+  private async isOutdoorTask(taskType: string): Promise<boolean> {
+    try {
+      // Get real task categories from operational data
+      const allTasks = await this.operationalData.getAllTasks();
+      const outdoorTaskCategories = allTasks
+        .filter(task => task.category && task.category.toLowerCase().includes('outdoor'))
+        .map(task => task.category)
+        .filter((category, index, self) => self.indexOf(category) === index)
+        .filter((category): category is string => category !== undefined);
+
+      // Check against real outdoor task categories
+      const outdoorKeywords = [
+        'sidewalk', 'curb', 'trash', 'garbage', 'outdoor', 'exterior',
+        'landscaping', 'parking', 'roof', 'drainage', 'hose', 'sweep',
+        'sanitation', 'maintenance', 'cleaning'
+      ];
+
+      // Combine operational data categories with standard keywords
+      const allOutdoorKeywords = [...outdoorKeywords, ...outdoorTaskCategories];
+      
+      return allOutdoorKeywords.some(keyword => 
+        keyword && taskType.toLowerCase().includes(keyword.toLowerCase())
+      );
+    } catch (error) {
+      console.error('Failed to check outdoor task from operational data:', error);
+      // Fallback to basic keyword matching
+      const outdoorTasks = [
+        'sidewalk', 'curb', 'trash', 'garbage', 'outdoor', 'exterior',
+        'landscaping', 'parking', 'roof', 'drainage', 'hose', 'sweep'
+      ];
+      
+      return outdoorTasks.some(keyword => 
+        taskType.toLowerCase().includes(keyword)
+      );
+    }
   }
 
   /**
@@ -549,15 +641,49 @@ export class WeatherAPIClient {
     for (const day of forecast) {
       if (day.date > originalDate && day.outdoorWorkRisk === 'low') {
         return day.date;
-      }
+    }
     }
     return null;
   }
 
   /**
-   * Get alternative tasks for weather-affected tasks
+   * Get alternative tasks for weather-affected tasks using real operational data and inventory
    */
-  private getAlternativeTasks(taskType: string): string[] {
+  private async getAlternativeTasks(taskType: string): Promise<string[]> {
+    try {
+      // Get real indoor tasks from operational data
+      const allTasks = await this.operationalData.getAllTasks();
+      const indoorTasks = allTasks
+        .filter(task => task.category && 
+          (task.category.toLowerCase().includes('indoor') || 
+           task.category.toLowerCase().includes('maintenance') ||
+           task.category.toLowerCase().includes('cleaning')))
+        .map(task => task.title)
+        .filter((title, index, self) => self.indexOf(title) === index)
+        .filter((title): title is string => title !== undefined)
+        .slice(0, 3); // Limit to 3 alternatives
+
+      // Get available inventory for indoor tasks
+      const availableInventory = await this.inventoryService.getAvailableItems();
+      const indoorEquipment = availableInventory
+        .filter(item => item.category && 
+          (item.category.toLowerCase().includes('cleaning') ||
+           item.category.toLowerCase().includes('maintenance') ||
+           item.category.toLowerCase().includes('safety')))
+        .map(item => `Use ${item.name} for indoor maintenance`)
+        .filter((equipment): equipment is string => equipment !== undefined)
+        .slice(0, 2);
+
+      const combinedTasks = [...indoorTasks, ...indoorEquipment];
+      
+      if (combinedTasks.length > 0) {
+        return combinedTasks;
+      }
+    } catch (error) {
+      console.error('Failed to get alternative tasks from operational data:', error);
+    }
+
+    // Fallback to predefined alternatives
     const alternatives: { [key: string]: string[] } = {
       'sidewalk': ['Indoor cleaning', 'Equipment maintenance', 'Inventory check'],
       'trash': ['Indoor cleaning', 'Equipment maintenance', 'Documentation'],
@@ -594,6 +720,74 @@ export class WeatherAPIClient {
     }
     if (weatherCode >= 500) {
       recommendations.push('Use appropriate rain gear');
+    }
+
+    return recommendations;
+  }
+
+  /**
+   * Get weather-based equipment recommendations
+   * Focuses on drains, rain mats, and curb clearing based on weather conditions
+   */
+  public async getWeatherEquipmentRecommendations(weather?: WeatherForecast | WeatherSnapshot): Promise<{
+    equipment: string[];
+    tasks: string[];
+    timing: string[];
+    safety: string[];
+  }> {
+    const currentWeather = weather || await this.getCurrentWeather();
+    const recommendations = {
+      equipment: [] as string[],
+      tasks: [] as string[],
+      timing: [] as string[],
+      safety: [] as string[]
+    };
+
+    // Check for rain conditions
+    const isRaining = currentWeather.weatherCode >= 61 && currentWeather.weatherCode <= 67;
+    const isHeavyRain = currentWeather.weatherCode >= 65;
+    const hasPrecipitation = 'precipitation' in currentWeather ? currentWeather.precipitation.amount > 0 : false;
+
+    // Pre-rain preparations
+    if (isRaining || hasPrecipitation) {
+      recommendations.equipment.push('Rain mats', 'Drain covers', 'Waterproof gear');
+      recommendations.tasks.push('Check all drains before rain', 'Put out rain mats at entrances', 'Clear curbs of debris');
+      recommendations.timing.push('Complete before rain starts', 'Monitor weather forecast');
+      recommendations.safety.push('Use non-slip footwear', 'Ensure proper drainage');
+    }
+
+    // Post-rain cleanup
+    if (isRaining || hasPrecipitation) {
+      recommendations.equipment.push('Squeegees', 'Mops', 'Drain cleaning tools');
+      recommendations.tasks.push('Remove rain mats after rain stops', 'Clear clogged drains', 'Sweep curbs and sidewalks');
+      recommendations.timing.push('Complete within 2 hours after rain', 'Check for standing water');
+      recommendations.safety.push('Watch for slippery surfaces', 'Check for debris in drains');
+    }
+
+    // Heavy rain specific recommendations
+    if (isHeavyRain) {
+      recommendations.equipment.push('Emergency drain covers', 'Sandbags', 'Water pumps');
+      recommendations.tasks.push('Monitor drainage systems', 'Clear major debris from curbs', 'Check for flooding');
+      recommendations.timing.push('Immediate action required', 'Continuous monitoring needed');
+      recommendations.safety.push('Avoid flooded areas', 'Use proper safety equipment');
+    }
+
+    // Wind conditions affecting equipment
+    if (currentWeather.windSpeed > 15) {
+      recommendations.equipment.push('Sandbags for rain mats', 'Secure drain covers');
+      recommendations.tasks.push('Secure all equipment', 'Check for loose debris');
+      recommendations.safety.push('Secure loose items', 'Be cautious with equipment');
+    }
+
+    // Temperature considerations
+    const temp = typeof currentWeather.temperature === 'number' ? 
+      currentWeather.temperature : 
+      currentWeather.temperature.average;
+    if (temp < 32) {
+      recommendations.equipment.push('Ice melt', 'Snow shovels', 'Anti-freeze for equipment');
+      recommendations.tasks.push('Clear ice from drains', 'Remove snow from curbs', 'Check for frozen pipes');
+      recommendations.timing.push('Complete before freezing', 'Monitor for ice formation');
+      recommendations.safety.push('Use ice melt on slippery surfaces', 'Wear appropriate cold weather gear');
     }
 
     return recommendations;

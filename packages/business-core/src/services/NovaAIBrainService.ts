@@ -166,13 +166,12 @@ export class NovaAIBrainService {
       
       console.log(`✅ Nova: Response generated in ${response.processingTime}ms`);
       return response;
-      
     } catch (error) {
       Logger.error('❌ Nova: Failed to process prompt:', undefined, 'NovaAIBrainService');
       
       // Return error response
       return {
-        id: `nova_resp_${Date.now()}`,
+  // id: `nova_resp_${Date.now()}`,
         promptId: prompt.id,
         responseType: 'analysis',
         content: 'I apologize, but I encountered an error processing your request. Please try again.',
@@ -218,7 +217,7 @@ export class NovaAIBrainService {
       const data = await response.json();
       
       return {
-        id: `nova_resp_${Date.now()}`,
+  // id: `nova_resp_${Date.now()}`,
         promptId: prompt.id,
         responseType: prompt.expectedResponseType,
         content: data.content || 'No response generated',
@@ -258,7 +257,7 @@ export class NovaAIBrainService {
       const actions = this.generateActions(intent, insights, prompt.context);
       
       return {
-        id: `nova_resp_${Date.now()}`,
+  // id: `nova_resp_${Date.now()}`,
         promptId: prompt.id,
         responseType: prompt.expectedResponseType,
         content,
@@ -338,7 +337,7 @@ export class NovaAIBrainService {
     }
 
     return supabaseContext;
-  }
+    }
 
   /**
    * Gather context data for local processing
@@ -372,7 +371,7 @@ export class NovaAIBrainService {
     }
 
     return data;
-  }
+    }
 
   // MARK: - Local AI Logic
 
@@ -393,7 +392,7 @@ export class NovaAIBrainService {
     };
 
     return intents;
-  }
+    }
 
   /**
    * Generate local insights
@@ -469,7 +468,7 @@ export class NovaAIBrainService {
     }
 
     return insights;
-  }
+    }
 
   /**
    * Generate response content
@@ -490,7 +489,7 @@ export class NovaAIBrainService {
     }
 
     return content;
-  }
+    }
 
   /**
    * Generate actions based on insights
@@ -530,7 +529,7 @@ export class NovaAIBrainService {
     }
 
     return actions;
-  }
+    }
 
   // MARK: - Data Access Methods
 
@@ -585,7 +584,7 @@ export class NovaAIBrainService {
       const completionRate = metrics.total_tasks > 0 ? (metrics.completed_tasks / metrics.total_tasks) * 100 : 0;
       
       return {
-        totalTasks: metrics.total_tasks,
+  // totalTasks: metrics.total_tasks,
         completedTasks: metrics.completed_tasks,
         completionRate: Math.round(completionRate * 100) / 100,
         averageCompletionTime: Math.round(metrics.avg_completion_time || 0)
@@ -670,35 +669,35 @@ export class NovaAIBrainService {
       return `Based on your current data, I've identified ${insights.length} key insights. ${insights[0].description}`;
     }
     return "I'd be happy to help answer your question. Could you provide more specific details?";
-  }
+    }
 
   private generateRequestResponse(insights: NovaInsight[], context: NovaContext): string {
     if (insights.length > 0) {
       return `I can help with that. Here are some recommendations: ${insights.map(i => i.description).join(' ')}`;
     }
     return "I'm here to help. What specific assistance do you need?";
-  }
+    }
 
   private generateStatusResponse(insights: NovaInsight[], context: NovaContext): string {
     if (insights.length > 0) {
       return `Here's your current status: ${insights.map(i => i.description).join(' ')}`;
     }
     return "Your status looks good. Is there anything specific you'd like to know about?";
-  }
+    }
 
   private generateOptimizationResponse(insights: NovaInsight[], context: NovaContext): string {
     if (insights.length > 0) {
       return `Here are some optimization opportunities: ${insights.map(i => i.description).join(' ')}`;
     }
     return "I can help optimize your workflow. What area would you like to focus on?";
-  }
+    }
 
   private generateGeneralResponse(insights: NovaInsight[], context: NovaContext): string {
     if (insights.length > 0) {
       return `I've analyzed your situation and found: ${insights.map(i => i.description).join(' ')}`;
     }
     return "I'm here to assist you. How can I help today?";
-  }
+    }
 
   /**
    * Calculate confidence score
@@ -719,7 +718,7 @@ export class NovaAIBrainService {
     }
     
     return Math.min(100, Math.max(0, confidence));
-  }
+    }
 
   /**
    * Store response in database
@@ -755,14 +754,14 @@ export class NovaAIBrainService {
    */
   getQueueStatus(): number {
     return this.processingQueue.length;
-  }
+    }
 
   /**
    * Check if Supabase is enabled
    */
   isSupabaseAvailable(): boolean {
     return this.isSupabaseEnabled;
-  }
+    }
 
   /**
    * Get service statistics
@@ -774,7 +773,7 @@ export class NovaAIBrainService {
       );
       
       return {
-        responsesLast24h: stats[0]?.count || 0,
+  // responsesLast24h: stats[0]?.count || 0,
         queueSize: this.processingQueue.length,
         supabaseEnabled: this.isSupabaseEnabled,
         isProcessing: this.isProcessing
@@ -782,7 +781,7 @@ export class NovaAIBrainService {
     } catch (error) {
       Logger.error('Failed to get service stats:', undefined, 'NovaAIBrainService');
       return {
-        responsesLast24h: 0,
+  // responsesLast24h: 0,
         queueSize: 0,
         supabaseEnabled: false,
         isProcessing: false

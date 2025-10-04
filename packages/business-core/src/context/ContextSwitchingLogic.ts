@@ -843,7 +843,7 @@ export class ContextSwitchingLogic extends EventEmitter {
   private executeAction(action: SwitchAction, currentContext: ContextInfo): void {
     switch (action.type) {
       case 'switch':
-        this.requestContextSwitch(currentContext, action.target, action.parameters);
+        this.handleContextSwitch(currentContext, action.target, action.parameters);
         break;
       case 'suggest':
         this.suggestContextSwitch(currentContext, action.target, action.parameters);
@@ -863,7 +863,7 @@ export class ContextSwitchingLogic extends EventEmitter {
   /**
    * Request context switch
    */
-  private requestContextSwitch(currentContext: ContextInfo, target: string, parameters: Record<string, any>): void {
+  private handleContextSwitch(currentContext: ContextInfo, target: string, parameters: Record<string, any>): void {
     // Implementation for requesting context switch
     this.emit('contextSwitchRequested', { currentContext, target, parameters });
   }
@@ -903,7 +903,7 @@ export class ContextSwitchingLogic extends EventEmitter {
   /**
    * Request a context switch
    */
-  public async requestContextSwitch(
+  async requestContextSwitch(
     fromContext: ContextInfo,
     toContext: ContextInfo,
     trigger: SwitchTrigger,

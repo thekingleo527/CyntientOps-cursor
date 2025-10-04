@@ -135,7 +135,6 @@ export interface AppState {
     
     // Building actions
     setBuildings: (buildings: NamedCoordinate[]) => void;
-    setCurrentBuilding: (building: NamedCoordinate | null) => void;
     setBuildingMetrics: (buildingId: string, metrics: any) => void;
     setBuildingTasks: (buildingId: string, tasks: OperationalDataTaskAssignment[]) => void;
     addBuildingAlert: (buildingId: string, alert: any) => void;
@@ -410,17 +409,6 @@ export const useAppStore = create<AppState>()(
           buildings: {
             ...state.buildings,
             buildings
-          }
-        })),
-        
-        setCurrentBuilding: (building) => set((state) => ({
-          buildings: {
-            ...state.buildings,
-            currentBuilding: building
-          },
-          worker: {
-            ...state.worker,
-            currentBuilding: building
           }
         })),
         

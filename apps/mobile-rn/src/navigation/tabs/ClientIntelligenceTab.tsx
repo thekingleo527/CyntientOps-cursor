@@ -43,7 +43,7 @@ export interface ClientInsight {
   onAction?: () => void;
 }
 
-export interface ClientIntelligenceTab {
+export interface ClientIntelligenceTabData {
   id: 'overview' | 'portfolio' | 'compliance' | 'team' | 'quickactions';
   title: string;
   icon: string;

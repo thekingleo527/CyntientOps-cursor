@@ -9,7 +9,7 @@ export { ClockInManager } from './ClockInManager';
 export { LocationManager } from './LocationManager';
 export { NotificationManager } from './NotificationManager';
 export { PhotoEvidenceManager } from './PhotoEvidenceManager';
-export { WeatherTaskManager } from './WeatherTaskManager';
+export { WeatherManager } from './WeatherManager';
 export { WorkCompletionManager } from './WorkCompletionManager';
 
 export type { 
@@ -40,7 +40,7 @@ export type {
   WeatherRiskAssessment,
   OutdoorWorkConditions,
   WeatherTaskAdjustment
-} from './WeatherTaskManager';
+} from './WeatherManager';
 
 export type { 
   WorkCompletionRecord,
@@ -57,20 +57,20 @@ export async function initializeManagers(databaseManager: any, weatherClient?: a
   const { LocationManager: LocationMgr } = await import('./LocationManager');
   const { NotificationManager: NotificationMgr } = await import('./NotificationManager');
   const { PhotoEvidenceManager: PhotoEvidenceMgr } = await import('./PhotoEvidenceManager');
-  const { WeatherTaskManager: WeatherTaskMgr } = await import('./WeatherTaskManager');
+  const { WeatherManager: WeatherMgr } = await import('./WeatherManager');
   
   const clockInManager = ClockInMgr.getInstance(databaseManager);
   const locationManager = LocationMgr.getInstance(databaseManager);
   const notificationManager = NotificationMgr.getInstance(databaseManager);
   const photoEvidenceManager = PhotoEvidenceMgr.getInstance(databaseManager);
-  const weatherTaskManager = weatherClient ? WeatherTaskMgr.getInstance(weatherClient, databaseManager) : null;
+  const weatherManager = weatherClient ? WeatherMgr.getInstance(weatherClient, databaseManager) : null;
 
   return {
     clockIn: clockInManager,
     location: locationManager,
     notification: notificationManager,
     photoEvidence: photoEvidenceManager,
-    weatherTask: weatherTaskManager
+    weather: weatherManager
   };
 }
 
@@ -80,6 +80,6 @@ export default {
   get LocationManager() { return require('./LocationManager').LocationManager; },
   get NotificationManager() { return require('./NotificationManager').NotificationManager; },
   get PhotoEvidenceManager() { return require('./PhotoEvidenceManager').PhotoEvidenceManager; },
-  get WeatherTaskManager() { return require('./WeatherTaskManager').WeatherTaskManager; },
+  get WeatherManager() { return require('./WeatherManager').WeatherManager; },
   get WorkCompletionManager() { return require('./WorkCompletionManager').WorkCompletionManager; }
 };

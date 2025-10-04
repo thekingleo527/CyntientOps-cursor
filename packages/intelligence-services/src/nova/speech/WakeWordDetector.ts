@@ -70,7 +70,6 @@ declare global {
   }
 }
 import { NovaSpeechRecognizer, SpeechRecognitionResult } from './NovaSpeechRecognizer';
-import { Logger } from '@cyntientops/business-core';
 
 export interface WakeWordConfig {
   wakePhrase: string;

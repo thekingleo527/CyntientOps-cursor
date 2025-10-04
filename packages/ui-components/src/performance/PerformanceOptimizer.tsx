@@ -318,7 +318,7 @@ export const OptimizedModal = React.memo(({
       {children}
     </Modal>
   );
-};
+});
 
 // Export all performance utilities
 export {

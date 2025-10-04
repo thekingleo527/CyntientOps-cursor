@@ -818,7 +818,7 @@ export class RealTimeNotificationManager {
   async getNotificationStats(userId?: string): Promise<NotificationStats> {
     try {
       let query = 'SELECT * FROM notifications';
-      let params: any[] = [];
+      const params: any[] = [];
 
       if (userId) {
         query += ' WHERE user_id = ?';
@@ -1028,12 +1028,6 @@ export class RealTimeNotificationManager {
 
   // MARK: - Public API
 
-  /**
-   * Get notification manager instance
-   */
-  static getInstance(): RealTimeNotificationManager | null {
-    return RealTimeNotificationManager.instance || null;
-  }
 
   /**
    * Destroy notification manager

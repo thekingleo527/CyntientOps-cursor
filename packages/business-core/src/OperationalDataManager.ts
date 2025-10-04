@@ -162,7 +162,43 @@ export class OperationalDataManager {
   
   // MARK: - 🛡️ PRESERVED OPERATIONAL DATA
   // Every task updated with canonical IDs - Complete real-world data
-  private readonly realWorldTasks: OperationalDataTaskAssignment[] = [
+  private readonly realWorldTasks: OperationalDataTaskAssignment[] = [];
+  
+  // MARK: - Complete Task Data Integration
+  private async loadCompleteTaskData(): Promise<void> {
+    try {
+      // Load all tasks from data-seed package
+      const { routines } = await import('@cyntientops/data-seed');
+      
+      // Convert JSON tasks to OperationalDataTaskAssignment format
+      this.realWorldTasks.push(...routines.map(task => ({
+        building: task.building,
+        taskName: task.title,
+        assignedWorker: task.assignedWorker,
+        category: task.category,
+        skillLevel: task.skillLevel,
+        recurrence: task.recurrence,
+        startHour: task.startHour,
+        endHour: task.endHour,
+        daysOfWeek: task.daysOfWeek,
+        workerId: task.workerId,
+        buildingId: task.buildingId,
+        requiresPhoto: task.requiresPhoto || false,
+        estimatedDuration: task.estimatedDuration || 60
+      })));
+      
+      console.log(`✅ Loaded ${this.realWorldTasks.length} complete operational tasks from data-seed`);
+    } catch (error) {
+      console.error('Failed to load complete task data:', error);
+      // Fallback to hardcoded tasks
+      this.loadHardcodedTasks();
+    }
+  }
+  
+  private loadHardcodedTasks(): void {
+    // MARK: - 🛡️ PRESERVED OPERATIONAL DATA
+    // Every task updated with canonical IDs - Complete real-world data
+    this.realWorldTasks.push(
     
     // ───────────────────────────────
     //  KEVIN DUTAN (EXPANDED DUTIES)
@@ -1142,7 +1178,8 @@ export class OperationalDataManager {
     
     // Note: This is now the complete set of 88 real-world routines
     // All tasks for all workers across all buildings are included
-  ];
+    );
+  }
   
   // MARK: - Singleton Pattern
   public static getInstance(): OperationalDataManager {
@@ -1154,6 +1191,10 @@ export class OperationalDataManager {
   
   private constructor() {
     this.initializeCachedData();
+    // Load complete task data asynchronously
+    this.loadCompleteTaskData().catch(error => {
+      console.error('Failed to load complete task data:', error);
+    });
   }
   
   // MARK: - Initialization
@@ -1202,6 +1243,15 @@ export class OperationalDataManager {
    */
   public getWorkerTasks(workerId: string): OperationalDataTaskAssignment[] {
     return this.realWorldTasks.filter(task => task.workerId === workerId);
+  }
+  
+  /**
+   * Ensure data is loaded before accessing tasks
+   */
+  public async ensureDataLoaded(): Promise<void> {
+    if (this.realWorldTasks.length === 0) {
+      await this.loadCompleteTaskData();
+    }
   }
   
   /**
@@ -1270,7 +1320,8 @@ export class OperationalDataManager {
   /**
    * Get all task assignments
    */
-  public getAllTasks(): OperationalDataTaskAssignment[] {
+  public async getAllTasks(): Promise<OperationalDataTaskAssignment[]> {
+    await this.ensureDataLoaded();
     return [...this.realWorldTasks];
   }
   

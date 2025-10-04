@@ -334,8 +334,8 @@ export class DataValidator {
   }
 
   private isValidPhone(phone: string): boolean {
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+    const phoneRegex = /^[+]?[1-9][\d]{0,15}$/;
+    return phoneRegex.test(phone.replace(/[\s\-()]/g, ''));
   }
 
   private isValidDate(date: any): boolean {
@@ -427,7 +427,7 @@ export class DataValidator {
     
     return input
       .trim()
-      .replace(/[<>\"'&]/g, '') // Remove potentially dangerous characters
+      .replace(/[<>"'&]/g, '') // Remove potentially dangerous characters
       .replace(/\s+/g, ' '); // Normalize whitespace
   }
 
@@ -436,7 +436,7 @@ export class DataValidator {
   }
 
   public sanitizePhone(phone: string): string {
-    return phone.replace(/[^\d\+\-\(\)\s]/g, '');
+    return phone.replace(/[^\d+\-()\s]/g, '');
   }
 
   public sanitizeUrl(url: string): string {

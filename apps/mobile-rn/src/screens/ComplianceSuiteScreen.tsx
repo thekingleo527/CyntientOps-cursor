@@ -10,7 +10,7 @@ import { View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DatabaseManager } from '@cyntientops/database';
 import { Building, OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
-import { ComplianceService } from '@cyntientops/business-core';
+import { ComplianceService, Logger } from '@cyntientops/business-core';
 import { ServiceContainer } from '@cyntientops/business-core';
 
 interface ComplianceData {

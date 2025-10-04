@@ -115,9 +115,9 @@ export class PhotoEvidenceManager {
       // Get current location with smart detection
       const location = await this.getCurrentLocation();
       
-      // Get building information
-      const building = task.assigned_building_id ? 
-        this.dbManager.getBuildingById(task.assigned_building_id) : null;
+      // Get building information from database
+      const building = task.buildingId ? 
+        await this.dbManager.get('buildings', task.buildingId) : null;
       
       if (!building) {
         throw new Error('Building not found for task');
@@ -144,7 +144,7 @@ export class PhotoEvidenceManager {
 
       const photoEvidence: PhotoEvidence = {
         id: photoId,
-        taskId: task.id,
+        taskId: task.taskName, // Use task name as ID since we don't have task.id
         workerId: worker.id,
         buildingId: building.id,
         imageUri: destinationUri,
@@ -154,7 +154,7 @@ export class PhotoEvidenceManager {
         smartLocation: smartLocation,
         metadata: {
           category: task.category,
-          taskName: task.name,
+          taskName: task.taskName,
           workerName: worker.name,
           buildingId: building.id,
           buildingName: building.name,

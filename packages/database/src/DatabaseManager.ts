@@ -321,6 +321,75 @@ export class DatabaseManager {
     ]);
   }
 
+  // MARK: - CRUD Operations for Managers
+  
+  async insert(table: string, data: any): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const columns = Object.keys(data).join(', ');
+    const placeholders = Object.keys(data).map(() => '?').join(', ');
+    const values = Object.values(data);
+    
+    await this.db.runAsync(
+      `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`,
+      values
+    );
+  }
+  
+  async update(table: string, id: string, data: any): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
+    const values = [...Object.values(data), id];
+    
+    await this.db.runAsync(
+      `UPDATE ${table} SET ${setClause} WHERE id = ?`,
+      values
+    );
+  }
+  
+  async delete(table: string, id: string): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    await this.db.runAsync(`DELETE FROM ${table} WHERE id = ?`, [id]);
+  }
+  
+  async get(table: string, id: string): Promise<any> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const result = await this.db.getFirstAsync(`SELECT * FROM ${table} WHERE id = ?`, [id]);
+    return result;
+  }
+  
+  async getAll(table: string, where?: Record<string, any>): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    let query = `SELECT * FROM ${table}`;
+    let params: any[] = [];
+    
+    if (where) {
+      const whereClause = Object.keys(where).map(key => `${key} = ?`).join(' AND ');
+      query += ` WHERE ${whereClause}`;
+      params = Object.values(where);
+    }
+    
+    const result = await this.db.getAllAsync(query, params);
+    return result;
+  }
+  
+  async query(sql: string, params: any[] = []): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    const result = await this.db.getAllAsync(sql, params);
+    return result;
+  }
+  
+  async execute(sql: string, params: any[] = []): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    await this.db.runAsync(sql, params);
+  }
+
   async insertRoutine(routine: any): Promise<void> {
     if (!this.db) throw new Error('Database not initialized');
     

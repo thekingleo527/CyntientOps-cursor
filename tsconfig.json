@@ -63,10 +63,10 @@
       "path": "./apps/mobile-rn"
     }
   ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+  "exclude": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/build/**",
+    "**/.expo/**"
   ]
 }

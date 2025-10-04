@@ -967,7 +967,7 @@ export class ComprehensiveTestSuite {
   async getTestResults(type?: TestResult['type']): Promise<TestResult[]> {
     try {
       let query = 'SELECT * FROM test_results';
-      let params: any[] = [];
+      const params: any[] = [];
 
       if (type) {
         query += ' WHERE type = ?';

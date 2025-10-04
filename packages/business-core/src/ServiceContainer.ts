@@ -10,7 +10,7 @@ import { ClockInManager } from '@cyntientops/managers';
 import { LocationManager } from '@cyntientops/managers';
 import { NotificationManager } from '@cyntientops/managers';
 import { PhotoEvidenceManager } from '@cyntientops/managers';
-import { WeatherTaskManager } from '@cyntientops/managers';
+import { WeatherManager } from '@cyntientops/managers';
 import { WebSocketManager } from '@cyntientops/realtime-sync';
 import { OfflineManager } from '@cyntientops/offline-support';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
@@ -129,7 +129,7 @@ export class ServiceContainer {
   private _location: LocationManager | null = null;
   private _notifications: NotificationManager | null = null;
   private _photoEvidence: PhotoEvidenceManager | null = null;
-  private _weatherTasks: WeatherTaskManager | null = null;
+  private _weatherTasks: WeatherManager | null = null;
   private _weatherTriggeredTasks: WeatherTriggeredTaskManager | null = null;
   private _offlineQueue: OfflineManager | null = null;
   
@@ -369,7 +369,7 @@ export class ServiceContainer {
     return this._commandChainManager;
   }
 
-  public get operationalData(): OperationalDataManager {
+  public get operationalDataManager(): OperationalDataManager {
     return operationalDataManager;
   }
 
@@ -948,9 +948,9 @@ export class ServiceContainer {
     return this._photoEvidence;
   }
   
-  public get weatherTasks(): WeatherTaskManager {
+  public get weatherTasks(): WeatherManager {
     if (!this._weatherTasks) {
-      this._weatherTasks = WeatherTaskManager.getInstance();
+      this._weatherTasks = WeatherManager.getInstance();
     }
     return this._weatherTasks;
   }
@@ -1053,16 +1053,3 @@ export class ServiceContainer {
 
 // MARK: - Service Health Type
 
-export interface ServiceHealth {
-  databaseConnected: boolean;
-  authInitialized: boolean;
-  tasksLoaded: boolean;
-  intelligenceActive: boolean;
-  syncActive: boolean;
-  offlineQueueSize: number;
-  cacheSize: number;
-  backgroundTasksActive: number;
-  
-  isHealthy?: boolean;
-  summary?: string;
-}

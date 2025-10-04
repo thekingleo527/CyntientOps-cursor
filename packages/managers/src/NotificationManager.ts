@@ -168,7 +168,7 @@ export class NotificationManager {
   private loadUserSettings(): void {
     const workers = this.databaseManager.getWorkers();
     
-    workers.forEach(worker => {
+    workers.forEach((worker: any) => {
       this.userSettings.set(worker.id, {
         userId: worker.id,
         pushNotifications: true,
@@ -485,14 +485,14 @@ export class NotificationManager {
   /**
    * Get users by role
    */
-  private getUsersByRole(role: 'worker' | 'admin' | 'client'): string[] {
-    const workers = this.databaseManager.getWorkers();
+  private async getUsersByRole(role: 'worker' | 'admin' | 'client'): Promise<string[]> {
+    const workers = await this.databaseManager.getWorkers();
     
     switch (role) {
       case 'worker':
-        return workers.map(worker => worker.id);
+        return workers.map((worker: any) => worker.id);
       case 'admin':
-        return workers.filter(worker => worker.role === 'admin').map(worker => worker.id);
+        return workers.filter((worker: any) => worker.role === 'admin').map((worker: any) => worker.id);
       case 'client':
         // This would return client user IDs
         return [];
@@ -504,8 +504,9 @@ export class NotificationManager {
   /**
    * Get user role
    */
-  private getUserRole(userId: string): 'worker' | 'admin' | 'client' {
-    const worker = this.databaseManager.getWorkerById(userId);
+  private async getUserRole(userId: string): Promise<'worker' | 'admin' | 'client'> {
+    const workers = await this.databaseManager.getWorkers();
+    const worker = workers.find((w: any) => w.id === userId);
     if (worker) {
       return worker.role === 'admin' ? 'admin' : 'worker';
     }

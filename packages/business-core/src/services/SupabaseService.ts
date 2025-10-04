@@ -234,7 +234,7 @@ export class SupabaseService {
   ) {
     const client = getSupabaseClient();
 
-    let channel = client
+    const channel = client
       .channel(`${table}-changes`)
       .on(
         'postgres_changes',

@@ -255,7 +255,6 @@ export class WorkCompletionManager {
         notes,
         metadata: {
           departureId: `departure_${buildingId}_${workerId}_${Date.now()}`,
-          completedTasks,
           completedRoutines,
         }
       };

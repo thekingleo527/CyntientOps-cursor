@@ -11,7 +11,7 @@ import {
   LocationManager, 
   NotificationManager, 
   PhotoEvidenceManager,
-  WeatherTaskManager 
+  WeatherManager 
 } from '@cyntientops/managers';
 import { IntelligenceService, PerformanceMonitor } from '@cyntientops/intelligence-services';
 import { 
@@ -132,7 +132,7 @@ export class EndToEndTestSuite {
       location: LocationManager.getInstance(this.dbManager),
       notification: NotificationManager.getInstance(this.dbManager),
       photoEvidence: PhotoEvidenceManager.getInstance(this.dbManager),
-      weatherTask: WeatherTaskManager.getInstance(this.apiClientManager.weather, this.dbManager),
+      weatherTask: WeatherManager.getInstance(this.apiClientManager.weather, this.dbManager),
     };
 
     console.log('✅ Test environment initialized');

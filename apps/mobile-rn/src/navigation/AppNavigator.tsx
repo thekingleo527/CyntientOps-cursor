@@ -92,8 +92,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
 
   useEffect(() => {
     void restoreActiveSession();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      }, []);
 
   /**
    * Attempt to restore an active session from AsyncStorage and validate it
@@ -122,7 +121,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
       }
 
       setSession(validated);
-      try { services.sessionManager.setCurrentSession(validated); } catch {}
+      try { services.sessionManager.setCurrentSession(validated); } catch { /* TODO: Implement */ }
       setUser(resolveAppUser(validated));
     } catch (error) {
       console.error('Failed to restore session', error);
@@ -200,7 +199,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
       await secureStorage.removeSessionToken();
     } catch (err) {
       // Best-effort logout - ensure token is removed even on error
-      await secureStorage.removeSessionToken().catch(() => {});
+      await secureStorage.removeSessionToken().catch(() => { /* TODO: Implement */ });
     } finally {
       setSession(null);
       setUser(null);

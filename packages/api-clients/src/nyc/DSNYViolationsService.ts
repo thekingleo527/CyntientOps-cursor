@@ -54,7 +54,7 @@ export async function normalizeNYCAddress(raw: string): Promise<NormalizedAddres
   // Naive split as fallback; best is to parse client-side then call Geoclient
   const [num, ...rest] = raw.split(' ');
   const street = rest.join(' ');
-  const boroughGuess = /manhattan|ny\,?\s*100/i.test(raw) ? 'MANHATTAN' : undefined;
+  const boroughGuess = /manhattan|ny,?\s*100/i.test(raw) ? 'MANHATTAN' : undefined;
 
   const url = new URL(GEOC_API);
   url.searchParams.set('houseNumber', num);

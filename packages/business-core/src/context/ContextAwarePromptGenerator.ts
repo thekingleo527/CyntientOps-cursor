@@ -654,17 +654,19 @@ export class ContextAwarePromptGenerator extends EventEmitter {
         if (input.includes('year')) return 'this year';
         break;
       
-      case 'buildingName':
+      case 'buildingName': {
         // Extract building name using simple pattern matching
         const buildingMatch = input.match(/building\s+([a-z]+)/i);
         if (buildingMatch) return buildingMatch[1];
         break;
+      }
       
-      case 'workerName':
+      case 'workerName': {
         // Extract worker name using simple pattern matching
         const workerMatch = input.match(/(?:worker|employee)\s+([a-z\s]+)/i);
         if (workerMatch) return workerMatch[1].trim();
         break;
+      }
       
       case 'taskType':
         // Extract task type

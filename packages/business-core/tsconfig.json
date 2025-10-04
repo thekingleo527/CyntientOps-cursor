@@ -5,7 +5,11 @@
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "composite": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*"
@@ -14,6 +18,18 @@
     "node_modules",
     "dist",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "../api-clients/**/*",
+    "../managers/**/*",
+    "../ui-components/**/*",
+    "../database/**/*",
+    "../domain-schema/**/*",
+    "../intelligence-services/**/*",
+    "../offline-support/**/*",
+    "../realtime-sync/**/*",
+    "../command-chains/**/*",
+    "../design-tokens/**/*",
+    "../testing/**/*",
+    "../data-seed/**/*"
   ]
 }

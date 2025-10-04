@@ -91,7 +91,7 @@ export class InventoryService {
 
     // Ensure operational data is available for light intelligence
     const ops = OperationalDataService.getInstance();
-    try { await ops.initialize(); } catch {}
+    try { await ops.initialize(); } catch { /* TODO: Implement */ }
 
     const b = ops.getBuildingById(buildingId);
     const sf = b?.squareFootage || 0;

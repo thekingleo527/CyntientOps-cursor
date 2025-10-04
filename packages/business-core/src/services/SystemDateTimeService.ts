@@ -199,7 +199,7 @@ export class SystemDateTimeService {
    */
   public getNextBusinessDay(date?: Date): Date {
     const startDate = date || this.getCurrentDateTime();
-    let nextDay = new Date(startDate);
+    const nextDay = new Date(startDate);
     
     do {
       nextDay.setDate(nextDay.getDate() + 1);

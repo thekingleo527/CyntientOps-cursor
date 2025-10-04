@@ -56,11 +56,11 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
           if (t.includes('building') || t.includes('routine') || t.includes('compliance')) {
             void refreshDashboard();
           }
-        } catch {}
+        } catch { /* TODO: Implement */ }
       });
-    } catch {}
+    } catch { /* TODO: Implement */ }
     return () => {
-      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
+      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch { /* TODO: Implement */ }
     };
   }, [clientId]);
 

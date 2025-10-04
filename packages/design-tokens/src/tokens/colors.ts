@@ -153,12 +153,6 @@ export const Colors = {
   medium: BorderColors.medium,
   glassOverlayLight: 'rgba(255, 255, 255, 0.1)',
   glassOverlayDark: 'rgba(255, 255, 255, 0.2)',
-  
-  // Fix border color access
-  borderLight: BorderColors.light,
-  borderMedium: BorderColors.medium,
-  borderStrong: BorderColors.strong,
-  borderAccent: BorderColors.accent,
 } as const;
 
 export type ColorRole = keyof typeof RoleColors;

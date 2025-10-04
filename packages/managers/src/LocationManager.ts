@@ -56,7 +56,7 @@ export class LocationManager {
   private locationHistory: Map<string, LocationData[]> = new Map();
   private geofences: Map<string, GeofenceConfig> = new Map();
   private trackingWorkers: Set<string> = new Set();
-  private watchId: number | null = null;
+  private watchId: NodeJS.Timeout | null = null;
 
   private constructor(databaseManager: DatabaseManager) {
     this.databaseManager = databaseManager;
@@ -73,10 +73,10 @@ export class LocationManager {
   /**
    * Initialize geofences for all buildings
    */
-  private initializeGeofences(): void {
-    const buildings = this.databaseManager.getBuildings();
+  private async initializeGeofences(): Promise<void> {
+    const buildings = await this.databaseManager.getBuildings();
     
-    buildings.forEach(building => {
+    buildings.forEach((building: any) => {
       this.geofences.set(building.id, {
         buildingId: building.id,
         center: {
@@ -170,10 +170,10 @@ export class LocationManager {
   /**
    * Simulate location update (for testing)
    */
-  private simulateLocationUpdate(): void {
-    this.trackingWorkers.forEach(workerId => {
+  private async simulateLocationUpdate(): Promise<void> {
+    this.trackingWorkers.forEach(async (workerId) => {
       // Simulate location near a random building
-      const buildings = this.databaseManager.getBuildings();
+      const buildings = await this.databaseManager.getBuildings();
       const randomBuilding = buildings[Math.floor(Math.random() * buildings.length)];
       
       const location: LocationData = {

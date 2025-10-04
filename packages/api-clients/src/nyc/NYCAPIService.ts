@@ -88,7 +88,7 @@ export class NYCAPIService {
   }
 
   private sanitizeInput(input: string): string {
-    return input.replace(/[<>\"'&]/g, '');
+    return input.replace(/[<>"'&]/g, '');
   }
 
   // Rate limiting methods
@@ -255,10 +255,6 @@ export class NYCAPIService {
     return this.fetch<DSNYViolation[]>(endpoint);
   }
 
-  // DSNY Violations API - using new service
-  async getDSNYViolations(address: string, useDemoData = false): Promise<DSNYViolationsResult> {
-    return dsnyViolationsService.getViolationsForAddress(address, useDemoData);
-  }
 
   // Get comprehensive compliance data for a building
   async getBuildingComplianceData(bbl: string, bin: string, address?: string): Promise<NYCComplianceData> {

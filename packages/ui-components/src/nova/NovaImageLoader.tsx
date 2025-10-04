@@ -187,7 +187,8 @@ export const useNovaImageLoader = () => {
   const loadImageFromAssets = async (_imageName: string): Promise<NovaImageInfo | null> => {
     try {
       // Metro requires static requires; resolve to canonical assistant image
-      const asset = Asset.fromModule(require('../../../apps/mobile-rn/assets/images/AIAssistant.png'));
+      // Use a default placeholder image instead of importing from mobile app
+      const asset = Asset.fromURI('https://via.placeholder.com/100x100/4A90E2/FFFFFF?text=AI');
       await asset.downloadAsync();
       
       if (asset.localUri) {

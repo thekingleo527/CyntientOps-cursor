@@ -463,10 +463,10 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
       {React.useEffect(() => {
         const id = `tabs-${userRole}-${userId}`;
         try {
-          services.realTimeOrchestrator.addUpdateListener(id, () => {});
-        } catch {}
+          services.realTimeOrchestrator.addUpdateListener(id, () => { /* TODO: Implement */ });
+        } catch { /* TODO: Implement */ }
         return () => {
-          try { services.realTimeOrchestrator.removeUpdateListener(id); } catch {}
+          try { services.realTimeOrchestrator.removeUpdateListener(id); } catch { /* TODO: Implement */ }
         };
       }, [services.realTimeOrchestrator, userRole, userId])}
       <Tab.Navigator

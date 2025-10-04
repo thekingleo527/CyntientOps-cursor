@@ -420,7 +420,7 @@ export class AdvancedSecurityManager {
   async getAuditLogs(userId?: string, limit: number = 100): Promise<AuditLog[]> {
     try {
       let query = 'SELECT * FROM audit_logs';
-      let params: any[] = [];
+      const params: any[] = [];
 
       if (userId) {
         query += ' WHERE user_id = ?';
@@ -454,7 +454,7 @@ export class AdvancedSecurityManager {
   async getSecurityEvents(severity?: SecurityEvent['severity']): Promise<SecurityEvent[]> {
     try {
       let query = 'SELECT * FROM security_events';
-      let params: any[] = [];
+      const params: any[] = [];
 
       if (severity) {
         query += ' WHERE severity = ?';

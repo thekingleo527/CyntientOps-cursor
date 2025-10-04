@@ -79,7 +79,6 @@ export class AuthService {
 
       console.log(`User ${user.email} logged in successfully`);
       return this.currentUser;
-
     } catch (error) {
       Logger.error('Login failed:', undefined, 'AuthService');
       throw error;
@@ -112,7 +111,7 @@ export class AuthService {
    */
   getCurrentUser(): AuthUser | null {
     return this.currentUser;
-  }
+    }
 
   /**
    * Check if user is authenticated
@@ -126,14 +125,14 @@ export class AuthService {
    */
   hasRole(role: UserRole): boolean {
     return this.currentUser?.role === role;
-  }
+    }
 
   /**
    * Check if user has any of the specified roles
    */
   hasAnyRole(roles: UserRole[]): boolean {
     return this.currentUser ? roles.includes(this.currentUser.role) : false;
-  }
+    }
 
   /**
    * Restore session from stored data
@@ -148,10 +147,9 @@ export class AuthService {
         this.currentUser = session;
         this.setSessionTimeout();
         return session;
-      }
+    }
 
       return null;
-
     } catch (error) {
       Logger.error('Session restoration failed:', undefined, 'AuthService');
       return null;
@@ -178,7 +176,7 @@ export class AuthService {
       const profile = operationalData.getWorkerById(worker.id);
 
       return {
-        id: worker.id,
+  // id: worker.id,
         email: worker.email,
         role: (worker.role as UserRole) || 'worker',
         name: worker.name,
@@ -198,7 +196,7 @@ export class AuthService {
       const profile = operationalData.getClientById(client.id);
 
       return {
-        id: client.id,
+  // id: client.id,
         email: normalizedEmail,
         role: 'client',
         name: client.name,
@@ -208,7 +206,7 @@ export class AuthService {
     }
 
     return null;
-  }
+    }
 
   /**
    * Load user profile from database
@@ -220,24 +218,24 @@ export class AuthService {
 
       if (role === 'worker' || role === 'admin') {
         return operationalData.getWorkerById(userId);
-      }
+    }
 
       if (role === 'client') {
         return operationalData.getClientById(userId);
-      }
+    }
     } catch (error) {
       Logger.error('Failed to load user profile:', undefined, 'AuthService');
     }
 
     return undefined;
-  }
+    }
 
   /**
    * Generate session token
    */
   private generateSessionToken(): string {
     return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
+    }
 
   /**
    * Store session in database
@@ -282,12 +280,11 @@ export class AuthService {
    */
   private isSessionValid(session: AuthUser): boolean {
     if (!session.lastLogin) return false;
-    
-    const now = new Date();
+  // const now = new Date();
     const sessionAge = now.getTime() - session.lastLogin.getTime();
     
     return sessionAge < this.SESSION_DURATION;
-  }
+    }
 
   /**
    * Set session timeout
@@ -331,7 +328,7 @@ export class AuthService {
    */
   getDemoCredentials(): LoginCredentials[] {
     return [
-      { email: 'shawn.magloire@francomanagement.com', password: 'password' },
+  // { email: 'shawn.magloire@francomanagement.com', password: 'password' },
       { email: 'greg.hutson@francomanagement.com', password: 'password' },
       { email: 'david@jmrealty.org', password: 'client123' },
     ];
@@ -347,7 +344,7 @@ export class AuthService {
       if (stored.startsWith('$2a$') || stored.startsWith('$2b$')) {
         const bcrypt = require('bcryptjs');
         return await bcrypt.compare(input, stored);
-      }
+    }
       
       // For backward compatibility with plain text passwords (migration phase)
       // TODO: Remove this after all passwords are migrated to hashed format
@@ -363,7 +360,6 @@ export class AuthService {
    */
   async canAccessBuilding(buildingId: string): Promise<boolean> {
     if (!this.currentUser) return false;
-
     try {
       if (this.currentUser.role === 'admin' || this.currentUser.role === 'manager' || this.currentUser.role === 'super_admin') {
         return true; // Admins can access all buildings
@@ -380,7 +376,6 @@ export class AuthService {
       }
 
       return false;
-
     } catch (error) {
       Logger.error('Failed to check building access:', undefined, 'AuthService');
       return false;
@@ -392,7 +387,7 @@ export class AuthService {
    */
   canPerformAction(action: string): boolean {
     if (!this.currentUser) return false;
-
+    
     const permissions = {
       'worker': ['view_tasks', 'complete_tasks', 'add_photos', 'clock_in', 'clock_out'],
       'admin': ['view_all', 'assign_tasks', 'manage_workers', 'view_reports', 'manage_buildings'],
@@ -403,5 +398,5 @@ export class AuthService {
 
     const userPermissions = permissions[this.currentUser.role] || [];
     return userPermissions.includes('*') || userPermissions.includes(action);
-  }
+    }
 }

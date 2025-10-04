@@ -7,9 +7,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "baseUrl": "../../",
-    "paths": {
-      "@cyntientops/domain-schema": ["packages/domain-schema/src"]
-    }
+    "composite": true
   },
   "include": [
     "src/**/*"

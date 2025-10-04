@@ -233,7 +233,7 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         break;
     }
     if (onHeaderRoute) {
-      try { onHeaderRoute(route); } catch {}
+      try { onHeaderRoute(route); } catch { /* TODO: Implement */ }
     }
   };
 

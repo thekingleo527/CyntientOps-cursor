@@ -172,7 +172,6 @@ export class OfflineSyncManager {
 
       console.log(`📱 Operation queued: ${operation.type} ${operation.entity} (${operationId})`);
       return operationId;
-
     } catch (error) {
       console.error('Failed to queue operation:', error);
       throw error;
@@ -267,10 +266,10 @@ export class OfflineSyncManager {
           
           if (aPriority !== bPriority) {
             return bPriority - aPriority;
-          }
+    }
           
           return a.timestamp.getTime() - b.timestamp.getTime();
-        });
+    });
 
       // Process operations in batches
       const batchSize = 10;
@@ -364,13 +363,14 @@ export class OfflineSyncManager {
   private async syncTaskOperation(operation: SyncOperation): Promise<boolean> {
     try {
       switch (operation.type) {
-        case 'create':
+        case 'create': {
           const taskId = await this.serviceContainer.databaseIntegration.createTask(operation.data);
           return !!taskId;
+    }
           
         case 'update':
           return await this.serviceContainer.databaseIntegration.updateTaskStatus(
-            operation.entityId,
+      operation.entityId,
             operation.data.status,
             operation.data.completionNotes
           );
@@ -378,10 +378,9 @@ export class OfflineSyncManager {
         case 'delete':
           // Implement task deletion
           return true;
-          
-        default:
+      default:
           return false;
-      }
+    }
     } catch (error) {
       console.error('Task sync failed:', error);
       return false;
@@ -398,18 +397,18 @@ export class OfflineSyncManager {
       switch (clockOp) {
         case 'clock_in':
           return await this.serviceContainer.databaseIntegration.clockInWorker(
-            operation.userId,
+      operation.userId,
             buildingId
           );
           
         case 'clock_out':
           return await this.serviceContainer.databaseIntegration.clockOutWorker(
-            operation.userId
+      operation.userId
           );
           
         default:
           return false;
-      }
+    }
     } catch (error) {
       console.error('Clock sync failed:', error);
       return false;
@@ -513,7 +512,7 @@ export class OfflineSyncManager {
     }
     
     return 'data_mismatch';
-  }
+    }
 
   /**
    * Resolve conflict
@@ -522,7 +521,6 @@ export class OfflineSyncManager {
     try {
       const conflict = this.conflicts.find(c => c.id === conflictId);
       if (!conflict) return false;
-
       conflict.resolution = 'resolved';
       conflict.resolvedData = resolvedData;
       conflict.resolvedBy = 'user'; // In real implementation, use actual user ID
@@ -543,7 +541,6 @@ export class OfflineSyncManager {
       }
 
       return true;
-
     } catch (error) {
       console.error('Failed to resolve conflict:', error);
       return false;
@@ -802,7 +799,7 @@ export class OfflineSyncManager {
    */
   getPendingConflicts(): SyncConflict[] {
     return this.conflicts.filter(conflict => conflict.resolution === 'pending');
-  }
+    }
 
   /**
    * Force sync

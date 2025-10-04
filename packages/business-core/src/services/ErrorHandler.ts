@@ -108,7 +108,10 @@ export class ErrorHandler {
     }
 
     // Determine if error is recoverable and retryable
-    ({ recoverable, retryable, userMessage } = this.analyzeError(code, message, category, severity));
+    const analysis = this.analyzeError(code, message, category, severity);
+    recoverable = analysis.recoverable;
+    retryable = analysis.retryable;
+    userMessage = analysis.userMessage;
 
     return {
       code,

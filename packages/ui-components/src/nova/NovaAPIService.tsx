@@ -108,7 +108,7 @@ export class NovaAPIService {
    */
   isCurrentlyProcessing(): boolean {
     return this.isProcessing;
-  }
+    }
 
   /**
    * Get processing queue status
@@ -137,7 +137,6 @@ export class NovaAPIService {
       
       console.log('✅ Nova: Online response generated successfully');
       return response;
-      
     } catch (error) {
       console.log('❌ Nova: Online processing failed, falling back to offline:', error);
       // Fallback to offline processing if online fails
@@ -272,7 +271,7 @@ Please check your device storage and try again.`;
     console.log('✅ Nova: Offline response generated');
     
     return {
-      id: `response_${Date.now()}`,
+  // id: `response_${Date.now()}`,
       success: true,
       message: responseMessage,
       insights: [],
@@ -295,7 +294,7 @@ Please check your device storage and try again.`;
     try {
       // This would call the UnifiedIntelligenceService method
       // For now, return empty array
-      return [];
+  // return [];
     } catch (error) {
       console.error('❌ Failed to get cached insights:', error);
       return [];
@@ -312,7 +311,7 @@ Please check your device storage and try again.`;
     
     // Generate new context based on prompt content and current data
     return await this.generateEnhancedContext(prompt.text);
-  }
+    }
 
   private async generateEnhancedContext(text: string): Promise<NovaContext> {
     // Analyze prompt for context clues
@@ -367,7 +366,7 @@ Please check your device storage and try again.`;
     
     // Build comprehensive context
     return createNovaContext(
-      contextData,
+  // contextData,
       insights,
       {
         contextType: contextType,
@@ -387,7 +386,7 @@ Please check your device storage and try again.`;
     const actions = await this.generateActions(prompt, context);
     
     return {
-      id: `response_${Date.now()}`,
+  // id: `response_${Date.now()}`,
       success: true,
       message: responseText,
       insights,
@@ -426,7 +425,7 @@ Please check your device storage and try again.`;
     
     // General conversational response
     return await this.generateGeneralResponse(promptText, context);
-  }
+    }
 
   // MARK: - Specific Response Generators
 
@@ -436,7 +435,7 @@ Please check your device storage and try again.`;
     }
     
     return `We manage ${this.BUILDING_COUNT} buildings in our portfolio. Each building has specific operational requirements and assigned specialist workers. Would you like information about a specific building or general portfolio metrics?`;
-  }
+    }
 
   private async generateWorkerResponse(prompt: string, context: NovaContext): Promise<string> {
     if (prompt.includes('kevin')) {
@@ -444,7 +443,7 @@ Please check your device storage and try again.`;
     }
     
     return `Our team includes ${this.WORKER_COUNT} active workers, each with specialized skills and building assignments. Workers are assigned based on their expertise and the specific needs of each property. Would you like information about a specific worker or team assignments?`;
-  }
+    }
 
   private async generateTaskResponse(prompt: string, context: NovaContext): Promise<string> {
     // Enhanced with real-time data if available
@@ -457,11 +456,11 @@ Please check your device storage and try again.`;
     response += `Tasks are prioritized by urgency and building requirements. Our system ensures efficient allocation based on worker expertise and building needs. Would you like to see pending tasks or completion statistics?`;
     
     return response;
-  }
+    }
 
   private async generatePortfolioResponse(prompt: string, context: NovaContext): Promise<string> {
     return `Portfolio Overview:
-• Buildings: ${this.BUILDING_COUNT} properties under management
+  // • Buildings: ${this.BUILDING_COUNT} properties under management
 • Active Workers: ${this.WORKER_COUNT} specialized team members
 • Current Tasks: ${this.TASK_COUNT} active assignments
 
@@ -487,7 +486,7 @@ Our portfolio spans diverse property types from residential to specialized facil
 What would you like to know about your portfolio operations?`;
     
     return response;
-  }
+    }
 
   // MARK: - Insight Generation
 
@@ -520,7 +519,7 @@ What would you like to know about your portfolio operations?`;
     }
     
     return insights;
-  }
+    }
 
   // MARK: - Action Generation
 
@@ -609,7 +608,7 @@ What would you like to know about your portfolio operations?`;
     });
     
     return actions;
-  }
+    }
 
   // MARK: - Context Type Determination
 
@@ -665,7 +664,7 @@ What would you like to know about your portfolio operations?`;
     // 4. Return formatted result
     
     return 'API response placeholder';
-  }
+    }
 
   /**
    * Prepare for streaming responses
@@ -696,7 +695,7 @@ What would you like to know about your portfolio operations?`;
       return await this.processPrompt(prompt);
     } catch (error) {
       return {
-        id: `response_${Date.now()}`,
+  // id: `response_${Date.now()}`,
         success: false,
         message: `Unable to process request: ${error}`,
         insights: [],

@@ -690,7 +690,7 @@ export class WorkerDashboardViewModel {
         
         console.log(`Task ${taskId} status updated to ${status}`);
         return true;
-      }
+    }
       
       return false;
     } catch (error) {
@@ -721,7 +721,7 @@ export class WorkerDashboardViewModel {
   public getState() {
     // Return a basic state object for now
     return {
-      userRole: 'worker' as any,
+  // userRole: 'worker' as any,
       isLoading: false,
       selectedTab: 'Priorities' as any,
       uiState: {
@@ -789,7 +789,7 @@ export class WorkerDashboardViewModel {
     try {
       const status = await this.container.clockIn.getClockInStatus(workerId);
       return {
-        isClockedIn: status.isClockedIn,
+  // isClockedIn: status.isClockedIn,
         clockInTime: status.clockInTime,
         currentBuilding: status.buildingId
       };
@@ -857,7 +857,7 @@ export class WorkerDashboardViewModel {
     const hoursWorked = clockInTime ? (now.getTime() - clockInTime.getTime()) / (1000 * 60 * 60) : 0;
     
     return {
-      hoursWorked: Math.round(hoursWorked * 100) / 100,
+  // hoursWorked: Math.round(hoursWorked * 100) / 100,
       tasksCompleted: this.state.tasks.filter(t => t.isCompleted).length
     };
   }
@@ -966,17 +966,17 @@ export function useWorkerDashboardViewModel(
   
   const currentBuilding = useMemo(() => {
     return state.assignedBuildings.find(b => b.status === BuildingStatus.CURRENT);
-  }, [state.assignedBuildings]);
+    }, [state.assignedBuildings]);
 
   const hasUrgentTasks = useMemo(() => {
     return state.urgentTasks.length > 0;
-  }, [state.urgentTasks]);
+    }, [state.urgentTasks]);
 
   const completionRate = useMemo(() => {
     const total = state.todaysTasks.length;
     const completed = state.completedTasks.length;
     return total > 0 ? (completed / total) * 100 : 0;
-  }, [state.todaysTasks.length, state.completedTasks.length]);
+    }, [state.todaysTasks.length, state.completedTasks.length]);
 
   // MARK: - Data Loading Methods
   
@@ -1320,8 +1320,7 @@ export function useWorkerDashboardViewModel(
     try {
       const task = state.todaysTasks.find(t => t.id === taskId);
       if (!task) return;
-
-      const newStatus = !task.isCompleted;
+  // const newStatus = !task.isCompleted;
       await container.tasks.updateTaskStatus(taskId, newStatus ? 'completed' : 'pending');
       
       setState(prev => ({
@@ -1341,7 +1340,7 @@ export function useWorkerDashboardViewModel(
   const getPhotoRequirement = useCallback((taskId: string): boolean => {
     const task = state.todaysTasks.find(t => t.id === taskId);
     return task?.requiresPhoto ?? false;
-  }, [state.todaysTasks]);
+    }, [state.todaysTasks]);
 
   const createPhotoEvidenceForTask = useCallback((taskId: string, photoURLs: string[]) => {
     const task = state.todaysTasks.find(t => t.id === taskId);
@@ -1350,7 +1349,7 @@ export function useWorkerDashboardViewModel(
       : `Task completed with photo verification: ${task?.title ?? 'Task'}`;
     
     return {
-      description,
+  // description,
       photoURLs,
       timestamp: new Date()
     };
@@ -1547,8 +1546,7 @@ export function useWorkerDashboardViewModel(
 
   const updateMapRegion = useCallback(() => {
     if (state.assignedBuildings.length === 0) return;
-    
-    const coordinates = state.assignedBuildings.map(b => b.coordinate);
+  // const coordinates = state.assignedBuildings.map(b => b.coordinate);
     const minLat = Math.min(...coordinates.map(c => c.latitude));
     const maxLat = Math.max(...coordinates.map(c => c.latitude));
     const minLon = Math.min(...coordinates.map(c => c.longitude));
@@ -1583,7 +1581,7 @@ export function useWorkerDashboardViewModel(
     } catch (error) {
       // Return default capabilities
       return {
-        canUploadPhotos: true,
+  // canUploadPhotos: true,
         canAddNotes: true,
         canViewMap: true,
         canAddEmergencyTasks: false,
@@ -1597,7 +1595,7 @@ export function useWorkerDashboardViewModel(
     try {
       const buildings = await container.workers.getAssignedBuildings(workerId);
       return buildings.map(building => ({
-        id: building.id,
+  // id: building.id,
         name: building.name,
         address: building.address,
         coordinate: {
@@ -1620,7 +1618,7 @@ export function useWorkerDashboardViewModel(
       if (!workerName) {
         console.warn(`Worker not found for ID: ${workerId}`);
         return [];
-      }
+    }
       
       // Get all tasks for this worker from real operational data
       const realTasks = container.operationalData.getRealWorldTasks(workerName);
@@ -1675,7 +1673,7 @@ export function useWorkerDashboardViewModel(
     try {
       const schedule = await container.workers.getWorkerSchedule(workerId, new Date());
       return {
-        date: new Date(),
+  // date: new Date(),
         items: schedule.map(item => ({
           id: item.id,
           startTime: item.startTime,
@@ -1692,7 +1690,7 @@ export function useWorkerDashboardViewModel(
     } catch (error) {
       console.error('Failed to load today\'s schedule:', error);
       return {
-        date: new Date(),
+  // date: new Date(),
         items: [],
         totalHours: 0
       };
@@ -1703,7 +1701,7 @@ export function useWorkerDashboardViewModel(
     try {
       const performance = await container.workers.getWorkerPerformance(workerId);
       return {
-        efficiency: performance.efficiency,
+  // efficiency: performance.efficiency,
         completedCount: performance.completedCount,
         averageTime: performance.averageTime,
         qualityScore: performance.qualityScore,
@@ -1712,7 +1710,7 @@ export function useWorkerDashboardViewModel(
     } catch (error) {
       console.error('Failed to load worker performance:', error);
       return {
-        efficiency: 0,
+  // efficiency: 0,
         completedCount: 0,
         averageTime: 0,
         qualityScore: 0,
@@ -1733,7 +1731,7 @@ export function useWorkerDashboardViewModel(
       const risk = await weatherClient.getOutdoorWorkRisk();
 
       return {
-        temperature: current.temperature,
+  // temperature: current.temperature,
         condition: current.description,
         guidance: risk.recommendations[0] || 'Weather conditions suitable for outdoor work',
         isOutdoorSafe: risk.isSafeForWork,
@@ -1743,7 +1741,7 @@ export function useWorkerDashboardViewModel(
     } catch (error) {
       console.error('Failed to load weather data:', error);
       return {
-        temperature: 0,
+  // temperature: 0,
         condition: 'Unknown',
         guidance: 'Weather data unavailable',
         isOutdoorSafe: true,
@@ -1766,12 +1764,12 @@ export function useWorkerDashboardViewModel(
   const mapTaskUrgency = (urgency: string): TaskUrgency => {
     switch (urgency) {
       case 'low': return TaskUrgency.LOW;
-      case 'normal': return TaskUrgency.NORMAL;
-      case 'high': return TaskUrgency.HIGH;
-      case 'urgent': return TaskUrgency.URGENT;
-      case 'critical': return TaskUrgency.CRITICAL;
-      case 'emergency': return TaskUrgency.EMERGENCY;
-      default: return TaskUrgency.NORMAL;
+  // case 'normal': return TaskUrgency.NORMAL;
+  // case 'high': return TaskUrgency.HIGH;
+  // case 'urgent': return TaskUrgency.URGENT;
+  // case 'critical': return TaskUrgency.CRITICAL;
+  // case 'emergency': return TaskUrgency.EMERGENCY;
+  // default: return TaskUrgency.NORMAL;
     }
   };
   
@@ -1790,14 +1788,14 @@ export function useWorkerDashboardViewModel(
       return TaskUrgency.MEDIUM;
     }
     return TaskUrgency.LOW;
-  };
+    };
 
   const mapTrendDirection = (trend: string): TrendDirection => {
     switch (trend) {
       case 'up': return TrendDirection.UP;
-      case 'down': return TrendDirection.DOWN;
-      case 'stable': return TrendDirection.STABLE;
-      default: return TrendDirection.STABLE;
+  // case 'down': return TrendDirection.DOWN;
+  // case 'stable': return TrendDirection.STABLE;
+  // default: return TrendDirection.STABLE;
     }
   };
 
@@ -1820,12 +1818,12 @@ export function useWorkerDashboardViewModel(
     });
 
     return unsubscribe;
-  }, [container.dashboardSync, workerId, currentBuilding]);
+    }, [container.dashboardSync, workerId, currentBuilding]);
 
   // MARK: - Return Combined State and Actions
   
   return {
-    ...state,
+  // ...state,
     currentBuilding,
     hasUrgentTasks,
     completionRate,

@@ -41,7 +41,7 @@ export interface AdminInsight {
   onAction?: () => void;
 }
 
-export interface AdminIntelligenceTab {
+export interface AdminIntelligenceTabData {
   id: 'overview' | 'workers' | 'buildings' | 'analytics' | 'quickactions';
   title: string;
   icon: string;

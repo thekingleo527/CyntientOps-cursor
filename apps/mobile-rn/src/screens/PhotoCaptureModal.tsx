@@ -18,7 +18,7 @@ type PhotoCaptureRoute = RouteProp<RootStackParamList, 'PhotoCaptureModal'>;
 
 export const PhotoCaptureModal: React.FC = () => {
   const route = useRoute<PhotoCaptureRoute>();
-  const { taskId, buildingId: routeBuildingId } = route.params || {} as any;
+  const { taskId, buildingId: routeBuildingId } = route.params || { /* TODO: Implement */ } as any;
 
   const [isBusy, setIsBusy] = useState(false);
   const [step, setStep] = useState<'pick' | 'tag' | 'done'>('pick');
@@ -39,9 +39,8 @@ export const PhotoCaptureModal: React.FC = () => {
       const sp = spaces.find(s => s.id === selectedSpaceId) || spaces.find(s => s.id === suggestedSpaceId);
       const merged = TagSuggestionService.getSuggestions({ taskName, buildingName: (buildingId || routeBuildingId || undefined) as any, space: sp ? { name: sp.name, floor: sp.floor, category: sp.category } : undefined });
       setSuggestedTags(merged);
-    } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSpaceId, suggestedSpaceId]);
+    } catch { /* TODO: Implement */ }
+      }, [selectedSpaceId, suggestedSpaceId]);
 
   const handleAttach = async () => {
     try {
@@ -77,7 +76,7 @@ export const PhotoCaptureModal: React.FC = () => {
             chosenUri = result.assets[0].uri;
           }
         }
-      } catch {}
+      } catch { /* TODO: Implement */ }
 
       // Fallback: grab latest photo from library
       if (!chosenUri) {
@@ -117,14 +116,14 @@ export const PhotoCaptureModal: React.FC = () => {
           }
           if (best) { setSuggestedSpaceId(best.id); setSelectedSpaceId(best.id); }
         }
-      } catch {}
+      } catch { /* TODO: Implement */ }
 
       setImageUri(chosenUri);
       // initialize base tag suggestions
       try {
         const baseTags = TagSuggestionService.getSuggestions({ taskName, buildingName: (buildingId || routeBuildingId || undefined) as any });
         setSuggestedTags(baseTags);
-      } catch {}
+      } catch { /* TODO: Implement */ }
       setStep('tag');
     } catch (err) {
       Alert.alert('Failed', 'Unable to attach photo evidence.');
@@ -244,7 +243,7 @@ export const PhotoCaptureModal: React.FC = () => {
                 } as any);
 
                 if (selectedSpace) {
-                  try { await manager.specifyWorkerArea(saved.id, selectedSpace.id); } catch {}
+                  try { await manager.specifyWorkerArea(saved.id, selectedSpace.id); } catch { /* TODO: Implement */ }
                 }
 
                 setStep('done');

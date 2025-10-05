@@ -60,14 +60,9 @@ import { OperationalDataService } from './OperationalDataService';
 import { BuildingService } from './BuildingService';
 import { TaskService } from './TaskService';
 // // import { NYCAPIService } from '@cyntientops/api-clients'; // Disabled for TypeScript compatibility
-
-// Local mock implementation
-class NYCAPIService {
-  static getInstance() { return new NYCAPIService(); }
-  async getViolations() { return []; }
-  async getPermits() { return []; }
-} // Disabled for TypeScript compatibility
 import { Logger } from './LoggingService';
+
+// NYCAPIService is already declared above
 
 export interface BuildingMetrics {
   buildingId: string;

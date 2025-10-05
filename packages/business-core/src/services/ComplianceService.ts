@@ -70,12 +70,7 @@ import {
 import { ServiceContainer } from '../ServiceContainer';
 // // import { NYCAPIService, HPDViolation, DOBPermit, DSNYRoute, LL97Emission } from '@cyntientops/api-clients'; // Disabled for TypeScript compatibility
 
-// Local mock implementations
-class NYCAPIService {
-  static getInstance() { return new NYCAPIService(); }
-  async getViolations() { return []; }
-  async getPermits() { return []; }
-}
+// NYCAPIService is already declared above
 
 interface HPDViolation {
   id: string;

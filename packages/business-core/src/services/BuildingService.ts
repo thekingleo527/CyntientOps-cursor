@@ -88,13 +88,9 @@ export interface BuildingMaintenanceSchedule {
 }
 
 // // import { APIClientManager } from '@cyntientops/api-clients'; // Disabled for TypeScript compatibility
-
-// Local mock implementation
-class APIClientManager {
-  static getInstance() { return new APIClientManager(); }
-  async getData() { return null; }
-} // Disabled for TypeScript compatibility
 import { Logger } from './LoggingService';
+
+// APIClientManager is already declared above
 
 export class BuildingService {
   private operationalDataService: OperationalDataService;

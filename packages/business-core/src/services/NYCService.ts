@@ -59,22 +59,7 @@ export class PropertyValueService {
 import { BuildingService } from './BuildingService';
 // // import { NYCAPIService, DSNYViolationsService, PropertyValueService } from '@cyntientops/api-clients'; // Disabled for TypeScript compatibility
 
-// Local mock implementations
-class NYCAPIService {
-  static getInstance() { return new NYCAPIService(); }
-  async getViolations() { return []; }
-  async getPermits() { return []; }
-}
-
-class DSNYViolationsService {
-  static getInstance() { return new DSNYViolationsService(); }
-  async getViolations() { return []; }
-}
-
-class PropertyValueService {
-  static getInstance() { return new PropertyValueService(); }
-  async getPropertyValue() { return null; }
-} // Disabled for TypeScript compatibility
+// All service classes are already declared above
 import { Logger } from './LoggingService';
 import { CacheManager } from './CacheManager';
 

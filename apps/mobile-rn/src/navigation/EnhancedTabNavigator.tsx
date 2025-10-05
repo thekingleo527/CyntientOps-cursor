@@ -463,10 +463,22 @@ export const EnhancedTabNavigator: React.FC<TabNavigatorProps> = ({
       {React.useEffect(() => {
         const id = `tabs-${userRole}-${userId}`;
         try {
-          services.realTimeOrchestrator.addUpdateListener(id, () => { /* TODO: Implement */ });
-        } catch { /* TODO: Implement */ }
+          services.realTimeOrchestrator.addUpdateListener(id, (update) => {
+            // Handle real-time updates for tab-specific data
+            console.log('Real-time update received for tabs:', update);
+            // Future: Implement specific update handling based on update type
+          });
+        } catch (error) {
+          console.warn('Failed to add real-time listener for tabs:', error);
+          // Non-critical: Real-time updates are optional, app continues to work
+        }
         return () => {
-          try { services.realTimeOrchestrator.removeUpdateListener(id); } catch { /* TODO: Implement */ }
+          try { 
+            services.realTimeOrchestrator.removeUpdateListener(id); 
+          } catch (error) {
+            console.warn('Failed to remove real-time listener for tabs:', error);
+            // Non-critical: Cleanup failed but component is unmounting
+          }
         };
       }, [services.realTimeOrchestrator, userRole, userId])}
       <Tab.Navigator

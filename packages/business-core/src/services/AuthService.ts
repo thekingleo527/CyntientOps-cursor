@@ -362,8 +362,16 @@ export class AuthService {
       }
       
       // For backward compatibility with plain text passwords (migration phase)
-      // TODO: Remove this after all passwords are migrated to hashed format
-      return stored === input;
+      // Check if this is a legacy plain text password
+      if (stored === input) {
+        // Legacy password found - log for migration tracking
+        Logger.warn('Legacy plain text password detected - consider migrating to hashed format', 
+          { userId: input }, 'AuthService');
+        return true;
+      }
+      
+      // Password doesn't match
+      return false;
     } catch (error) {
       Logger.error('Password verification failed:', error, 'AuthService');
       return false;

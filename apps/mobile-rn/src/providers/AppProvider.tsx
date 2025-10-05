@@ -30,7 +30,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Preload critical assets early and in parallel
-    AssetOptimizer.getInstance().preloadCriticalAssets().catch(() => { /* TODO: Implement */ });
+    AssetOptimizer.getInstance().preloadCriticalAssets().catch((error) => {
+      console.warn('Failed to preload critical assets:', error);
+      // Non-critical: Assets will be loaded on-demand
+    });
     // Defer heavy initialization until after first interactions to improve TTI
     const task = InteractionManager.runAfterInteractions(() => {
       void initializeApp();
@@ -81,7 +84,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       try {
         const bc = await import('@cyntientops/business-core');
         bc.Logger.error('App initialization failed', err as any, 'AppProvider');
-      } catch { /* TODO: Implement */ }
+      } catch (loggerError) {
+        console.error('Failed to log app initialization error:', loggerError);
+        // Fallback: Log to console if business-core logger fails
+        console.error('App initialization failed:', err);
+      }
       setError(err instanceof Error ? err : new Error('Unknown error'));
     }
   };

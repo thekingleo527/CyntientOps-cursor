@@ -91,7 +91,12 @@ export class InventoryService {
 
     // Ensure operational data is available for light intelligence
     const ops = OperationalDataService.getInstance();
-    try { await ops.initialize(); } catch { /* TODO: Implement */ }
+    try { 
+      await ops.initialize(); 
+    } catch (error) {
+      Logger.warn('Failed to initialize operational data service:', error, 'InventoryService');
+      // Non-critical: Inventory can still be fetched without full operational data
+    }
 
     const b = ops.getBuildingById(buildingId);
     const sf = b?.squareFootage || 0;

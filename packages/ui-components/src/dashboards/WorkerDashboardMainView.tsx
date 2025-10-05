@@ -232,7 +232,12 @@ export const WorkerDashboardMainView: React.FC<WorkerDashboardMainViewProps> = (
         break;
     }
     if (onHeaderRoute) {
-      try { onHeaderRoute(route); } catch { /* TODO: Implement */ }
+      try { 
+        onHeaderRoute(route); 
+      } catch (error) {
+        console.warn('Failed to handle header route:', error);
+        // Non-critical: Route handling failed but navigation can continue
+      }
     }
   };
 

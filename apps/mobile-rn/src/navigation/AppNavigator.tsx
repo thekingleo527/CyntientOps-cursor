@@ -121,7 +121,13 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
       }
 
       setSession(validated);
-      try { services.sessionManager.setCurrentSession(validated); } catch { /* TODO: Implement */ }
+      try { 
+        services.sessionManager.setCurrentSession(validated); 
+      } catch (error) {
+        console.warn('Failed to set current session, continuing with restored session:', error);
+        // Session is still valid, just couldn't set it in the manager
+        // This is non-critical as the session is already restored
+      }
       setUser(resolveAppUser(validated));
     } catch (error) {
       console.error('Failed to restore session', error);
@@ -199,7 +205,11 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
       await secureStorage.removeSessionToken();
     } catch (err) {
       // Best-effort logout - ensure token is removed even on error
-      await secureStorage.removeSessionToken().catch(() => { /* TODO: Implement */ });
+      await secureStorage.removeSessionToken().catch((error) => {
+        console.warn('Failed to remove session token during logout:', error);
+        // Non-critical: token removal failed but logout should continue
+        // The session is already cleared from memory
+      });
     } finally {
       setSession(null);
       setUser(null);

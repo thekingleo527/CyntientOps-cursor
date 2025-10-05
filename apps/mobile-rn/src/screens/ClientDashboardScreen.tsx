@@ -56,11 +56,22 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
           if (t.includes('building') || t.includes('routine') || t.includes('compliance')) {
             void refreshDashboard();
           }
-        } catch { /* TODO: Implement */ }
+        } catch (error) {
+          console.warn('Failed to handle real-time update for client dashboard:', error);
+          // Non-critical: Dashboard will refresh on next manual refresh
+        }
       });
-    } catch { /* TODO: Implement */ }
+    } catch (error) {
+      console.warn('Failed to add real-time listener for client dashboard:', error);
+      // Non-critical: Dashboard works without real-time updates
+    }
     return () => {
-      try { services.realTimeOrchestrator.removeUpdateListener(id); } catch { /* TODO: Implement */ }
+      try { 
+        services.realTimeOrchestrator.removeUpdateListener(id); 
+      } catch (error) {
+        console.warn('Failed to remove real-time listener for client dashboard:', error);
+        // Non-critical: Cleanup failed but component is unmounting
+      }
     };
   }, [clientId]);
 

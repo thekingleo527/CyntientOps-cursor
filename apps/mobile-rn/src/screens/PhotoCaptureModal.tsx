@@ -18,7 +18,7 @@ type PhotoCaptureRoute = RouteProp<RootStackParamList, 'PhotoCaptureModal'>;
 
 export const PhotoCaptureModal: React.FC = () => {
   const route = useRoute<PhotoCaptureRoute>();
-  const { taskId, buildingId: routeBuildingId } = route.params || { /* TODO: Implement */ } as any;
+  const { taskId, buildingId: routeBuildingId } = route.params || {};
 
   const [isBusy, setIsBusy] = useState(false);
   const [step, setStep] = useState<'pick' | 'tag' | 'done'>('pick');
@@ -39,7 +39,10 @@ export const PhotoCaptureModal: React.FC = () => {
       const sp = spaces.find(s => s.id === selectedSpaceId) || spaces.find(s => s.id === suggestedSpaceId);
       const merged = TagSuggestionService.getSuggestions({ taskName, buildingName: (buildingId || routeBuildingId || undefined) as any, space: sp ? { name: sp.name, floor: sp.floor, category: sp.category } : undefined });
       setSuggestedTags(merged);
-    } catch { /* TODO: Implement */ }
+    } catch (error) {
+      console.warn('Failed to get tag suggestions:', error);
+      // Non-critical: User can still add tags manually
+    }
       }, [selectedSpaceId, suggestedSpaceId]);
 
   const handleAttach = async () => {
@@ -76,7 +79,10 @@ export const PhotoCaptureModal: React.FC = () => {
             chosenUri = result.assets[0].uri;
           }
         }
-      } catch { /* TODO: Implement */ }
+      } catch (error) {
+        console.warn('Failed to process camera photo:', error);
+        // Non-critical: Will fallback to library photo
+      }
 
       // Fallback: grab latest photo from library
       if (!chosenUri) {
@@ -116,14 +122,20 @@ export const PhotoCaptureModal: React.FC = () => {
           }
           if (best) { setSuggestedSpaceId(best.id); setSelectedSpaceId(best.id); }
         }
-      } catch { /* TODO: Implement */ }
+      } catch (error) {
+        console.warn('Failed to suggest space for photo:', error);
+        // Non-critical: User can select space manually
+      }
 
       setImageUri(chosenUri);
       // initialize base tag suggestions
       try {
         const baseTags = TagSuggestionService.getSuggestions({ taskName, buildingName: (buildingId || routeBuildingId || undefined) as any });
         setSuggestedTags(baseTags);
-      } catch { /* TODO: Implement */ }
+      } catch (error) {
+        console.warn('Failed to get base tag suggestions:', error);
+        // Non-critical: User can add tags manually
+      }
       setStep('tag');
     } catch (err) {
       Alert.alert('Failed', 'Unable to attach photo evidence.');
@@ -243,7 +255,12 @@ export const PhotoCaptureModal: React.FC = () => {
                 } as any);
 
                 if (selectedSpace) {
-                  try { await manager.specifyWorkerArea(saved.id, selectedSpace.id); } catch { /* TODO: Implement */ }
+                  try { 
+                    await manager.specifyWorkerArea(saved.id, selectedSpace.id); 
+                  } catch (error) {
+                    console.warn('Failed to specify worker area:', error);
+                    // Non-critical: Photo is still saved, area can be specified later
+                  }
                 }
 
                 setStep('done');

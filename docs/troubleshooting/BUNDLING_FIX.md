@@ -28,6 +28,21 @@
 
 ---
 
+## 🆕 **Latest Fix: Missing Sentry Dependency**
+
+**Issue:** `Unable to resolve "@sentry/react-native" from "packages/business-core/src/services/LoggingService.ts"`
+
+**Root Cause:** Missing `@sentry/react-native` dependency for error tracking and logging
+
+**Solution Applied:**
+1. **Installed Sentry dependency** at workspace level using `yarn add -W @sentry/react-native`
+2. **Resolved LoggingService import** for error tracking functionality
+3. **Progress milestone:** Moved from TypeScript syntax errors to dependency resolution
+
+**Result:** ✅ Sentry dependency installed successfully, ready for next bundling test
+
+---
+
 ## 🎯 **Original Issue:** `Unable to resolve "../../App" from "node_modules/expo/AppEntry.js"`
 
 ---

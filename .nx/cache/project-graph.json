@@ -4151,13 +4151,40 @@
         "hash": "sha512-J3Q4Bkuo99k7mu+jPS9gSUSgq+lLRSI/+ahXNwV92XgJ/8UgOTxu2LPwhJnBk/sQKxq7E8WkZBnBiozukQMqrw=="
       }
     },
-    "npm:@react-navigation/elements": {
+    "npm:@react-navigation/bottom-tabs": {
       "type": "npm",
-      "name": "npm:@react-navigation/elements",
+      "name": "npm:@react-navigation/bottom-tabs",
+      "data": {
+        "version": "7.4.8",
+        "packageName": "@react-navigation/bottom-tabs",
+        "hash": "sha512-W85T9f5sPA2zNnkxBO0PF0Jg9CRAMYqD9hY20dAhuVM5I+qiCqhW7qLveK59mlbtdXuGmieit6FK3inKmXzL7A=="
+      }
+    },
+    "npm:@react-navigation/core": {
+      "type": "npm",
+      "name": "npm:@react-navigation/core",
+      "data": {
+        "version": "7.12.4",
+        "packageName": "@react-navigation/core",
+        "hash": "sha512-xLFho76FA7v500XID5z/8YfGTvjQPw7/fXsq4BIrVSqetNe/o/v+KAocEw4ots6kyv3XvSTyiWKh2g3pN6xZ9Q=="
+      }
+    },
+    "npm:@react-navigation/elements@2.6.4": {
+      "type": "npm",
+      "name": "npm:@react-navigation/elements@2.6.4",
       "data": {
         "version": "2.6.4",
         "packageName": "@react-navigation/elements",
         "hash": "sha512-O3X9vWXOEhAO56zkQS7KaDzL8BvjlwZ0LGSteKpt1/k6w6HONG+2Wkblrb057iKmehTkEkQMzMLkXiuLmN5x9Q=="
+      }
+    },
+    "npm:@react-navigation/elements": {
+      "type": "npm",
+      "name": "npm:@react-navigation/elements",
+      "data": {
+        "version": "2.6.5",
+        "packageName": "@react-navigation/elements",
+        "hash": "sha512-HOaekvFeoqKyaSKP2hakL7OUnw0jIhk/1wMjcovUKblT76LMTumZpriqsc30m/Vnyy1a8zgp4VsuA1xftcalgQ=="
       }
     },
     "npm:@react-navigation/native-stack": {
@@ -4167,6 +4194,33 @@
         "version": "7.3.26",
         "packageName": "@react-navigation/native-stack",
         "hash": "sha512-EjaBWzLZ76HJGOOcWCFf+h/M+Zg7M1RalYioDOb6ZdXHz7AwYNidruT3OUAQgSzg3gVLqvu5OYO0jFsNDPCZxQ=="
+      }
+    },
+    "npm:@react-navigation/native-stack@7.3.27": {
+      "type": "npm",
+      "name": "npm:@react-navigation/native-stack@7.3.27",
+      "data": {
+        "version": "7.3.27",
+        "packageName": "@react-navigation/native-stack",
+        "hash": "sha512-bbbud0pT63tGh706hQD/A3Z9gF1O2HtQ0dJqaiYzHzPy9wSOi82i721530tJkmccevAemUrZbEeEC5mxVo1DzQ=="
+      }
+    },
+    "npm:@react-navigation/native": {
+      "type": "npm",
+      "name": "npm:@react-navigation/native",
+      "data": {
+        "version": "7.1.18",
+        "packageName": "@react-navigation/native",
+        "hash": "sha512-DZgd6860dxcq3YX7UzIXeBr6m3UgXvo9acxp5jiJyIZXdR00Br9JwVkO7e0bUeTA2d3Z8dsmtAR84Y86NnH64Q=="
+      }
+    },
+    "npm:@react-navigation/routers": {
+      "type": "npm",
+      "name": "npm:@react-navigation/routers",
+      "data": {
+        "version": "7.5.1",
+        "packageName": "@react-navigation/routers",
+        "hash": "sha512-pxipMW/iEBSUrjxz2cDD7fNwkqR4xoi0E/PcfTQGCcdJwLoaxzab5kSadBLj1MTJyT0YRrOXL9umHpXtp+Dv4w=="
       }
     },
     "npm:@redis/bloom": {
@@ -6986,6 +7040,15 @@
         "hash": "sha512-9iE1PgSik9HeIIw2JO94IidnE3eBoQrFJ3w7sFuzSX4DpmZ3v5sZpUiV5Swcf6mQEF+Y0ru8Neo+p+nyh2J+hQ=="
       }
     },
+    "npm:decode-uri-component": {
+      "type": "npm",
+      "name": "npm:decode-uri-component",
+      "data": {
+        "version": "0.2.2",
+        "packageName": "decode-uri-component",
+        "hash": "sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ=="
+      }
+    },
     "npm:dedent": {
       "type": "npm",
       "name": "npm:dedent",
@@ -7616,9 +7679,9 @@
         "hash": "sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow=="
       }
     },
-    "npm:escape-string-regexp": {
+    "npm:escape-string-regexp@1.0.5": {
       "type": "npm",
-      "name": "npm:escape-string-regexp",
+      "name": "npm:escape-string-regexp@1.0.5",
       "data": {
         "version": "1.0.5",
         "packageName": "escape-string-regexp",
@@ -7634,9 +7697,9 @@
         "hash": "sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w=="
       }
     },
-    "npm:escape-string-regexp@4.0.0": {
+    "npm:escape-string-regexp": {
       "type": "npm",
-      "name": "npm:escape-string-regexp@4.0.0",
+      "name": "npm:escape-string-regexp",
       "data": {
         "version": "4.0.0",
         "packageName": "escape-string-regexp",
@@ -8057,6 +8120,15 @@
         "hash": "sha512-bTUHaJWRZ7ywP8dg3f+wfOwv6RwMV3mWT2CDUIhsK70GjNGlCtiWOCoHsA5Od/esPaVxqc37cCBvQGQRFStRlA=="
       }
     },
+    "npm:expo-haptics": {
+      "type": "npm",
+      "name": "npm:expo-haptics",
+      "data": {
+        "version": "15.0.7",
+        "packageName": "expo-haptics",
+        "hash": "sha512-7flWsYPrwjJxZ8x82RiJtzsnk1Xp9ahnbd9PhCy3NnsemyMApoWIEUr4waPqFr80DtiLZfhD9VMLL1CKa8AImQ=="
+      }
+    },
     "npm:expo-json-utils": {
       "type": "npm",
       "name": "npm:expo-json-utils",
@@ -8165,6 +8237,15 @@
         "hash": "sha512-fAAI0ZXxayc2Rt5KfQjULv+TFreuLRZ+hdpc5TxZJ7CDpW1ZIqaVzELHh1rYTRVEBDFDiCBXtioS9WWTEAX+fg=="
       }
     },
+    "npm:expo-speech": {
+      "type": "npm",
+      "name": "npm:expo-speech",
+      "data": {
+        "version": "14.0.7",
+        "packageName": "expo-speech",
+        "hash": "sha512-Ff/seq4tfj6AnGZj8Mj83EGnHj636f2mO30bPr3qQJzF9zn3ArakuUQTK8UrkVy0OS0E12z28d+9Fe+AgSUB0w=="
+      }
+    },
     "npm:expo-sqlite": {
       "type": "npm",
       "name": "npm:expo-sqlite",
@@ -8172,6 +8253,15 @@
         "version": "13.2.2",
         "packageName": "expo-sqlite",
         "hash": "sha512-aad52QL0Nbe5+KTlwNPEaSro9l39H5dWtGrykwWRvnUbAC9FMP+6ixSKtcNGNTEb7BHKx5AfuFVy+vxKVAOX1Q=="
+      }
+    },
+    "npm:expo-status-bar": {
+      "type": "npm",
+      "name": "npm:expo-status-bar",
+      "data": {
+        "version": "3.0.8",
+        "packageName": "expo-status-bar",
+        "hash": "sha512-L248XKPhum7tvREoS1VfE0H6dPCaGtoUWzRsUv7hGKdiB4cus33Rc0sxkWkoQ77wE8stlnUlL5lvmT0oqZ3ZBw=="
       }
     },
     "npm:expo-task-manager": {
@@ -8379,6 +8469,15 @@
         "version": "7.1.1",
         "packageName": "fill-range",
         "hash": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg=="
+      }
+    },
+    "npm:filter-obj": {
+      "type": "npm",
+      "name": "npm:filter-obj",
+      "data": {
+        "version": "1.1.0",
+        "packageName": "filter-obj",
+        "hash": "sha512-8rXg1ZnX7xzy2NGDVkBVaAy+lSlPNwad13BtgSlLuxfIslyt5Vg64U7tFcCt4WS1R0hvtnQybT/IyCkGZ3DpXQ=="
       }
     },
     "npm:finalhandler": {
@@ -13052,6 +13151,15 @@
         "hash": "sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w=="
       }
     },
+    "npm:query-string": {
+      "type": "npm",
+      "name": "npm:query-string",
+      "data": {
+        "version": "7.1.3",
+        "packageName": "query-string",
+        "hash": "sha512-hh2WYhq4fi8+b+/2Kg9CEge4fDPvHS534aOOvOZeQ3+Vf2mCFsaFBYj0i+iXcAq6I9Vzp5fjMFBlONvayDC1qg=="
+      }
+    },
     "npm:queue-microtask": {
       "type": "npm",
       "name": "npm:queue-microtask",
@@ -13158,6 +13266,15 @@
         "version": "17.0.2",
         "packageName": "react-is",
         "hash": "sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w=="
+      }
+    },
+    "npm:react-is@19.2.0": {
+      "type": "npm",
+      "name": "npm:react-is@19.2.0",
+      "data": {
+        "version": "19.2.0",
+        "packageName": "react-is",
+        "hash": "sha512-x3Ax3kNSMIIkyVYhWPyO09bu0uttcAIoecO/um/rKGQ4EltYWVYtyiGkS/3xMynrbVQdS69Jhlv8FXUEZehlzA=="
       }
     },
     "npm:react-native-camera": {
@@ -14195,6 +14312,15 @@
         "hash": "sha512-kvzhi7vqKTfkh0PZU+2D2PIllw2ymqJKujUcyPMd9Y75Nv4nPbGJZXNhxsgdQab2BmlDct1YnfQCguEvHr7VsQ=="
       }
     },
+    "npm:split-on-first": {
+      "type": "npm",
+      "name": "npm:split-on-first",
+      "data": {
+        "version": "1.1.0",
+        "packageName": "split-on-first",
+        "hash": "sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw=="
+      }
+    },
     "npm:split2": {
       "type": "npm",
       "name": "npm:split2",
@@ -14328,6 +14454,15 @@
         "version": "0.5.1",
         "packageName": "strict-event-emitter",
         "hash": "sha512-vMgjE/GGEPEFnhFub6pa4FmJBRBVOLpIII2hvCZ8Kzb7K0hlHo7mQv6xYrBvCL2LtAIBwFUK8wvuJgTVSQ5MFQ=="
+      }
+    },
+    "npm:strict-uri-encode": {
+      "type": "npm",
+      "name": "npm:strict-uri-encode",
+      "data": {
+        "version": "2.0.0",
+        "packageName": "strict-uri-encode",
+        "hash": "sha512-QwiXZgpRcKkhTj2Scnn++4PKtWsH0kpzZ62L2R6c/LUVYv7hVnZqcg2+sMuT6R7Jusu1vviK/MFsu6kNJfWlEQ=="
       }
     },
     "npm:string-length": {
@@ -16072,6 +16207,11 @@
       },
       {
         "source": "intelligence-services",
+        "target": "npm:expo-haptics",
+        "type": "static"
+      },
+      {
+        "source": "intelligence-services",
         "target": "npm:expo-av",
         "type": "static"
       }
@@ -16271,6 +16411,11 @@
       {
         "source": "business-core",
         "target": "npm:expo-av",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "npm:expo-speech",
         "type": "static"
       },
       {
@@ -16493,6 +16638,16 @@
       },
       {
         "source": "ui-components",
+        "target": "npm:expo-haptics",
+        "type": "dynamic"
+      },
+      {
+        "source": "ui-components",
+        "target": "npm:expo-haptics",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
         "target": "npm:@expo/vector-icons",
         "type": "static"
       },
@@ -16524,6 +16679,21 @@
       {
         "source": "ui-components",
         "target": "npm:expo-camera",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
+        "target": "npm:@react-navigation/native",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
+        "target": "npm:@react-navigation/bottom-tabs",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
+        "target": "npm:expo-speech",
         "type": "static"
       },
       {
@@ -16767,6 +16937,11 @@
       },
       {
         "source": "mobile-rn",
+        "target": "npm:expo-status-bar",
+        "type": "static"
+      },
+      {
+        "source": "mobile-rn",
         "target": "npm:react-native",
         "type": "static"
       },
@@ -16797,17 +16972,37 @@
       },
       {
         "source": "mobile-rn",
+        "target": "npm:@react-navigation/bottom-tabs",
+        "type": "static"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "npm:@react-navigation/native",
+        "type": "static"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "npm:@react-navigation/native-stack",
+        "type": "static"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "npm:expo-haptics",
+        "type": "static"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "npm:expo-speech",
+        "type": "static"
+      },
+      {
+        "source": "mobile-rn",
         "target": "npm:expo-linear-gradient",
         "type": "static"
       },
       {
         "source": "mobile-rn",
         "target": "npm:expo-camera",
-        "type": "static"
-      },
-      {
-        "source": "mobile-rn",
-        "target": "npm:@react-navigation/native-stack",
         "type": "static"
       },
       {
@@ -22954,6 +23149,72 @@
         "type": "static"
       }
     ],
+    "npm:@react-navigation/bottom-tabs": [
+      {
+        "source": "npm:@react-navigation/bottom-tabs",
+        "target": "npm:@react-navigation/elements",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/bottom-tabs",
+        "target": "npm:color",
+        "type": "static"
+      }
+    ],
+    "npm:@react-navigation/core": [
+      {
+        "source": "npm:@react-navigation/core",
+        "target": "npm:@react-navigation/routers",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/core",
+        "target": "npm:escape-string-regexp",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/core",
+        "target": "npm:nanoid",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/core",
+        "target": "npm:query-string",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/core",
+        "target": "npm:react-is@19.2.0",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/core",
+        "target": "npm:use-latest-callback",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/core",
+        "target": "npm:use-sync-external-store",
+        "type": "static"
+      }
+    ],
+    "npm:@react-navigation/elements@2.6.4": [
+      {
+        "source": "npm:@react-navigation/elements@2.6.4",
+        "target": "npm:color",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/elements@2.6.4",
+        "target": "npm:use-latest-callback",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/elements@2.6.4",
+        "target": "npm:use-sync-external-store",
+        "type": "static"
+      }
+    ],
     "npm:@react-navigation/elements": [
       {
         "source": "npm:@react-navigation/elements",
@@ -22974,12 +23235,58 @@
     "npm:@react-navigation/native-stack": [
       {
         "source": "npm:@react-navigation/native-stack",
-        "target": "npm:@react-navigation/elements",
+        "target": "npm:@react-navigation/elements@2.6.4",
         "type": "static"
       },
       {
         "source": "npm:@react-navigation/native-stack",
         "target": "npm:warn-once",
+        "type": "static"
+      }
+    ],
+    "npm:@react-navigation/native-stack@7.3.27": [
+      {
+        "source": "npm:@react-navigation/native-stack@7.3.27",
+        "target": "npm:@react-navigation/elements",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/native-stack@7.3.27",
+        "target": "npm:warn-once",
+        "type": "static"
+      }
+    ],
+    "npm:@react-navigation/native": [
+      {
+        "source": "npm:@react-navigation/native",
+        "target": "npm:@react-navigation/core",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/native",
+        "target": "npm:escape-string-regexp",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/native",
+        "target": "npm:fast-deep-equal",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/native",
+        "target": "npm:nanoid",
+        "type": "static"
+      },
+      {
+        "source": "npm:@react-navigation/native",
+        "target": "npm:use-latest-callback",
+        "type": "static"
+      }
+    ],
+    "npm:@react-navigation/routers": [
+      {
+        "source": "npm:@react-navigation/routers",
+        "target": "npm:nanoid",
         "type": "static"
       }
     ],
@@ -25373,7 +25680,7 @@
       },
       {
         "source": "npm:chalk@2.4.2",
-        "target": "npm:escape-string-regexp",
+        "target": "npm:escape-string-regexp@1.0.5",
         "type": "static"
       },
       {
@@ -25402,7 +25709,7 @@
       },
       {
         "source": "npm:chrome-launcher",
-        "target": "npm:escape-string-regexp@4.0.0",
+        "target": "npm:escape-string-regexp",
         "type": "static"
       },
       {
@@ -25424,7 +25731,7 @@
       },
       {
         "source": "npm:chromium-edge-launcher",
-        "target": "npm:escape-string-regexp@4.0.0",
+        "target": "npm:escape-string-regexp",
         "type": "static"
       },
       {
@@ -26863,7 +27170,7 @@
     "npm:eslint-plugin-eslint-comments": [
       {
         "source": "npm:eslint-plugin-eslint-comments",
-        "target": "npm:escape-string-regexp",
+        "target": "npm:escape-string-regexp@1.0.5",
         "type": "static"
       },
       {
@@ -27101,7 +27408,7 @@
       },
       {
         "source": "npm:eslint",
-        "target": "npm:escape-string-regexp@4.0.0",
+        "target": "npm:escape-string-regexp",
         "type": "static"
       },
       {
@@ -27535,6 +27842,13 @@
         "type": "static"
       }
     ],
+    "npm:expo-status-bar": [
+      {
+        "source": "npm:expo-status-bar",
+        "target": "npm:react-native-is-edge-to-edge",
+        "type": "static"
+      }
+    ],
     "npm:expo-task-manager": [
       {
         "source": "npm:expo-task-manager",
@@ -27764,7 +28078,7 @@
     "npm:figures": [
       {
         "source": "npm:figures",
-        "target": "npm:escape-string-regexp",
+        "target": "npm:escape-string-regexp@1.0.5",
         "type": "static"
       }
     ],
@@ -34949,6 +35263,28 @@
       {
         "source": "npm:qs",
         "target": "npm:side-channel",
+        "type": "static"
+      }
+    ],
+    "npm:query-string": [
+      {
+        "source": "npm:query-string",
+        "target": "npm:decode-uri-component",
+        "type": "static"
+      },
+      {
+        "source": "npm:query-string",
+        "target": "npm:filter-obj",
+        "type": "static"
+      },
+      {
+        "source": "npm:query-string",
+        "target": "npm:split-on-first",
+        "type": "static"
+      },
+      {
+        "source": "npm:query-string",
+        "target": "npm:strict-uri-encode",
         "type": "static"
       }
     ],

@@ -36,7 +36,26 @@ This project is the **multiplatform successor** to the SwiftUI version located a
 - **Enhanced offline support**: YJS-based CRDT synchronization with conflict resolution
 - **Rich developer experience**: Nx workspace with comprehensive tooling
 
-Refer to [`docs/CONTINUITY_REPORT.md`](./docs/CONTINUITY_REPORT.md) for detailed feature-by-feature implementation status. See the consolidated Documentation Index under [`docs/`](./docs/).
+Refer to [`docs/development/CONTINUITY_REPORT.md`](./docs/development/CONTINUITY_REPORT.md) for detailed feature-by-feature implementation status. See the consolidated Documentation Index under [`docs/`](./docs/).
+
+## 📚 Documentation Structure
+
+### Development Documentation
+- [`docs/development/CONTINUITY_REPORT.md`](./docs/development/CONTINUITY_REPORT.md) - Complete development progress and status
+- [`docs/development/DEVELOPMENT_BUILD_SOLUTION.md`](./docs/development/DEVELOPMENT_BUILD_SOLUTION.md) - Development build setup and troubleshooting
+- [`docs/development/SIMULATION_REPORT.md`](./docs/development/SIMULATION_REPORT.md) - Application simulation and testing results
+
+### Setup Documentation
+- [`docs/setup/FASTSSD_SETUP.md`](./docs/setup/FASTSSD_SETUP.md) - FastSSD development environment configuration
+- [`docs/setup/FASTSSD_STATUS.md`](./docs/setup/FASTSSD_STATUS.md) - FastSSD environment status and verification
+
+### Troubleshooting Documentation
+- [`docs/troubleshooting/BUNDLING_FIX.md`](./docs/troubleshooting/BUNDLING_FIX.md) - Metro bundler issues and solutions
+
+### Setup Scripts
+- [`scripts/setup/start-fastssd.sh`](./scripts/setup/start-fastssd.sh) - FastSSD environment startup script
+- [`scripts/setup/start-ios-simulator.sh`](./scripts/setup/start-ios-simulator.sh) - iOS simulator launch script
+- [`scripts/setup/ios-sim-setup-fastssd.sh`](./scripts/setup/ios-sim-setup-fastssd.sh) - iOS simulator FastSSD setup
 
 ---
 

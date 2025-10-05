@@ -1,21 +1,21 @@
 {
   "run": {
-    "command": "nx build business-core --verbose",
-    "startTime": "2025-10-04T12:17:06.701Z",
-    "endTime": "2025-10-04T12:17:15.570Z",
+    "command": "nx run mobile-rn:ios",
+    "startTime": "2025-10-05T03:55:00.407Z",
+    "endTime": "2025-10-05T03:58:17.195Z",
     "inner": false
   },
   "tasks": [
     {
-      "taskId": "business-core:build",
-      "target": "build",
-      "projectName": "business-core",
-      "hash": "14222062717626672217",
-      "startTime": "2025-10-04T12:17:06.706Z",
-      "endTime": "2025-10-04T12:17:15.570Z",
+      "taskId": "mobile-rn:ios",
+      "target": "ios",
+      "projectName": "mobile-rn",
+      "hash": "12962028917906574623",
+      "startTime": "2025-10-05T03:55:00.412Z",
+      "endTime": "2025-10-05T03:58:17.195Z",
       "params": "",
       "cacheStatus": "cache-miss",
-      "status": 0
+      "status": 1
     }
   ]
 }

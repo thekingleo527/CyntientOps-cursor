@@ -1,6 +1,6 @@
 import { registerRootComponent } from 'expo';
 import Constants from 'expo-constants';
-import App from './App';
+import App from './App.js';
 
 // Bridge selected app.json extras into process.env for runtime config (RN)
 try {

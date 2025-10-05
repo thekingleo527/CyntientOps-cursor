@@ -3,6 +3,7 @@
     "name": "CyntientOps",
     "slug": "cyntientops-mobile",
     "version": "1.0.0",
+    "main": "index.js",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "dark",
@@ -63,9 +64,6 @@
           "api.weather.gov",
           "secure.cyntientops.com"
         ]
-      },
-      "config": {
-        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -199,11 +197,9 @@
         "expo-build-properties",
         {
           "ios": {
-            "newArchEnabled": false,
             "deploymentTarget": "15.1"
           },
           "android": {
-            "newArchEnabled": false,
             "minSdkVersion": 23,
             "compileSdkVersion": 34,
             "targetSdkVersion": 34
@@ -216,6 +212,7 @@
     "experiments": {
       "typedRoutes": true
     },
+    "newArchEnabled": false,
     "extra": {
       "router": {
         "origin": false

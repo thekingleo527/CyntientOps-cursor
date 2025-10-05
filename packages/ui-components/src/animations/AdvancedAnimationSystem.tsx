@@ -7,6 +7,7 @@
 import React, { useRef, useEffect, ReactNode } from 'react';
 import { View, Animated, Easing, Dimensions, PanResponder, GestureResponderEvent, PanResponderGestureState, TouchableOpacity, Platform } from 'react-native';
 import { Colors } from '@cyntientops/design-tokens';
+import * as Haptics from 'expo-haptics';
 
 const { width, height } = Dimensions.get('window');
 
@@ -263,8 +264,7 @@ export const GracefulTouch: React.FC<{
     }
 
     if (hapticFeedback && Platform.OS === 'ios') {
-      const { HapticFeedback } = require('expo-haptics');
-      HapticFeedback.impactAsync(HapticFeedback.ImpactFeedbackStyle.Light);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   };
 

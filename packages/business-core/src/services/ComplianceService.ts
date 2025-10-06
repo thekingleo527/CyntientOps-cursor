@@ -291,7 +291,7 @@ export class ComplianceService {
           }
 
           // Load DOB permits (convert to compliance issues if needed)
-          const dobPermits = await nyc.getDOBPermits(bbl);
+          const dobPermits = await nyc.getDOBPermits(bin);
           for (const permit of dobPermits) {
             if (this.isPermitComplianceIssue(permit)) {
               violations.push(this.convertDOBPermitToComplianceIssue(permit, building));
@@ -610,21 +610,28 @@ export class ComplianceService {
   }
 
   private async generateTrendData(violations: ComplianceIssue[]): Promise<any[]> {
-    const trends = [];
+    // Group violations by month (last 12 months)
     const now = new Date();
-    
+    const buckets: Record<string, number> = {};
     for (let i = 11; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const count = Math.floor(Math.random() * 10) + 1;
-      
-      trends.push({
-        date,
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      buckets[key] = 0;
+    }
+    violations.forEach(v => {
+      const d = v.dateIssued || v.createdDate || new Date();
+      const dd = new Date(d);
+      const key = `${dd.getFullYear()}-${String(dd.getMonth() + 1).padStart(2, '0')}`;
+      if (key in buckets) buckets[key] += 1;
+    });
+    return Object.entries(buckets).map(([ym, count]) => {
+      const [y, m] = ym.split('-');
+      return {
+        date: new Date(Number(y), Number(m) - 1, 1),
         count,
         violationClass: 'All'
-      });
-    }
-
-    return trends;
+      };
+    });
   }
 
   // MARK: - NYC API Data Conversion Methods

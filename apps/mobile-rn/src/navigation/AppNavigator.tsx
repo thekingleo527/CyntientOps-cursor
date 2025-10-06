@@ -33,6 +33,9 @@ const DailyRoutineScreen = React.lazy(() => import('../screens/DailyRoutineScree
 const PhotoCaptureModal = React.lazy(() => import('../screens/PhotoCaptureModal'));
 const ProfileScreen = React.lazy(() => import('../screens/ProfileScreen'));
 const HPDDetailScreen = React.lazy(() => import('../screens/compliance/HPDDetailScreen'));
+const DOBDetailScreen = React.lazy(() => import('../screens/compliance/DOBDetailScreen'));
+const DSNYDetailScreen = React.lazy(() => import('../screens/compliance/DSNYDetailScreen'));
+const LL97DetailScreen = React.lazy(() => import('../screens/compliance/LL97DetailScreen'));
 
 // Enhanced Tab Navigator
 const EnhancedTabNavigator = React.lazy(() => import('./EnhancedTabNavigator'));
@@ -57,6 +60,9 @@ export type RootStackParamList = {
   WeeklyRoutine: undefined;
   DailyRoutine: undefined;
   HPDDetail: { buildingId: string };
+  DOBDetail: { buildingId: string };
+  DSNYDetail: { buildingId: string };
+  LL97Detail: { buildingId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -251,6 +257,66 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
                 userRole: user.role,
                 userId: user.id,
                 userName: user.name
+              }}
+            />
+            <Stack.Screen
+              name="HPDDetail"
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
+                  <HPDDetailScreen />
+                </Suspense>
+              )}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#0f0f0f' },
+                headerTintColor: '#ffffff',
+                headerTitleStyle: { color: '#ffffff' },
+                title: 'HPD Violations'
+              }}
+            />
+            <Stack.Screen
+              name="DOBDetail"
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
+                  <DOBDetailScreen />
+                </Suspense>
+              )}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#0f0f0f' },
+                headerTintColor: '#ffffff',
+                headerTitleStyle: { color: '#ffffff' },
+                title: 'DOB Permits'
+              }}
+            />
+            <Stack.Screen
+              name="DSNYDetail"
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
+                  <DSNYDetailScreen />
+                </Suspense>
+              )}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#0f0f0f' },
+                headerTintColor: '#ffffff',
+                headerTitleStyle: { color: '#ffffff' },
+                title: 'DSNY Violations'
+              }}
+            />
+            <Stack.Screen
+              name="LL97Detail"
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
+                  <LL97DetailScreen />
+                </Suspense>
+              )}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#0f0f0f' },
+                headerTintColor: '#ffffff',
+                headerTitleStyle: { color: '#ffffff' },
+                title: 'LL97 Emissions'
               }}
             />
             <Stack.Screen

@@ -70,68 +70,176 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "tsconfig.base.json",
-        "hash": "2675220573733747715"
+        "file": "tsconfig.json",
+        "hash": "15516362356990904964"
       },
       {
-        "file": "docs/security/SECURITY_IMPLEMENTATION_SUMMARY.md",
-        "hash": "11823152063794061531"
+        "file": "scripts/setup/start-ios-simulator.sh",
+        "hash": "14491774438373204335"
       },
       {
         "file": "ios/CyntientOps/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png",
         "hash": "16417964834553859574"
       },
       {
-        "file": "ios/CyntientOps/CyntientOps.entitlements",
-        "hash": "12066357273802162219"
-      },
-      {
-        "file": "scripts/setup/ios-sim-setup-fastssd.sh",
-        "hash": "17798637519310278651"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "8748481403450115145"
-      },
-      {
-        "file": "docs/README.md",
-        "hash": "14449991486945672650"
-      },
-      {
-        "file": "docs/security/SECURE_CONFIGURATION.md",
-        "hash": "600406109140077031"
-      },
-      {
-        "file": ".eslintrc.js",
-        "hash": "10014922124745627993"
-      },
-      {
-        "file": "ios/CyntientOps/Info.plist",
-        "hash": "11365344724549381333"
-      },
-      {
-        "file": "ios/CyntientOps/CyntientOps-Bridging-Header.h",
-        "hash": "11108490452811459790"
-      },
-      {
-        "file": "ios/Podfile.lock",
-        "hash": "5976028431186123087"
+        "file": "docs/security/SECURITY_IMPLEMENTATION_SUMMARY.md",
+        "hash": "11823152063794061531"
       },
       {
         "file": "docs/setup/FASTSSD_SETUP.md",
         "hash": "565102121703578994"
       },
       {
-        "file": "docs/WEEK_3_IMPLEMENTATION_SUMMARY.md",
-        "hash": "11981808569589512832"
+        "file": "docs/security/SECURITY_ARCHITECTURE_ANALYSIS.md",
+        "hash": "18066824589454640643"
+      },
+      {
+        "file": "ios/CyntientOps/CyntientOps-Bridging-Header.h",
+        "hash": "11108490452811459790"
+      },
+      {
+        "file": "docs/README.md",
+        "hash": "7466873090281368304"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1817247490336913443"
+      },
+      {
+        "file": "docs/security/SECURE_CONFIGURATION.md",
+        "hash": "600406109140077031"
+      },
+      {
+        "file": "ios/CyntientOps.xcworkspace/contents.xcworkspacedata",
+        "hash": "12228685163321215289"
+      },
+      {
+        "file": "package.json",
+        "hash": "17564585815745612030"
+      },
+      {
+        "file": "docs/COMPREHENSIVE_DASHBOARD_WIRE_DIAGRAMS.md",
+        "hash": "4667450523576140533"
+      },
+      {
+        "file": "scripts/supabase-schema.sql",
+        "hash": "7287036416344629629"
+      },
+      {
+        "file": "App.js",
+        "hash": "12861595163321516535"
+      },
+      {
+        "file": "ios/CyntientOps/Images.xcassets/SplashScreenBackground.colorset/Contents.json",
+        "hash": "9576105678051360468"
+      },
+      {
+        "file": "ios/.xcode.env",
+        "hash": "2240437479405059044"
+      },
+      {
+        "file": "scripts/hash-passwords.js",
+        "hash": "14921686841847983403"
+      },
+      {
+        "file": "yarn.lock",
+        "hash": "2824471539758139455"
+      },
+      {
+        "file": "ios/Podfile",
+        "hash": "7932591417039988372"
+      },
+      {
+        "file": "ios/CyntientOps/AppDelegate.swift",
+        "hash": "16837202117940929849"
+      },
+      {
+        "file": "ios/CyntientOps.xcodeproj/project.pbxproj",
+        "hash": "3215918108249553552"
+      },
+      {
+        "file": "ios/CyntientOps/Info.plist",
+        "hash": "11365344724549381333"
       },
       {
         "file": ".nvmrc",
         "hash": "14743000810602433389"
       },
       {
-        "file": "package.json",
-        "hash": "17564585815745612030"
+        "file": "docs/WEEK_2_IMPLEMENTATION_SUMMARY.md",
+        "hash": "11239366318900471736"
+      },
+      {
+        "file": "docs/CONTINUITY_REPORT.md",
+        "hash": "7813951139347640144"
+      },
+      {
+        "file": "docs/setup/FASTSSD_STATUS.md",
+        "hash": "2934930248934116608"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "2599607768644681757"
+      },
+      {
+        "file": ".eslintrc.js",
+        "hash": "10014922124745627993"
+      },
+      {
+        "file": "scripts/setup/start-fastssd.sh",
+        "hash": "15663367669899186205"
+      },
+      {
+        "file": "README.md",
+        "hash": "7913573499929071536"
+      },
+      {
+        "file": "scripts/setup/ios-sim-setup-fastssd.sh",
+        "hash": "17798637519310278651"
+      },
+      {
+        "file": "metro.config.js",
+        "hash": "16725044788944818653"
+      },
+      {
+        "file": "ios/CyntientOps/Images.xcassets/Contents.json",
+        "hash": "3228211763563848421"
+      },
+      {
+        "file": "ios/CyntientOps/Supporting/Expo.plist",
+        "hash": "11113139161232999326"
+      },
+      {
+        "file": "ios/CyntientOps/SplashScreen.storyboard",
+        "hash": "13128309381184383039"
+      },
+      {
+        "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/image@2x.png",
+        "hash": "3198971543413937783"
+      },
+      {
+        "file": "ios/Podfile.lock",
+        "hash": "5976028431186123087"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "2675220573733747715"
+      },
+      {
+        "file": "ios/CyntientOps.xcodeproj/xcshareddata/xcschemes/CyntientOps.xcscheme",
+        "hash": "4307072582965261544"
+      },
+      {
+        "file": "supabase/config.toml",
+        "hash": "17824313339316520371"
+      },
+      {
+        "file": "docs/WEEK_3_IMPLEMENTATION_SUMMARY.md",
+        "hash": "11981808569589512832"
+      },
+      {
+        "file": "ios/CyntientOps/CyntientOps.entitlements",
+        "hash": "12066357273802162219"
       },
       {
         "file": "docs/COMPLIANCE_VIEW_WIRE_DIAGRAMS.md",
@@ -142,156 +250,44 @@
         "hash": "15427026913346176372"
       },
       {
-        "file": "ios/.gitignore",
-        "hash": "7693209614351072706"
-      },
-      {
-        "file": "docs/COMPREHENSIVE_DASHBOARD_WIRE_DIAGRAMS.md",
-        "hash": "4667450523576140533"
-      },
-      {
-        "file": "metro.config.js",
-        "hash": "16725044788944818653"
-      },
-      {
-        "file": "ios/CyntientOps.xcodeproj/xcshareddata/xcschemes/CyntientOps.xcscheme",
-        "hash": "4307072582965261544"
-      },
-      {
-        "file": "README.md",
-        "hash": "7913573499929071536"
-      },
-      {
-        "file": "ios/CyntientOps/SplashScreen.storyboard",
-        "hash": "13128309381184383039"
-      },
-      {
-        "file": "docs/CONTINUITY_REPORT.md",
-        "hash": "7813951139347640144"
-      },
-      {
-        "file": "ios/CyntientOps/Images.xcassets/SplashScreenBackground.colorset/Contents.json",
-        "hash": "9576105678051360468"
-      },
-      {
-        "file": "ios/CyntientOps/Supporting/Expo.plist",
-        "hash": "11113139161232999326"
-      },
-      {
         "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/image.png",
         "hash": "3198971543413937783"
       },
       {
-        "file": "docs/WEEK_2_IMPLEMENTATION_SUMMARY.md",
-        "hash": "11239366318900471736"
-      },
-      {
-        "file": "scripts/supabase-schema.sql",
-        "hash": "7287036416344629629"
-      },
-      {
-        "file": "nx.json",
-        "hash": "1817247490336913443"
-      },
-      {
-        "file": "App.js",
-        "hash": "12861595163321516535"
-      },
-      {
-        "file": "ios/CyntientOps/PrivacyInfo.xcprivacy",
-        "hash": "5886337800270640546"
-      },
-      {
-        "file": "ios/Podfile",
-        "hash": "7932591417039988372"
-      },
-      {
-        "file": "docs/setup/FASTSSD_STATUS.md",
-        "hash": "2934930248934116608"
-      },
-      {
-        "file": "docs/security/SECURITY_ARCHITECTURE_ANALYSIS.md",
-        "hash": "18066824589454640643"
-      },
-      {
-        "file": "supabase/config.toml",
-        "hash": "17824313339316520371"
+        "file": ".gitignore",
+        "hash": "8748481403450115145"
       },
       {
         "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/Contents.json",
         "hash": "12385527687388327545"
       },
       {
-        "file": "tsconfig.tsbuildinfo",
-        "hash": "15092415212349142237"
-      },
-      {
-        "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/image@2x.png",
-        "hash": "3198971543413937783"
-      },
-      {
         "file": "ios/CyntientOps/Images.xcassets/SplashScreenLegacy.imageset/image@3x.png",
         "hash": "3198971543413937783"
-      },
-      {
-        "file": "scripts/hash-passwords.js",
-        "hash": "14921686841847983403"
-      },
-      {
-        "file": ".vscode/launch.json",
-        "hash": "16586355814837684456"
-      },
-      {
-        "file": "ios/CyntientOps/Images.xcassets/Contents.json",
-        "hash": "3228211763563848421"
-      },
-      {
-        "file": "yarn.lock",
-        "hash": "2824471539758139455"
-      },
-      {
-        "file": "scripts/setup/start-ios-simulator.sh",
-        "hash": "14491774438373204335"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "15516362356990904964"
       },
       {
         "file": "docs/PRODUCTION_READINESS_PLAN.md",
         "hash": "10857077079098431062"
       },
       {
-        "file": "ios/.xcode.env",
-        "hash": "2240437479405059044"
+        "file": "ios/CyntientOps/PrivacyInfo.xcprivacy",
+        "hash": "5886337800270640546"
       },
       {
-        "file": "ios/Podfile.properties.json",
-        "hash": "8801138607851770780"
-      },
-      {
-        "file": "ios/CyntientOps/AppDelegate.swift",
-        "hash": "16837202117940929849"
-      },
-      {
-        "file": "scripts/setup/start-fastssd.sh",
-        "hash": "15663367669899186205"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "2599607768644681757"
-      },
-      {
-        "file": "ios/CyntientOps.xcworkspace/contents.xcworkspacedata",
-        "hash": "12228685163321215289"
+        "file": "ios/.gitignore",
+        "hash": "7693209614351072706"
       },
       {
         "file": "scripts/cleanup-and-deploy.sql",
         "hash": "13840598590269509317"
       },
       {
-        "file": "ios/CyntientOps.xcodeproj/project.pbxproj",
-        "hash": "3215918108249553552"
+        "file": "ios/Podfile.properties.json",
+        "hash": "8801138607851770780"
+      },
+      {
+        "file": ".vscode/launch.json",
+        "hash": "16586355814837684456"
       }
     ],
     "projectFileMap": {
@@ -577,7 +573,7 @@
         },
         {
           "file": "apps/mobile-rn/src/navigation/AppNavigator.tsx",
-          "hash": "10900541481359029273",
+          "hash": "15514695319198111061",
           "deps": [
             "npm:react",
             "npm:@react-navigation/native",
@@ -983,6 +979,33 @@
             "npm:react-native",
             "npm:@react-navigation/native"
           ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/compliance/DOBDetailScreen.tsx",
+          "hash": "5985845534902619630",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@react-navigation/native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/compliance/DSNYDetailScreen.tsx",
+          "hash": "16094185969393127198",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@react-navigation/native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/compliance/LL97DetailScreen.tsx",
+          "hash": "272952385245483831",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@react-navigation/native"
+          ]
         }
       ],
       "offline-support": [
@@ -1028,10 +1051,6 @@
         {
           "file": "packages/offline-support/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/offline-support/tsconfig.tsbuildinfo",
-          "hash": "14552613709741300594"
         }
       ],
       "compliance-engine": [
@@ -3028,6 +3047,10 @@
         {
           "file": "packages/api-clients/tsconfig.lib.json",
           "hash": "2684171098582105912"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/HistoricalDataService.ts",
+          "hash": "16108125009400807300"
         }
       ],
       "domain-schema": [
@@ -3093,10 +3116,6 @@
         {
           "file": "packages/domain-schema/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/domain-schema/tsconfig.tsbuildinfo",
-          "hash": "12465510096258248904"
         }
       ],
       "realtime-sync": [
@@ -3307,10 +3326,6 @@
         {
           "file": "packages/data-seed/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/data-seed/tsconfig.tsbuildinfo",
-          "hash": "11075270209128527802"
         }
       ],
       "intelligence-services": [
@@ -3457,10 +3472,6 @@
         {
           "file": "packages/intelligence-services/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/intelligence-services/tsconfig.tsbuildinfo",
-          "hash": "18261868063622377232"
         }
       ],
       "command-chains": [
@@ -3507,10 +3518,6 @@
         {
           "file": "packages/command-chains/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/command-chains/tsconfig.tsbuildinfo",
-          "hash": "10901013140316584562"
         }
       ],
       "database": [
@@ -3589,10 +3596,6 @@
         {
           "file": "packages/database/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/database/tsconfig.tsbuildinfo",
-          "hash": "973706751735326819"
         }
       ],
       "admin-portal": [
@@ -3650,10 +3653,6 @@
         {
           "file": "packages/testing/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/testing/tsconfig.tsbuildinfo",
-          "hash": "9401718689713212541"
         }
       ],
       "managers": [
@@ -3744,10 +3743,6 @@
         {
           "file": "packages/managers/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/managers/tsconfig.tsbuildinfo",
-          "hash": "8720900097692687877"
         }
       ],
       "context-engines": [
@@ -3898,10 +3893,6 @@
         {
           "file": "packages/context-engines/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/context-engines/tsconfig.tsbuildinfo",
-          "hash": "10688665601859713769"
         }
       ],
       "business-core": [
@@ -4237,7 +4228,7 @@
         },
         {
           "file": "packages/business-core/src/services/ComplianceService.ts",
-          "hash": "4760613808982662039",
+          "hash": "4523541612147240921",
           "deps": [
             "api-clients",
             "domain-schema",
@@ -4603,10 +4594,6 @@
         {
           "file": "packages/business-core/tsconfig.lib.json",
           "hash": "2684171098582105912"
-        },
-        {
-          "file": "packages/business-core/tsconfig.tsbuildinfo",
-          "hash": "15643766666251349154"
         }
       ]
     }

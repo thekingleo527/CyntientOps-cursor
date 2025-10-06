@@ -31,6 +31,8 @@ config.resolver.nodeModulesPaths = [
 
 // Workspace package resolution
 config.resolver.alias = {
+  // Ensure bcryptjs uses ESM build which checks global crypto.getRandomValues
+  'bcryptjs': path.resolve(workspaceRoot, 'node_modules/bcryptjs/index.js'),
   '@cyntientops/design-tokens': path.resolve(workspaceRoot, 'packages/design-tokens/src'),
   '@cyntientops/ui-components': path.resolve(workspaceRoot, 'packages/ui-components/src'),
   '@cyntientops/business-core': path.resolve(workspaceRoot, 'packages/business-core/src'),

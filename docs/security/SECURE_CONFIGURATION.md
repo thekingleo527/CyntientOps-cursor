@@ -14,10 +14,12 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your_supabase_anon_key_here
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
 
-# NYC API Keys (Optional)
-DOF_API_KEY=your_dof_api_key_here
-DSNY_API_KEY=your_dsny_api_key_here
-FDNY_API_KEY=your_fdny_api_key_here
+# NYC Open Data (Public Access)
+# No API keys are required for public datasets. If you have app tokens,
+# you can provide them to increase rate limits, but they are optional.
+DOF_API_KEY=
+DSNY_API_KEY=
+FDNY_API_KEY=
 
 # Security Configuration
 ENCRYPTION_KEY=your_32_character_encryption_key_here
@@ -51,12 +53,12 @@ The QuickBooks credentials are now:
 - ✅ Service role key encrypted
 - ✅ API keys validated
 
-## NYC API Security
+## NYC Open Data Access
 
-- ✅ API keys encrypted at rest
-- ✅ Rate limiting implemented
-- ✅ Request validation enabled
-- ✅ Error handling secure
+- ✅ Public datasets require no API keys
+- ✅ Optional app tokens only to increase rate limits
+- ✅ Rate limiting and request validation implemented in clients
+- ✅ Errors handled without exposing secrets
 
 ## Implementation
 

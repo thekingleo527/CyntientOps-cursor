@@ -54,10 +54,12 @@ export type { BuildingPropertyValue, PropertyValueUpdateResult } from './propert
 
 // API Configuration
 export interface APIConfiguration {
-  dsnyApiKey: string;
-  hpdApiKey: string;
-  dobApiKey: string;
-  weatherApiKey: string;
+  // NYC Open Data tokens are optional (public access works without tokens).
+  // Provide tokens only to increase rate limits.
+  dsnyApiKey?: string;
+  hpdApiKey?: string;
+  dobApiKey?: string;
+  weatherApiKey?: string;
   weatherLatitude?: number;
   weatherLongitude?: number;
   quickBooksCredentials?: any; // QuickBooksCredentials
@@ -91,9 +93,9 @@ export class APIClientManager {
     this.nyc = nycAPIService;
     this.nycCompliance = nycComplianceService;
     this.nycCoordinator = nycDataCoordinator;
-    this.hpd = new HPDAPIClient(config.hpdApiKey);
-    this.dob = new DOBAPIClient(config.dobApiKey);
-    this.dsny = new DSNYAPIClient(config.dsnyApiKey);
+    this.hpd = new HPDAPIClient(config.hpdApiKey || '');
+    this.dob = new DOBAPIClient(config.dobApiKey || '');
+    this.dsny = new DSNYAPIClient(config.dsnyApiKey || '');
     this.weather = new WeatherAPIClient(
       config.weatherApiKey,
       config.weatherLatitude,
@@ -110,14 +112,14 @@ export class APIClientManager {
       if (!config) {
         // Provide default configuration for development/testing
         config = {
-          dsnyApiKey: process.env.DSNY_API_KEY || '',
-          hpdApiKey: process.env.HPD_API_KEY || '',
-          dobApiKey: process.env.DOB_API_KEY || '',
-          weatherApiKey: process.env.WEATHER_API_KEY || '',
+          dsnyApiKey: process.env.DSNY_API_KEY,
+          hpdApiKey: process.env.HPD_API_KEY,
+          dobApiKey: process.env.DOB_API_KEY,
+          weatherApiKey: process.env.WEATHER_API_KEY,
           weatherLatitude: 40.7128,
           weatherLongitude: -74.0060,
         };
-        console.warn('APIClientManager initialized with default configuration. Some features may not work without proper API keys.');
+        console.info('APIClientManager: Using public NYC Open Data (no API keys required). Tokens optional for higher rate limits.');
       }
       APIClientManager.instance = new APIClientManager(config);
     }

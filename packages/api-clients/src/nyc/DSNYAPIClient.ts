@@ -38,14 +38,10 @@ export class DSNYAPIClient {
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
-    this.client = axios.create({
-      baseURL: this.baseURL,
-      headers: {
-        'X-App-Token': this.apiKey,
-        'Content-Type': 'application/json'
-      },
-      timeout: 10000
-    });
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    // Public datasets do not require tokens; include only if present to raise limits
+    if (this.apiKey) headers['X-App-Token'] = this.apiKey;
+    this.client = axios.create({ baseURL: this.baseURL, headers, timeout: 10000 });
   }
 
   /**

@@ -8,7 +8,6 @@ import { DatabaseManager } from '@cyntientops/database';
 import { UserRole } from '@cyntientops/domain-schema';
 import { Logger } from './LoggingService';
 import * as bcrypt from 'bcryptjs';
-import * as CryptoJS from 'crypto-js';
 
 export interface SecurityPolicy {
   id: string;
@@ -81,10 +80,22 @@ export class SecurityManager {
   private complianceRequirements: ComplianceRequirement[] = [];
   private securityAudits: SecurityAudit[] = [];
   private accessControls: Map<string, AccessControl> = new Map();
+  private cryptoJS: any | null = null;
 
   private constructor(database: DatabaseManager) {
     this.database = database;
     Logger.debug('SecurityManager initialized', undefined, 'SecurityManager');
+    // Load optional encryption library if present to avoid bundler resolution errors
+    try {
+      const req: any = (0, eval)('require');
+      this.cryptoJS = req?.('crypto-js') || null;
+      if (!this.cryptoJS) {
+        Logger.warn('crypto-js not installed; encryption will fall back in dev', undefined, 'SecurityManager');
+      }
+    } catch (err) {
+      this.cryptoJS = null;
+      Logger.warn('crypto-js unavailable; encryption will fall back in dev', err as any, 'SecurityManager');
+    }
     this.initializeSecurityPolicies();
     this.initializeComplianceRequirements();
   }
@@ -518,16 +529,27 @@ export class SecurityManager {
   private getEncryptionKey(): string {
     // In production, this should come from secure key management
     const key = process.env.ENCRYPTION_KEY || 'CyntientOps-Default-Key-2025-Secure';
-    return CryptoJS.SHA256(key).toString();
+    if (this.cryptoJS) {
+      return this.cryptoJS.SHA256(key).toString();
+    }
+    // Fallback: return raw key when crypto-js is missing (dev only use)
+    return key;
   }
 
   public async encryptSensitiveData(data: any): Promise<string> {
     try {
       Logger.debug('Encrypting sensitive data with AES-256...', undefined, 'SecurityManager');
-      const key = this.getEncryptionKey();
       const dataString = JSON.stringify(data);
-      const encrypted = CryptoJS.AES.encrypt(dataString, key).toString();
-      return encrypted;
+      if (this.cryptoJS) {
+        const key = this.getEncryptionKey();
+        const encrypted = this.cryptoJS.AES.encrypt(dataString, key).toString();
+        return encrypted;
+      }
+      if (__DEV__) {
+        Logger.warn('Encrypt fallback (dev): returning DEV-prefixed plaintext', undefined, 'SecurityManager');
+        return `DEV:${dataString}`;
+      }
+      throw new Error('Encryption module not available');
     } catch (error) {
       Logger.error('Encryption failed:', undefined, 'SecurityManager');
       throw new Error('Failed to encrypt sensitive data');
@@ -537,10 +559,17 @@ export class SecurityManager {
   public async decryptSensitiveData(encryptedData: string): Promise<any> {
     try {
       Logger.debug('Decrypting sensitive data with AES-256...', undefined, 'SecurityManager');
-      const key = this.getEncryptionKey();
-      const decrypted = CryptoJS.AES.decrypt(encryptedData, key);
-      const dataString = decrypted.toString(CryptoJS.enc.Utf8);
-      return JSON.parse(dataString);
+      if (this.cryptoJS) {
+        const key = this.getEncryptionKey();
+        const decrypted = this.cryptoJS.AES.decrypt(encryptedData, key);
+        const dataString = decrypted.toString(this.cryptoJS.enc.Utf8);
+        return JSON.parse(dataString);
+      }
+      if (__DEV__ && typeof encryptedData === 'string' && encryptedData.startsWith('DEV:')) {
+        const json = encryptedData.slice(4);
+        return JSON.parse(json);
+      }
+      throw new Error('Decryption module not available');
     } catch (error) {
       Logger.error('Decryption failed:', undefined, 'SecurityManager');
       throw new Error('Failed to decrypt sensitive data');

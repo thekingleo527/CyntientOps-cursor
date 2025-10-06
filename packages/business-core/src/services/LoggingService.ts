@@ -160,7 +160,6 @@ class LoggingService {
       // Try multiple remote logging services in order of preference
       const services = [
         this.sendToSentry(entry),
-        this.sendToLogRocket(entry),
         this.sendToCustomEndpoint(entry),
       ];
 
@@ -186,37 +185,33 @@ class LoggingService {
   private async sendToSentry(entry: LogEntry): Promise<void> {
     if (!process.env.SENTRY_DSN) return;
     
-    const Sentry = await import('@sentry/react-native');
-    
-    if (entry.level === LogLevel.ERROR) {
-      Sentry.captureException(new Error(entry.message), {
-        tags: { context: entry.context },
-        extra: entry.data,
-      });
-    } else {
-      Sentry.addBreadcrumb({
-        message: entry.message,
-        level: entry.level.toLowerCase() as any,
-        data: entry.data,
-        category: entry.context,
-      });
+    try {
+      const Sentry = await import('@sentry/react-native');
+      
+      if (entry.level === LogLevel.ERROR) {
+        Sentry.captureException(new Error(entry.message), {
+          tags: { context: entry.context },
+          extra: entry.data,
+        });
+      } else {
+        Sentry.addBreadcrumb({
+          message: entry.message,
+          level: entry.level.toLowerCase() as any,
+          data: entry.data,
+          category: entry.context,
+        });
+      }
+    } catch (error) {
+      // Sentry is not available or failed to load
+      console.warn('Sentry is not available:', error);
+      throw error; // Re-throw to trigger fallback to next service
     }
   }
 
   /**
    * Send to LogRocket
    */
-  private async sendToLogRocket(entry: LogEntry): Promise<void> {
-    if (!process.env.LOGROCKET_APP_ID) return;
-    
-    const LogRocket = await import('logrocket');
-    LogRocket.log(entry.message, {
-      level: entry.level,
-      context: entry.context,
-      data: entry.data,
-      timestamp: entry.timestamp,
-    });
-  }
+  // Removed LogRocket integration for React Native to avoid bundling issues
 
   /**
    * Send to custom logging endpoint

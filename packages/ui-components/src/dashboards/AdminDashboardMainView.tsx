@@ -13,7 +13,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  RefreshControl,
 } from 'react-native';
 
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
@@ -21,6 +20,7 @@ import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-compone
 import { LinearGradient } from 'expo-linear-gradient';
 import { AdminHeaderV3B } from '../headers/AdminHeaderV3B';
 import { WorkerProfile } from '@cyntientops/domain-schema';
+import { ServiceContainer } from '@cyntientops/business-core';
 // Import REAL data from data-seed package - NO MOCK DATA ANYWHERE
 import { workers as workersData, buildings as buildingsData, clients as clientsData } from '@cyntientops/data-seed';
 
@@ -51,7 +51,7 @@ import { AdminOverviewOverlayContent } from './components/AdminOverviewOverlayCo
 import { AdminWorkersOverlayContent } from './components/AdminWorkersOverlayContent';
 import { AdminBuildingsOverlayContent } from './components/AdminBuildingsOverlayContent';
 import { AdminAnalyticsOverlayContent } from './components/AdminAnalyticsOverlayContent';
-import { AdminSystemOverlayContent } from './components/AdminSystemOverlayContent';
+import { AdminComplianceOverlayContent } from './components/AdminComplianceOverlayContent';
 
 // Types
 export interface AdminDashboardMainViewProps {
@@ -76,10 +76,16 @@ export interface AdminDashboardData {
     averageCompletion: number;
     activeWorkers: number;
   };
+  compliance: {
+    overallScore: number;
+    totalViolations: number;
+    hpdViolations: number;
+    dsnyViolations: number;
+  };
 }
 
 export interface AdminIntelligenceTab {
-  id: 'overview' | 'workers' | 'buildings' | 'analytics' | 'system';
+  id: 'overview' | 'workers' | 'buildings' | 'compliance' | 'analytics' | 'system';
   title: string;
   icon: string;
 }
@@ -88,6 +94,7 @@ const ADMIN_INTELLIGENCE_TABS: AdminIntelligenceTab[] = [
   { id: 'overview', title: 'Overview', icon: '📊' },
   { id: 'workers', title: 'Workers', icon: '👥' },
   { id: 'buildings', title: 'Buildings', icon: '🏢' },
+  { id: 'compliance', title: 'Compliance', icon: '🛡️' },
   { id: 'analytics', title: 'Analytics', icon: '📈' },
   { id: 'system', title: 'System', icon: '⚙️' },
 ];
@@ -102,7 +109,7 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
 }) => {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null);
   const [intelligencePanelExpanded, setIntelligencePanelExpanded] = useState(false);
-  const [selectedIntelligenceTab, setSelectedIntelligenceTab] = useState<'overview' | 'workers' | 'buildings' | 'analytics' | 'system' | null>(null);
+  const [selectedIntelligenceTab, setSelectedIntelligenceTab] = useState<'overview' | 'workers' | 'buildings' | 'compliance' | 'analytics' | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -126,8 +133,17 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
       const activeTasks = 47; // Mock data - would come from task service
       const systemAlerts = Math.floor(Math.random() * 3); // Mock data
 
+      // Load real compliance data
+      const services = ServiceContainer.getInstance();
+      const buildingIds = buildingsData.map(b => b.id);
+      const complianceData = await services.compliance.loadComplianceData(buildingIds);
+      const overallComplianceScore = complianceData?.metrics?.overallScore || 0.85;
+      const totalViolations = complianceData?.recentViolations?.length || 0;
+      const hpdViolations = complianceData?.recentViolations?.filter(v => v.title.toLowerCase().includes('hpd')).length || 0;
+      const dsnyViolations = complianceData?.recentViolations?.filter(v => v.title.toLowerCase().includes('dsny')).length || 0;
+
       const dashboardData: AdminDashboardData = {
-        admin: admin as WorkerProfile,
+        admin: admin as unknown as WorkerProfile,
         totalWorkers,
         totalBuildings,
         totalClients,
@@ -143,6 +159,12 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
           topPerformer: 'Kevin Dutan',
           averageCompletion: 94,
           activeWorkers: 6,
+        },
+        compliance: {
+          overallScore: overallComplianceScore,
+          totalViolations,
+          hpdViolations,
+          dsnyViolations,
         },
       };
 
@@ -204,7 +226,7 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
           </LinearGradient>
         </GlassCard>
 
-        {/* Performance Status Card */}
+        {/* Compliance Status Card */}
         <GlassCard
           intensity={GlassIntensity.regular}
           cornerRadius={CornerRadius.large}
@@ -215,22 +237,22 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
             style={styles.heroGradient}
           >
             <View style={styles.heroContent}>
-              <Text style={styles.heroTitle}>Performance Status</Text>
+              <Text style={styles.heroTitle}>Compliance Status</Text>
               <Text style={styles.heroSubtitle}>
-                {dashboardData.systemAlerts === 0 ? 'All Systems Normal' : `${dashboardData.systemAlerts} Alerts`}
+                {dashboardData.compliance.totalViolations === 0 ? 'All Clear' : `${dashboardData.compliance.totalViolations} Open Violations`}
               </Text>
               <View style={styles.heroMetrics}>
                 <View style={styles.heroMetric}>
-                  <Text style={styles.heroMetricValue}>{dashboardData.workerPerformance.averageCompletion}%</Text>
-                  <Text style={styles.heroMetricLabel}>Avg Completion</Text>
+                  <Text style={styles.heroMetricValue}>{Math.round(dashboardData.compliance.overallScore * 100)}%</Text>
+                  <Text style={styles.heroMetricLabel}>Compliance</Text>
                 </View>
                 <View style={styles.heroMetric}>
-                  <Text style={styles.heroMetricValue}>{dashboardData.workerPerformance.activeWorkers}</Text>
-                  <Text style={styles.heroMetricLabel}>Active Workers</Text>
+                  <Text style={styles.heroMetricValue}>{dashboardData.compliance.hpdViolations}</Text>
+                  <Text style={styles.heroMetricLabel}>HPD Issues</Text>
                 </View>
                 <View style={styles.heroMetric}>
-                  <Text style={styles.heroMetricValue}>4.8</Text>
-                  <Text style={styles.heroMetricLabel}>Quality Score</Text>
+                  <Text style={styles.heroMetricValue}>{dashboardData.compliance.dsnyViolations}</Text>
+                  <Text style={styles.heroMetricLabel}>DSNY Issues</Text>
                 </View>
               </View>
             </View>
@@ -480,13 +502,6 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.baseScreenContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={Colors.role.admin.primary}
-          />
-        }
       >
         {/* Hero Cards - ~200px */}
         {renderHeroCards()}
@@ -571,20 +586,21 @@ export const AdminDashboardMainView: React.FC<AdminDashboardMainViewProps> = ({
         </IntelligenceOverlay>
       )}
 
-      {selectedIntelligenceTab === 'system' && (
+      {selectedIntelligenceTab === 'compliance' && (
         <IntelligenceOverlay
           visible={true}
           onClose={() => setSelectedIntelligenceTab(null)}
-          title="System Management"
-          tabId="system"
+          title="Compliance Management"
+          tabId="compliance"
         >
-          <AdminSystemOverlayContent
+          <AdminComplianceOverlayContent
             adminId={adminId}
             adminName={adminName}
             onRefresh={handleRefresh}
           />
         </IntelligenceOverlay>
       )}
+
     </View>
   );
 };

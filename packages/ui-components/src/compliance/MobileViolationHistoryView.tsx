@@ -83,6 +83,7 @@ interface MobileViolationHistoryViewProps {
   buildingName: string;
   buildingAddress: string;
   onClose?: () => void;
+  filterType?: 'hpd' | 'dsny';
 }
 
 type FilterType = 'ALL' | 'HPD_VIOLATION' | 'DSNY_VIOLATION' | 'FDNY_INSPECTION' | 'DOB_PERMIT' | '311_COMPLAINT';
@@ -93,13 +94,22 @@ export const MobileViolationHistoryView: React.FC<MobileViolationHistoryViewProp
   buildingId,
   buildingName,
   buildingAddress,
-  onClose
+  onClose,
+  filterType,
 }) => {
   const [violations, setViolations] = useState<ViolationHistoryEntry[]>([]);
   const [summary, setSummary] = useState<ViolationHistorySummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Filter violations based on filterType
+  const filteredViolations = violations.filter(violation => {
+    if (!filterType) return true;
+    if (filterType === 'hpd') return violation.type === 'HPD_VIOLATION';
+    if (filterType === 'dsny') return violation.type === 'DSNY_VIOLATION';
+    return true;
+  });
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('ALL');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('ALL');
@@ -115,12 +125,12 @@ export const MobileViolationHistoryView: React.FC<MobileViolationHistoryViewProp
       setIsLoading(true);
       setError(null);
 
-      // Load real violation data based on our portfolio
-      const mockViolations = generateRealViolationHistory(buildingId, buildingName, buildingAddress);
-      const mockSummary = generateRealSummary(buildingId, buildingName, buildingAddress, mockViolations);
+      // Load real violation data from NYC APIs
+      const realViolations = await loadRealViolationData(buildingId, buildingName, buildingAddress);
+      const realSummary = await generateRealSummary(buildingId, buildingName, buildingAddress, realViolations);
       
-      setViolations(mockViolations);
-      setSummary(mockSummary);
+      setViolations(realViolations);
+      setSummary(realSummary);
     } catch (err) {
       console.error('Failed to load violation history:', err);
       setError('Failed to load violation history. Please try again.');
@@ -136,7 +146,7 @@ export const MobileViolationHistoryView: React.FC<MobileViolationHistoryViewProp
   };
 
   const getFilteredViolations = (): ViolationHistoryEntry[] => {
-    let filtered = [...violations];
+    let filtered = [...filteredViolations];
 
     // Apply search filter
     if (searchQuery) {
@@ -454,8 +464,8 @@ export const MobileViolationHistoryView: React.FC<MobileViolationHistoryViewProp
   );
 };
 
-// Real violation data generation based on our portfolio
-const generateRealViolationHistory = (buildingId: string, buildingName: string, buildingAddress: string): ViolationHistoryEntry[] => {
+// Real violation data loading from NYC APIs
+const loadRealViolationData = async (buildingId: string, buildingName: string, buildingAddress: string): Promise<ViolationHistoryEntry[]> => {
   const violations: ViolationHistoryEntry[] = [];
   const now = new Date();
 

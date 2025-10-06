@@ -13,13 +13,13 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  RefreshControl,
 } from 'react-native';
 
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ClientHeaderV3B } from '../headers/ClientHeaderV3B';
+import { ServiceContainer } from '@cyntientops/business-core';
 // Mock components for development
 const BuildingDetailOverview = ({ building }: any) => (
   <View style={{ padding: 16, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8, margin: 8 }}>
@@ -84,6 +84,12 @@ export interface ClientDashboardData {
   averageCompliance: number;
   activeAlerts: number;
   recentActivity: string[];
+  compliance: {
+    overallScore: number;
+    totalViolations: number;
+    hpdViolations: number;
+    dsnyViolations: number;
+  };
 }
 
 export interface ClientIntelligenceTab {
@@ -133,6 +139,15 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
       const totalUnits = buildings.reduce((sum, building) => sum + (building.numberOfUnits || 0), 0);
       const totalSquareFootage = buildings.reduce((sum, building) => sum + (building.squareFootage || 0), 0);
       const averageCompliance = buildings.reduce((sum, building) => sum + (building.compliance_score || 0), 0) / buildings.length || 0;
+
+      // Load real compliance data for client's buildings
+      const services = ServiceContainer.getInstance();
+      const buildingIds = buildings.map(b => b.id);
+      const complianceData = await services.compliance.loadComplianceData(buildingIds);
+      const overallComplianceScore = complianceData?.metrics?.overallScore || averageCompliance;
+      const totalViolations = complianceData?.recentViolations?.length || 0;
+      const hpdViolations = complianceData?.recentViolations?.filter(v => v.title.toLowerCase().includes('hpd')).length || 0;
+      const dsnyViolations = complianceData?.recentViolations?.filter(v => v.title.toLowerCase().includes('dsny')).length || 0;
 
       const dashboardData: ClientDashboardData = {
         client: {
@@ -209,7 +224,13 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
         totalUnits,
         totalSquareFootage,
         averageCompliance,
-        activeAlerts: Math.floor(Math.random() * 5), // Mock data
+        activeAlerts: totalViolations, // Real compliance violations
+        compliance: {
+          overallScore: overallComplianceScore,
+          totalViolations,
+          hpdViolations,
+          dsnyViolations,
+        },
         recentActivity: [
           'Compliance inspection completed at 131 Perry Street',
           'Maintenance scheduled for Rubin Museum',
@@ -292,26 +313,20 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
             <View style={styles.heroContent}>
               <Text style={styles.heroTitle}>Compliance Status</Text>
               <Text style={styles.heroSubtitle}>
-                {dashboardData.activeAlerts === 0 ? 'All Clear' : `${dashboardData.activeAlerts} Alerts`}
+                {dashboardData.compliance.totalViolations === 0 ? 'All Clear' : `${dashboardData.compliance.totalViolations} Open Violations`}
               </Text>
               <View style={styles.heroMetrics}>
                 <View style={styles.heroMetric}>
-                  <Text style={styles.heroMetricValue}>
-                    {dashboardData.buildings.filter(b => (b.complianceScore || 0) > 0.9).length}
-                  </Text>
-                  <Text style={styles.heroMetricLabel}>Excellent</Text>
+                  <Text style={styles.heroMetricValue}>{Math.round(dashboardData.compliance.overallScore * 100)}%</Text>
+                  <Text style={styles.heroMetricLabel}>Compliance</Text>
                 </View>
                 <View style={styles.heroMetric}>
-                  <Text style={styles.heroMetricValue}>
-                    {dashboardData.buildings.filter(b => (b.complianceScore || 0) > 0.7 && (b.complianceScore || 0) <= 0.9).length}
-                  </Text>
-                  <Text style={styles.heroMetricLabel}>Good</Text>
+                  <Text style={styles.heroMetricValue}>{dashboardData.compliance.hpdViolations}</Text>
+                  <Text style={styles.heroMetricLabel}>HPD Issues</Text>
                 </View>
                 <View style={styles.heroMetric}>
-                  <Text style={styles.heroMetricValue}>
-                    {dashboardData.buildings.filter(b => (b.complianceScore || 0) <= 0.7).length}
-                  </Text>
-                  <Text style={styles.heroMetricLabel}>Needs Attention</Text>
+                  <Text style={styles.heroMetricValue}>{dashboardData.compliance.dsnyViolations}</Text>
+                  <Text style={styles.heroMetricLabel}>DSNY Issues</Text>
                 </View>
               </View>
             </View>
@@ -558,13 +573,6 @@ export const ClientDashboardMainView: React.FC<ClientDashboardMainViewProps> = (
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.baseScreenContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={Colors.role.client.primary}
-          />
-        }
       >
         {/* Hero Cards - ~200px */}
         {renderHeroCards()}

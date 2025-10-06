@@ -350,13 +350,23 @@ export class FDNYAPIClient {
 
   // Helper method to get building data from our database
   private async getBuildingData(buildingId: string): Promise<any> {
-    // This would typically query our database for building information
-    const mockBuildings: Record<string, any> = {
-      '14': { address: '150 W 17th St, New York, NY' },
-      '20': { address: '123 Main St, New York, NY' },
-      '16': { address: '456 Park Ave, New York, NY' },
-    };
-    return mockBuildings[buildingId] || { address: 'Unknown Address' };
+    try {
+      // Import building data from our data-seed package
+      const { buildings } = await import('@cyntientops/data-seed');
+      const building = buildings.find(b => b.id === buildingId);
+      
+      if (!building) {
+        console.warn(`Building ${buildingId} not found in data-seed`);
+        return { address: 'Unknown Address' };
+      }
+
+      return {
+        address: building.address
+      };
+    } catch (error) {
+      console.error('Failed to get building data:', error);
+      return { address: 'Unknown Address' };
+    }
   }
 
   // Transform FDNY API data to our format

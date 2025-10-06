@@ -6,6 +6,29 @@
 
 ---
 
+## 📋 Lean Documentation Policy
+
+### **Essential Documentation (DO NOT DELETE)**
+- **`CONTINUITY_REPORT.md`** - Main project status, achievements, and real-time thread
+- **`COMPREHENSIVE_DASHBOARD_WIRE_DIAGRAMS.md`** - Complete wire diagrams for all dashboard views
+- **`COMPLIANCE_VIEW_WIRE_DIAGRAMS.md`** - Compliance-specific wire diagrams and data flows
+
+### **Documentation Guidelines**
+- **Focus on wire diagrams** - Visual documentation of all UI flows and data integration
+- **Maintain continuity tracking** - Real-time updates in continuity report
+- **Avoid redundant summaries** - Don't create multiple files covering the same topics
+- **Keep documentation lean** - Only essential docs that serve ongoing development needs
+- **Update in real-time** - Continuity report serves as the single source of truth
+
+### **Cleanup Completed (October 6, 2025)**
+- ✅ Removed `API_SIMPLIFICATION_SUMMARY.md` (redundant)
+- ✅ Removed `BUILDING_DATA_REHYDRATION_SUMMARY.md` (redundant)
+- ✅ Removed `REAL_PORTFOLIO_VIOLATION_REPORT_OCT_6_2025.md` (temporary)
+- ✅ Removed `UPDATED_COMPLIANCE_WIRE_DIAGRAMS.md` (superseded)
+- ✅ Removed `DOFAPIClient_FIXED.ts` and `DOFAPIClient_OLD.ts` (cleanup)
+
+---
+
 ## 🧭 Current Focus: Production Deployment & Clean Architecture
 
 ### Key Achievements
@@ -45,9 +68,10 @@
 - **Hermes bytecode compilation** - Enabled for production builds
 - **Bundle analysis tools** - New scripts for monitoring bundle size
 
-#### **Documentation Cleanup** 📚
+#### **Documentation Cleanup & Lean Guidelines** 📚
 - **Reduced documentation clutter** - Removed 8+ redundant documentation files
 - **Consolidated essential docs** - Kept only critical documentation
+- **Established lean documentation policy** - Focus on wire diagrams and continuity tracking
 - **Updated continuity report** - Current status and achievements
 - **API simplification summary** - Complete guide to simplified API approach
 
@@ -207,6 +231,10 @@ CyntientOps-MP/
 - **3:20 PM**: Removed extra documentation files (violation reports with fake data)
 - **3:25 PM**: Created accurate violation report for our real 18-building portfolio
 - **3:30 PM**: Updated continuity report as single source of truth
+- **4:00 PM**: Removed "System" tab from admin intelligence panel, moved content to AdminProfile view
+- **4:15 PM**: Made HPD and DSNY violation cards clickable in both admin and client compliance views
+- **4:30 PM**: Cleaned up API files (removed FIXED/OLD designations) and documentation clutter
+- **4:45 PM**: Established lean documentation policy focusing on wire diagrams and continuity tracking
 
 ### **Key Corrections Made**
 - **Fixed**: Removed fake building data from violation reports

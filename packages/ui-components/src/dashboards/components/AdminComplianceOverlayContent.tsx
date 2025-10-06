@@ -1,8 +1,8 @@
 /**
  * @cyntientops/ui-components
  * 
- * Client Compliance Overlay Content
- * Full-screen compliance management for client dashboard
+ * Admin Compliance Overlay Content
+ * Full-screen compliance management for admin dashboard
  */
 
 import React, { useState, useEffect } from 'react';
@@ -14,15 +14,15 @@ import { ServiceContainer } from '@cyntientops/business-core';
 import { ViolationHistoryView } from '../../compliance/ViolationHistoryView';
 import { MobileViolationHistoryView } from '../../compliance/MobileViolationHistoryView';
 
-export interface ClientComplianceOverlayContentProps {
-  clientId: string;
-  clientName: string;
+export interface AdminComplianceOverlayContentProps {
+  adminId: string;
+  adminName: string;
   onRefresh?: () => void;
 }
 
-export const ClientComplianceOverlayContent: React.FC<ClientComplianceOverlayContentProps> = ({
-  clientId,
-  clientName,
+export const AdminComplianceOverlayContent: React.FC<AdminComplianceOverlayContentProps> = ({
+  adminId,
+  adminName,
   onRefresh,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -35,15 +35,15 @@ export const ClientComplianceOverlayContent: React.FC<ClientComplianceOverlayCon
 
   useEffect(() => {
     loadComplianceData();
-  }, [clientId]);
+  }, [adminId]);
 
   const loadComplianceData = async () => {
     try {
-      // Load client's buildings only
-      const clientBuildings = await services.buildingDataHydration.getBuildingsByClientId(clientId);
-      setBuildings(clientBuildings);
+      // Load all buildings for admin view
+      const allBuildings = await services.buildingDataHydration.getBuildings();
+      setBuildings(allBuildings);
 
-      // Load compliance data for client's buildings
+      // Load compliance data for all buildings
       const compliance = await services.compliance.loadComplianceData();
       setComplianceData(compliance);
     } catch (error) {
@@ -125,25 +125,12 @@ export const ClientComplianceOverlayContent: React.FC<ClientComplianceOverlayCon
           </GlassCard>
         </TouchableOpacity>
       </View>
-
-      {/* Portfolio Value Integration */}
-      <GlassCard intensity={GlassIntensity.regular} cornerRadius={CornerRadius.medium} style={styles.portfolioValueCard}>
-        <View style={styles.portfolioValueHeader}>
-          <Text style={styles.portfolioValueTitle}>Portfolio Value</Text>
-          <Text style={styles.portfolioValueAmount}>
-            ${buildings.reduce((sum, building) => sum + (building.squareFootage * 500), 0).toLocaleString()}
-          </Text>
-        </View>
-        <Text style={styles.portfolioValueSubtext}>
-          Based on square footage and current market rates
-        </Text>
-      </GlassCard>
     </View>
   );
 
   const renderBuildingList = () => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>🏢 Your Building Compliance Status</Text>
+      <Text style={styles.sectionTitle}>🏢 Building Compliance Status</Text>
       
       {buildings.map((building) => (
         <TouchableOpacity
@@ -156,9 +143,6 @@ export const ClientComplianceOverlayContent: React.FC<ClientComplianceOverlayCon
               <View style={styles.buildingInfo}>
                 <Text style={styles.buildingName}>{building.name}</Text>
                 <Text style={styles.buildingAddress}>{building.address}</Text>
-                <Text style={styles.buildingValue}>
-                  Est. Value: ${(building.squareFootage * 500).toLocaleString()}
-                </Text>
               </View>
               
               <View style={styles.buildingStatus}>
@@ -269,7 +253,7 @@ export const ClientComplianceOverlayContent: React.FC<ClientComplianceOverlayCon
         <RefreshControl
           refreshing={refreshing}
           onRefresh={handleRefresh}
-          tintColor={Colors.role.client.primary}
+          tintColor={Colors.role.admin.primary}
         />
       }
     >
@@ -360,30 +344,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: Spacing.md,
   },
-  portfolioValueCard: {
-    padding: Spacing.lg,
-    marginTop: Spacing.md,
-  },
-  portfolioValueHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.xs,
-  },
-  portfolioValueTitle: {
-    ...Typography.titleMedium,
-    color: Colors.text.primary,
-    fontWeight: '600',
-  },
-  portfolioValueAmount: {
-    ...Typography.titleLarge,
-    color: Colors.status.success,
-    fontWeight: 'bold',
-  },
-  portfolioValueSubtext: {
-    ...Typography.bodySmall,
-    color: Colors.text.secondary,
-  },
   buildingItem: {
     marginBottom: Spacing.md,
   },
@@ -408,12 +368,6 @@ const styles = StyleSheet.create({
   buildingAddress: {
     ...Typography.bodyMedium,
     color: Colors.text.secondary,
-    marginBottom: Spacing.xs,
-  },
-  buildingValue: {
-    ...Typography.bodySmall,
-    color: Colors.status.success,
-    fontWeight: '500',
   },
   buildingStatus: {
     flexDirection: 'row',

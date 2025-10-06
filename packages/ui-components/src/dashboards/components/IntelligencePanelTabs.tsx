@@ -48,8 +48,8 @@ const ADMIN_TABS: IntelligenceTab[] = [
   { id: 'overview', title: 'Overview', icon: '📊', color: Colors.role.admin.primary },
   { id: 'workers', title: 'Workers', icon: '👥', color: Colors.status.info },
   { id: 'buildings', title: 'Buildings', icon: '🏢', color: Colors.status.success },
+  { id: 'compliance', title: 'Compliance', icon: '🛡️', color: Colors.status.warning },
   { id: 'analytics', title: 'Analytics', icon: '📈', color: Colors.status.warning },
-  { id: 'system', title: 'System', icon: '⚙️', color: Colors.role.admin.accent },
 ];
 
 export interface IntelligencePanelTabsProps {

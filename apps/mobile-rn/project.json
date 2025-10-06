@@ -34,5 +34,14 @@
       }
     }
   },
-  "tags": ["scope:mobile", "type:app"]
+  "tags": ["scope:mobile", "type:app"],
+  "implicitDependencies": [
+    "business-core",
+    "api-clients", 
+    "compliance-engine",
+    "database",
+    "domain-schema",
+    "ui-components",
+    "design-tokens"
+  ]
 }

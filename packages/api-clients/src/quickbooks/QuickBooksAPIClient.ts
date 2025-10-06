@@ -5,7 +5,23 @@
  * Security: Uses secure credential management for API keys
  */
 
-import { CredentialManager } from '@cyntientops/business-core';
+// Simple credential storage to avoid circular dependency
+interface SimpleCredentialManager {
+  get(key: string): string | null;
+  set(key: string, value: string): void;
+}
+
+class InMemoryCredentialManager implements SimpleCredentialManager {
+  private credentials = new Map<string, string>();
+
+  get(key: string): string | null {
+    return this.credentials.get(key) || null;
+  }
+
+  set(key: string, value: string): void {
+    this.credentials.set(key, value);
+  }
+}
 
 
 export interface QuickBooksCredentials {
@@ -68,12 +84,12 @@ export interface QuickBooksPayrollData {
 
 export class QuickBooksAPIClient {
   private credentials: QuickBooksCredentials;
-  private credentialManager: CredentialManager;
+  private credentialManager: SimpleCredentialManager;
   private baseURL = 'https://sandbox-quickbooks.api.intuit.com/v3/company';
   private authURL = 'https://appcenter.intuit.com/connect/oauth2';
 
-  constructor(credentialManager: CredentialManager) {
-    this.credentialManager = credentialManager;
+  constructor(credentialManager?: SimpleCredentialManager) {
+    this.credentialManager = credentialManager || new InMemoryCredentialManager();
     this.credentials = { clientId: '', clientSecret: '' }; // Will be loaded securely
   }
 

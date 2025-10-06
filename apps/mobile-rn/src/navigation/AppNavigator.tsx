@@ -32,6 +32,7 @@ const WeeklyRoutineScreen = React.lazy(() => import('../screens/WeeklyRoutineScr
 const DailyRoutineScreen = React.lazy(() => import('../screens/DailyRoutineScreen'));
 const PhotoCaptureModal = React.lazy(() => import('../screens/PhotoCaptureModal'));
 const ProfileScreen = React.lazy(() => import('../screens/ProfileScreen'));
+const HPDDetailScreen = React.lazy(() => import('../screens/compliance/HPDDetailScreen'));
 
 // Enhanced Tab Navigator
 const EnhancedTabNavigator = React.lazy(() => import('./EnhancedTabNavigator'));
@@ -55,6 +56,7 @@ export type RootStackParamList = {
   MultisiteDeparture: undefined;
   WeeklyRoutine: undefined;
   DailyRoutine: undefined;
+  HPDDetail: { buildingId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -249,6 +251,21 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
                 userRole: user.role,
                 userId: user.id,
                 userName: user.name
+              }}
+            />
+            <Stack.Screen
+              name="HPDDetail"
+              children={() => (
+                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
+                  <HPDDetailScreen />
+                </Suspense>
+              )}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: '#0f0f0f' },
+                headerTintColor: '#ffffff',
+                headerTitleStyle: { color: '#ffffff' },
+                title: 'HPD Violations'
               }}
             />
             <Stack.Screen

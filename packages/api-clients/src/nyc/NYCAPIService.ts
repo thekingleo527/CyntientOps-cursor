@@ -22,11 +22,36 @@ export interface APIEndpoint {
   method: 'GET' | 'POST';
 }
 
-import { CacheManager } from '@cyntientops/business-core';
+// Simple in-memory cache to avoid circular dependency
+interface SimpleCache {
+  get<T>(key: string): T | null;
+  set<T>(key: string, value: T, ttl?: number): void;
+}
+
+class InMemoryCache implements SimpleCache {
+  private cache = new Map<string, { value: any; expires: number }>();
+
+  get<T>(key: string): T | null {
+    const item = this.cache.get(key);
+    if (!item) return null;
+    if (Date.now() > item.expires) {
+      this.cache.delete(key);
+      return null;
+    }
+    return item.value;
+  }
+
+  set<T>(key: string, value: T, ttl: number = 300000): void {
+    this.cache.set(key, {
+      value,
+      expires: Date.now() + ttl
+    });
+  }
+}
 
 export class NYCAPIService {
   private config: APIConfig;
-  private cacheManager: CacheManager;
+  private cacheManager: SimpleCache;
   private lastRequestTime: number = 0;
   private requestCount: number = 0;
   private requestHistory: Array<{timestamp: number, endpoint: string}> = [];
@@ -65,13 +90,13 @@ export class NYCAPIService {
     },
   };
 
-  constructor(cacheManager: CacheManager) {
+  constructor(cacheManager?: SimpleCache) {
     this.config = {
       baseURL: "https://data.cityofnewyork.us/resource",
       timeout: 30000,
       rateLimitDelay: 1000,
     };
-    this.cacheManager = cacheManager;
+    this.cacheManager = cacheManager || new InMemoryCache();
   }
 
   // Input validation methods
@@ -544,9 +569,5 @@ export class NYCAPIService {
   }
 }
 
-import { DatabaseManager } from '@cyntientops/database';
-
-// Export singleton instance
-const databaseManager = DatabaseManager.getInstance();
-const cacheManager = CacheManager.getInstance(databaseManager);
-export const nycAPIService = new NYCAPIService(cacheManager);
+// Export singleton instance with default in-memory cache
+export const nycAPIService = new NYCAPIService();

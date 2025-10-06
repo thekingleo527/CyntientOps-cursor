@@ -5,6 +5,8 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "@cyntientops/domain-schema": "workspace:*"
+  }
 }
 

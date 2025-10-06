@@ -349,18 +349,9 @@ export class Complaints311APIClient {
   // Helper method to get building data from our database
   private async getBuildingData(buildingId: string): Promise<any> {
     try {
-      // Import building data from our data-seed package
-      const { buildings } = await import('@cyntientops/data-seed');
-      const building = buildings.find(b => b.id === buildingId);
-      
-      if (!building) {
-        console.warn(`Building ${buildingId} not found in data-seed`);
-        return { address: 'Unknown Address' };
-      }
-
-      return {
-        address: building.address
-      };
+      // Use building ID directly - no need to import data-seed to avoid circular dependency
+      // The building ID is sufficient for API calls
+      return { address: `Building ${buildingId}` };
     } catch (error) {
       console.error('Failed to get building data:', error);
       return { address: 'Unknown Address' };

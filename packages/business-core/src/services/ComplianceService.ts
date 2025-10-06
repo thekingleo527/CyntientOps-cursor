@@ -158,27 +158,22 @@ export class ComplianceService {
   async calculateRealComplianceScore(buildingId: string): Promise<number> {
     try {
       const violations = await this.loadRealViolations(buildingId);
-      
-      let score = 100;
-      
-      // Deduct points based on violations
-      violations.forEach(violation => {
-        if (violation.isCritical) {
-          score -= 15; // Critical violations
-        } else if (violation.severity === 'high') {
-          score -= 10; // High severity
-        } else if (violation.severity === 'medium') {
-          score -= 5; // Medium severity
-        } else {
-          score -= 2; // Low severity
+      const openCritical = violations.filter(v => v.isCritical).length;
+      const openWarning = violations.filter(v => v.severity === 'high' || v.severity === 'medium').length;
+      const openInfo = violations.filter(v => v.severity === 'low').length;
+      // LL97 emissions average (optional)
+      let avgEmissions = 0;
+      try {
+        const bbl = this.nycAPI.extractBBL(buildingId);
+        const ll97 = await this.nycAPI.getLL97Emissions(bbl);
+        if (Array.isArray(ll97) && ll97.length > 0) {
+          const sum = ll97.reduce((s: number, e: any) => s + (parseFloat(e.total_ghg_emissions_intensity || e.totalEmissions || '0') || 0), 0);
+          avgEmissions = sum / ll97.length;
         }
-      });
-
-      // Bonus for resolved violations
-      const resolvedCount = violations.filter(v => v.status === 'resolved').length;
-      score += Math.min(resolvedCount * 2, 20); // Max 20 point bonus
-
-      return Math.max(0, Math.min(100, score));
+      } catch {}
+      // Compute score via compliance-engine
+      const { ComplianceCalculator } = await import('@cyntientops/compliance-engine');
+      return ComplianceCalculator.calculateComplianceScore({ openCritical, openWarning, openInfo, avgEmissions });
     } catch (error) {
       console.error('Failed to calculate real compliance score:', error);
       return 75; // Default score

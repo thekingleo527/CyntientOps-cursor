@@ -76,6 +76,75 @@
         "implicitDependencies": []
       }
     },
+    "compliance-engine": {
+      "name": "compliance-engine",
+      "type": "lib",
+      "data": {
+        "root": "packages/compliance-engine",
+        "name": "compliance-engine",
+        "targets": {
+          "build": {
+            "executor": "nx:run-commands",
+            "dependsOn": [
+              "^build"
+            ],
+            "inputs": [
+              "production",
+              "^production"
+            ],
+            "outputs": [
+              "{workspaceRoot}/dist/packages/compliance-engine"
+            ],
+            "options": {
+              "command": "tsc",
+              "cwd": "packages/compliance-engine"
+            },
+            "configurations": {}
+          },
+          "test": {
+            "executor": "@nx/jest:jest",
+            "inputs": [
+              "default",
+              "^production",
+              "{workspaceRoot}/jest.preset.js"
+            ],
+            "outputs": [
+              "{workspaceRoot}/coverage/{projectRoot}"
+            ],
+            "options": {
+              "jestConfig": "packages/compliance-engine/jest.config.ts",
+              "passWithNoTests": true
+            },
+            "configurations": {}
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "inputs": [
+              "default",
+              "{workspaceRoot}/.eslintrc.json",
+              "{workspaceRoot}/.eslintignore"
+            ],
+            "outputs": [
+              "{options.outputFile}"
+            ],
+            "options": {
+              "lintFilePatterns": [
+                "packages/compliance-engine/**/*.{ts,tsx,js,jsx}"
+              ]
+            },
+            "configurations": {}
+          }
+        },
+        "sourceRoot": "packages/compliance-engine/src",
+        "projectType": "library",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "tags": [
+          "scope:compliance",
+          "type:lib"
+        ],
+        "implicitDependencies": []
+      }
+    },
     "context-engines": {
       "name": "context-engines",
       "type": "lib",
@@ -1428,7 +1497,15 @@
           "scope:mobile",
           "type:app"
         ],
-        "implicitDependencies": []
+        "implicitDependencies": [
+          "business-core",
+          "api-clients",
+          "compliance-engine",
+          "database",
+          "domain-schema",
+          "ui-components",
+          "design-tokens"
+        ]
       }
     }
   },
@@ -7058,6 +7135,15 @@
         "hash": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="
       }
     },
+    "npm:crypto-js": {
+      "type": "npm",
+      "name": "npm:crypto-js",
+      "data": {
+        "version": "4.2.0",
+        "packageName": "crypto-js",
+        "hash": "sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q=="
+      }
+    },
     "npm:crypto-random-string": {
       "type": "npm",
       "name": "npm:crypto-random-string",
@@ -8129,13 +8215,22 @@
         "hash": "sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ=="
       }
     },
-    "npm:eventemitter3": {
+    "npm:eventemitter3@4.0.7": {
       "type": "npm",
-      "name": "npm:eventemitter3",
+      "name": "npm:eventemitter3@4.0.7",
       "data": {
         "version": "4.0.7",
         "packageName": "eventemitter3",
         "hash": "sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw=="
+      }
+    },
+    "npm:eventemitter3": {
+      "type": "npm",
+      "name": "npm:eventemitter3",
+      "data": {
+        "version": "5.0.1",
+        "packageName": "eventemitter3",
+        "hash": "sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA=="
       }
     },
     "npm:exec-async": {
@@ -8426,6 +8521,15 @@
         "hash": "sha512-FVJ5W4rOpKvmrLJ1Sd5pxiVTV4a7ApgTlKro+E5X8M2TBbXmEVOjs09klzdalXTjlzmU/Gu8aRw9xr7Ea/gZdw=="
       }
     },
+    "npm:expo-random": {
+      "type": "npm",
+      "name": "npm:expo-random",
+      "data": {
+        "version": "14.0.1",
+        "packageName": "expo-random",
+        "hash": "sha512-gX2mtR9o+WelX21YizXUCD/y+a4ZL+RDthDmFkHxaYbdzjSYTn8u/igoje/l3WEO+/RYspmqUFa8w/ckNbt6Vg=="
+      }
+    },
     "npm:expo-secure-store": {
       "type": "npm",
       "name": "npm:expo-secure-store",
@@ -8505,6 +8609,15 @@
         "version": "3.1.2",
         "packageName": "exponential-backoff",
         "hash": "sha512-8QxYTVXUkuy7fIIoitQkPwGonB8F3Zj8eEO8Sqg9Zv/bkI7RJAzowee4gr81Hak/dUTpA2Z7VfQgoijjPNlUZA=="
+      }
+    },
+    "npm:fast-base64-decode": {
+      "type": "npm",
+      "name": "npm:fast-base64-decode",
+      "data": {
+        "version": "1.0.0",
+        "packageName": "fast-base64-decode",
+        "hash": "sha512-qwaScUgUGBYeDNRnbc/KyllVU88Jk1pRHPStuF/lO7B0/RTRLj7U0lkdTAutlBblY08rwZDff6tNU9cjv6j//Q=="
       }
     },
     "npm:fast-deep-equal": {
@@ -13520,6 +13633,15 @@
         "hash": "sha512-0msfJ1vRxXKVgTgvL+1ZOoYw3/0z1R+Ked0+udoJhyplC2jbVKIJ8Z1bzWdpQRCV3QcQ87Op0zJVE5DhKK2A0A=="
       }
     },
+    "npm:react-native-get-random-values": {
+      "type": "npm",
+      "name": "npm:react-native-get-random-values",
+      "data": {
+        "version": "1.11.0",
+        "packageName": "react-native-get-random-values",
+        "hash": "sha512-4BTbDbRmS7iPdhYLRcz3PGFIpFJBwNZg9g42iwa2P6FOv9vZj/xJc678RZXnLNZzd0qd7Q3CCF6Yd+CU2eoXKQ=="
+      }
+    },
     "npm:react-native-image-picker": {
       "type": "npm",
       "name": "npm:react-native-image-picker",
@@ -16418,6 +16540,11 @@
       },
       {
         "source": "intelligence-services",
+        "target": "business-core",
+        "type": "static"
+      },
+      {
+        "source": "intelligence-services",
         "target": "npm:react-native",
         "type": "static"
       },
@@ -16429,6 +16556,18 @@
       {
         "source": "intelligence-services",
         "target": "npm:expo-av",
+        "type": "static"
+      }
+    ],
+    "compliance-engine": [
+      {
+        "source": "compliance-engine",
+        "target": "domain-schema",
+        "type": "static"
+      },
+      {
+        "source": "compliance-engine",
+        "target": "database",
         "type": "static"
       }
     ],
@@ -16601,12 +16740,62 @@
       },
       {
         "source": "business-core",
+        "target": "api-clients",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "domain-schema",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "database",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "compliance-engine",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "compliance-engine",
+        "type": "dynamic"
+      },
+      {
+        "source": "business-core",
         "target": "npm:@types/uuid",
         "type": "static"
       },
       {
         "source": "business-core",
         "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "managers",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "realtime-sync",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "offline-support",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "intelligence-services",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "command-chains",
         "type": "static"
       },
       {
@@ -16641,18 +16830,18 @@
       },
       {
         "source": "business-core",
-        "target": "domain-schema",
-        "type": "static"
-      },
-      {
-        "source": "business-core",
-        "target": "database",
-        "type": "static"
-      },
-      {
-        "source": "business-core",
         "target": "npm:@sentry/react-native",
         "type": "dynamic"
+      },
+      {
+        "source": "business-core",
+        "target": "npm:expo-notifications",
+        "type": "static"
+      },
+      {
+        "source": "business-core",
+        "target": "npm:react-native",
+        "type": "static"
       },
       {
         "source": "business-core",
@@ -16894,6 +17083,16 @@
       },
       {
         "source": "ui-components",
+        "target": "data-seed",
+        "type": "dynamic"
+      },
+      {
+        "source": "ui-components",
+        "target": "data-seed",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
         "target": "domain-schema",
         "type": "static"
       },
@@ -16904,17 +17103,17 @@
       },
       {
         "source": "ui-components",
-        "target": "data-seed",
-        "type": "static"
-      },
-      {
-        "source": "ui-components",
         "target": "npm:expo-location",
         "type": "static"
       },
       {
         "source": "ui-components",
         "target": "npm:expo-camera",
+        "type": "static"
+      },
+      {
+        "source": "ui-components",
+        "target": "npm:supercluster",
         "type": "static"
       },
       {
@@ -16976,12 +17175,22 @@
       },
       {
         "source": "api-clients",
+        "target": "domain-schema",
+        "type": "static"
+      },
+      {
+        "source": "api-clients",
         "target": "npm:@types/node",
         "type": "static"
       },
       {
         "source": "api-clients",
         "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "api-clients",
+        "target": "database",
         "type": "static"
       }
     ],
@@ -17089,6 +17298,11 @@
       },
       {
         "source": "managers",
+        "target": "npm:expo-notifications",
+        "type": "dynamic"
+      },
+      {
+        "source": "managers",
         "target": "npm:expo-file-system",
         "type": "static"
       },
@@ -17100,6 +17314,16 @@
       {
         "source": "managers",
         "target": "npm:expo-location",
+        "type": "static"
+      },
+      {
+        "source": "managers",
+        "target": "npm:eventemitter3",
+        "type": "static"
+      },
+      {
+        "source": "managers",
+        "target": "api-clients",
         "type": "static"
       }
     ],
@@ -17163,6 +17387,41 @@
     "mobile-rn": [
       {
         "source": "mobile-rn",
+        "target": "business-core",
+        "type": "implicit"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "api-clients",
+        "type": "implicit"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "compliance-engine",
+        "type": "implicit"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "database",
+        "type": "implicit"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "domain-schema",
+        "type": "implicit"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "ui-components",
+        "type": "implicit"
+      },
+      {
+        "source": "mobile-rn",
+        "target": "design-tokens",
+        "type": "implicit"
+      },
+      {
+        "source": "mobile-rn",
         "target": "npm:react-native-gesture-handler",
         "type": "static"
       },
@@ -17198,17 +17457,17 @@
       },
       {
         "source": "mobile-rn",
+        "target": "npm:react-native-get-random-values",
+        "type": "static"
+      },
+      {
+        "source": "mobile-rn",
         "target": "npm:expo",
         "type": "static"
       },
       {
         "source": "mobile-rn",
         "target": "npm:expo-constants",
-        "type": "static"
-      },
-      {
-        "source": "mobile-rn",
-        "target": "npm:@expo/metro-config",
         "type": "static"
       },
       {
@@ -28300,6 +28559,13 @@
         "type": "static"
       }
     ],
+    "npm:expo-random": [
+      {
+        "source": "npm:expo-random",
+        "target": "npm:base64-js",
+        "type": "static"
+      }
+    ],
     "npm:expo-sqlite": [
       {
         "source": "npm:expo-sqlite",
@@ -29240,7 +29506,7 @@
     "npm:http-proxy": [
       {
         "source": "npm:http-proxy",
-        "target": "npm:eventemitter3",
+        "target": "npm:eventemitter3@4.0.7",
         "type": "static"
       },
       {
@@ -35885,6 +36151,13 @@
       {
         "source": "npm:react-native-gesture-handler",
         "target": "npm:invariant",
+        "type": "static"
+      }
+    ],
+    "npm:react-native-get-random-values": [
+      {
+        "source": "npm:react-native-get-random-values",
+        "target": "npm:fast-base64-decode",
         "type": "static"
       }
     ],

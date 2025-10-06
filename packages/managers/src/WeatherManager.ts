@@ -4,7 +4,7 @@
  * Purpose: Weather-based task adjustments, automation, and outdoor work risk assessment
  */
 
-import { EventEmitter } from 'events';
+import EventEmitter from 'eventemitter3';
 import { WeatherAPIClient, WeatherForecast, WeatherAlert } from '@cyntientops/api-clients';
 import { DatabaseManager } from '@cyntientops/database';
 import { OperationalDataTaskAssignment, WorkerProfile, WeatherSnapshot } from '@cyntientops/domain-schema';

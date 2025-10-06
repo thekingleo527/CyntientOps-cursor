@@ -14,6 +14,10 @@ import { PhotoEvidenceManager } from '@cyntientops/managers';
 import { WeatherManager } from '@cyntientops/managers';
 import { WebSocketManager } from '@cyntientops/realtime-sync';
 import { OfflineManager } from '@cyntientops/offline-support';
+import { OptimizedWebSocketManager } from './services/OptimizedWebSocketManager';
+import { OfflineSupportManager } from './services/OfflineSupportManager';
+import { RealTimeMessageRouter } from './services/RealTimeMessageRouter';
+import { RealTimeSyncIntegration } from './services/RealTimeSyncIntegration';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
 import { AlertsService } from './services/AlertsService';
 import { BuildingMetricsService } from './services/BuildingMetricsService';
@@ -100,6 +104,10 @@ export class ServiceContainer {
   private _metrics: BuildingMetricsService | null = null;
   private _compliance: ComplianceService | null = null;
   private _webSocket: WebSocketManager | null = null;
+  private _optimizedWebSocket: OptimizedWebSocketManager | null = null;
+  private _offlineSupport: OfflineSupportManager | null = null;
+  private _messageRouter: RealTimeMessageRouter | null = null;
+  private _syncIntegration: RealTimeSyncIntegration | null = null;
   private _notes: NotesService | null = null;
   private _inventory: InventoryService | null = null;
   private _weather: any | null = null; // Weather via WeatherAPIClient in api-clients
@@ -910,6 +918,50 @@ export class ServiceContainer {
       this._webSocket = new WebSocketManager();
     }
     return this._webSocket;
+  }
+
+  public get optimizedWebSocket(): OptimizedWebSocketManager {
+    if (!this._optimizedWebSocket) {
+      this._optimizedWebSocket = OptimizedWebSocketManager.getInstance({
+        url: 'wss://api.cyntientops.com/ws',
+        heartbeatInterval: 30000,
+        reconnectInterval: 5000,
+        maxReconnectAttempts: 10,
+        connectionTimeout: 10000,
+      });
+    }
+    return this._optimizedWebSocket;
+  }
+
+  public get offlineSupport(): OfflineSupportManager {
+    if (!this._offlineSupport) {
+      this._offlineSupport = OfflineSupportManager.getInstance({
+        cacheConfig: {
+          maxSize: 1000,
+          ttl: 5 * 60 * 1000, // 5 minutes
+          compressionEnabled: true,
+        },
+        syncBatchSize: 10,
+        syncInterval: 30000, // 30 seconds
+        maxRetries: 3,
+        retryDelay: 5000, // 5 seconds
+      });
+    }
+    return this._offlineSupport;
+  }
+
+  public get messageRouter(): RealTimeMessageRouter {
+    if (!this._messageRouter) {
+      this._messageRouter = RealTimeMessageRouter.getInstance();
+    }
+    return this._messageRouter;
+  }
+
+  public get syncIntegration(): RealTimeSyncIntegration {
+    if (!this._syncIntegration) {
+      this._syncIntegration = RealTimeSyncIntegration.getInstance();
+    }
+    return this._syncIntegration;
   }
   
   public get intelligence(): IntelligenceService {

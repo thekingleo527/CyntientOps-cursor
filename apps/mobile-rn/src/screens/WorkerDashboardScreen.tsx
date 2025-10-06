@@ -7,7 +7,7 @@
 import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { WorkerDashboardMainView } from '@cyntientops/ui-components';
+import { WorkerDashboardMainView, useRealTimeSync } from '@cyntientops/ui-components';
 import { WorkerDashboardViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { ClockInManager, LocationManager, NotificationManager } from '@cyntientops/managers';
@@ -45,6 +45,37 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   const mountedRef = useRef(true);
   const subscriptionRef = useRef<string | null>(null);
   const viewModelRef = useRef<WorkerDashboardViewModel | null>(null);
+
+  // Real-time sync for tasks
+  const taskSync = useRealTimeSync({
+    entityType: 'task',
+    enabled: true,
+    onUpdate: (data) => {
+      if (mountedRef.current && viewModelRef.current) {
+        // Refresh dashboard when task data updates
+        refreshDashboard();
+      }
+    },
+    onError: (error) => {
+      Logger.error('Task sync error', error, 'WorkerDashboardScreen');
+    },
+  });
+
+  // Real-time sync for worker status
+  const workerSync = useRealTimeSync({
+    entityType: 'worker',
+    entityId: workerId,
+    enabled: true,
+    onUpdate: (data) => {
+      if (mountedRef.current && viewModelRef.current) {
+        // Update worker status in real-time
+        refreshDashboard();
+      }
+    },
+    onError: (error) => {
+      Logger.error('Worker sync error', error, 'WorkerDashboardScreen');
+    },
+  });
 
   // Cleanup on unmount
   useEffect(() => {
@@ -165,6 +196,30 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
       if (mountedRef.current) {
         viewModelRef.current = workerViewModel;
         setViewModel(workerViewModel);
+
+        // Initialize real-time sync
+        try {
+          const services = ServiceContainer.getInstance();
+          await services.syncIntegration.initialize(
+            services.optimizedWebSocket,
+            services.messageRouter,
+            services.offlineSupport,
+            {
+              userId: workerId,
+              userRole: 'worker',
+              buildingIds: [], // This would be populated from worker's assigned buildings
+              permissions: ['task_read', 'task_write', 'clock_in', 'clock_out'],
+            }
+          );
+          
+          // Load cached data
+          await taskSync.loadCachedData();
+          await workerSync.loadCachedData();
+          
+          Logger.info('Real-time sync initialized for worker dashboard', 'WorkerDashboardScreen');
+        } catch (syncError) {
+          Logger.error('Failed to initialize real-time sync', syncError, 'WorkerDashboardScreen');
+        }
       }
     } catch (err) {
       if (mountedRef.current) {
@@ -227,7 +282,22 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
 
     try {
       const success = await viewModelRef.current.updateTaskStatus(taskId, status);
-      if (!success && mountedRef.current) {
+      if (success && mountedRef.current) {
+        // Send real-time sync event
+        await taskSync.sendSyncEvent({
+          taskId,
+          status,
+          updatedAt: new Date().toISOString(),
+          workerId,
+        }, 'task_update');
+        
+        // Cache the update
+        await taskSync.cacheData({
+          taskId,
+          status,
+          updatedAt: new Date().toISOString(),
+        });
+      } else if (mountedRef.current) {
         Alert.alert('Update Failed', 'Failed to update task status.');
       }
     } catch (error) {
@@ -236,7 +306,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
         Alert.alert('Error', 'Failed to update task. Please try again.');
       }
     }
-  }, []);
+  }, [taskSync, workerId]);
 
   const handleNotificationRead = useCallback(async (notificationId: string) => {
     if (!viewModelRef.current || !mountedRef.current) return;

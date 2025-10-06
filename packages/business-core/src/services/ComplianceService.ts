@@ -24,7 +24,7 @@ import {
   ComplianceDashboardData
 } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '../ServiceContainer';
-import { NYCAPIService } from '@cyntientops/api-clients';
+import { APIClientManager, dsnyViolationsService } from '@cyntientops/api-clients';
 
 // Types are now imported from @cyntientops/api-clients
 import { Logger } from './LoggingService';
@@ -32,13 +32,13 @@ import { Logger } from './LoggingService';
 export class ComplianceService {
   private static instance: ComplianceService;
   private container: ServiceContainer;
-  private nycAPI: NYCAPIService;
+  private api: APIClientManager;
   private complianceCache: Map<string, any> = new Map();
   private updateSubscribers: Set<(update: ComplianceIssue) => void> = new Set();
 
   private constructor(container: ServiceContainer) {
     this.container = container;
-    this.nycAPI = new NYCAPIService();
+    this.api = container.apiClients;
   }
 
   public static getInstance(container: ServiceContainer): ComplianceService {
@@ -55,51 +55,56 @@ export class ComplianceService {
   async loadRealViolations(buildingId: string): Promise<ComplianceIssue[]> {
     try {
       // Load real violations from NYC APIs
+      const address = await this.getBuildingAddress(buildingId);
       const [hpdViolations, dsnyViolations, fdnyInspections, complaints311] = await Promise.allSettled([
-        this.container.apiClients.hpd.getBuildingViolations(buildingId),
-        this.container.apiClients.dsny.getBuildingViolations(buildingId),
-        this.container.apiClients.fdny.getBuildingInspections(buildingId, 10),
-        this.container.apiClients.complaints311.getBuildingComplaints(buildingId, 20)
+        this.api.hpd.getViolationsByAddress(address),
+        dsnyViolationsService.fetchDSNYSummonsByAddress(address),
+        this.api.fdny.getBuildingInspections(buildingId, 10),
+        this.api.complaints311.getBuildingComplaints(buildingId, 20)
       ]);
 
       const violations: ComplianceIssue[] = [];
 
       // Process HPD violations
       if (hpdViolations.status === 'fulfilled') {
-        hpdViolations.value.forEach((violation: any) => {
+        const list = Array.isArray(hpdViolations.value) ? hpdViolations.value : [];
+        const deduped = list; // HPDAPIClient already filters duplicates; extend with ViolationProcessor if needed
+        deduped.forEach((violation: any) => {
           violations.push({
-            id: violation.violationid,
+            id: violation.violationId || violation.violationid || violation.id,
             buildingId,
             type: 'HPD_VIOLATION',
-            severity: this.mapHPDViolationSeverity(violation.violationclass),
-            title: violation.novdescription,
-            description: violation.novdescription,
-            status: violation.currentstatus === 'OPEN' ? 'active' : 'resolved',
-            dateIssued: new Date(violation.inspectiondate),
-            dueDate: violation.originalcorrectbydate ? new Date(violation.originalcorrectbydate) : undefined,
+            severity: this.mapHPDViolationSeverity((violation.severity || violation.violationClass || '').toString()),
+            title: violation.title || violation.description || violation.novDescription || 'HPD Violation',
+            description: violation.description || violation.novDescription || '',
+            status: (violation.status || violation.currentStatus || '').includes('OPEN') ? 'active' : 'resolved',
+            dateIssued: violation.dateFound ? new Date(violation.dateFound) : (violation.inspectionDate ? new Date(violation.inspectionDate) : new Date()),
+            dueDate: violation.dateResolved ? new Date(violation.dateResolved) : undefined,
             source: 'HPD',
             fineAmount: 0, // HPD violations don't have direct fines
-            isCritical: violation.violationclass === 'A'
+            isCritical: (violation.severity || '').toString().toLowerCase() === 'critical'
           });
         });
       }
 
       // Process DSNY violations
       if (dsnyViolations.status === 'fulfilled') {
-        dsnyViolations.value.forEach((violation: any) => {
+        const result = dsnyViolations.value;
+        const summons = (result && result.summons) ? result.summons : [];
+        summons.forEach((v: any) => {
           violations.push({
-            id: violation.ticket_number,
+            id: v.case_number,
             buildingId,
             type: 'DSNY_VIOLATION',
-            severity: this.mapDSNYViolationSeverity(violation.penalty_imposed),
-            title: violation.charge_1_code_description,
-            description: `${violation.charge_1_code_section} - ${violation.charge_1_code_description}`,
-            status: violation.hearing_status?.includes('PAID') ? 'resolved' : 'active',
-            dateIssued: new Date(violation.violation_date),
-            dueDate: violation.hearing_date ? new Date(violation.hearing_date) : undefined,
+            severity: this.mapDSNYViolationSeverity(String(v.fine_amount || '0')),
+            title: v.violation_type || v.description || 'DSNY Summons',
+            description: v.description || '',
+            status: v.status?.includes('PAID') ? 'resolved' : 'active',
+            dateIssued: v.violation_date ? new Date(v.violation_date) : new Date(),
+            dueDate: v.hearing_date ? new Date(v.hearing_date) : undefined,
             source: 'DSNY',
-            fineAmount: parseFloat(violation.penalty_imposed || '0') / 100,
-            isCritical: parseFloat(violation.penalty_imposed || '0') > 50000 // $500+ is critical
+            fineAmount: v.fine_amount || 0,
+            isCritical: (v.fine_amount || 0) >= 500
           });
         });
       }
@@ -164,8 +169,9 @@ export class ComplianceService {
       // LL97 emissions average (optional)
       let avgEmissions = 0;
       try {
-        const bbl = this.nycAPI.extractBBL(buildingId);
-        const ll97 = await this.nycAPI.getLL97Emissions(bbl);
+        const nyc = this.container.apiClients.nyc;
+        const bbl = nyc.extractBBL(buildingId);
+        const ll97 = await nyc.getLL97Emissions(bbl);
         if (Array.isArray(ll97) && ll97.length > 0) {
           const sum = ll97.reduce((s: number, e: any) => s + (parseFloat(e.total_ghg_emissions_intensity || e.totalEmissions || '0') || 0), 0);
           avgEmissions = sum / ll97.length;
@@ -273,18 +279,19 @@ export class ComplianceService {
         
         if (!building) continue;
 
-        const bbl = this.nycAPI.extractBBL(buildingId);
-        const bin = this.nycAPI.extractBIN(buildingId);
+        const nyc = this.container.apiClients.nyc;
+        const bbl = nyc.extractBBL(buildingId);
+        const bin = nyc.extractBIN(buildingId);
 
         try {
           // Load HPD violations
-          const hpdViolations = await this.nycAPI.getHPDViolations(bbl);
+          const hpdViolations = await nyc.getHPDViolations(bbl);
           for (const hpdViolation of hpdViolations) {
             violations.push(this.convertHPDViolationToComplianceIssue(hpdViolation, building));
           }
 
           // Load DOB permits (convert to compliance issues if needed)
-          const dobPermits = await this.nycAPI.getDOBPermits(bbl);
+          const dobPermits = await nyc.getDOBPermits(bbl);
           for (const permit of dobPermits) {
             if (this.isPermitComplianceIssue(permit)) {
               violations.push(this.convertDOBPermitToComplianceIssue(permit, building));
@@ -292,7 +299,7 @@ export class ComplianceService {
           }
 
           // Load LL97 emissions (convert to compliance issues if needed)
-          const ll97Emissions = await this.nycAPI.getLL97Emissions(bbl);
+          const ll97Emissions = await nyc.getLL97Emissions(bbl);
           for (const emission of ll97Emissions) {
             if (this.isEmissionComplianceIssue(emission)) {
               violations.push(this.convertLL97EmissionToComplianceIssue(emission, building));

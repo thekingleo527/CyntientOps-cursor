@@ -61,6 +61,9 @@
     },
     {
       "path": "./apps/mobile-rn"
+    },
+    {
+      "path": "./packages/compliance-engine"
     }
   ],
   "exclude": [

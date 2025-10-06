@@ -1,55 +1,11 @@
 
-// Mock types to replace cross-package imports
-export interface HPDViolation {
-  id: string;
-  buildingId: string;
-  description: string;
-  status: string;
-  date: string;
-}
-
-export interface DOBPermit {
-  id: string;
-  buildingId: string;
-  type: string;
-  status: string;
-  date: string;
-}
-
-export interface DSNYRoute {
-  id: string;
-  buildingId: string;
-  route: string;
-  schedule: string;
-}
-
-export interface LL97Emission {
-  id: string;
-  buildingId: string;
-  emissions: number;
-  year: number;
-}
-
-export class APIClientManager {
-  static getInstance() { return new APIClientManager(); }
-  async getData() { return null; }
-}
-
-export class NYCAPIService {
-  static getInstance() { return new NYCAPIService(); }
-  async getViolations() { return []; }
-  async getPermits() { return []; }
-}
-
-export class DSNYViolationsService {
-  static getInstance() { return new DSNYViolationsService(); }
-  async getViolations() { return []; }
-}
-
-export class PropertyValueService {
-  static getInstance() { return new PropertyValueService(); }
-  async getPropertyValue() { return null; }
-}
+// Import real types and services from api-clients package
+import type { 
+  HPDViolation, 
+  DOBPermit, 
+  DSNYRoute, 
+  LL97Emission 
+} from '@cyntientops/api-clients';
 
 /**
  * 🏙️ NYC Service
@@ -57,9 +13,7 @@ export class PropertyValueService {
  */
 
 import { BuildingService } from './BuildingService';
-// // import { NYCAPIService, DSNYViolationsService, PropertyValueService } from '@cyntientops/api-clients'; // Disabled for TypeScript compatibility
-
-// All service classes are already declared above
+import { NYCAPIService, DSNYViolationsService, PropertyValueService } from '@cyntientops/api-clients';
 import { Logger } from './LoggingService';
 import { CacheManager } from './CacheManager';
 

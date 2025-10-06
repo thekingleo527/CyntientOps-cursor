@@ -1,0 +1,10 @@
+{
+  "name": "@cyntientops/compliance-engine",
+  "version": "1.0.0",
+  "description": "Compliance engine for CyntientOps: LL11/LL97 calculations, deduplication, caching",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "private": true,
+  "dependencies": {}
+}
+

@@ -24,6 +24,7 @@ config.resolver.alias = {
   '@cyntientops/intelligence-services': path.resolve(projectRoot, 'packages/intelligence-services/src'),
   '@cyntientops/managers': path.resolve(projectRoot, 'packages/managers/src'),
   '@cyntientops/data-seed': path.resolve(projectRoot, 'packages/data-seed/src'),
+  '@cyntientops/compliance-engine': path.resolve(projectRoot, 'packages/compliance-engine/src'),
 };
 
 // Watch essential app and packages
@@ -36,6 +37,7 @@ config.watchFolders = [
   path.resolve(projectRoot, 'packages/intelligence-services'),
   path.resolve(projectRoot, 'packages/managers'),
   path.resolve(projectRoot, 'packages/data-seed'),
+  path.resolve(projectRoot, 'packages/compliance-engine'),
 ];
 
 // Resolve node_modules from root and app

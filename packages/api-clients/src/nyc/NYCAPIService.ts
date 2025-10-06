@@ -184,7 +184,7 @@ export class NYCAPIService {
     }
   }
 
-  // DSNY Collection Schedule API
+  // DSNY Collection Schedule API (public dataset; no token required)
   async getDSNYCollectionSchedule(bin: string): Promise<DSNYRoute> {
     if (!this.validateBIN(bin)) {
       throw new Error('Invalid BIN format');
@@ -192,7 +192,8 @@ export class NYCAPIService {
 
     const sanitizedBin = this.sanitizeInput(bin);
     const endpoint: APIEndpoint = {
-      url: `${this.API_CONFIG.DSNY.baseURL}/dsny-collection-schedule.json?$where=bin='${sanitizedBin}'`,
+      // ebb7-mvp5 is the DSNY collection schedule dataset; adjust field names as needed
+      url: `${this.API_CONFIG.DSNY.baseURL}/ebb7-mvp5.json?$where=bin='${sanitizedBin}'&$limit=1`,
       cacheKey: `dsny_${sanitizedBin}`,
       method: 'GET',
     };
@@ -228,10 +229,11 @@ export class NYCAPIService {
     return this.fetch<DOBPermit[]>(endpoint);
   }
 
-  // LL97 Emissions API
+  // LL97 Emissions API (public dataset)
   async getLL97Emissions(bbl: string): Promise<LL97Emission[]> {
     const endpoint: APIEndpoint = {
-      url: `${this.API_CONFIG.LL97.baseURL}/ll97-emissions.json?$where=bbl='${bbl}'`,
+      // 8vys-2eex is the LL97 emissions dataset id
+      url: `${this.API_CONFIG.LL97.baseURL}/8vys-2eex.json?$where=bbl='${bbl}'`,
       cacheKey: `ll97_emissions_${bbl}`,
       method: 'GET',
     };

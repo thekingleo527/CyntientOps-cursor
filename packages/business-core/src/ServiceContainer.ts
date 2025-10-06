@@ -18,6 +18,9 @@ import { OptimizedWebSocketManager } from './services/OptimizedWebSocketManager'
 import { OfflineSupportManager } from './services/OfflineSupportManager';
 import { RealTimeMessageRouter } from './services/RealTimeMessageRouter';
 import { RealTimeSyncIntegration } from './services/RealTimeSyncIntegration';
+import { OfflineTaskManager } from './services/OfflineTaskManager';
+import { OfflineComplianceManager } from './services/OfflineComplianceManager';
+import { PushNotificationService } from './services/PushNotificationService';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
 import { AlertsService } from './services/AlertsService';
 import { BuildingMetricsService } from './services/BuildingMetricsService';
@@ -108,6 +111,9 @@ export class ServiceContainer {
   private _offlineSupport: OfflineSupportManager | null = null;
   private _messageRouter: RealTimeMessageRouter | null = null;
   private _syncIntegration: RealTimeSyncIntegration | null = null;
+  private _offlineTaskManager: OfflineTaskManager | null = null;
+  private _offlineComplianceManager: OfflineComplianceManager | null = null;
+  private _pushNotifications: PushNotificationService | null = null;
   private _notes: NotesService | null = null;
   private _inventory: InventoryService | null = null;
   private _weather: any | null = null; // Weather via WeatherAPIClient in api-clients
@@ -962,6 +968,27 @@ export class ServiceContainer {
       this._syncIntegration = RealTimeSyncIntegration.getInstance();
     }
     return this._syncIntegration;
+  }
+
+  public get offlineTaskManager(): OfflineTaskManager {
+    if (!this._offlineTaskManager) {
+      this._offlineTaskManager = OfflineTaskManager.getInstance();
+    }
+    return this._offlineTaskManager;
+  }
+
+  public get offlineComplianceManager(): OfflineComplianceManager {
+    if (!this._offlineComplianceManager) {
+      this._offlineComplianceManager = OfflineComplianceManager.getInstance();
+    }
+    return this._offlineComplianceManager;
+  }
+
+  public get pushNotifications(): PushNotificationService {
+    if (!this._pushNotifications) {
+      this._pushNotifications = PushNotificationService.getInstance();
+    }
+    return this._pushNotifications;
   }
   
   public get intelligence(): IntelligenceService {

@@ -38,7 +38,6 @@
   "implicitDependencies": [
     "business-core",
     "api-clients", 
-    "compliance-engine",
     "database",
     "domain-schema",
     "ui-components",

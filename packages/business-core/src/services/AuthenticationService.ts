@@ -10,6 +10,16 @@ import { WorkerProfile } from '@cyntientops/domain-schema';
 import workersData from '@cyntientops/data-seed/src/workers.json';
 import clientsData from '@cyntientops/data-seed/src/clients.json';
 import { Logger } from './LoggingService';
+import bcrypt from 'bcryptjs';
+
+// Generate hashed passwords for security
+const generateHashedPassword = (plainPassword: string): string => {
+  return bcrypt.hashSync(plainPassword, 10);
+};
+
+// Default password for all users (in production, each user should have unique passwords)
+const DEFAULT_PASSWORD = 'password';
+const HASHED_DEFAULT_PASSWORD = generateHashedPassword(DEFAULT_PASSWORD);
 
 // Types
 export interface UserCredentials {
@@ -50,74 +60,74 @@ export class AuthenticationService {
     // Workers (7 users) - matches workers.json exactly
     'greg.hutson@francomanagement.com': {
       email: 'greg.hutson@francomanagement.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'greg.hutson'
     },
     'edwin.lema@francomanagement.com': {
       email: 'edwin.lema@francomanagement.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'edwin.lema'
     },
     'kevin.dutan@francomanagement.com': {
       email: 'kevin.dutan@francomanagement.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'kevin.dutan'
     },
     'mercedes.inamagua@francomanagement.com': {
       email: 'mercedes.inamagua@francomanagement.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'mercedes.inamagua'
     },
     'luis.lopez@francomanagement.com': {
       email: 'luis.lopez@francomanagement.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'luis.lopez'
     },
     'angel.guirachocha@francomanagement.com': {
       email: 'angel.guirachocha@francomanagement.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'angel.guirachocha'
     },
     'shawn.magloire@francomanagement.com': {
       email: 'shawn.magloire@francomanagement.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'shawn.magloire'
     },
 
     // Client Users (7 users) - property managers/clients
     'david@jmrealty.org': {
       email: 'david@jmrealty.org',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'david'
     },
     'mfarhat@farhatrealtymanagement.com': {
       email: 'mfarhat@farhatrealtymanagement.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'mfarhat'
     },
     'facilities@solarone.org': {
       email: 'facilities@solarone.org',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'solarone'
     },
     'management@grandelizabeth.com': {
       email: 'management@grandelizabeth.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'gelman'
     },
     'property@citadelrealty.com': {
       email: 'property@citadelrealty.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'citadel'
     },
     'admin@corbelproperty.com': {
       email: 'admin@corbelproperty.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'corbel'
     },
     'management@chelsea115.com': {
       email: 'management@chelsea115.com',
-      password: 'password',
+      password: HASHED_DEFAULT_PASSWORD,
       username: 'chelsea'
     }
   };
@@ -157,8 +167,8 @@ export class AuthenticationService {
         };
       }
 
-      // Verify password
-      if (credentials.password !== password) {
+      // Verify password using bcrypt
+      if (!bcrypt.compareSync(password, credentials.password)) {
         return {
           success: false,
           error: 'Invalid password'

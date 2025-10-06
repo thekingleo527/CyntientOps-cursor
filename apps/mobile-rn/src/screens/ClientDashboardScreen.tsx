@@ -19,7 +19,7 @@ import { DatabaseManager } from '@cyntientops/database';
 import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
 import { ServiceContainer, PropertyDataService } from '@cyntientops/business-core';
-import { ViolationDataService } from '../services/ViolationDataService';
+// Removed ViolationDataService - now using real ComplianceService
 import { APIClientManager } from '@cyntientops/api-clients';
 import { Logger } from '@cyntientops/business-core';
 
@@ -40,10 +40,21 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
+  const [violationsData, setViolationsData] = useState<any>(null);
+  const [violationsLoading, setViolationsLoading] = useState(false);
 
   useEffect(() => {
     initializeViewModel();
   }, [clientId]);
+
+  // Load violations data when buildingId changes
+  useEffect(() => {
+    const allProperties = PropertyDataService.getAllProperties();
+    const targetBuildingId = buildingId || (allProperties.length > 0 ? allProperties[0].id : null);
+    if (targetBuildingId) {
+      loadViolationsData(targetBuildingId);
+    }
+  }, [buildingId, refreshTick]);
 
   // Subscribe to portfolio/building updates and refresh
   useEffect(() => {
@@ -115,6 +126,44 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
     }
   };
 
+  const loadViolationsData = async (buildingId: string) => {
+    try {
+      setViolationsLoading(true);
+      const services = ServiceContainer.getInstance();
+      const complianceService = services.compliance;
+      
+      // Load real violations data
+      const violations = await complianceService.loadRealViolations(buildingId);
+      const complianceScore = await complianceService.calculateRealComplianceScore(buildingId);
+      
+      // Transform to match expected format
+      const hpdCount = violations.filter(v => v.category === 'hpd').length;
+      const dobCount = violations.filter(v => v.category === 'dob').length;
+      const dsnyCount = violations.filter(v => v.category === 'dsny').length;
+      const outstandingFines = violations.reduce((sum, v) => sum + (v.estimatedCost || 0), 0);
+      
+      setViolationsData({
+        hpd: hpdCount,
+        dob: dobCount,
+        dsny: dsnyCount,
+        outstanding: outstandingFines,
+        score: Math.round(complianceScore * 100) // Convert to 0-100 scale
+      });
+    } catch (error) {
+      console.error('Failed to load violations data:', error);
+      // Fallback to default values
+      setViolationsData({
+        hpd: 0,
+        dob: 0,
+        dsny: 0,
+        outstanding: 0,
+        score: 100
+      });
+    } finally {
+      setViolationsLoading(false);
+    }
+  };
+
   const refreshDashboard = async () => {
     if (!viewModel) return;
     try {
@@ -177,14 +226,14 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
   const allProperties = PropertyDataService.getAllProperties();
   const targetBuildingId = buildingId || (allProperties.length > 0 ? allProperties[0].id : null);
   const property = targetBuildingId ? PropertyDataService.getPropertyDetails(targetBuildingId) : null;
-  const violations = targetBuildingId ? ViolationDataService.getViolationData(targetBuildingId) : null;
+  const violations = violationsData; // Now using real API data
 
   return (
     <ErrorBoundary context="ClientDashboardScreen">
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {/* Property Overview Cards */}
-          {property && violations && (
+          {property && (violations || violationsLoading) && (
             <>
               <PropertyOverviewCard
                 address={property.address}
@@ -193,19 +242,19 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
                 yearBuilt={property.yearBuilt}
                 yearRenovated={property.yearRenovated}
                 units={property.unitsTotal}
-                complianceScore={violations.score}
-                violationsCount={violations.hpd + violations.dob + violations.dsny}
+                complianceScore={violations?.score || 0}
+                violationsCount={violations ? (violations.hpd + violations.dob + violations.dsny) : 0}
                 historicDistrict={property.historicDistrict}
                 neighborhood={property.neighborhood}
               />
 
               <ComplianceStatusCard
-                score={violations.score}
-                status={violations.score >= 90 ? 'Excellent' : violations.score >= 70 ? 'Good' : violations.score >= 50 ? 'Fair' : 'Needs Attention'}
-                hpdViolations={violations.hpd}
-                dobViolations={violations.dob}
-                dsnyViolations={violations.dsny}
-                outstanding={violations.outstanding}
+                score={violations?.score || 0}
+                status={violations ? (violations.score >= 90 ? 'Excellent' : violations.score >= 70 ? 'Good' : violations.score >= 50 ? 'Fair' : 'Needs Attention') : 'Loading...'}
+                hpdViolations={violations?.hpd || 0}
+                dobViolations={violations?.dob || 0}
+                dsnyViolations={violations?.dsny || 0}
+                outstanding={violations?.outstanding || 0}
               />
             </>
           )}

@@ -6,6 +6,7 @@
 
 import { DatabaseManager } from '@cyntientops/database';
 import { APIClientManager } from '@cyntientops/api-clients';
+import { CacheManager } from './services/CacheManager';
 
 import { ClockInManager } from '@cyntientops/managers';
 import { LocationManager } from '@cyntientops/managers';
@@ -67,6 +68,9 @@ import {
 
 export interface ServiceContainerConfig {
   databasePath: string;
+  supabaseUrl?: string;
+  supabaseAnonKey?: string;
+  supabaseServiceRoleKey?: string;
   enableOfflineMode: boolean;
   enableRealTimeSync: boolean;
   enableIntelligence: boolean;
@@ -80,6 +84,7 @@ export class ServiceContainer {
   public readonly database: DatabaseManager;
   public readonly operationalData: OperationalDataService;
   public readonly databaseIntegration: DatabaseIntegrationService;
+  public readonly cacheManager: CacheManager;
   
   // MARK: - Layer 1: Core Services (LAZY INITIALIZATION)
   public readonly auth: AuthService;
@@ -160,6 +165,7 @@ export class ServiceContainer {
     
     // Initialize essential services synchronously
     this.database = DatabaseManager.getInstance({ path: config.databasePath });
+    this.cacheManager = CacheManager.getInstance(this.database);
     this.operationalData = OperationalDataService.getInstance();
     this.databaseIntegration = DatabaseIntegrationService.getInstance(this.database);
     this.auth = AuthService.getInstance(this.database);
@@ -385,6 +391,10 @@ export class ServiceContainer {
   }
 
   public get operationalDataManager(): OperationalDataManager {
+    // Ensure cacheManager is set on the operational data manager
+    if (operationalDataManager && !operationalDataManager['cacheManager']) {
+      operationalDataManager.setCacheManager(this.cacheManager);
+    }
     return operationalDataManager;
   }
 

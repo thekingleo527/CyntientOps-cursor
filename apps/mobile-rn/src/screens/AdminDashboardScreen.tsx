@@ -21,7 +21,7 @@ import { DatabaseManager } from '@cyntientops/database';
 import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
 import { ServiceContainer, PropertyDataService } from '@cyntientops/business-core';
-import { ViolationDataService } from '../services/ViolationDataService';
+// Removed ViolationDataService - now using real ComplianceService
 import { APIClientManager } from '@cyntientops/api-clients';
 import { Logger } from '@cyntientops/business-core';
 
@@ -40,10 +40,18 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
+  const [portfolioViolations, setPortfolioViolations] = useState<any>(null);
+  const [violationsLoading, setViolationsLoading] = useState(false);
+  const [propertyViolations, setPropertyViolations] = useState<Map<string, any>>(new Map());
 
   useEffect(() => {
     initializeViewModel();
   }, []);
+
+  // Load portfolio violations data
+  useEffect(() => {
+    loadPortfolioViolationsData();
+  }, [refreshTick]);
 
   // Subscribe to real-time updates for admin critical events and refresh
   useEffect(() => {
@@ -112,6 +120,80 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
       setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadPortfolioViolationsData = async () => {
+    try {
+      setViolationsLoading(true);
+      const services = ServiceContainer.getInstance();
+      const complianceService = services.compliance;
+      const allProperties = PropertyDataService.getAllProperties();
+      
+      const violationsByType = { hpd: 0, dob: 0, dsny: 0 };
+      let totalOutstanding = 0;
+      let totalScore = 0;
+      let criticalBuildings = 0;
+      const propertyViolationsMap = new Map<string, any>();
+      
+      // Load violations for each building
+      for (const property of allProperties) {
+        try {
+          const violations = await complianceService.loadRealViolations(property.id);
+          const complianceScore = await complianceService.calculateRealComplianceScore(property.id);
+          
+          const hpdCount = violations.filter(v => v.category === 'hpd').length;
+          const dobCount = violations.filter(v => v.category === 'dob').length;
+          const dsnyCount = violations.filter(v => v.category === 'dsny').length;
+          const outstandingFines = violations.reduce((sum, v) => sum + (v.estimatedCost || 0), 0);
+          
+          violationsByType.hpd += hpdCount;
+          violationsByType.dob += dobCount;
+          violationsByType.dsny += dsnyCount;
+          totalOutstanding += outstandingFines;
+          totalScore += complianceScore;
+          
+          // Store individual property data
+          propertyViolationsMap.set(property.id, {
+            hpd: hpdCount,
+            dob: dobCount,
+            dsny: dsnyCount,
+            outstanding: outstandingFines,
+            score: Math.round(complianceScore * 100)
+          });
+          
+          if (complianceScore < 0.5) { // Less than 50% compliance
+            criticalBuildings++;
+          }
+        } catch (error) {
+          console.warn(`Failed to load violations for building ${property.id}:`, error);
+          // Continue with other buildings
+        }
+      }
+      
+      const totalViolations = violationsByType.hpd + violationsByType.dob + violationsByType.dsny;
+      const portfolioScore = allProperties.length > 0 ? Math.round((totalScore / allProperties.length) * 100) : 100;
+      
+      setPortfolioViolations({
+        violationsByType,
+        totalViolations,
+        totalOutstanding,
+        portfolioScore,
+        criticalBuildings
+      });
+      setPropertyViolations(propertyViolationsMap);
+    } catch (error) {
+      console.error('Failed to load portfolio violations data:', error);
+      // Fallback to default values
+      setPortfolioViolations({
+        violationsByType: { hpd: 0, dob: 0, dsny: 0 },
+        totalViolations: 0,
+        totalOutstanding: 0,
+        portfolioScore: 100,
+        criticalBuildings: 0
+      });
+    } finally {
+      setViolationsLoading(false);
     }
   };
 
@@ -188,29 +270,12 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
   const topProperties = PropertyDataService.getTopPropertiesByValue(5);
   const developmentOpportunities = PropertyDataService.getPropertiesWithDevelopmentPotential().slice(0, 6);
 
-  // Calculate compliance summary
-  const allProperties = PropertyDataService.getAllProperties();
-  const violationsByType = { hpd: 0, dob: 0, dsny: 0 };
-  let totalOutstanding = 0;
-  let totalScore = 0;
-
-  allProperties.forEach(property => {
-    const violations = ViolationDataService.getViolationData(property.id);
-    if (violations) {
-      violationsByType.hpd += violations.hpd;
-      violationsByType.dob += violations.dob;
-      violationsByType.dsny += violations.dsny;
-      totalOutstanding += violations.outstanding;
-      totalScore += violations.score;
-    }
-  });
-
-  const totalViolations = violationsByType.hpd + violationsByType.dob + violationsByType.dsny;
-  const portfolioScore = allProperties.length > 0 ? totalScore / allProperties.length : 100;
-  const criticalBuildings = allProperties.filter(property => {
-    const violations = ViolationDataService.getViolationData(property.id);
-    return violations && violations.score < 50;
-  }).length;
+  // Use real compliance data from API
+  const violationsByType = portfolioViolations?.violationsByType || { hpd: 0, dob: 0, dsny: 0 };
+  const totalViolations = portfolioViolations?.totalViolations || 0;
+  const totalOutstanding = portfolioViolations?.totalOutstanding || 0;
+  const portfolioScore = portfolioViolations?.portfolioScore || 100;
+  const criticalBuildings = portfolioViolations?.criticalBuildings || 0;
 
   return (
     <ErrorBoundary context="AdminDashboardScreen">
@@ -235,16 +300,16 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
           />
 
           <TopPropertiesCard
-            properties={topProperties.map(p => ({
-              id: p.id,
-              name: p.name,
-              marketValue: p.marketValue,
-              complianceScore: ViolationDataService.getViolationData(p.id)?.score || 100,
-              violations: (() => {
-                const v = ViolationDataService.getViolationData(p.id);
-                return v ? v.hpd + v.dob + v.dsny : 0;
-              })(),
-            }))}
+            properties={topProperties.map(p => {
+              const violations = propertyViolations.get(p.id);
+              return {
+                id: p.id,
+                name: p.name,
+                marketValue: p.marketValue,
+                complianceScore: violations?.score || 100,
+                violations: violations ? (violations.hpd + violations.dob + violations.dsny) : 0,
+              };
+            })}
             onPropertyPress={onNavigateToBuilding}
           />
 

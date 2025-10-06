@@ -29,6 +29,7 @@ export enum ComplianceCategory {
   ALL = 'all',
   HPD = 'hpd',
   DOB = 'dob',
+  DSNY = 'dsny',
   FDNY = 'fdny',
   LL97 = 'll97',
   LL11 = 'll11',

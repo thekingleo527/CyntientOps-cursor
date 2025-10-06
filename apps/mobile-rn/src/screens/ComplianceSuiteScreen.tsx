@@ -499,13 +499,36 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
   const renderCriticalDeadlinesAlert = () => {
     if (criticalDeadlines.length === 0) return null;
 
+    const handleViewDetailsPress = () => {
+      try {
+        const first = criticalDeadlines[0];
+        if (!first) return;
+        const cat = (first.category || '').toString().toLowerCase();
+        const bid = first.buildingId;
+        if (!bid) return;
+        if (cat === 'hpd') {
+          navigation.navigate('HPDDetail', { buildingId: bid });
+        } else if (cat === 'dob') {
+          navigation.navigate('DOBDetail', { buildingId: bid });
+        } else if (cat === 'dsny') {
+          navigation.navigate('DSNYDetail', { buildingId: bid });
+        } else if (cat === 'll97') {
+          navigation.navigate('LL97Detail', { buildingId: bid });
+        } else {
+          navigation.navigate('HPDDetail', { buildingId: bid });
+        }
+      } catch {
+        // ignore navigation errors
+      }
+    };
+
     return (
       <View style={styles.criticalAlert}>
         <Text style={styles.criticalAlertTitle}>⚠️ Critical Deadlines</Text>
         <Text style={styles.criticalAlertText}>
           {criticalDeadlines.length} critical compliance deadline(s) approaching
         </Text>
-        <TouchableOpacity style={styles.criticalAlertButton}>
+        <TouchableOpacity style={styles.criticalAlertButton} onPress={handleViewDetailsPress}>
           <Text style={styles.criticalAlertButtonText}>View Details</Text>
         </TouchableOpacity>
       </View>
@@ -612,7 +635,28 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
       <View style={styles.violationsSection}>
         <Text style={styles.sectionTitle}>Recent Violations</Text>
         {recentViolations.map((violation) => (
-          <View key={violation.id} style={styles.violationCard}>
+          <TouchableOpacity
+            key={violation.id}
+            style={styles.violationCard}
+            onPress={() => {
+              try {
+                const cat = (violation.category || '').toString().toLowerCase();
+                const bid = violation.buildingId;
+                if (!bid) return;
+                if (cat === 'hpd') {
+                  navigation.navigate('HPDDetail', { buildingId: bid });
+                } else if (cat === 'dob') {
+                  navigation.navigate('DOBDetail', { buildingId: bid });
+                } else if (cat === 'dsny') {
+                  navigation.navigate('DSNYDetail', { buildingId: bid });
+                } else if (cat === 'll97') {
+                  navigation.navigate('LL97Detail', { buildingId: bid });
+                }
+              } catch {
+                // ignore navigation errors
+              }
+            }}
+          >
             <View style={styles.violationHeader}>
               <Text style={styles.violationCategory}>{violation.category}</Text>
               <View style={[styles.severityBadge, { backgroundColor: getSeverityColor(violation.severity) }]}>
@@ -628,7 +672,7 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
                 Due: {violation.dueDate.toLocaleDateString()}
               </Text>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     );

@@ -159,6 +159,7 @@ export interface OperationalEvent {
 
 export class OperationalDataManager {
   private static instance: OperationalDataManager | null = null;
+  private cacheManager: any; // Will be injected from ServiceContainer
   
   // MARK: - 🛡️ PRESERVED OPERATIONAL DATA
   // Every task updated with canonical IDs - Complete real-world data
@@ -1182,23 +1183,41 @@ export class OperationalDataManager {
   }
   
   // MARK: - Singleton Pattern
-  public static getInstance(): OperationalDataManager {
+  public static getInstance(cacheManager?: any): OperationalDataManager {
     if (!OperationalDataManager.instance) {
-      OperationalDataManager.instance = new OperationalDataManager();
+      OperationalDataManager.instance = new OperationalDataManager(cacheManager);
     }
     return OperationalDataManager.instance;
   }
   
-  private constructor() {
-    this.initializeCachedData();
+  private constructor(cacheManager?: any) {
+    this.cacheManager = cacheManager;
+    if (this.cacheManager) {
+      this.initializeCachedData();
+    }
     // Load complete task data asynchronously
     this.loadCompleteTaskData().catch(error => {
       console.error('Failed to load complete task data:', error);
     });
   }
   
+  /**
+   * Set cache manager after initialization
+   */
+  public setCacheManager(cacheManager: any): void {
+    this.cacheManager = cacheManager;
+    if (this.cacheManager) {
+      this.initializeCachedData();
+    }
+  }
+  
   // MARK: - Initialization
   private async initializeCachedData(): Promise<void> {
+    if (!this.cacheManager) {
+      console.warn('CacheManager not available, skipping cache initialization');
+      return;
+    }
+    
     // Initialize cached buildings
     for (const [id, name] of Object.entries(CanonicalIDs.Buildings.nameMap)) {
       const building: CachedBuilding = {
@@ -1265,6 +1284,11 @@ export class OperationalDataManager {
    * Get all workers
    */
   public async getAllWorkers(): Promise<CachedWorker[]> {
+    if (!this.cacheManager) {
+      console.warn('CacheManager not available, returning empty workers list');
+      return [];
+    }
+    
     const workers: CachedWorker[] = [];
     for (const id of Object.keys(CanonicalIDs.Workers.nameMap)) {
       const worker = await this.cacheManager.get<CachedWorker>(`worker_${id}`);
@@ -1279,6 +1303,11 @@ export class OperationalDataManager {
    * Get all buildings
    */
   public async getAllBuildings(): Promise<CachedBuilding[]> {
+    if (!this.cacheManager) {
+      console.warn('CacheManager not available, returning empty buildings list');
+      return [];
+    }
+    
     const buildings: CachedBuilding[] = [];
     for (const id of Object.keys(CanonicalIDs.Buildings.nameMap)) {
       const building = await this.cacheManager.get<CachedBuilding>(`building_${id}`);
@@ -1293,6 +1322,10 @@ export class OperationalDataManager {
    * Get worker by ID
    */
   public async getWorker(workerId: string): Promise<CachedWorker | undefined> {
+    if (!this.cacheManager) {
+      console.warn('CacheManager not available, returning undefined worker');
+      return undefined;
+    }
     return this.cacheManager.get<CachedWorker>(`worker_${workerId}`);
   }
   
@@ -1300,6 +1333,10 @@ export class OperationalDataManager {
    * Get building by ID
    */
   public async getBuilding(buildingId: string): Promise<CachedBuilding | undefined> {
+    if (!this.cacheManager) {
+      console.warn('CacheManager not available, returning undefined building');
+      return undefined;
+    }
     return this.cacheManager.get<CachedBuilding>(`building_${buildingId}`);
   }
   

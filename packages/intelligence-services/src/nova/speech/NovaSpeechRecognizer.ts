@@ -28,18 +28,30 @@ import { UserRole } from '@cyntientops/domain-schema';
 let Voice: any = null;
 let SpeechToText: any = null;
 
-// Platform-specific imports
-if (Platform.OS === 'ios') {
+// Platform-specific imports - Expo compatible
+if (Platform.OS === 'ios' || Platform.OS === 'android') {
   try {
-    Voice = require('@react-native-voice/voice');
+    // Use Expo Speech for voice recognition
+    const { Speech } = require('expo-speech');
+    Voice = {
+      start: async (locale: string) => {
+        // Expo Speech doesn't have direct voice recognition, use mock for now
+        Logger.warn('Voice recognition not fully implemented with Expo Speech', null, 'NovaSpeechRecognizer');
+        return Promise.resolve();
+      },
+      stop: async () => {
+        return Promise.resolve();
+      },
+      cancel: async () => {
+        return Promise.resolve();
+      },
+      isAvailable: async () => {
+        return Promise.resolve(false);
+      }
+    };
+    SpeechToText = Voice;
   } catch (error) {
-    Logger.warn('Voice recognition not available on iOS:', null, 'NovaSpeechRecognizer', error);
-  }
-} else if (Platform.OS === 'android') {
-  try {
-    SpeechToText = require('@react-native-voice/voice');
-  } catch (error) {
-    Logger.warn('Voice recognition not available on Android:', null, 'NovaSpeechRecognizer', error);
+    Logger.warn('Voice recognition not available:', null, 'NovaSpeechRecognizer', error);
   }
 } else if (Platform.OS === 'web') {
   // Web Speech API will be used directly

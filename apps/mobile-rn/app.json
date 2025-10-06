@@ -222,7 +222,20 @@
       },
       "eas": {
         "projectId": "e59805da-6423-4c79-ba1a-d277633f0875"
-      }
+      },
+      "supabase": {
+        "url": "https://your-supabase-project.supabase.co",
+        "anonKey": "your-supabase-anon-key",
+        "serviceRoleKey": "your-supabase-service-role-key"
+      },
+      "apiKeys": {
+        "weatherApiKey": "your-weather-api-key",
+        "dsnyApiKey": "your-dsny-api-key",
+        "hpdApiKey": "your-hpd-api-key",
+        "dobApiKey": "your-dob-api-key"
+      },
+      "websocketUrl": "wss://your-websocket-url.com",
+      "databasePath": "cyntientops.db"
     },
     "runtimeVersion": {
       "policy": "appVersion"

@@ -320,21 +320,6 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
               }}
             />
             <Stack.Screen
-              name="HPDDetail"
-              children={() => (
-                <Suspense fallback={<ActivityIndicator size="large" color="#10b981" />}>
-                  <HPDDetailScreen />
-                </Suspense>
-              )}
-              options={{
-                headerShown: true,
-                headerStyle: { backgroundColor: '#0f0f0f' },
-                headerTintColor: '#ffffff',
-                headerTitleStyle: { color: '#ffffff' },
-                title: 'HPD Violations'
-              }}
-            />
-            <Stack.Screen
               name="PhotoCaptureModal"
               // Wrap lazy component in a function so we can provide Suspense
               children={() => (

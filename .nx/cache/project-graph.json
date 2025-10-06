@@ -85,13 +85,6 @@
         "targets": {
           "build": {
             "executor": "nx:run-commands",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "outputs": [
               "{workspaceRoot}/dist/packages/compliance-engine"
             ],
@@ -101,13 +94,22 @@
             },
             "configurations": {}
           },
+          "dev": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "dev"
+            },
+            "configurations": {}
+          },
+          "clean": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "clean"
+            },
+            "configurations": {}
+          },
           "test": {
             "executor": "@nx/jest:jest",
-            "inputs": [
-              "default",
-              "^production",
-              "{workspaceRoot}/jest.preset.js"
-            ],
             "outputs": [
               "{workspaceRoot}/coverage/{projectRoot}"
             ],
@@ -119,11 +121,6 @@
           },
           "lint": {
             "executor": "@nx/eslint:lint",
-            "inputs": [
-              "default",
-              "{workspaceRoot}/.eslintrc.json",
-              "{workspaceRoot}/.eslintignore"
-            ],
             "outputs": [
               "{options.outputFile}"
             ],
@@ -131,6 +128,13 @@
               "lintFilePatterns": [
                 "packages/compliance-engine/**/*.{ts,tsx,js,jsx}"
               ]
+            },
+            "configurations": {}
+          },
+          "lint:fix": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "lint:fix"
             },
             "configurations": {}
           }
@@ -17247,6 +17251,16 @@
       {
         "source": "database",
         "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "database",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "database",
+        "target": "npm:react-native",
         "type": "static"
       },
       {

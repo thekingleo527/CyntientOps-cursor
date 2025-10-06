@@ -8,10 +8,17 @@
 
 import { Logger } from '@cyntientops/business-core';
 
-// Real TensorFlow.js implementation
+// Real TensorFlow.js implementation - React Native compatible
 let tf: any;
 try {
-  tf = require('@tensorflow/tfjs-node');
+  // Use React Native compatible TensorFlow.js
+  tf = require('@tensorflow/tfjs');
+  // Try to load platform-specific backend
+  try {
+    require('@tensorflow/tfjs-react-native');
+  } catch (backendError) {
+    console.warn('TensorFlow.js React Native backend not available, using CPU backend');
+  }
 } catch (error) {
   console.warn('TensorFlow.js not available, using mock implementation');
   tf = null;

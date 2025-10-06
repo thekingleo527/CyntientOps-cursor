@@ -20,10 +20,10 @@ import {
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius, BuildingDetailOverview } from '@cyntientops/ui-components';
-import { RealDataService } from '@cyntientops/business-core';
+import { RealDataService, ServiceContainer } from '@cyntientops/business-core';
 import { NYCService } from '@cyntientops/business-core';
 import { useServices } from '../providers/AppProvider';
-import { ViolationDataService } from '../services/ViolationDataService';
+// Removed ViolationDataService - now using real ComplianceService
 import config from '../config/app.config';
 import { DSNYAPIClient } from '@cyntientops/api-clients';
 import { PropertyDataService } from '@cyntientops/business-core';
@@ -100,6 +100,7 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nextPickup, setNextPickup] = useState<Date>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
+  const [violationsLoading, setViolationsLoading] = useState(false);
 
   // Load building data
   useEffect(() => {
@@ -119,9 +120,8 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = () => {
         setBuilding(buildingData);
         setRoutines(routinesData || []);
 
-        // Load violation data
-        const violationData = ViolationDataService.getViolationData(buildingId);
-        setViolationSummary(violationData);
+        // Load violation data using real API
+        await loadViolationsData(buildingId);
 
       } catch (err) {
         console.error('Error loading building data:', err);
@@ -133,6 +133,44 @@ export const BuildingDetailScreen: React.FC<BuildingDetailScreenProps> = () => {
 
     loadBuildingData();
   }, [buildingId, services.database]);
+
+  const loadViolationsData = async (buildingId: string) => {
+    try {
+      setViolationsLoading(true);
+      const services = ServiceContainer.getInstance();
+      const complianceService = services.compliance;
+      
+      // Load real violations data
+      const violations = await complianceService.loadRealViolations(buildingId);
+      const complianceScore = await complianceService.calculateRealComplianceScore(buildingId);
+      
+      // Transform to match expected format
+      const hpdCount = violations.filter(v => v.category === 'hpd').length;
+      const dobCount = violations.filter(v => v.category === 'dob').length;
+      const dsnyCount = violations.filter(v => v.category === 'dsny').length;
+      const outstandingFines = violations.reduce((sum, v) => sum + (v.estimatedCost || 0), 0);
+      
+      setViolationSummary({
+        hpd: hpdCount,
+        dob: dobCount,
+        dsny: dsnyCount,
+        outstanding: outstandingFines,
+        score: Math.round(complianceScore * 100) // Convert to 0-100 scale
+      });
+    } catch (error) {
+      console.error('Failed to load violations data:', error);
+      // Fallback to default values
+      setViolationSummary({
+        hpd: 0,
+        dob: 0,
+        dsny: 0,
+        outstanding: 0,
+        score: 100
+      });
+    } finally {
+      setViolationsLoading(false);
+    }
+  };
 
   // Load inventory data
   useEffect(() => {

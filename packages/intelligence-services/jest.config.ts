@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'intelligence-services',
-  preset: '../../jest.preset.js',
+  preset: '../../config/jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react-native/babel'] }],
   },

@@ -70,19 +70,21 @@ export class ComplianceService {
         const list = Array.isArray(hpdViolations.value) ? hpdViolations.value : [];
         const deduped = list; // HPDAPIClient already filters duplicates; extend with ViolationProcessor if needed
         deduped.forEach((violation: any) => {
+          const severity = this.mapHPDViolationSeverity((violation.severity || violation.violationClass || '').toString());
           violations.push({
             id: violation.violationId || violation.violationid || violation.id,
             buildingId,
-            type: 'HPD_VIOLATION',
-            severity: this.mapHPDViolationSeverity((violation.severity || violation.violationClass || '').toString()),
+            type: ComplianceType.REGULATORY,
+            severity,
             title: violation.title || violation.description || violation.novDescription || 'HPD Violation',
             description: violation.description || violation.novDescription || '',
-            status: (violation.status || violation.currentStatus || '').includes('OPEN') ? 'active' : 'resolved',
+            status: (violation.status || violation.currentStatus || '').includes('OPEN') ? ComplianceStatus.OPEN : ComplianceStatus.RESOLVED,
             dateIssued: violation.dateFound ? new Date(violation.dateFound) : (violation.inspectionDate ? new Date(violation.inspectionDate) : new Date()),
             dueDate: violation.dateResolved ? new Date(violation.dateResolved) : undefined,
-            source: 'HPD',
-            fineAmount: 0, // HPD violations don't have direct fines
-            isCritical: (violation.severity || '').toString().toLowerCase() === 'critical'
+            createdDate: violation.dateFound ? new Date(violation.dateFound) : (violation.inspectionDate ? new Date(violation.inspectionDate) : new Date()),
+            category: ComplianceCategory.HPD,
+            priority: this.getSeverityPriority(severity),
+            estimatedCost: 0 // HPD violations don't have direct fines
           });
         });
       }
@@ -95,16 +97,17 @@ export class ComplianceService {
           violations.push({
             id: v.case_number,
             buildingId,
-            type: 'DSNY_VIOLATION',
+            type: ComplianceType.REGULATORY,
             severity: this.mapDSNYViolationSeverity(String(v.fine_amount || '0')),
             title: v.violation_type || v.description || 'DSNY Summons',
             description: v.description || '',
-            status: v.status?.includes('PAID') ? 'resolved' : 'active',
+            status: v.status?.includes('PAID') ? ComplianceStatus.RESOLVED : ComplianceStatus.OPEN,
             dateIssued: v.violation_date ? new Date(v.violation_date) : new Date(),
             dueDate: v.hearing_date ? new Date(v.hearing_date) : undefined,
-            source: 'DSNY',
-            fineAmount: v.fine_amount || 0,
-            isCritical: (v.fine_amount || 0) >= 500
+            createdDate: v.violation_date ? new Date(v.violation_date) : new Date(),
+            category: ComplianceCategory.DSNY,
+            priority: this.getSeverityPriority(this.mapDSNYViolationSeverity(String(v.fine_amount || '0'))),
+            estimatedCost: v.fine_amount || 0
           });
         });
       }

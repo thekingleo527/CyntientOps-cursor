@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'data-seed',
-  preset: '../../jest.preset.js',
+  preset: '../../config/jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react-native/babel'] }],
   },

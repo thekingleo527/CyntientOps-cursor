@@ -4,7 +4,7 @@
  * Purpose: Main worker dashboard with task timeline and clock-in functionality
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WorkerDashboardMainView } from '@cyntientops/ui-components';
@@ -40,17 +40,52 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
   const navigation = useNavigation<any>();
+  
+  // Memory leak prevention refs
+  const mountedRef = useRef(true);
+  const subscriptionRef = useRef<string | null>(null);
+  const viewModelRef = useRef<WorkerDashboardViewModel | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      if (subscriptionRef.current) {
+        try {
+          const services = ServiceContainer.getInstance();
+          services.realTimeOrchestrator.removeUpdateListener(subscriptionRef.current);
+        } catch (error) {
+          Logger.warn('Failed to remove realtime listener on unmount', error, 'WorkerDashboardScreen');
+        }
+      }
+      if (viewModelRef.current) {
+        try {
+          viewModelRef.current.dispose?.();
+        } catch (error) {
+          Logger.warn('Failed to dispose viewModel on unmount', error, 'WorkerDashboardScreen');
+        }
+      }
+    };
+  }, []);
 
   useEffect(() => {
-    initializeViewModel();
+    if (mountedRef.current) {
+      initializeViewModel();
+    }
   }, [workerId]);
 
-  // Subscribe to real-time updates and refresh dashboard when relevant events arrive
+  // Subscribe to real-time updates with proper cleanup
   useEffect(() => {
+    if (!mountedRef.current) return;
+
     const services = ServiceContainer.getInstance();
     const id = `worker-dashboard-${workerId}`;
+    subscriptionRef.current = id;
+    
     try {
       services.realTimeOrchestrator.addUpdateListener(id, (update: any) => {
+        if (!mountedRef.current) return;
+        
         try {
           if (!update) return;
           if (update.workerId === workerId) {
@@ -68,19 +103,34 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
     } catch (error) {
       Logger.warn('Failed to setup realtime listener', error, 'WorkerDashboardScreen');
     }
+    
     return () => {
-      try {
-        services.realTimeOrchestrator.removeUpdateListener(id);
-      } catch (error) {
-        Logger.warn('Failed to remove realtime listener', error, 'WorkerDashboardScreen');
+      if (subscriptionRef.current) {
+        try {
+          services.realTimeOrchestrator.removeUpdateListener(subscriptionRef.current);
+          subscriptionRef.current = null;
+        } catch (error) {
+          Logger.warn('Failed to remove realtime listener', error, 'WorkerDashboardScreen');
+        }
       }
     };
   }, [workerId]);
 
-  const initializeViewModel = async () => {
+  const initializeViewModel = useCallback(async () => {
+    if (!mountedRef.current) return;
+    
     try {
       setIsLoading(true);
       setError(null);
+
+      // Dispose previous viewModel if exists
+      if (viewModelRef.current) {
+        try {
+          viewModelRef.current.dispose?.();
+        } catch (error) {
+          Logger.warn('Failed to dispose previous viewModel', error, 'WorkerDashboardScreen');
+        }
+      }
 
       // Initialize all required services
       const databaseManager = DatabaseManager.getInstance({
@@ -112,76 +162,91 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
       // Initialize dashboard
       await workerViewModel.initialize(workerId);
 
-      setViewModel(workerViewModel);
+      if (mountedRef.current) {
+        viewModelRef.current = workerViewModel;
+        setViewModel(workerViewModel);
+      }
     } catch (err) {
-      Logger.error('Failed to initialize worker dashboard', err, 'WorkerDashboardScreen');
-      setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
+      if (mountedRef.current) {
+        Logger.error('Failed to initialize worker dashboard', err, 'WorkerDashboardScreen');
+        setError(err instanceof Error ? err.message : 'Failed to initialize dashboard');
+      }
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) {
+        setIsLoading(false);
+      }
     }
-  };
+  }, [workerId]);
 
-  const refreshDashboard = async () => {
-    if (!viewModel) return;
+  const refreshDashboard = useCallback(async () => {
+    if (!viewModelRef.current || !mountedRef.current) return;
     try {
-      await viewModel.initialize(workerId);
-      setRefreshTick((t) => t + 1); // force re-render to pull latest state
+      await viewModelRef.current.initialize(workerId);
+      if (mountedRef.current) {
+        setRefreshTick((t) => t + 1); // force re-render to pull latest state
+      }
     } catch (err) {
       Logger.error('Failed to refresh worker dashboard:', undefined, 'WorkerDashboardScreen.tsx');
     }
-  };
+  }, [workerId]);
 
-  const handleClockIn = async (buildingId: string, location: { latitude: number; longitude: number; accuracy: number }) => {
-    if (!viewModel) return;
+  const handleClockIn = useCallback(async (buildingId: string, location: { latitude: number; longitude: number; accuracy: number }) => {
+    if (!viewModelRef.current || !mountedRef.current) return;
 
     try {
-      const success = await viewModel.clockIn(buildingId, location);
-      if (!success) {
+      const success = await viewModelRef.current.clockIn(buildingId, location);
+      if (!success && mountedRef.current) {
         Alert.alert('Clock In Failed', 'Please check your location and try again.');
       }
     } catch (error) {
       Logger.error('Clock in error:', undefined, 'WorkerDashboardScreen.tsx');
-      Alert.alert('Error', 'Failed to clock in. Please try again.');
+      if (mountedRef.current) {
+        Alert.alert('Error', 'Failed to clock in. Please try again.');
+      }
     }
-  };
+  }, []);
 
-  const handleClockOut = async () => {
-    if (!viewModel) return;
+  const handleClockOut = useCallback(async () => {
+    if (!viewModelRef.current || !mountedRef.current) return;
 
     try {
-      const success = await viewModel.clockOut();
-      if (!success) {
+      const success = await viewModelRef.current.clockOut();
+      if (!success && mountedRef.current) {
         Alert.alert('Clock Out Failed', 'Please try again.');
       }
     } catch (error) {
       Logger.error('Clock out error:', undefined, 'WorkerDashboardScreen.tsx');
-      Alert.alert('Error', 'Failed to clock out. Please try again.');
+      if (mountedRef.current) {
+        Alert.alert('Error', 'Failed to clock out. Please try again.');
+      }
     }
-  };
+  }, []);
 
-  const handleTaskUpdate = async (taskId: string, status: string) => {
-    if (!viewModel) return;
+  const handleTaskUpdate = useCallback(async (taskId: string, status: string) => {
+    if (!viewModelRef.current || !mountedRef.current) return;
 
     try {
-      const success = await viewModel.updateTaskStatus(taskId, status);
-      if (!success) {
+      const success = await viewModelRef.current.updateTaskStatus(taskId, status);
+      if (!success && mountedRef.current) {
         Alert.alert('Update Failed', 'Failed to update task status.');
       }
     } catch (error) {
       Logger.error('Task update error:', undefined, 'WorkerDashboardScreen.tsx');
-      Alert.alert('Error', 'Failed to update task. Please try again.');
+      if (mountedRef.current) {
+        Alert.alert('Error', 'Failed to update task. Please try again.');
+      }
     }
-  };
+  }, []);
 
-  const handleNotificationRead = async (notificationId: string) => {
-    if (!viewModel) return;
+  const handleNotificationRead = useCallback(async (notificationId: string) => {
+    if (!viewModelRef.current || !mountedRef.current) return;
 
     try {
-      await viewModel.markNotificationAsRead(notificationId);
+      await viewModelRef.current.markNotificationAsRead(notificationId);
     } catch (error) {
       Logger.error('Notification read error:', undefined, 'WorkerDashboardScreen.tsx');
     }
-  };
+  }, []);
 
   if (isLoading) {
     return (

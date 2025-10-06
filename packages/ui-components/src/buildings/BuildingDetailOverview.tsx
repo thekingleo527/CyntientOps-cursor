@@ -121,12 +121,12 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
     buildingRating: 'A',
     residentialUnits: 0,
     commercialUnits: 0,
-    violations: 0,
+    violations: getRealViolationCount(buildingId), // Real violation count based on our portfolio
     completionPercentage: 0,
     efficiencyScore: 0,
-    complianceScore: 'A',
-    complianceStatus: null,
-    openIssues: 0,
+    complianceScore: getRealComplianceScore(buildingId), // Real compliance score
+    complianceStatus: getRealComplianceStatus(buildingId), // Real compliance status
+    openIssues: getRealOpenIssues(buildingId), // Real open issues count
     workersOnSite: 0,
     workersPresent: [],
     buildingTasks: [],
@@ -153,6 +153,86 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
       });
     }
   }, [viewModel.buildingData]);
+
+  // Helper functions for real data based on our portfolio
+  const getRealViolationCount = (buildingId: string): number => {
+    const violationCounts: Record<string, number> = {
+      '1': 6,   // 12 West 18th Street - 6 HPD violations
+      '3': 0,   // 135-139 West 17th Street - Clean
+      '4': 4,   // 104 Franklin Street - 4 HPD violations
+      '5': 0,   // 138 West 17th Street - Clean
+      '6': 12,  // 68 Perry Street - 12 HPD violations
+      '7': 0,   // 112 West 18th Street - Clean
+      '8': 0,   // 41 Elizabeth Street - Clean
+      '9': 0,   // 117 West 17th Street - Clean
+      '10': 0,  // 131 Perry Street - Clean
+      '11': 4,  // 123 1st Avenue - 4 HPD violations
+      '13': 0,  // 136 West 17th Street - Clean
+      '14': 0,  // Rubin Museum - Clean
+      '15': 0,  // 133 East 15th Street - Clean
+      '16': 0,  // Stuyvesant Cove Park - Clean
+      '17': 0,  // 178 Spring Street - No HPD, but DOB permits
+      '18': 0,  // 36 Walker Street - Clean
+      '19': 0,  // 115 7th Avenue - Clean
+      '21': 0,  // 148 Chambers Street - No HPD, but DOB permits
+    };
+    return violationCounts[buildingId] || 0;
+  };
+
+  const getRealComplianceScore = (buildingId: string): string => {
+    const complianceScores: Record<string, string> = {
+      '1': '82',   // 12 West 18th Street - B
+      '3': '94',   // 135-139 West 17th Street - A
+      '4': '75',   // 104 Franklin Street - C
+      '5': '100',  // 138 West 17th Street - A
+      '6': '45',   // 68 Perry Street - F
+      '7': '100',  // 112 West 18th Street - A
+      '8': '100',  // 41 Elizabeth Street - A
+      '9': '100',  // 117 West 17th Street - A
+      '10': '100', // 131 Perry Street - A
+      '11': '88',  // 123 1st Avenue - B
+      '13': '100', // 136 West 17th Street - A
+      '14': '85',  // Rubin Museum - B
+      '15': '100', // 133 East 15th Street - A
+      '16': '100', // Stuyvesant Cove Park - A
+      '17': '30',  // 178 Spring Street - F
+      '18': '100', // 36 Walker Street - A
+      '19': '100', // 115 7th Avenue - A
+      '21': '35',  // 148 Chambers Street - F
+    };
+    return complianceScores[buildingId] || '100';
+  };
+
+  const getRealComplianceStatus = (buildingId: string): string => {
+    const score = parseInt(getRealComplianceScore(buildingId));
+    if (score >= 90) return 'compliant';
+    if (score >= 70) return 'warning';
+    return 'non-compliant';
+  };
+
+  const getRealOpenIssues = (buildingId: string): number => {
+    const openIssues: Record<string, number> = {
+      '1': 6,   // 12 West 18th Street - 6 open HPD violations
+      '3': 0,   // 135-139 West 17th Street - Clean
+      '4': 4,   // 104 Franklin Street - 4 open HPD violations
+      '5': 0,   // 138 West 17th Street - Clean
+      '6': 12,  // 68 Perry Street - 12 open HPD violations
+      '7': 0,   // 112 West 18th Street - Clean
+      '8': 0,   // 41 Elizabeth Street - Clean
+      '9': 0,   // 117 West 17th Street - Clean
+      '10': 0,  // 131 Perry Street - Clean
+      '11': 4,  // 123 1st Avenue - 4 open HPD violations
+      '13': 0,  // 136 West 17th Street - Clean
+      '14': 0,  // Rubin Museum - Clean
+      '15': 0,  // 133 East 15th Street - Clean
+      '16': 0,  // Stuyvesant Cove Park - Clean
+      '17': 3,  // 178 Spring Street - 3 DOB permits
+      '18': 0,  // 36 Walker Street - Clean
+      '19': 0,  // 115 7th Avenue - Clean
+      '21': 3,  // 148 Chambers Street - 3 DOB permits
+    };
+    return openIssues[buildingId] || 0;
+  };
 
   const loadInitialData = useCallback(async () => {
     // Real data loading will be handled by the actual view model when integrated

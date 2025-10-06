@@ -60,11 +60,13 @@ export class ProductionMonitoring {
       return;
     }
 
-    // Initialize Sentry for error tracking
+    // Initialize Sentry for error tracking (optional, only if available)
     try {
       if (process.env.SENTRY_DSN) {
-        // Dynamic import to avoid bundling Sentry in development
-        import('@sentry/react-native').then((Sentry) => {
+        // Avoid static import to prevent bundler resolution when dependency isn't installed
+        const req: any = (0, eval)('require');
+        const Sentry = req?.('@sentry/react-native');
+        if (Sentry && typeof Sentry.init === 'function') {
           Sentry.init({
             dsn: process.env.SENTRY_DSN,
             environment: process.env.NODE_ENV || 'development',
@@ -72,24 +74,25 @@ export class ProductionMonitoring {
           });
           this.sentryEnabled = true;
           Logger.info('Sentry initialized successfully', undefined, 'ProductionMonitoring');
-        }).catch((error) => {
-          Logger.warn('Failed to initialize Sentry:', error, 'ProductionMonitoring');
-        });
+        } else {
+          Logger.warn('Sentry not installed; skipping initialization', undefined, 'ProductionMonitoring');
+        }
       }
     } catch (error) {
       Logger.warn('Sentry initialization failed:', error, 'ProductionMonitoring');
     }
 
-    // Initialize Analytics (Firebase, Amplitude, etc.)
+    // Initialize Analytics (optional RN Firebase analytics if present)
     try {
       if (process.env.ANALYTICS_KEY) {
-        // Dynamic import to avoid bundling analytics in development
-        import('@react-native-firebase/analytics').then((analytics) => {
+        const req: any = (0, eval)('require');
+        const analytics = req?.('@react-native-firebase/analytics');
+        if (analytics) {
           this.analyticsEnabled = true;
           Logger.info('Analytics initialized successfully', undefined, 'ProductionMonitoring');
-        }).catch((error) => {
-          Logger.warn('Failed to initialize Analytics:', error, 'ProductionMonitoring');
-        });
+        } else {
+          Logger.warn('Analytics module not installed; skipping initialization', undefined, 'ProductionMonitoring');
+        }
       }
     } catch (error) {
       Logger.warn('Analytics initialization failed:', error, 'ProductionMonitoring');
@@ -106,11 +109,11 @@ export class ProductionMonitoring {
 
     if (this.sentryEnabled) {
       try {
-        import('@sentry/react-native').then((Sentry) => {
+        const req: any = (0, eval)('require');
+        const Sentry = req?.('@sentry/react-native');
+        if (Sentry?.setUser) {
           Sentry.setUser({ id: userId, ...userInfo });
-        }).catch((error) => {
-          Logger.warn('Failed to set Sentry user:', error, 'ProductionMonitoring');
-        });
+        }
       } catch (error) {
         Logger.warn('Sentry setUser failed:', error, 'ProductionMonitoring');
       }
@@ -118,11 +121,9 @@ export class ProductionMonitoring {
 
     if (this.analyticsEnabled) {
       try {
-        import('@react-native-firebase/analytics').then((analytics) => {
-          analytics().setUserId(userId);
-        }).catch((error) => {
-          Logger.warn('Failed to set Analytics user ID:', error, 'ProductionMonitoring');
-        });
+        const req: any = (0, eval)('require');
+        const analytics = req?.('@react-native-firebase/analytics');
+        analytics && analytics().setUserId(userId);
       } catch (error) {
         Logger.warn('Analytics setUserId failed:', error, 'ProductionMonitoring');
       }
@@ -216,15 +217,15 @@ export class ProductionMonitoring {
 
     if (this.sentryEnabled) {
       try {
-        import('@sentry/react-native').then((Sentry) => {
+        const req: any = (0, eval)('require');
+        const Sentry = req?.('@sentry/react-native');
+        if (Sentry?.captureException) {
           Sentry.captureException(error, {
             tags: { context },
             extra: metadata,
             user: this.userId ? { id: this.userId } : undefined,
           });
-        }).catch((sentryError) => {
-          Logger.warn('Failed to capture exception in Sentry:', sentryError, 'ProductionMonitoring');
-        });
+        }
       } catch (error) {
         Logger.warn('Sentry captureException failed:', error, 'ProductionMonitoring');
       }
@@ -249,11 +250,9 @@ export class ProductionMonitoring {
 
     if (this.analyticsEnabled) {
       try {
-        import('@react-native-firebase/analytics').then((analytics) => {
-          analytics().logEvent(event, properties);
-        }).catch((analyticsError) => {
-          Logger.warn('Failed to track analytics event:', analyticsError, 'ProductionMonitoring');
-        });
+        const req: any = (0, eval)('require');
+        const analytics = req?.('@react-native-firebase/analytics');
+        analytics && analytics().logEvent(event, properties);
       } catch (error) {
         Logger.warn('Analytics track failed:', error, 'ProductionMonitoring');
       }

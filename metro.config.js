@@ -14,6 +14,8 @@ config.resolver.mainFields = ['react-native', 'browser', 'main'];
 
 // Package aliases for workspace packages
 config.resolver.alias = {
+  // Ensure bcryptjs uses ESM build which checks global crypto.getRandomValues
+  'bcryptjs': path.resolve(workspaceRoot, 'node_modules/bcryptjs/index.js'),
   '@cyntientops/design-tokens': path.resolve(projectRoot, 'packages/design-tokens/src'),
   '@cyntientops/ui-components': path.resolve(projectRoot, 'packages/ui-components/src'),
   '@cyntientops/business-core': path.resolve(projectRoot, 'packages/business-core/src'),
@@ -21,7 +23,7 @@ config.resolver.alias = {
   '@cyntientops/database': path.resolve(projectRoot, 'packages/database/src'),
   '@cyntientops/intelligence-services': path.resolve(projectRoot, 'packages/intelligence-services/src'),
   '@cyntientops/managers': path.resolve(projectRoot, 'packages/managers/src'),
-  '@cyntientops/data-seed': path.resolve(projectRoot, 'packages/data-seed'),
+  '@cyntientops/data-seed': path.resolve(projectRoot, 'packages/data-seed/src'),
 };
 
 // Watch essential app and packages
@@ -51,15 +53,23 @@ config.resolver.platforms = ['ios', 'android', 'native', 'web'];
 config.transformer = {
   ...config.transformer,
   minifierConfig: {
-    keep_fnames: true,
-    mangle: false,
-    compress: false,
+    keep_fnames: process.env.NODE_ENV === 'development',
+    mangle: process.env.NODE_ENV === 'production',
+    compress: process.env.NODE_ENV === 'production',
+    sourceMap: process.env.NODE_ENV === 'development',
   },
   assetPlugins: ['expo-asset/tools/hashAssetFiles'],
 };
 
 if (process.env.NODE_ENV === 'development') {
-  config.transformer.minifierConfig.sourceMap = false;
+  config.transformer.getTransformOptions = async () => ({
+    transform: {
+      experimentalImportSupport: false,
+      inlineRequires: true,
+    },
+  });
+} else {
+  // Production optimizations
   config.transformer.getTransformOptions = async () => ({
     transform: {
       experimentalImportSupport: false,
@@ -80,6 +90,8 @@ if (cacheRoot) {
 config.serializer = {
   ...config.serializer,
   getModulesRunBeforeMainModule: () => [require.resolve('react-native/Libraries/Core/InitializeCore')],
+  // Enable Hermes bytecode compilation for production
+  customSerializer: process.env.NODE_ENV === 'production' ? require('metro-serializer-hermes') : undefined,
 };
 
 config.server = {

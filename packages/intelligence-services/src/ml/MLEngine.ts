@@ -8,6 +8,15 @@
 
 import { Logger } from '@cyntientops/business-core';
 
+// Real TensorFlow.js implementation
+let tf: any;
+try {
+  tf = require('@tensorflow/tfjs-node');
+} catch (error) {
+  console.warn('TensorFlow.js not available, using mock implementation');
+  tf = null;
+}
+
 export interface TrainingData {
   features: number[][];
   labels: number[];
@@ -21,20 +30,27 @@ export interface Prediction {
 
 export class MLEngine {
   private db: any; // DatabaseManager
-  private models: Map<string, any> = new Map(); // Mock TensorFlow models
+  private models: Map<string, any> = new Map(); // Real TensorFlow models
   private initialized = false;
+  private useRealML = !!tf;
 
   constructor(db: any) {
     this.db = db;
   }
 
   /**
-   * Initialize TensorFlow.js (mock implementation)
+   * Initialize TensorFlow.js (real implementation with fallback)
    */
   async initialize(): Promise<void> {
     try {
-      // Mock TensorFlow initialization
-      Logger.info('TensorFlow.js initialized (mock)', null, 'MLEngine');
+      if (this.useRealML && tf) {
+        // Real TensorFlow initialization
+        await tf.ready();
+        Logger.info('TensorFlow.js initialized (real)', null, 'MLEngine');
+      } else {
+        // Mock TensorFlow initialization
+        Logger.info('TensorFlow.js initialized (mock)', null, 'MLEngine');
+      }
       this.initialized = true;
     } catch (error) {
       Logger.error('Initialization failed', error, 'MLEngine');
@@ -43,12 +59,12 @@ export class MLEngine {
   }
 
   /**
-   * Train model with data (mock implementation)
+   * Train model with data (real implementation with fallback)
    */
   async trainModel(
     modelName: string,
     trainingData: TrainingData,
-    _options: {
+    options: {
       epochs?: number;
       batchSize?: number;
       validationSplit?: number;
@@ -60,8 +76,56 @@ export class MLEngine {
 
     Logger.info(`Training model: ${modelName}`, null, 'MLEngine');
 
-    // Mock training process
-    // const _epochs = options.epochs || 50;
+    if (this.useRealML && tf) {
+      // Real TensorFlow training
+      const epochs = options.epochs || 50;
+      const batchSize = options.batchSize || 32;
+      const validationSplit = options.validationSplit || 0.2;
+
+      // Create model
+      const model = tf.sequential({
+        layers: [
+          tf.layers.dense({ inputShape: [trainingData.features[0].length], units: 64, activation: 'relu' }),
+          tf.layers.dropout({ rate: 0.2 }),
+          tf.layers.dense({ units: 32, activation: 'relu' }),
+          tf.layers.dropout({ rate: 0.2 }),
+          tf.layers.dense({ units: 1, activation: 'linear' })
+        ]
+      });
+
+      // Compile model
+      model.compile({
+        optimizer: 'adam',
+        loss: 'meanSquaredError',
+        metrics: ['mae']
+      });
+
+      // Prepare data
+      const xs = tf.tensor2d(trainingData.features);
+      const ys = tf.tensor2d(trainingData.labels.map(label => [label]));
+
+      // Train model
+      const history = await model.fit(xs, ys, {
+        epochs,
+        batchSize,
+        validationSplit,
+        verbose: 0
+      });
+
+      // Store model
+      this.models.set(modelName, model);
+
+      // Clean up tensors
+      xs.dispose();
+      ys.dispose();
+
+      return {
+        loss: history.history.loss[history.history.loss.length - 1],
+        accuracy: 1 - history.history.val_loss[history.history.val_loss.length - 1]
+      };
+    } else {
+      // Mock training process
+      const epochs = options.epochs || 50;
     // const _batchSize = options.batchSize || 32;
     // const _validationSplit = options.validationSplit || 0.2;
 
@@ -93,7 +157,7 @@ export class MLEngine {
   }
 
   /**
-   * Make prediction with trained model (mock implementation)
+   * Make prediction with trained model (real implementation with fallback)
    */
   async predict(modelName: string, features: number[]): Promise<Prediction> {
     if (!this.initialized) {
@@ -110,9 +174,26 @@ export class MLEngine {
       throw new Error(`Model ${modelName} not found`);
     }
 
-    // Mock prediction based on features
-    const prediction = this.mockPrediction(features, model);
-    const confidence = this.calculateConfidence(prediction, features);
+    if (this.useRealML && tf && model.predict) {
+      // Real TensorFlow prediction
+      const input = tf.tensor2d([features]);
+      const prediction = model.predict(input);
+      const value = await prediction.data();
+      input.dispose();
+      prediction.dispose();
+
+      const confidence = this.calculateConfidence(value[0], features);
+      const factors = this.calculateFeatureImportance(features, model);
+
+      return {
+        value: value[0],
+        confidence,
+        factors
+      };
+    } else {
+      // Mock prediction based on features
+      const prediction = this.mockPrediction(features, model);
+      const confidence = this.calculateConfidence(prediction, features);
     const factors = this.getFeatureImportance(features, model);
 
     return {

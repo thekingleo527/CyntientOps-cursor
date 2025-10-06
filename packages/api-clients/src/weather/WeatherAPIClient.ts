@@ -135,6 +135,7 @@ export class WeatherAPIClient {
 
   /**
    * Get current weather conditions
+   * Uses public National Weather Service API (Open-Meteo) - no API key required
    */
   public async getCurrentWeather(): Promise<WeatherSnapshot> {
     try {

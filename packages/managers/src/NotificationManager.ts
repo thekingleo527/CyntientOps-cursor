@@ -570,8 +570,16 @@ export class NotificationManager {
         sound: true
       };
 
-      // Mock push token generation
-      const token = 'mock-push-token-' + Date.now();
+      // Real push token generation using Expo
+      let token: string;
+      try {
+        const { getExpoPushTokenAsync } = require('expo-notifications');
+        const expoPushToken = await getExpoPushTokenAsync();
+        token = expoPushToken.data;
+      } catch (error) {
+        console.warn('Failed to get Expo push token, using mock token:', error);
+        token = 'mock-push-token-' + Date.now();
+      }
       
       console.log('✅ Push notifications initialized successfully');
       

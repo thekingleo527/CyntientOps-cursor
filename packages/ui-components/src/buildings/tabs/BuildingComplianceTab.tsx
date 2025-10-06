@@ -48,6 +48,10 @@ export const BuildingComplianceTab: React.FC<BuildingComplianceTabProps> = ({
     switch (category) {
       case 'HPD': return '🏠';
       case 'DOB': return '🏗️';
+      case 'HPD_VIOLATION': return '🏠';
+      case 'DSNY_VIOLATION': return '🗑️';
+      case 'FDNY_INSPECTION_FAILURE': return '🚒';
+      case '311_COMPLAINT': return '📞';
       case 'DSNY': return '🗑️';
       case 'LL97': return '🌱';
       case 'FDNY': return '🚒';

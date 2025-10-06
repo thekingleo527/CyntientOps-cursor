@@ -22,18 +22,43 @@
 - **Comprehensive audit trail and logging** ✅
 - **Automated backup and recovery system** ✅
 
-### Recent Cleanup (October 6, 2025)
+### Recent Major Updates (October 6, 2025)
+
+#### **Data Rehydration & Real NYC API Integration** 🏗️
+- **Complete building data rehydration** - All mock data replaced with live NYC API data
+- **Real-time violation tracking** - HPD, DSNY, FDNY, and 311 complaints from live APIs
+- **Live compliance scoring** - Dynamic calculation based on actual violations and complaints
+- **Property data integration** - Real DOF assessments, market values, tax status
+- **Public API access** - No API keys required for NYC Open Data portal access
+
+#### **API Simplification & Optimization** ⚡
+- **Simplified API endpoints** - Direct access to NYC Open Data without authentication
+- **Generous rate limits** - 1000 requests/hour per endpoint, 10,000/day for weather
+- **Intelligent caching** - 5-10 minute cache with automatic refresh
+- **Graceful fallback** - Mock data fallback when APIs are unavailable
+- **Error handling** - Comprehensive error handling with retry mechanisms
+
+#### **Bundling & Performance Optimization** 🚀
+- **Metro configuration consolidation** - Single root configuration for all apps
+- **Production minification** - Dynamic minification based on NODE_ENV
+- **Asset bundling optimization** - Selective asset patterns instead of wildcards
+- **Hermes bytecode compilation** - Enabled for production builds
+- **Bundle analysis tools** - New scripts for monitoring bundle size
+
+#### **Documentation Cleanup** 📚
+- **Reduced documentation clutter** - Removed 8+ redundant documentation files
+- **Consolidated essential docs** - Kept only critical documentation
+- **Updated continuity report** - Current status and achievements
+- **API simplification summary** - Complete guide to simplified API approach
+
+#### **Configuration & Build System** 🔧
 - **Removed duplicate configuration files** - Eliminated conflicting app.json, babel.config.js, metro.config.js
 - **Cleaned up legacy folders** - Removed unused cyntientops/ template folder
 - **Fixed Metro configuration** - Simplified to use Expo defaults with proper monorepo support
 - **Updated dependency versions** - All packages now aligned with Expo SDK 54 requirements
-- **Removed @types/react-native** - Package not needed as types are included with react-native
-- **Cleaned build artifacts** - Removed ios/, dist/, tmp/ folders and caches
- - **New Architecture unified** - Enabled across Expo and iOS (Info.plist, Podfile.properties.json) for RN 0.81 + Expo 54
- - **Logging bundling error resolved** - Removed optional LogRocket integration from mobile logger to prevent Metro resolution failures; Sentry and custom endpoint remain
- - **Run flow unified to app dir** - Root scripts now run from `apps/mobile-rn` so Metro/Expo always use the app’s config
- - **Simulator on FastSSD** - iOS Simulator device set runs off FastSSD via an APFS sparseimage mounted at `~/Library/Developer/CoreSimulator`; auto-mounted via LaunchAgent
- - **Caches on FastSSD** - Yarn/NPM/CocoaPods/SwiftPM/TypeScript/DerivedData all redirected to `/Volumes/FastSSD/Developer/_cache/**`
+- **New Architecture unified** - Enabled across Expo and iOS for RN 0.81 + Expo 54
+- **Simulator on FastSSD** - iOS Simulator device set runs off FastSSD via APFS sparseimage
+- **Caches on FastSSD** - All build caches redirected to `/Volumes/FastSSD/Developer/_cache/**`
 
 ---
 

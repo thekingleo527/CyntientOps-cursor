@@ -278,9 +278,84 @@ export class BuildingDataHydrationService extends EventEmitter {
    * Get building basic data
    */
   private async getBuildingBasicData(buildingId: string): Promise<BuildingData> {
-    // This would typically fetch from database or API
-    // For now, return mock data based on building ID
-    const mockBuildings: Record<string, BuildingData> = {
+    try {
+      // Query real building data from database
+      const building = await this.database.query(
+        `SELECT * FROM buildings WHERE id = ?`,
+        [buildingId]
+      );
+
+      if (!building || building.length === 0) {
+        throw new Error(`Building ${buildingId} not found`);
+      }
+
+      const buildingData = building[0];
+      
+      // Get additional data from related tables
+      const [contacts, assessments, tasks] = await Promise.all([
+        this.database.query(
+          `SELECT * FROM building_contacts WHERE building_id = ?`,
+          [buildingId]
+        ),
+        this.database.query(
+          `SELECT * FROM building_assessments WHERE building_id = ? ORDER BY assessment_year DESC LIMIT 1`,
+          [buildingId]
+        ),
+        this.database.query(
+          `SELECT COUNT(*) as task_count FROM tasks WHERE building_id = ? AND status = 'completed'`,
+          [buildingId]
+        )
+      ]);
+
+      const contact = contacts[0];
+      const assessment = assessments[0];
+      const taskCount = tasks[0]?.task_count || 0;
+
+      return {
+        id: buildingData.id,
+        name: buildingData.name,
+        address: buildingData.address,
+        latitude: buildingData.latitude,
+        longitude: buildingData.longitude,
+        numberOfUnits: buildingData.units,
+        yearBuilt: buildingData.year_built,
+        squareFootage: buildingData.square_footage,
+        managementCompany: buildingData.management_company,
+        primaryContact: contact?.name || 'Unknown',
+        contactEmail: contact?.email || '',
+        contactPhone: contact?.phone || '',
+        isActive: buildingData.is_active,
+        borough: buildingData.borough,
+        complianceScore: this.calculateComplianceScore(taskCount),
+        clientId: buildingData.client_id,
+        marketValue: assessment?.market_value || 0,
+        assessedValue: assessment?.assessed_value || 0,
+        taxableValue: assessment?.taxable_value || 0,
+        taxClass: buildingData.tax_class,
+        propertyType: buildingData.property_type,
+        lastAssessmentDate: assessment?.assessment_date ? new Date(assessment.assessment_date) : new Date(),
+        assessmentYear: assessment?.assessment_year || new Date().getFullYear(),
+        exemptions: assessment?.exemptions || 0,
+        currentTaxOwed: assessment?.current_tax_owed || 0,
+        lastTaxPayment: assessment?.last_tax_payment ? new Date(assessment.last_tax_payment) : undefined,
+        taxStatus: assessment?.tax_status || 'current',
+        violations: await this.getBuildingViolations(buildingId),
+        complaints: await this.getBuildingComplaints(buildingId),
+        inspections: await this.getBuildingInspections(buildingId),
+        permits: await this.getBuildingPermits(buildingId),
+        energyEfficiency: await this.getEnergyEfficiencyData(buildingId),
+        maintenanceHistory: await this.getMaintenanceHistory(buildingId),
+        tenantSatisfaction: await this.getTenantSatisfactionData(buildingId),
+        marketComparables: await this.getMarketComparables(buildingId),
+        riskFactors: await this.getRiskFactors(buildingId),
+        opportunities: await this.getOpportunities(buildingId),
+        lastUpdated: new Date(),
+        dataSource: 'database'
+      };
+    } catch (error) {
+      console.error('Failed to fetch building data from database:', error);
+      // Fallback to mock data for development
+      const mockBuildings: Record<string, BuildingData> = {
       '1': {
         id: '1',
         name: '12 West 18th Street',

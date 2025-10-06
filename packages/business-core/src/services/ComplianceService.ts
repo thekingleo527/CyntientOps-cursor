@@ -124,31 +124,205 @@ export class ComplianceService {
     return ComplianceService.instance;
   }
 
+  // MARK: - Real NYC API Data Loading
+
+  async loadRealViolations(buildingId: string): Promise<ComplianceIssue[]> {
+    try {
+      // Load real violations from NYC APIs
+      const [hpdViolations, dsnyViolations, fdnyInspections, complaints311] = await Promise.allSettled([
+        this.container.apiClients.hpd.getBuildingViolations(buildingId),
+        this.container.apiClients.dsny.getBuildingViolations(buildingId),
+        this.container.apiClients.fdny.getBuildingInspections(buildingId, 10),
+        this.container.apiClients.complaints311.getBuildingComplaints(buildingId, 20)
+      ]);
+
+      const violations: ComplianceIssue[] = [];
+
+      // Process HPD violations
+      if (hpdViolations.status === 'fulfilled') {
+        hpdViolations.value.forEach((violation: any) => {
+          violations.push({
+            id: violation.violationid,
+            buildingId,
+            type: 'HPD_VIOLATION',
+            severity: this.mapHPDViolationSeverity(violation.violationclass),
+            title: violation.novdescription,
+            description: violation.novdescription,
+            status: violation.currentstatus === 'OPEN' ? 'active' : 'resolved',
+            dateIssued: new Date(violation.inspectiondate),
+            dueDate: violation.originalcorrectbydate ? new Date(violation.originalcorrectbydate) : undefined,
+            source: 'HPD',
+            fineAmount: 0, // HPD violations don't have direct fines
+            isCritical: violation.violationclass === 'A'
+          });
+        });
+      }
+
+      // Process DSNY violations
+      if (dsnyViolations.status === 'fulfilled') {
+        dsnyViolations.value.forEach((violation: any) => {
+          violations.push({
+            id: violation.ticket_number,
+            buildingId,
+            type: 'DSNY_VIOLATION',
+            severity: this.mapDSNYViolationSeverity(violation.penalty_imposed),
+            title: violation.charge_1_code_description,
+            description: `${violation.charge_1_code_section} - ${violation.charge_1_code_description}`,
+            status: violation.hearing_status?.includes('PAID') ? 'resolved' : 'active',
+            dateIssued: new Date(violation.violation_date),
+            dueDate: violation.hearing_date ? new Date(violation.hearing_date) : undefined,
+            source: 'DSNY',
+            fineAmount: parseFloat(violation.penalty_imposed || '0') / 100,
+            isCritical: parseFloat(violation.penalty_imposed || '0') > 50000 // $500+ is critical
+          });
+        });
+      }
+
+      // Process FDNY failed inspections
+      if (fdnyInspections.status === 'fulfilled') {
+        fdnyInspections.value
+          .filter((inspection: any) => inspection.status === 'failed')
+          .forEach((inspection: any) => {
+            violations.push({
+              id: inspection.id,
+              buildingId,
+              type: 'FDNY_INSPECTION_FAILURE',
+              severity: 'high',
+              title: `FDNY ${inspection.inspectionType} Inspection Failed`,
+              description: `Fire safety inspection failed: ${inspection.notes || 'No details available'}`,
+              status: 'active',
+              dateIssued: new Date(inspection.inspectionDate),
+              dueDate: inspection.nextInspectionDate ? new Date(inspection.nextInspectionDate) : undefined,
+              source: 'FDNY',
+              fineAmount: 0,
+              isCritical: true
+            });
+          });
+      }
+
+      // Process 311 complaints
+      if (complaints311.status === 'fulfilled') {
+        complaints311.value
+          .filter((complaint: any) => complaint.status === 'open' || complaint.status === 'in_progress')
+          .forEach((complaint: any) => {
+            violations.push({
+              id: complaint.id,
+              buildingId,
+              type: '311_COMPLAINT',
+              severity: this.map311ComplaintSeverity(complaint.complaintType),
+              title: complaint.complaintType,
+              description: complaint.description,
+              status: 'active',
+              dateIssued: new Date(complaint.createdDate),
+              dueDate: undefined,
+              source: '311',
+              fineAmount: 0,
+              isCritical: complaint.priority === 'high'
+            });
+          });
+      }
+
+      return violations;
+    } catch (error) {
+      console.error('Failed to load real violations:', error);
+      return [];
+    }
+  }
+
+  async calculateRealComplianceScore(buildingId: string): Promise<number> {
+    try {
+      const violations = await this.loadRealViolations(buildingId);
+      
+      let score = 100;
+      
+      // Deduct points based on violations
+      violations.forEach(violation => {
+        if (violation.isCritical) {
+          score -= 15; // Critical violations
+        } else if (violation.severity === 'high') {
+          score -= 10; // High severity
+        } else if (violation.severity === 'medium') {
+          score -= 5; // Medium severity
+        } else {
+          score -= 2; // Low severity
+        }
+      });
+
+      // Bonus for resolved violations
+      const resolvedCount = violations.filter(v => v.status === 'resolved').length;
+      score += Math.min(resolvedCount * 2, 20); // Max 20 point bonus
+
+      return Math.max(0, Math.min(100, score));
+    } catch (error) {
+      console.error('Failed to calculate real compliance score:', error);
+      return 75; // Default score
+    }
+  }
+
+  private mapHPDViolationSeverity(violationClass: string): 'low' | 'medium' | 'high' | 'critical' {
+    switch (violationClass?.toUpperCase()) {
+      case 'A': return 'critical';
+      case 'B': return 'high';
+      case 'C': return 'medium';
+      default: return 'low';
+    }
+  }
+
+  private mapDSNYViolationSeverity(penaltyAmount: string): 'low' | 'medium' | 'high' | 'critical' {
+    const amount = parseFloat(penaltyAmount || '0');
+    if (amount >= 500) return 'critical';
+    if (amount >= 200) return 'high';
+    if (amount >= 100) return 'medium';
+    return 'low';
+  }
+
+  private map311ComplaintSeverity(complaintType: string): 'low' | 'medium' | 'high' | 'critical' {
+    const criticalTypes = ['HEATING', 'PLUMBING', 'ELECTRICAL', 'ELEVATOR'];
+    const highTypes = ['NOISE', 'CONSTRUCTION', 'SANITATION'];
+    
+    if (criticalTypes.includes(complaintType)) return 'critical';
+    if (highTypes.includes(complaintType)) return 'high';
+    return 'medium';
+  }
+
   // MARK: - Data Loading
 
   async loadComplianceData(buildingIds: string[]): Promise<ComplianceDashboardData> {
     try {
       Logger.debug('🛡️ Loading compliance data for buildings:', undefined, 'ComplianceService');
 
-      const [violations, deadlines, insights, metrics] = await Promise.all([
-        this.loadViolations({ buildingId: buildingIds[0] }),
-        this.getCriticalDeadlines(buildingIds),
-        this.getPredictiveInsights(buildingIds),
-        this.getComplianceMetrics(buildingIds)
-      ]);
+      // Load real NYC API data for all buildings
+      const allViolations = [];
+      const allDeadlines = [];
+      const allInsights = [];
+      const allMetrics = [];
+
+      for (const buildingId of buildingIds) {
+        const [violations, deadlines, insights, metrics] = await Promise.all([
+          this.loadRealViolations(buildingId),
+          this.getCriticalDeadlines([buildingId]),
+          this.getPredictiveInsights([buildingId]),
+          this.getComplianceMetrics([buildingId])
+        ]);
+
+        allViolations.push(...violations);
+        allDeadlines.push(...deadlines);
+        allInsights.push(...insights);
+        allMetrics.push(...metrics);
+      }
 
       const buildingCompliance: Record<string, number> = {};
       for (const buildingId of buildingIds) {
-        buildingCompliance[buildingId] = await this.calculateComplianceScore(buildingId);
+        buildingCompliance[buildingId] = await this.calculateRealComplianceScore(buildingId);
       }
 
       return {
-        metrics,
-        recentViolations: violations.slice(0, 10),
-        criticalDeadlines: deadlines,
+        metrics: allMetrics,
+        recentViolations: allViolations.slice(0, 10),
+        criticalDeadlines: allDeadlines,
         buildingCompliance,
-        predictiveInsights: insights,
-        trends: await this.generateTrendData(violations),
+        predictiveInsights: allInsights,
+        trends: await this.generateTrendData(allViolations),
         lastUpdated: new Date()
       };
     } catch (error) {

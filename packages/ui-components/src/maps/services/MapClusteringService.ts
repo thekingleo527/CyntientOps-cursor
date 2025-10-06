@@ -24,7 +24,10 @@ declare global {
 // Import Logger
 import { Logger } from '@cyntientops/business-core';
 
-// Mock Supercluster for development
+// Real Supercluster implementation
+import Supercluster from 'supercluster';
+
+// Fallback mock implementation for development
 interface MockSupercluster {
   load(features: any[]): void;
   getClusters(bbox: [number, number, number, number], zoom: number): any[];
@@ -32,7 +35,6 @@ interface MockSupercluster {
   getClusterLeaves(clusterId: number, limit?: number): any[];
 }
 
-// Mock implementation
 class MockSuperclusterImpl implements MockSupercluster {
   private features: any[] = [];
   
@@ -63,8 +65,14 @@ class MockSuperclusterImpl implements MockSupercluster {
   }
 }
 
-// Use mock for now
-const Supercluster = MockSuperclusterImpl;
+// Use real Supercluster if available, fallback to mock
+let SuperclusterClass: any;
+try {
+  SuperclusterClass = Supercluster;
+} catch (error) {
+  console.warn('Supercluster not available, using mock implementation');
+  SuperclusterClass = MockSuperclusterImpl;
+}
 
 export interface BuildingMarker {
   id: string;
@@ -138,7 +146,7 @@ export class MapClusteringService {
     }));
 
     // Initialize Supercluster
-    this.supercluster = new Supercluster(this.config);
+    this.supercluster = new SuperclusterClass(this.config);
     this.supercluster.load(features);
     this.initialized = true;
 

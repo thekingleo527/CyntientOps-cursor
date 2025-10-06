@@ -468,20 +468,80 @@ export class ClockInManager {
   /**
    * Get clock in statistics for a worker
    */
-  public getWorkerClockStats(workerId: string, _period: 'daily' | 'weekly' | 'monthly' = 'daily'): {
+  public async getWorkerClockStats(workerId: string, period: 'daily' | 'weekly' | 'monthly' = 'daily'): Promise<{
     totalSessions: number;
     totalHours: number;
     averageHours: number;
     lastClockIn?: Date;
     lastClockOut?: Date;
-  } {
-    // This would query the database for clock statistics
-    // For now, return mock data
-    return {
-      totalSessions: 0,
-      totalHours: 0,
-      averageHours: 0
-    };
+  }> {
+    try {
+      // Calculate date range based on period
+      const now = new Date();
+      let startDate: Date;
+      
+      switch (period) {
+        case 'daily':
+          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          break;
+        case 'weekly':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'monthly':
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+      }
+
+      // Query clock sessions from database
+      const sessions = await this.databaseManager.query(
+        `SELECT * FROM clock_sessions 
+         WHERE worker_id = ? AND clock_in_time >= ? 
+         ORDER BY clock_in_time DESC`,
+        [workerId, startDate.toISOString()]
+      );
+
+      if (!sessions || sessions.length === 0) {
+        return {
+          totalSessions: 0,
+          totalHours: 0,
+          averageHours: 0
+        };
+      }
+
+      // Calculate statistics
+      const totalSessions = sessions.length;
+      let totalHours = 0;
+      let completedSessions = 0;
+
+      sessions.forEach(session => {
+        if (session.clock_out_time) {
+          const clockIn = new Date(session.clock_in_time);
+          const clockOut = new Date(session.clock_out_time);
+          const hours = (clockOut.getTime() - clockIn.getTime()) / (1000 * 60 * 60);
+          totalHours += hours;
+          completedSessions++;
+        }
+      });
+
+      const averageHours = completedSessions > 0 ? totalHours / completedSessions : 0;
+      const lastSession = sessions[0];
+
+      return {
+        totalSessions,
+        totalHours,
+        averageHours,
+        lastClockIn: lastSession.clock_in_time ? new Date(lastSession.clock_in_time) : undefined,
+        lastClockOut: lastSession.clock_out_time ? new Date(lastSession.clock_out_time) : undefined
+      };
+    } catch (error) {
+      console.error('Failed to get worker clock stats:', error);
+      // Fallback to mock data
+      return {
+        totalSessions: 0,
+        totalHours: 0,
+        averageHours: 0
+      };
+    }
   }
 
   /**

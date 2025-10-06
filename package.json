@@ -22,6 +22,8 @@
     "mobile:prebuild": "cd apps/mobile-rn && npx expo prebuild",
     "mobile:run:ios": "cd apps/mobile-rn && npx expo run:ios",
     "mobile:run:android": "cd apps/mobile-rn && npx expo run:android",
+    "mobile:bundle:analyze": "cd apps/mobile-rn && npx expo export --platform all --output-dir ../../dist/bundle-analysis && npx react-native-bundle-visualizer ../../dist/bundle-analysis",
+    "mobile:bundle:size": "cd apps/mobile-rn && npx expo export --platform all --output-dir ../../dist/bundle-size && du -sh ../../dist/bundle-size/*",
     "dev:mobile": "nx run mobile-rn:start",
     "dev:web": "nx run web-dashboard:dev",
     "validate:data": "nx run data-seed:validate",

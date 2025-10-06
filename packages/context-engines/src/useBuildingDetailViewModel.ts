@@ -150,7 +150,40 @@ export function useBuildingDetailViewModel(
       
       // Load building workers
       const buildingWorkers = container.buildingWorkersCatalog.getBuildingWorkers(buildingId);
+
+      // Load real NYC API data in parallel
+      const [dofData, complaints311, fdnyInspections, hpdViolations, dsnyViolations] = await Promise.allSettled([
+        container.apiClients.dof.getPropertyAssessment(buildingId),
+        container.apiClients.complaints311.getBuildingComplaints(buildingId, 20),
+        container.apiClients.fdny.getBuildingInspections(buildingId, 10),
+        container.apiClients.hpd.getBuildingViolations(buildingId),
+        container.apiClients.dsny.getBuildingViolations(buildingId)
+      ]);
+
+      // Process NYC API data
+      const nycData = {
+        dof: dofData.status === 'fulfilled' ? dofData.value : null,
+        complaints311: complaints311.status === 'fulfilled' ? complaints311.value : [],
+        fdnyInspections: fdnyInspections.status === 'fulfilled' ? fdnyInspections.value : [],
+        hpdViolations: hpdViolations.status === 'fulfilled' ? hpdViolations.value : [],
+        dsnyViolations: dsnyViolations.status === 'fulfilled' ? dsnyViolations.value : []
+      };
       
+      // Calculate real compliance metrics from NYC data
+      const totalViolations = nycData.hpdViolations.length + nycData.dsnyViolations.length;
+      const openComplaints = nycData.complaints311.filter(c => c.status === 'open' || c.status === 'in_progress').length;
+      const recentFDNYInspections = nycData.fdnyInspections.filter(i => 
+        new Date(i.inspectionDate) > new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
+      );
+      const failedInspections = recentFDNYInspections.filter(i => i.status === 'failed').length;
+      
+      // Calculate compliance score based on real data
+      const complianceScore = Math.max(0, 100 - (totalViolations * 5) - (openComplaints * 3) - (failedInspections * 10));
+      const complianceGrade = complianceScore >= 90 ? 'A' : 
+                             complianceScore >= 80 ? 'B' : 
+                             complianceScore >= 70 ? 'C' : 
+                             complianceScore >= 60 ? 'D' : 'F';
+
       // Process and combine data
       const processedData = {
         ...buildingInfrastructure,
@@ -161,6 +194,19 @@ export function useBuildingDetailViewModel(
         activity: buildingActivity,
         inventory: buildingInventory,
         workers: buildingWorkers,
+        // Real NYC data
+        nycData,
+        totalViolations,
+        openComplaints,
+        recentFDNYInspections: recentFDNYInspections.length,
+        failedInspections,
+        realComplianceScore: complianceScore,
+        realComplianceGrade: complianceGrade,
+        // DOF property data
+        marketValue: nycData.dof?.marketValue || 0,
+        assessedValue: nycData.dof?.assessedValue || 0,
+        taxStatus: nycData.dof?.taxBills?.[0]?.status || 'current',
+        lastAssessment: nycData.dof?.assessmentYear || new Date().getFullYear()
       };
       
       // Calculate derived metrics
@@ -220,12 +266,13 @@ export function useBuildingDetailViewModel(
         buildingRating: buildingMetrics.rating || 'A',
         residentialUnits: buildingInfrastructure.residentialUnits || 0,
         commercialUnits: buildingInfrastructure.commercialUnits || 0,
-        violations: buildingMetrics.violations || 0,
+        violations: totalViolations, // Use real violation count
         completionPercentage,
         efficiencyScore: buildingMetrics.efficiencyScore || 0,
-        complianceScore: buildingMetrics.complianceScore || 'A',
-        complianceStatus: buildingMetrics.complianceStatus || null,
-        openIssues: buildingMetrics.openIssues || 0,
+        complianceScore: complianceGrade, // Use real compliance grade
+        complianceStatus: complianceScore >= 80 ? 'compliant' : 
+                         complianceScore >= 60 ? 'warning' : 'non-compliant',
+        openIssues: openComplaints, // Use real open complaints count
         workersOnSite: buildingWorkers.filter((worker: any) => worker.isOnSite).length,
         workersPresent,
         buildingTasks,

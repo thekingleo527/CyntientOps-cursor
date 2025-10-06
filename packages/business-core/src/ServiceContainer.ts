@@ -5,13 +5,7 @@
  */
 
 import { DatabaseManager } from '@cyntientops/database';
-// import { APIClientManager } from '@cyntientops/api-clients'; // Disabled for TypeScript compatibility
-
-// Local mock implementation
-class APIClientManager {
-  static getInstance() { return new APIClientManager(); }
-  async getData() { return null; }
-}
+import { APIClientManager } from '@cyntientops/api-clients';
 
 import { ClockInManager } from '@cyntientops/managers';
 import { LocationManager } from '@cyntientops/managers';

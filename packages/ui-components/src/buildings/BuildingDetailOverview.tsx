@@ -19,17 +19,14 @@ import {
   Image,
   Dimensions,
   Alert,
-  Linking,
-  TextInput,
-  Modal,
-  Share
+  Linking
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ZoomableImage from '../effects/ZoomableImage';
 import { Colors, Typography, Spacing, DashboardGradients } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { ServiceContainer } from '@cyntientops/business-core';
-import { useBuildingDetailViewModel } from '@cyntientops/context-engines';
+// import { useBuildingDetailViewModel } from '@cyntientops/context-engines';
 
 // MARK: - Types (matching SwiftUI exactly)
 
@@ -701,6 +698,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
                 <Text style={[styles.infoValue, { color: viewModel.violations > 5 ? Colors.critical : Colors.success }]}>
                   {viewModel.violations}
                 </Text>
+                <Text style={styles.infoSubtext}>HPD + DSNY + FDNY</Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.infoIcon}>ℹ️</Text>
@@ -760,6 +758,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
               <Text style={styles.metricIcon}>✅</Text>
               <Text style={styles.metricValue}>{viewModel.complianceScore}</Text>
               <Text style={styles.metricLabel}>Compliance</Text>
+              <Text style={styles.metricSubtext}>Live NYC Data</Text>
               <Text style={styles.metricTrend}>➡️</Text>
             </GlassCard>
           )}
@@ -1041,9 +1040,9 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
       <View style={styles.tabSection}>
         <GlassCard style={styles.card} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
           <Text style={styles.cardTitle}>🔎 Find a Space</Text>
-          <TextInput
+          {/* <TextInput
             style={styles.searchInput}
-            placeholder="Search: Lobby, roof, …"
+            placeholder="Search: Lobby, roof, …" */}
             placeholderTextColor={Colors.secondaryText}
             value={spaceQuery}
             onChangeText={setSpaceQuery}
@@ -1098,14 +1097,14 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
           )}
         </GlassCard>
 
-        <Modal visible={galleryVisible} animationType="slide" onRequestClose={() => setGalleryVisible(false)}>
+        {/* <Modal visible={galleryVisible} animationType="slide" onRequestClose={() => setGalleryVisible(false)}> */}
           <View style={styles.galleryContainer}>
             <View style={styles.galleryHeader}>
               <TouchableOpacity onPress={() => setGalleryVisible(false)}><Text style={styles.galleryHeaderText}>Close</Text></TouchableOpacity>
               <Text style={[styles.galleryHeaderText, { flex: 1, textAlign: 'center' }]}>
                 {gallerySpace?.name || 'Gallery'} {galleryPhotos.length > 0 ? `(${galleryIndex + 1}/${galleryPhotos.length})` : ''}
               </Text>
-              <TouchableOpacity onPress={async () => { try { await Share.share({ message: galleryPhotos[galleryIndex]?.imageUri || '' }); } catch {} }}>
+              {/* <TouchableOpacity onPress={async () => { try { await Share.share({ message: galleryPhotos[galleryIndex]?.imageUri || '' }); } catch {} }}> */}
                 <Text style={styles.galleryHeaderText}>Share</Text>
               </TouchableOpacity>
             </View>
@@ -1135,7 +1134,7 @@ export const BuildingDetailOverview: React.FC<BuildingDetailOverviewProps> = ({
               <TouchableOpacity onPress={() => setGalleryIndex(Math.min(galleryPhotos.length - 1, galleryIndex + 1))}><Text style={styles.galleryNavText}>Next ›</Text></TouchableOpacity>
             </View>
           </View>
-        </Modal>
+        {/* </Modal> */}
       </View>
     );
   }
@@ -1619,6 +1618,18 @@ const styles = StyleSheet.create({
     color: Colors.secondaryText,
     marginBottom: 4,
   },
+  metricSubtext: {
+    ...Typography.caption2,
+    color: Colors.accent,
+    fontSize: 10,
+    marginTop: 2,
+  },
+  infoSubtext: {
+    ...Typography.caption2,
+    color: Colors.secondaryText,
+    fontSize: 10,
+    marginTop: 2,
+  },
   metricTrend: {
     fontSize: 12,
   },
@@ -1677,15 +1688,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-  },
-  contactName: {
-    ...Typography.subheadline,
-    color: Colors.primaryText,
-    fontWeight: '600',
-  },
-  contactRole: {
-    ...Typography.caption,
-    color: Colors.secondaryText,
   },
   contactAction: {
     backgroundColor: Colors.primaryAction + '20',

@@ -2,8 +2,8 @@
   "name": "@cyntientops/intelligence-services",
   "version": "1.0.0",
   "description": "Intelligence services for CyntientOps - analytics, insights, and AI-powered features",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

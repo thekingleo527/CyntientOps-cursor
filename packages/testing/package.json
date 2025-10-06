@@ -2,8 +2,8 @@
   "name": "@cyntientops/testing",
   "version": "1.0.0",
   "description": "Testing utilities and end-to-end test suite for CyntientOps",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

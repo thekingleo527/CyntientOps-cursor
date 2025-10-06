@@ -88,6 +88,7 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
   const [selectedCategory, setSelectedCategory] = useState<ComplianceCategory>(ComplianceCategory.ALL);
   const [isLoading, setIsLoading] = useState(true);
   const [criticalDeadlines, setCriticalDeadlines] = useState<ComplianceDeadline[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadComplianceData();
@@ -112,18 +113,42 @@ export const ComplianceSuiteScreen: React.FC<ComplianceSuiteScreenProps> = ({ na
       // Load REAL compliance data from NYC Open Data APIs for each building
       const complianceDataArray = await Promise.all(
         buildingsData.map(async (building) => {
-          try {
-            // Fetch real HPD, DOB, DSNY, LL97 data from NYC APIs
-            const summary = await complianceService.getBuildingComplianceSummary(building.id);
+          let retryCount = 0;
+          const maxRetries = 3;
+          
+          while (retryCount < maxRetries) {
+            try {
+              // Fetch real HPD, DOB, DSNY, LL97 data from NYC APIs
+              const summary = await complianceService.getBuildingComplianceSummary(building.id);
 
-            // Convert NYC API data to ComplianceData format
-            return convertNYCDataToComplianceData(building, summary);
-          } catch (error) {
-            // Failed to load real compliance data - fallback to generated data
-            container.sentryService.captureException(error, {
-              tags: { feature: 'compliance', buildingId: building.id },
-            });
-            return generateComplianceData(building);
+              // Convert NYC API data to ComplianceData format
+              return convertNYCDataToComplianceData(building, summary);
+            } catch (error) {
+              retryCount++;
+              
+              if (retryCount >= maxRetries) {
+                // Final attempt failed - log error and use fallback
+                console.warn(`Failed to load compliance data for building ${building.id} after ${maxRetries} attempts:`, error);
+                container.sentryService.captureException(error, {
+                  tags: { 
+                    feature: 'compliance', 
+                    buildingId: building.id,
+                    retryCount: retryCount.toString(),
+                    finalAttempt: 'true'
+                  },
+                });
+                
+                // Set error state for user feedback
+                setError(`Unable to load real-time compliance data for ${building.name}. Showing estimated data.`);
+                
+                return generateComplianceData(building);
+              } else {
+                // Wait before retry (exponential backoff)
+                const delay = Math.pow(2, retryCount) * 1000;
+                console.warn(`Retry ${retryCount}/${maxRetries} for building ${building.id} in ${delay}ms`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+              }
+            }
           }
         })
       );

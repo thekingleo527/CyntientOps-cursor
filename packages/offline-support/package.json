@@ -2,8 +2,8 @@
   "name": "@cyntientops/offline-support",
   "version": "1.0.0",
   "description": "Offline support for CyntientOps - sync queues and offline-first architecture",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

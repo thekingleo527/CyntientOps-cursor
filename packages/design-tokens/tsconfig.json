@@ -12,7 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "jsx": "react-jsx",
-    "composite": true
+    "composite": true,
+    "noEmit": false
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist"]

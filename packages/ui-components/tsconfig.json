@@ -32,7 +32,8 @@
       "DOM.Iterable"
     ],
     "types": [],
-    "composite": true
+    "composite": true,
+    "noEmit": false
   },
   "include": [
     "src/**/*",

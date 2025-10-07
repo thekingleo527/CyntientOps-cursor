@@ -12,7 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AppProvider } from './src/providers/AppProvider';
-import { ErrorBoundary } from '@cyntientops/ui-components';
+import { ErrorBoundary } from '../../packages/ui-components/src';
 import { enableScreens } from 'react-native-screens';
 
 enableScreens(true);

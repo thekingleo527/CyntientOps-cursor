@@ -122,7 +122,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 /**
  * Hook to access app services
  */
-export const useServices = (): ServiceContainer => {
+export const useServices = (): ServiceContainerType => {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('useServices must be used within AppProvider');

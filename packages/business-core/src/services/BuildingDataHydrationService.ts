@@ -5,7 +5,7 @@
  * Last Updated: October 4, 2025
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 import { ServiceContainer } from '../ServiceContainer';
 import { LiveComplianceDataService, LiveComplianceData } from './LiveComplianceDataService';
 import { RealTimeComplianceService } from './RealTimeComplianceService';

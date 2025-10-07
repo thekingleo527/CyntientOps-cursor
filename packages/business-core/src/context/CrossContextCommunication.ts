@@ -10,7 +10,7 @@
  * - Real-time notification system
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 
 export type UserRole = 'admin' | 'client' | 'worker';
 export type CommunicationType = 'request' | 'response' | 'notification' | 'alert' | 'sync' | 'broadcast';

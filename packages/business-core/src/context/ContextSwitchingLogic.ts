@@ -10,7 +10,7 @@
  * - Performance optimization for context switches
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 
 export type UserRole = 'admin' | 'client' | 'worker';
 export type ContextType = 'admin' | 'client' | 'worker';

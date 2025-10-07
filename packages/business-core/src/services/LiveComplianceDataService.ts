@@ -5,7 +5,7 @@
  * Last Updated: October 4, 2025
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 import { ServiceContainer } from '../ServiceContainer';
 import { NYCService } from './NYCService';
 import { WebSocketManager } from '@cyntientops/realtime-sync';

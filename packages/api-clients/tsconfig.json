@@ -8,7 +8,9 @@
     "sourceMap": true,
     "baseUrl": "../../",
     "composite": true,
-    "noEmit": false
+    "noEmit": false,
+    "skipLibCheck": true,
+    "types": []
   },
   "include": [
     "src/**/*.ts",

@@ -4,7 +4,7 @@
  * Mirrors: CyntientOps/Services/RealTime/WebSocketManager.swift enhanced features
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 import { WebSocketManager, WebSocketMessage, WebSocketConfig } from '@cyntientops/realtime-sync';
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole } from '@cyntientops/domain-schema';

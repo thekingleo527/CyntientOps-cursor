@@ -10,7 +10,7 @@
  * - Multi-modal prompt generation
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 
 export type UserRole = 'admin' | 'client' | 'worker';
 export type PromptType = 'question' | 'command' | 'analysis' | 'report' | 'guidance' | 'action';

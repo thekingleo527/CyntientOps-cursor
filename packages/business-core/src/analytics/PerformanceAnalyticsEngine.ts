@@ -10,7 +10,7 @@
  * - Performance optimization recommendations
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 
 export type MetricType = 'counter' | 'gauge' | 'histogram' | 'timer' | 'rate';
 export type PerformanceCategory = 'system' | 'user' | 'database' | 'network' | 'api' | 'ui' | 'business';
@@ -201,9 +201,9 @@ export interface PerformanceState {
 
 export class PerformanceAnalyticsEngine extends EventEmitter {
   private state: PerformanceState;
-  private collectionTimer: NodeJS.Timeout | null = null;
-  private analysisTimer: NodeJS.Timeout | null = null;
-  private alertProcessor: NodeJS.Timeout | null = null;
+  private collectionTimer: ReturnType<typeof setInterval> | null = null;
+  private analysisTimer: ReturnType<typeof setInterval> | null = null;
+  private alertProcessor: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     super();

@@ -10,7 +10,7 @@
  * - Performance prediction and optimization
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 
 export type PredictionType = 'forecast' | 'anomaly' | 'capacity' | 'risk' | 'performance' | 'trend';
 export type PredictionModel = 'linear' | 'exponential' | 'seasonal' | 'arima' | 'lstm' | 'ensemble';
@@ -296,8 +296,8 @@ export interface PredictiveState {
 
 export class PredictiveAnalyticsService extends EventEmitter {
   private state: PredictiveState;
-  private processingTimer: NodeJS.Timeout | null = null;
-  private modelTrainer: NodeJS.Timeout | null = null;
+  private processingTimer: ReturnType<typeof setInterval> | null = null;
+  private modelTrainer: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     super();

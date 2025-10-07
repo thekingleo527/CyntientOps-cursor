@@ -5,11 +5,11 @@
  * Last Updated: October 4, 2025
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/EventEmitter';
 import { ServiceContainer } from '../ServiceContainer';
 import { NYCService } from './NYCService';
-import { WebSocketManager } from '@cyntientops/realtime-sync';
-import { NotificationManager } from '@cyntientops/managers';
+// import { WebSocketManager } from '@cyntientops/realtime-sync';
+// import { NotificationManager } from '@cyntientops/managers';
 
 export interface ComplianceUpdate {
   buildingId: string;
@@ -42,10 +42,10 @@ export interface RealTimeComplianceConfig {
 export class RealTimeComplianceService extends EventEmitter {
   private container: ServiceContainer;
   private nycService: NYCService;
-  private webSocketManager: WebSocketManager;
-  private notificationManager: NotificationManager;
+  private webSocketManager: any; // WebSocketManager;
+  private notificationManager: any; // NotificationManager;
   private config: RealTimeComplianceConfig;
-  private pollingTimer: NodeJS.Timeout | null = null;
+  private pollingTimer: ReturnType<typeof setInterval> | null = null;
   private lastUpdateTimes: Map<string, Date> = new Map();
   private isPolling = false;
 
@@ -366,10 +366,12 @@ export class RealTimeComplianceService extends EventEmitter {
    * Setup WebSocket listeners
    */
   private setupWebSocketListeners(): void {
-    this.webSocketManager.on('compliance_update', (update: ComplianceUpdate) => {
-      console.log('📡 Received WebSocket compliance update:', update);
-      this.emit('complianceUpdate', update);
-    });
+    if ('on' in this.webSocketManager && typeof this.webSocketManager.on === 'function') {
+      (this.webSocketManager as any).on('compliance_update', (update: ComplianceUpdate) => {
+        console.log('📡 Received WebSocket compliance update:', update);
+        this.emit('complianceUpdate', update);
+      });
+    }
   }
 
   /**

@@ -15,10 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "baseUrl": ".",
-    "types": [
-      "react",
-      "react-native"
-    ],
+    "types": [],
     "paths": {
       "@cyntientops/*": [
         "../../packages/*/src"

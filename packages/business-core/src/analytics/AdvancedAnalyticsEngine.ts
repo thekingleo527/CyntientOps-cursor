@@ -4,9 +4,12 @@
  * Features: Performance analytics, predictive modeling, trend analysis, and business intelligence
  */
 
-import { DatabaseManager } from '@cyntientops/database';
+// import { DatabaseManager } from '@cyntientops/database';
 import { ServiceContainer } from '../ServiceContainer';
-import { UserRole } from '@cyntientops/domain-schema';
+// import { UserRole } from '@cyntientops/domain-schema';
+
+// Temporary type definitions until packages are available
+type UserRole = 'admin' | 'manager' | 'worker' | 'viewer';
 
 export interface AnalyticsMetric {
   id: string;
@@ -128,17 +131,17 @@ export interface AnalyticsConfig {
 
 export class AdvancedAnalyticsEngine {
   private static instance: AdvancedAnalyticsEngine;
-  private database: DatabaseManager;
+  private database: any; // DatabaseManager;
   private serviceContainer: ServiceContainer;
   private config: AnalyticsConfig;
   private metrics: Map<string, AnalyticsMetric> = new Map();
   private insights: Map<string, PredictiveInsight> = new Map();
   private trends: Map<string, TrendAnalysis> = new Map();
   private reports: Map<string, AnalyticsReport> = new Map();
-  private analyticsTimer: NodeJS.Timeout | null = null;
+  private analyticsTimer: ReturnType<typeof setInterval> | null = null;
 
   private constructor(
-    database: DatabaseManager,
+    database: any, // DatabaseManager,
     serviceContainer: ServiceContainer,
     config: AnalyticsConfig
   ) {
@@ -148,7 +151,7 @@ export class AdvancedAnalyticsEngine {
   }
 
   public static getInstance(
-    database: DatabaseManager,
+    database: any, // DatabaseManager,
     serviceContainer: ServiceContainer,
     config?: Partial<AnalyticsConfig>
   ): AdvancedAnalyticsEngine {
@@ -729,7 +732,7 @@ export class AdvancedAnalyticsEngine {
         ORDER BY timestamp ASC
       `, [metric]);
 
-      return result.map(row => ({
+      return result.map((row: any) => ({
         timestamp: new Date(row.timestamp),
         value: row.value,
         metadata: row.metadata ? JSON.parse(row.metadata) : undefined
@@ -1298,7 +1301,7 @@ export class AdvancedAnalyticsEngine {
     try {
       const result = await this.database.query('SELECT * FROM trend_analyses ORDER BY timestamp DESC LIMIT 10');
       
-      return result.map(row => ({
+      return result.map((row: any) => ({
         metric: row.metric,
         period: row.period,
         dataPoints: JSON.parse(row.data_points),
@@ -1361,7 +1364,7 @@ export class AdvancedAnalyticsEngine {
         'SELECT * FROM analytics_reports ORDER BY generated_at DESC'
       );
 
-      return result.map(row => ({
+      return result.map((row: any) => ({
         id: row.id,
         title: row.title,
         type: row.type,

@@ -9,19 +9,31 @@
 import { Logger } from '@cyntientops/business-core';
 
 // Real TensorFlow.js implementation - React Native compatible
-let tf: any;
-try {
-  // Use React Native compatible TensorFlow.js
-  tf = require('@tensorflow/tfjs');
-  // Try to load platform-specific backend
-  try {
-    require('@tensorflow/tfjs-react-native');
-  } catch (backendError) {
-    console.warn('TensorFlow.js React Native backend not available, using CPU backend');
+let tf: any = null;
+let tfInitialized = false;
+
+async function initializeTensorFlow(): Promise<any> {
+  if (tfInitialized) {
+    return tf;
   }
-} catch (error) {
-  console.warn('TensorFlow.js not available, using mock implementation');
-  tf = null;
+  
+  try {
+    // Use React Native compatible TensorFlow.js
+    tf = require('@tensorflow/tfjs');
+    // Try to load platform-specific backend
+    try {
+      require('@tensorflow/tfjs-react-native');
+    } catch (backendError) {
+      console.warn('TensorFlow.js React Native backend not available, using CPU backend');
+    }
+    tfInitialized = true;
+    return tf;
+  } catch (error) {
+    console.warn('TensorFlow.js not available, using mock implementation');
+    tf = null;
+    tfInitialized = true;
+    return tf;
+  }
 }
 
 export interface TrainingData {
@@ -39,7 +51,7 @@ export class MLEngine {
   private db: any; // DatabaseManager
   private models: Map<string, any> = new Map(); // Real TensorFlow models
   private initialized = false;
-  private useRealML = !!tf;
+  private useRealML = false;
 
   constructor(db: any) {
     this.db = db;
@@ -50,9 +62,12 @@ export class MLEngine {
    */
   async initialize(): Promise<void> {
     try {
-      if (this.useRealML && tf) {
+      const tfInstance = await initializeTensorFlow();
+      this.useRealML = !!tfInstance;
+      
+      if (this.useRealML && tfInstance) {
         // Real TensorFlow initialization
-        await tf.ready();
+        await tfInstance.ready();
         Logger.info('TensorFlow.js initialized (real)', null, 'MLEngine');
       } else {
         // Mock TensorFlow initialization
@@ -83,20 +98,25 @@ export class MLEngine {
 
     Logger.info(`Training model: ${modelName}`, null, 'MLEngine');
 
-    if (this.useRealML && tf) {
+    if (this.useRealML) {
       // Real TensorFlow training
+      const tfInstance = await initializeTensorFlow();
+      if (!tfInstance) {
+        throw new Error('TensorFlow not available');
+      }
+      
       const epochs = options.epochs || 50;
       const batchSize = options.batchSize || 32;
       const validationSplit = options.validationSplit || 0.2;
 
       // Create model
-      const model = tf.sequential({
+      const model = tfInstance.sequential({
         layers: [
-          tf.layers.dense({ inputShape: [trainingData.features[0].length], units: 64, activation: 'relu' }),
-          tf.layers.dropout({ rate: 0.2 }),
-          tf.layers.dense({ units: 32, activation: 'relu' }),
-          tf.layers.dropout({ rate: 0.2 }),
-          tf.layers.dense({ units: 1, activation: 'linear' })
+          tfInstance.layers.dense({ inputShape: [trainingData.features[0].length], units: 64, activation: 'relu' }),
+          tfInstance.layers.dropout({ rate: 0.2 }),
+          tfInstance.layers.dense({ units: 32, activation: 'relu' }),
+          tfInstance.layers.dropout({ rate: 0.2 }),
+          tfInstance.layers.dense({ units: 1, activation: 'linear' })
         ]
       });
 
@@ -108,8 +128,8 @@ export class MLEngine {
       });
 
       // Prepare data
-      const xs = tf.tensor2d(trainingData.features);
-      const ys = tf.tensor2d(trainingData.labels.map(label => [label]));
+      const xs = tfInstance.tensor2d(trainingData.features);
+      const ys = tfInstance.tensor2d(trainingData.labels.map(label => [label]));
 
       // Train model
       const history = await model.fit(xs, ys, {
@@ -181,9 +201,13 @@ export class MLEngine {
       throw new Error(`Model ${modelName} not found`);
     }
 
-    if (this.useRealML && tf && model.predict) {
+    if (this.useRealML && model.predict) {
       // Real TensorFlow prediction
-      const input = tf.tensor2d([features]);
+      const tfInstance = await initializeTensorFlow();
+      if (!tfInstance) {
+        throw new Error('TensorFlow not available');
+      }
+      const input = tfInstance.tensor2d([features]);
       const prediction = model.predict(input);
       const value = await prediction.data();
       input.dispose();

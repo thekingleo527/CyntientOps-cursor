@@ -8,22 +8,23 @@
     "packages/*"
   ],
   "scripts": {
-    "mobile:prewarm-expo": "cd apps/mobile-rn && npx -y expo@latest --version",
-    "mobile:setup": "cd apps/mobile-rn && rm -rf node_modules && (npx -y expo@latest install --non-interactive || npm i)",
-    "mobile:setup:force": "cd apps/mobile-rn && rm -rf node_modules package-lock.json && npm i --legacy-peer-deps",
-    "mobile:doctor": "cd apps/mobile-rn && npx expo doctor",
+    "env:check": "echo 'Node:' $(node -v) 'npm:' $(npm -v) 'yarn:' $(yarn -v) && echo 'FastSSD cache:' $(ls -la '/Volumes/FastSSD/Developer/_devdata/metro-cache' 2>/dev/null || echo 'MISSING') && cd apps/mobile-rn && npx expo-doctor",
+    "mobile:prewarm-expo": "cd apps/mobile-rn && yarn expo --version",
+    "mobile:setup": "cd apps/mobile-rn && rm -rf node_modules && yarn expo install --non-interactive",
+    "mobile:setup:force": "cd apps/mobile-rn && rm -rf node_modules yarn.lock && yarn install",
+    "mobile:doctor": "cd apps/mobile-rn && npx expo-doctor",
     "mobile:clean": "cd apps/mobile-rn && rm -rf node_modules && rm -rf $TMPDIR/metro-cache && rm -rf $TMPDIR/react-* || true",
-    "mobile:start": "cd apps/mobile-rn && npx expo start",
-    "mobile:start:fast": "cd apps/mobile-rn && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" npx expo start --dev-client",
-    "mobile:start:fast:clear": "cd apps/mobile-rn && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" npx expo start -c --dev-client",
+    "mobile:start": "cd apps/mobile-rn && yarn expo start",
+    "mobile:start:fast": "cd apps/mobile-rn && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" yarn expo start --dev-client",
+    "mobile:start:fast:clear": "cd apps/mobile-rn && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" yarn expo start -c --dev-client",
     "mobile:ios": "cd apps/mobile-rn && yarn ios",
     "mobile:android": "cd apps/mobile-rn && yarn android",
-    "mobile:reset": "cd apps/mobile-rn && npx expo start -c",
-    "mobile:prebuild": "cd apps/mobile-rn && npx expo prebuild",
-    "mobile:run:ios": "cd apps/mobile-rn && npx expo run:ios",
-    "mobile:run:android": "cd apps/mobile-rn && npx expo run:android",
-    "mobile:bundle:analyze": "cd apps/mobile-rn && npx expo export --platform all --output-dir ../../dist/bundle-analysis && npx react-native-bundle-visualizer ../../dist/bundle-analysis",
-    "mobile:bundle:size": "cd apps/mobile-rn && npx expo export --platform all --output-dir ../../dist/bundle-size && du -sh ../../dist/bundle-size/*",
+    "mobile:reset": "cd apps/mobile-rn && yarn expo start -c",
+    "mobile:prebuild": "cd apps/mobile-rn && yarn expo prebuild",
+    "mobile:run:ios": "cd apps/mobile-rn && yarn expo run:ios",
+    "mobile:run:android": "cd apps/mobile-rn && yarn expo run:android",
+    "mobile:bundle:analyze": "cd apps/mobile-rn && yarn expo export --platform all --output-dir ../../dist/bundle-analysis && yarn react-native-bundle-visualizer ../../dist/bundle-analysis",
+    "mobile:bundle:size": "cd apps/mobile-rn && yarn expo export --platform all --output-dir ../../dist/bundle-size && du -sh ../../dist/bundle-size/*",
     "dev:mobile": "nx run mobile-rn:start",
     "dev:web": "nx run web-dashboard:dev",
     "validate:data": "nx run data-seed:validate",
@@ -46,8 +47,8 @@
     "install:root": "yarn install",
     "install:apps": "cd apps/mobile-rn && yarn install",
     "install:packages": "for d in packages/*; do (cd \"$d\" && [ -f package.json ] && yarn install || true); done",
-    "android": "cd apps/mobile-rn && npx expo run:android",
-    "ios": "cd apps/mobile-rn && npx expo run:ios"
+    "android": "cd apps/mobile-rn && yarn expo run:android",
+    "ios": "cd apps/mobile-rn && yarn expo run:ios"
   },
   "devDependencies": {
     "@nx/js": "^18.0.0",
@@ -131,9 +132,7 @@
     "react-native-worklets": "^0.5.0",
     "supercluster": "^8.0.1",
     "y-indexeddb": "^9.0.12",
-    "yjs": "^13.6.27",
-    "@tensorflow/tfjs": "^4.17.0",
-    "@tensorflow/tfjs-react-native": "^0.8.0"
+    "yjs": "^13.6.27"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

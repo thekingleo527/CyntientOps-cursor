@@ -3,7 +3,7 @@
  * Purpose: Advanced workspace management for Nova AI holographic mode
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '@cyntientops/business-core/src/utils/EventEmitter';
 import { HolographicModeManager } from './HolographicModeManager';
 
 export interface WorkspaceConfig {

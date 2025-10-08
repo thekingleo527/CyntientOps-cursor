@@ -24,21 +24,24 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Screens
 import { LoginScreen } from '../screens/LoginScreen';
-// Lazy-load heavy screens to reduce initial bundle
-const BuildingDetailScreen = React.lazy(() => import('../screens/BuildingDetailScreen'));
-const TaskTimelineScreen = React.lazy(() => import('../screens/TaskTimelineScreen'));
-const MultisiteDepartureScreen = React.lazy(() => import('../screens/MultisiteDepartureScreen'));
-const WeeklyRoutineScreen = React.lazy(() => import('../screens/WeeklyRoutineScreen'));
-const DailyRoutineScreen = React.lazy(() => import('../screens/DailyRoutineScreen'));
-const PhotoCaptureModal = React.lazy(() => import('../screens/PhotoCaptureModal'));
-const ProfileScreen = React.lazy(() => import('../screens/ProfileScreen'));
-const HPDDetailScreen = React.lazy(() => import('../screens/compliance/HPDDetailScreen'));
-const DOBDetailScreen = React.lazy(() => import('../screens/compliance/DOBDetailScreen'));
-const DSNYDetailScreen = React.lazy(() => import('../screens/compliance/DSNYDetailScreen'));
-const LL97DetailScreen = React.lazy(() => import('../screens/compliance/LL97DetailScreen'));
+// Import optimized lazy loading
+import { createLazyComponent, ComponentPreloader } from '../components/LazyComponentLoader';
 
-// Enhanced Tab Navigator
-const EnhancedTabNavigator = React.lazy(() => import('./EnhancedTabNavigator'));
+// Lazy-load heavy screens with optimized loading
+const BuildingDetailScreen = createLazyComponent(() => import('../screens/BuildingDetailScreen'), { priority: 'medium' });
+const TaskTimelineScreen = createLazyComponent(() => import('../screens/TaskTimelineScreen'), { priority: 'low' });
+const MultisiteDepartureScreen = createLazyComponent(() => import('../screens/MultisiteDepartureScreen'), { priority: 'low' });
+const WeeklyRoutineScreen = createLazyComponent(() => import('../screens/WeeklyRoutineScreen'), { priority: 'low' });
+const DailyRoutineScreen = createLazyComponent(() => import('../screens/DailyRoutineScreen'), { priority: 'low' });
+const PhotoCaptureModal = createLazyComponent(() => import('../screens/PhotoCaptureModal'), { priority: 'low' });
+const ProfileScreen = createLazyComponent(() => import('../screens/ProfileScreen'), { priority: 'low' });
+const HPDDetailScreen = createLazyComponent(() => import('../screens/compliance/HPDDetailScreen'), { priority: 'low' });
+const DOBDetailScreen = createLazyComponent(() => import('../screens/compliance/DOBDetailScreen'), { priority: 'low' });
+const DSNYDetailScreen = createLazyComponent(() => import('../screens/compliance/DSNYDetailScreen'), { priority: 'low' });
+const LL97DetailScreen = createLazyComponent(() => import('../screens/compliance/LL97DetailScreen'), { priority: 'low' });
+
+// Enhanced Tab Navigator - high priority as it's critical for navigation
+const EnhancedTabNavigator = createLazyComponent(() => import('./EnhancedTabNavigator'), { priority: 'high' });
 
 // Types
 import type { AuthUser } from '@cyntientops/business-core/src/services/AuthService';
@@ -100,7 +103,10 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
 
   useEffect(() => {
     void restoreActiveSession();
-      }, []);
+    
+    // Preload components after initial render
+    ComponentPreloader.preloadCriticalScreens();
+  }, []);
 
   /**
    * Attempt to restore an active session from AsyncStorage and validate it
@@ -111,8 +117,8 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
     try {
       // Use secure storage only (migration complete)
       if (!secureStorage) {
-        const bc = await import('@cyntientops/business-core');
-        secureStorage = bc.SecureStorageService.getInstance();
+        const { SecureStorageService } = await import('@cyntientops/business-core/src/services/SecureStorageService');
+        secureStorage = SecureStorageService.getInstance();
       }
       const storedToken = await secureStorage.getSessionToken();
 
@@ -190,8 +196,8 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
       }
 
       if (!secureStorage) {
-        const bc = await import('@cyntientops/business-core');
-        secureStorage = bc.SecureStorageService.getInstance();
+        const { SecureStorageService } = await import('@cyntientops/business-core/src/services/SecureStorageService');
+        secureStorage = SecureStorageService.getInstance();
       }
       await secureStorage.storeSessionToken(sessionData.sessionToken);
       setSession(sessionData);
@@ -203,8 +209,8 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
   const handleLogout = useCallback(async () => {
     try {
       if (!secureStorage) {
-        const bc = await import('@cyntientops/business-core');
-        secureStorage = bc.SecureStorageService.getInstance();
+        const { SecureStorageService } = await import('@cyntientops/business-core/src/services/SecureStorageService');
+        secureStorage = SecureStorageService.getInstance();
       }
       const token = await secureStorage.getSessionToken();
       if (token) {

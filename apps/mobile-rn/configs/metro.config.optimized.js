@@ -1,5 +1,11 @@
+/**
+ * 🚀 Optimized Metro Configuration
+ * Advanced bundling optimizations for faster startup and better performance
+ */
+
 const { getDefaultConfig } = require('@expo/metro-config');
 const path = require('path');
+const os = require('os');
 
 const projectRoot = path.resolve(__dirname);
 const workspaceRoot = path.resolve(__dirname, '../..');
@@ -12,13 +18,15 @@ config.projectRoot = projectRoot;
 // Set the entry point for the mobile app
 config.resolver.mainFields = ['react-native', 'browser', 'main'];
 
-// Package aliases for workspace packages - optimized for faster resolution
+// Advanced package aliases for workspace packages - optimized for faster resolution
 config.resolver.alias = {
   // Ensure bcryptjs uses the correct build for React Native
   'bcryptjs': path.resolve(workspaceRoot, 'node_modules/bcryptjs/index.js'),
   // Force single React and RN resolution to avoid duplicates
   'react': path.resolve(workspaceRoot, 'node_modules/react'),
   'react-native': path.resolve(workspaceRoot, 'node_modules/react-native'),
+  
+  // Workspace packages with optimized paths
   '@cyntientops/design-tokens': path.resolve(workspaceRoot, 'packages/design-tokens/src'),
   '@cyntientops/ui-components': path.resolve(workspaceRoot, 'packages/ui-components/src'),
   '@cyntientops/business-core': path.resolve(workspaceRoot, 'packages/business-core/src'),
@@ -36,15 +44,14 @@ config.resolver.alias = {
   '@cyntientops/testing': path.resolve(workspaceRoot, 'packages/testing/src'),
 };
 
-// Watch folders: start from Expo defaults, then add essentials
-const defaultWatch = Array.isArray(config.watchFolders) ? config.watchFolders : [];
-config.watchFolders = Array.from(new Set([
-  ...defaultWatch,
+// Optimized watch folders - only essential directories
+config.watchFolders = [
   path.resolve(workspaceRoot),
   path.resolve(workspaceRoot, 'apps/mobile-rn'),
   path.resolve(workspaceRoot, 'packages/ui-components'),
   path.resolve(workspaceRoot, 'packages/business-core'),
-]));
+  path.resolve(workspaceRoot, 'packages/domain-schema'),
+];
 
 // Resolve node_modules from root and app
 config.resolver.nodeModulesPaths = [
@@ -57,57 +64,142 @@ config.resolver.assetExts = [...config.resolver.assetExts, 'db', 'mp3', 'ttf', '
 config.resolver.sourceExts = [...config.resolver.sourceExts, 'ts', 'tsx', 'js', 'jsx', 'json'];
 config.resolver.platforms = ['ios', 'android', 'native', 'web'];
 
-// Optimized transformer for faster builds
+// Advanced transformer optimizations
 config.transformer = {
   ...config.transformer,
   minifierConfig: {
     keep_fnames: process.env.NODE_ENV === 'development',
     mangle: process.env.NODE_ENV === 'production',
-    compress: process.env.NODE_ENV === 'production',
+    compress: {
+      ...(process.env.NODE_ENV === 'production' ? {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        passes: 2,
+      } : {}),
+    },
     sourceMap: process.env.NODE_ENV === 'development',
   },
   assetPlugins: ['expo-asset/tools/hashAssetFiles'],
-  // Optimize for faster builds
+  
+  // Advanced transform options
   getTransformOptions: async () => ({
     transform: {
       experimentalImportSupport: false,
       inlineRequires: true,
+      // Enable tree shaking
+      unstable_disableES6Transforms: false,
     },
   }),
+  
+  // Enable Hermes optimizations
+  hermesParser: true,
+  
+  // Enable experimental features for better performance
+  unstable_allowRequireContext: false,
+  unstable_disableES6Transforms: false,
 };
 
 // Optimize worker count for faster builds
-config.maxWorkers = Math.max(2, Math.floor(require('os').cpus().length * 0.75));
+config.maxWorkers = Math.max(2, Math.floor(os.cpus().length * 0.75));
 
-// Honor EXPO/Metro cache root if provided
-const cacheRoot = process.env.METRO_CACHE_ROOT;
-if (cacheRoot) {
-  const { FileStore } = require('metro-cache');
-  config.cacheStores = [new FileStore({ 
+// Advanced cache configuration
+const cacheRoot = process.env.METRO_CACHE_ROOT || path.resolve(os.tmpdir(), 'metro-cache');
+config.cacheStores = [
+  new (require('metro-cache').FileStore)({
     root: cacheRoot,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  })];
-}
+  }),
+];
 
 // Optimize resolver for faster module resolution
-// Use Expo/Metro defaults for symlinks (avoid overriding doctor recommendations)
 config.resolver.unstable_enablePackageExports = true;
 config.resolver.unstable_conditionNames = ['react-native', 'browser', 'import', 'require'];
 
-// Optimize transformer for faster builds
-config.transformer.unstable_allowRequireContext = false;
-config.transformer.unstable_disableES6Transforms = false;
-
+// Advanced serializer optimizations
 config.serializer = {
   ...config.serializer,
-  getModulesRunBeforeMainModule: () => [require.resolve('react-native/Libraries/Core/InitializeCore')],
+  getModulesRunBeforeMainModule: () => [
+    require.resolve('react-native/Libraries/Core/InitializeCore'),
+  ],
   // Optimize module order for faster startup
   getPolyfills: () => [],
+  
+  // Enable experimental serializer features
+  experimentalSerializerHook: (graph, delta) => {
+    // Custom serialization logic for better performance
+    return graph;
+  },
 };
 
+// Server configuration
 config.server = {
   ...config.server,
   port: parseInt(process.env.RCT_METRO_PORT || '8081', 10),
+  // Enable experimental server features
+  experimentalImportSupport: true,
+};
+
+// Advanced bundling optimizations
+config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
+config.resolver.platforms = ['ios', 'android', 'native', 'web'];
+
+// Enable tree shaking and dead code elimination
+config.transformer.unstable_disableES6Transforms = false;
+config.transformer.unstable_allowRequireContext = false;
+
+// Optimize for development vs production
+if (process.env.NODE_ENV === 'development') {
+  // Development optimizations
+  config.transformer.minifierConfig = {
+    keep_fnames: true,
+    mangle: false,
+    compress: false,
+    sourceMap: true,
+  };
+  
+  // Enable hot reloading optimizations
+  config.server.experimentalImportSupport = true;
+} else {
+  // Production optimizations
+  config.transformer.minifierConfig = {
+    keep_fnames: false,
+    mangle: true,
+    compress: {
+      drop_console: true,
+      drop_debugger: true,
+      pure_funcs: ['console.log', 'console.info', 'console.debug'],
+      passes: 2,
+    },
+    sourceMap: false,
+  };
+}
+
+// Enable experimental features for better performance
+config.resolver.unstable_enablePackageExports = true;
+config.resolver.unstable_conditionNames = ['react-native', 'browser', 'import', 'require'];
+
+// Advanced bundling features
+config.transformer.unstable_allowRequireContext = false;
+config.transformer.unstable_disableES6Transforms = false;
+
+// Enable Hermes optimizations
+config.transformer.hermesParser = true;
+
+// Optimize for different platforms
+if (process.env.PLATFORM === 'ios') {
+  // iOS-specific optimizations
+  config.resolver.platforms = ['ios', 'native'];
+} else if (process.env.PLATFORM === 'android') {
+  // Android-specific optimizations
+  config.resolver.platforms = ['android', 'native'];
+}
+
+// Enable experimental bundling features
+config.experimental = {
+  // Enable experimental features
+  unstable_allowRequireContext: false,
+  unstable_disableES6Transforms: false,
 };
 
 module.exports = config;

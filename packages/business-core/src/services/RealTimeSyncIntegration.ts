@@ -4,7 +4,7 @@
  * Features: Service integration, UI updates, conflict resolution, data consistency
  */
 
-import { Logger } from '../Logger';
+import { Logger } from './LoggingService';
 import { OptimizedWebSocketManager } from './OptimizedWebSocketManager';
 import { RealTimeMessageRouter, MessageContext } from './RealTimeMessageRouter';
 import { OfflineSupportManager } from './OfflineSupportManager';
@@ -180,7 +180,7 @@ export class RealTimeSyncIntegration {
     this.emitSyncEvent('conflict-resolved', {
       ...syncEvent,
       data: resolution.resolvedData,
-      conflicts: resolution.conflicts,
+      // conflicts: resolution.conflicts, // Removed: conflicts property doesn't exist on SyncEvent
     });
   }
 
@@ -288,6 +288,7 @@ export class RealTimeSyncIntegration {
           type: 'UPDATE',
           entity: syncEvent.entityType,
           data: syncEvent,
+          maxRetries: 3, // Added missing maxRetries property
         });
       }
       return;
@@ -313,6 +314,7 @@ export class RealTimeSyncIntegration {
           type: 'UPDATE',
           entity: syncEvent.entityType,
           data: syncEvent,
+          maxRetries: 3, // Added missing maxRetries property
         });
       }
     }

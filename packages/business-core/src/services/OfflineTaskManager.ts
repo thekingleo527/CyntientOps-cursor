@@ -4,7 +4,7 @@
  * Features: Offline CRUD operations, conflict resolution, sync queue management
  */
 
-import { Logger } from '../Logger';
+import { Logger } from './LoggingService';
 import { OfflineSupportManager } from './OfflineSupportManager';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 
@@ -102,6 +102,7 @@ export class OfflineTaskManager {
       type: 'CREATE',
       entity: 'task',
       data: task,
+      maxRetries: 3, // Added missing maxRetries property
     });
 
     Logger.info(`Created offline task: ${task.id}`, 'OfflineTaskManager');
@@ -137,6 +138,7 @@ export class OfflineTaskManager {
       type: 'UPDATE',
       entity: 'task',
       data: updatedTask,
+      maxRetries: 3, // Added missing maxRetries property
     });
 
     Logger.info(`Updated offline task: ${taskId}`, 'OfflineTaskManager');
@@ -158,6 +160,7 @@ export class OfflineTaskManager {
       type: 'DELETE',
       entity: 'task',
       data: { id: taskId },
+      maxRetries: 3, // Added missing maxRetries property
     });
 
     Logger.info(`Deleted offline task: ${taskId}`, 'OfflineTaskManager');
@@ -281,7 +284,7 @@ export class OfflineTaskManager {
           break;
         default:
           // Default to server value
-          resolvedTask[conflict.field as keyof OfflineTask] = conflict.serverValue;
+          (resolvedTask as any)[conflict.field] = conflict.serverValue;
           conflict.resolution = 'server';
       }
     }

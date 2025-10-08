@@ -4,15 +4,17 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { InteractionManager } from 'react-native';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
-// Defer heavy business-core import to runtime to reduce initial bundle work
-import type { ServiceContainer as ServiceContainerType } from '@cyntientops/business-core';
+// Use optimized service container for fast boot
+import { optimizedServiceContainer } from '../utils/OptimizedServiceContainer';
 import { AssetOptimizer } from '../utils/AssetOptimizer';
+import { bootMonitor } from '../utils/BootMonitor';
+import { nativeImageCompressor } from '../utils/NativeImageCompressor';
+import { compressionMonitor } from '../utils/CompressionMonitor';
 import config from '../config/app.config';
 
 interface AppContextValue {
-  services: ServiceContainerType;
+  services: typeof optimizedServiceContainer;
   isReady: boolean;
   error: Error | null;
 }
@@ -26,68 +28,63 @@ interface AppProviderProps {
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [services, setServices] = useState<ServiceContainerType | null>(null);
+  const [services, setServices] = useState<typeof optimizedServiceContainer | null>(null);
 
   useEffect(() => {
-    // Preload critical assets early and in parallel
-    AssetOptimizer.getInstance().preloadCriticalAssets().catch((error) => {
-      console.warn('Failed to preload critical assets:', error);
-      // Non-critical: Assets will be loaded on-demand
-    });
-    // Defer heavy initialization until after first interactions to improve TTI
-    const task = InteractionManager.runAfterInteractions(() => {
-      void initializeApp();
-    });
-    return () => task.cancel();
+    // Fast initialization - no delays
+    void initializeApp();
   }, []);
 
   const initializeApp = async () => {
+    bootMonitor.startPhase('App Initialization');
+    
     try {
-      const bc = await import('@cyntientops/business-core');
-      bc.Logger.info('Initializing CyntientOps Mobile App', undefined, 'AppProvider');
+      bootMonitor.startPhase('Initialize Optimized Service Container');
+      
+      // Initialize the optimized service container
+      await optimizedServiceContainer.initialize();
+      
+      bootMonitor.endPhase('Initialize Optimized Service Container');
 
-      // Initialize ServiceContainer with configuration
-      const serviceContainer = bc.ServiceContainer.getInstance({
-        databasePath: config.databasePath,
-        supabaseUrl: config.supabaseUrl,
-        supabaseAnonKey: config.supabaseAnonKey,
-        supabaseServiceRoleKey: config.supabaseServiceRoleKey,
-        enableOfflineMode: config.enableOfflineMode,
-        enableRealTimeSync: config.enableRealTimeSync,
-        enableIntelligence: config.enableIntelligence,
-        enableWeatherIntegration: config.enableWeatherIntegration,
-      });
-
-      // Initialize all services
-      // Initialize essential services; other work can continue lazily inside container
-      await serviceContainer.initialize();
-
-      // Connect WebSocket if real-time sync is enabled
-      if (config.enableRealTimeSync) {
-        // Defer WebSocket connection slightly to avoid blocking startup
-        setTimeout(async () => {
-          bc.Logger.info('Connecting to WebSocket', undefined, 'AppProvider');
-          try {
-            await serviceContainer.webSocket.connect();
-            bc.Logger.info('WebSocket connected successfully', undefined, 'AppProvider');
-          } catch (wsError) {
-            bc.Logger.warn('WebSocket connection failed (will retry)', wsError, 'AppProvider');
-          }
-        }, 750);
-      }
-
-      setServices(serviceContainer);
+      setServices(optimizedServiceContainer);
       setIsReady(true);
-      bc.Logger.info('App initialized successfully', undefined, 'AppProvider');
+      
+      bootMonitor.endPhase('App Initialization');
+      bootMonitor.logReport();
+
+      // Defer asset preloading to background
+      setTimeout(() => {
+        bootMonitor.startPhase('Asset Preloading');
+        AssetOptimizer.getInstance().preloadCriticalAssets()
+          .then(() => bootMonitor.endPhase('Asset Preloading'))
+          .catch((error) => {
+            console.warn('Failed to preload critical assets:', error);
+            bootMonitor.endPhase('Asset Preloading');
+          });
+      }, 100);
+
+      // Start image compression monitoring
+      compressionMonitor.startMonitoring();
+      
+      // Defer image compression to background
+      setTimeout(() => {
+        bootMonitor.startPhase('Image Compression');
+        nativeImageCompressor.preloadImages()
+          .then(() => bootMonitor.endPhase('Image Compression'))
+          .catch((error) => {
+            console.warn('Failed to preload images:', error);
+            bootMonitor.endPhase('Image Compression');
+          });
+      }, 500);
 
     } catch (err) {
+      bootMonitor.endPhase('App Initialization');
       try {
-        const bc = await import('@cyntientops/business-core');
-        bc.Logger.error('App initialization failed', err as any, 'AppProvider');
+        const { Logger } = await import('@cyntientops/business-core/src/services/LoggingService');
+        Logger.error('Fast boot initialization failed', err as any, 'AppProvider');
       } catch (loggerError) {
-        console.error('Failed to log app initialization error:', loggerError);
-        // Fallback: Log to console if business-core logger fails
-        console.error('App initialization failed:', err);
+        console.error('Failed to log initialization error:', loggerError);
+        console.error('Fast boot initialization failed:', err);
       }
       setError(err instanceof Error ? err : new Error('Unknown error'));
     }
@@ -122,7 +119,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 /**
  * Hook to access app services
  */
-export const useServices = (): ServiceContainerType => {
+export const useServices = (): typeof optimizedServiceContainer => {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('useServices must be used within AppProvider');

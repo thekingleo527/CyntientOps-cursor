@@ -4,7 +4,7 @@
  * Features: Connection pooling, heartbeat, error recovery, memory leak prevention
  */
 
-import { Logger } from '../Logger';
+import { Logger } from './LoggingService';
 
 export interface WebSocketMessage {
   type: string;

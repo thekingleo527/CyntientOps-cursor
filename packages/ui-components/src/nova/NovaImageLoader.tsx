@@ -15,8 +15,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Image, View, Text, StyleSheet, ImageSourcePropType, ImageStyle, ViewStyle } from 'react-native';
-import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
 
 // Types
 export interface NovaImageInfo {
@@ -183,54 +181,33 @@ export const useNovaImageLoader = () => {
     }
   };
 
-  // Load image from assets
+  // Load image from assets - simplified to avoid cache configuration
   const loadImageFromAssets = async (_imageName: string): Promise<NovaImageInfo | null> => {
     try {
-      // Metro requires static requires; resolve to canonical assistant image
-      // Use a default placeholder image instead of importing from mobile app
-      const asset = Asset.fromURI('https://via.placeholder.com/100x100/4A90E2/FFFFFF?text=AI');
-      await asset.downloadAsync();
+      // Use a simple placeholder URI without Asset.fromURI() to avoid cache configuration
+      const placeholderUri = 'https://via.placeholder.com/100x100/4A90E2/FFFFFF?text=AI';
       
-      if (asset.localUri) {
-        const imageInfo = await getImageInfo(asset.localUri);
-        return {
-          ...imageInfo,
-          source: 'local',
-        };
-      }
+      const imageInfo = await getImageInfo(placeholderUri);
+      return {
+        ...imageInfo,
+        source: 'remote',
+      };
     } catch (error) {
-      // Try alternative loading methods
-      try {
-        const uri = `file://${FileSystem.documentDirectory}AIAssistant.png`;
-        const exists = await FileSystem.getInfoAsync(uri);
-        
-        if (exists.exists) {
-          const imageInfo = await getImageInfo(uri);
-          return {
-            ...imageInfo,
-            source: 'local',
-          };
-        }
-      } catch (altError) {
-        console.log(`Alternative loading failed for ${_imageName}:`, altError);
-      }
+      console.log(`Failed to load image ${_imageName}:`, error);
     }
 
     return null;
   };
 
-  // Get image information
+  // Get image information - simplified without FileSystem dependency
   const getImageInfo = async (uri: string): Promise<Omit<NovaImageInfo, 'source'>> => {
     try {
-      const fileInfo = await FileSystem.getInfoAsync(uri);
-      const size = fileInfo.exists ? fileInfo.size || 0 : 0;
-      
       return {
         uri,
         width: 512, // Default AI Assistant image size
         height: 512,
         format: 'png',
-        size,
+        size: 0, // Simplified - no file size calculation
         cached: false,
       };
     } catch (error) {

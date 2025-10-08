@@ -2,7 +2,7 @@
 import 'react-native-get-random-values';
 import { registerRootComponent } from 'expo';
 import Constants from 'expo-constants';
-import App from './App.js';
+import App from './App';
 
 // Bridge selected app.json extras into process.env for runtime config (RN)
 try {

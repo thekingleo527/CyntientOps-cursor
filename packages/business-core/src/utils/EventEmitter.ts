@@ -1,36 +1,74 @@
 /**
- * 🎯 Simple EventEmitter Implementation for React Native
- * Purpose: Provide EventEmitter functionality without Node.js dependencies
+ * 🎯 React Native Compatible EventEmitter
+ * Simple EventEmitter implementation for React Native
+ * Shared across all packages to avoid Node.js dependencies
  */
 
-export class EventEmitter {
-  private events: Map<string, Function[]> = new Map();
+export type EventCallback = (...args: any[]) => void;
 
-  on(event: string, listener: Function): this {
+export class EventEmitter {
+  private events: Map<string, EventCallback[]> = new Map();
+
+  /**
+   * Add event listener
+   */
+  on(event: string, callback: EventCallback): this {
     if (!this.events.has(event)) {
       this.events.set(event, []);
     }
-    this.events.get(event)!.push(listener);
+    this.events.get(event)!.push(callback);
     return this;
   }
 
-  emit(event: string, ...args: any[]): boolean {
-    const listeners = this.events.get(event);
-    if (!listeners || listeners.length === 0) {
-      return false;
-    }
-    
-    listeners.forEach(listener => {
-      try {
-        listener(...args);
-      } catch (error) {
-        console.error(`Error in event listener for ${event}:`, error);
-      }
-    });
-    
-    return true;
+  /**
+   * Add one-time event listener
+   */
+  once(event: string, callback: EventCallback): this {
+    const onceCallback = (...args: any[]) => {
+      callback(...args);
+      this.off(event, onceCallback);
+    };
+    return this.on(event, onceCallback);
   }
 
+  /**
+   * Remove event listener
+   */
+  off(event: string, callback: EventCallback): this {
+    const callbacks = this.events.get(event);
+    if (callbacks) {
+      const index = callbacks.indexOf(callback);
+      if (index > -1) {
+        callbacks.splice(index, 1);
+      }
+      if (callbacks.length === 0) {
+        this.events.delete(event);
+      }
+    }
+    return this;
+  }
+
+  /**
+   * Emit event
+   */
+  emit(event: string, ...args: any[]): boolean {
+    const callbacks = this.events.get(event);
+    if (callbacks) {
+      callbacks.forEach(callback => {
+        try {
+          callback(...args);
+        } catch (error) {
+          console.error(`Error in event listener for ${event}:`, error);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Remove all listeners for an event
+   */
   removeAllListeners(event?: string): this {
     if (event) {
       this.events.delete(event);
@@ -40,19 +78,18 @@ export class EventEmitter {
     return this;
   }
 
-  removeListener(event: string, listener: Function): this {
-    const listeners = this.events.get(event);
-    if (listeners) {
-      const index = listeners.indexOf(listener);
-      if (index > -1) {
-        listeners.splice(index, 1);
-      }
-    }
-    return this;
+  /**
+   * Get listener count for an event
+   */
+  listenerCount(event: string): number {
+    const callbacks = this.events.get(event);
+    return callbacks ? callbacks.length : 0;
   }
 
-  listenerCount(event: string): number {
-    const listeners = this.events.get(event);
-    return listeners ? listeners.length : 0;
+  /**
+   * Get all event names
+   */
+  eventNames(): string[] {
+    return Array.from(this.events.keys());
   }
 }

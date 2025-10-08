@@ -89,22 +89,10 @@ export const CanonicalIDs = {
       "21": "148 Chambers Street"
     } as const,
 
-    // Name to ID mapping (for lookups)
-    idMap: (() => {
-      const map: Record<string, string> = {};
-      const nameMap = CanonicalIDs.Buildings.nameMap;
-
-      for (const [id, name] of Object.entries(nameMap)) {
-        map[name] = id;
-        // Add variations for Rubin Museum
-        if (id === "14") {
-          map["Rubin Museum"] = id;
-          map["Rubin Museum (142-148 W 17th)"] = id;
-          map["Rubin Museum (142–148 W 17th)"] = id;
-        }
-      }
-      return map;
-    })(),
+    // Name to ID mapping (for lookups) - generated lazily to avoid circular reference
+    get idMap() {
+      return getBuildingIdMap();
+    },
 
     getName: (id: string): string | undefined => {
       return CanonicalIDs.Buildings.nameMap[id as keyof typeof CanonicalIDs.Buildings.nameMap];
@@ -231,6 +219,28 @@ export function getDisplayName(workerId?: string, buildingId?: string): string {
   const building = buildingName ?? "Unknown Building";
 
   return `${worker} at ${building}`;
+}
+
+// Helper function to generate building ID map (avoids circular reference)
+export function getBuildingIdMap(): Record<string, string> {
+  const map: Record<string, string> = {};
+  const nameMap = CanonicalIDs?.Buildings?.nameMap ?? {};
+  
+  if (!Object.keys(nameMap).length) {
+    console.warn('[canonical-ids] Buildings nameMap is empty/undefined');
+    return map;
+  }
+
+  for (const [id, name] of Object.entries(nameMap)) {
+    map[name] = id;
+    // Add variations for Rubin Museum
+    if (id === "14") {
+      map["Rubin Museum"] = id;
+      map["Rubin Museum (142-148 W 17th)"] = id;
+      map["Rubin Museum (142–148 W 17th)"] = id;
+    }
+  }
+  return map;
 }
 
 // Type exports

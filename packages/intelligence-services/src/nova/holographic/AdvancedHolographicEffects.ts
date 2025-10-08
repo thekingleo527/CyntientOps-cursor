@@ -3,7 +3,7 @@
  * Purpose: Advanced visual effects and animations for holographic mode
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '@cyntientops/business-core/src/utils/EventEmitter';
 
 // Global type declarations
 declare global {

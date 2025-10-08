@@ -4,7 +4,7 @@
  * Features: Message filtering, role-based routing, conflict resolution
  */
 
-import { Logger } from '../Logger';
+import { Logger } from './LoggingService';
 import { OptimizedWebSocketManager, WebSocketMessage } from './OptimizedWebSocketManager';
 
 export interface MessageRoute {

@@ -4,7 +4,7 @@
  * Features: Violation caching, inspection data, permit tracking, offline analytics
  */
 
-import { Logger } from '../Logger';
+import { Logger } from './LoggingService';
 import { OfflineSupportManager } from './OfflineSupportManager';
 
 export interface OfflineViolation {

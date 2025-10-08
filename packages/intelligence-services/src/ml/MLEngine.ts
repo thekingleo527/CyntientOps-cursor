@@ -181,6 +181,7 @@ export class MLEngine {
       loss: finalLoss,
       accuracy: finalAccuracy,
     };
+    }
   }
 
   /**
@@ -232,6 +233,7 @@ export class MLEngine {
       confidence,
       factors,
     };
+    }
   }
 
   /**

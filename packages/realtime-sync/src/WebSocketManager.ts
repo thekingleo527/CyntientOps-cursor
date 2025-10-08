@@ -5,7 +5,7 @@
  * Features: Connection management, message broadcasting, event subscriptions, reconnection logic
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '@cyntientops/business-core/src/utils/EventEmitter';
 
 export interface WebSocketMessage {
   id: string;
@@ -41,8 +41,8 @@ export class WebSocketManager extends EventEmitter {
   private config: WebSocketConfig;
   private connections: Map<string, WebSocketConnection> = new Map();
   private reconnectAttempts = 0;
-  private reconnectTimer: NodeJS.Timeout | null = null;
-  private pingTimer: NodeJS.Timeout | null = null;
+  private reconnectTimer: number | null = null;
+  private pingTimer: number | null = null;
   private isConnecting = false;
   private messageQueue: WebSocketMessage[] = [];
   private subscriptions: Set<string> = new Set();

@@ -104,7 +104,7 @@ export const MobileViolationHistoryView: React.FC<MobileViolationHistoryViewProp
   const [searchQuery, setSearchQuery] = useState('');
   
   // Filter violations based on filterType
-  const filteredViolations = violations.filter(violation => {
+  const typeFilteredViolations = violations.filter(violation => {
     if (!filterType) return true;
     if (filterType === 'hpd') return violation.type === 'HPD_VIOLATION';
     if (filterType === 'dsny') return violation.type === 'DSNY_VIOLATION';
@@ -146,7 +146,7 @@ export const MobileViolationHistoryView: React.FC<MobileViolationHistoryViewProp
   };
 
   const getFilteredViolations = (): ViolationHistoryEntry[] => {
-    let filtered = [...filteredViolations];
+    let filtered = [...typeFilteredViolations];
 
     // Apply search filter
     if (searchQuery) {

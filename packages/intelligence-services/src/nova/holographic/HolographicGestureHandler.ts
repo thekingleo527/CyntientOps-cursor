@@ -3,7 +3,7 @@
  * Purpose: Advanced gesture recognition and processing for holographic interactions
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from '@cyntientops/business-core/src/utils/EventEmitter';
 
 // Global type declarations
 declare global {

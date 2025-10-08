@@ -12,10 +12,12 @@
       "backgroundColor": "#0a0a0a"
     },
     "assetBundlePatterns": [
-      "assets/images/**/*",
-      "assets/fonts/**/*",
-      "assets/icons/**/*",
-      "assets/sounds/**/*"
+      "assets/images/icon.png",
+      "assets/images/splash.png",
+      "assets/images/AIAssistant.png",
+      "assets/images/adaptive-icon.png",
+      "assets/images/notification-icon.png",
+      "assets/fonts/**/*"
     ],
     "ios": {
       "supportsTablet": true,
@@ -136,6 +138,7 @@
       "favicon": "./assets/images/favicon.png",
       "bundler": "metro"
     },
+    "jsEngine": "hermes",
     "plugins": [
       [
         "expo-location",

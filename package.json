@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "CyntientOps TypeScript/React Native implementation with complete data parity",
   "private": true,
+  "main": "apps/mobile-rn/index.js",
   "workspaces": [
     "apps/*",
     "packages/*"

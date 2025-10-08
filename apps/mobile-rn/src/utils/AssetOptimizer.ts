@@ -174,11 +174,17 @@ export class AssetOptimizer {
 
   private async loadBuildingPhotoInternal(photoName: string): Promise<any> {
     try {
-      const assetPath = `../../assets/images/buildings/${photoName}`;
-      const asset = require(assetPath);
-      const assetInstance = Asset.fromModule(asset);
-      await assetInstance.downloadAsync();
-      return assetInstance;
+      // For building photos, we'll use a placeholder approach since dynamic require doesn't work
+      // In a real implementation, you'd have a mapping of photo names to actual assets
+      console.warn(`Building photo loading not implemented for: ${photoName}`);
+      
+      // Return a placeholder asset for now
+      return {
+        uri: `placeholder://building/${photoName}`,
+        localUri: null,
+        width: 300,
+        height: 200
+      };
     } catch (error) {
       console.warn(`Failed to load building photo ${photoName}:`, error);
       throw error;

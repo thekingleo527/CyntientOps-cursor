@@ -11,8 +11,6 @@ config.resolver.mainFields = ['react-native', 'browser', 'main'];
 
 // Package aliases for workspace packages
 config.resolver.alias = {
-  // Override the default entry point resolution
-  'index': path.resolve(__dirname, 'index.js'),
   '@cyntientops/business-core': path.resolve(__dirname, '../../packages/business-core/src'),
   '@cyntientops/domain-schema': path.resolve(__dirname, '../../packages/domain-schema/src'),
   '@cyntientops/ui-components': path.resolve(__dirname, '../../packages/ui-components/src'),

@@ -352,8 +352,8 @@ class OptimizedServiceContainer {
     // Use dynamic imports for better tree shaking
     switch (config.name) {
       case 'logger':
-        const { Logger } = await import('@cyntientops/business-core/src/services/LoggingService');
-        return new Logger();
+        const { LoggingService } = await import('@cyntientops/business-core/src/services/LoggingService');
+        return LoggingService.getInstance();
         
       case 'secureStorage':
         const { SecureStorageService } = await import('@cyntientops/business-core/src/services/SecureStorageService');
@@ -372,7 +372,7 @@ class OptimizedServiceContainer {
         return new SessionManager(secureStorage2, logger2);
         
       case 'database':
-        const { DatabaseManager } = await import('@cyntientops/business-core/src/services/DatabaseManager');
+        const { DatabaseManager } = await import('@cyntientops/database/src/DatabaseManager');
         const logger3 = this.getService('logger');
         const db = new DatabaseManager(logger3);
         await db.initialize();
@@ -387,9 +387,9 @@ class OptimizedServiceContainer {
         return offline;
         
       case 'webSocket':
-        const { WebSocketService } = await import('@cyntientops/business-core/src/services/WebSocketService');
+        const { OptimizedWebSocketManager } = await import('@cyntientops/business-core/src/services/OptimizedWebSocketManager');
         const logger5 = this.getService('logger');
-        return new WebSocketService(logger5);
+        return new OptimizedWebSocketManager(logger5);
         
       case 'backupManager':
         const { BackupManager } = await import('@cyntientops/business-core/src/services/BackupManager');
@@ -413,9 +413,9 @@ class OptimizedServiceContainer {
         return intel;
         
       case 'weather':
-        const { WeatherService } = await import('@cyntientops/business-core/src/services/WeatherService');
+        const { WeatherTriggeredTaskManager } = await import('@cyntientops/business-core/src/services/WeatherTriggeredTaskManager');
         const logger9 = this.getService('logger');
-        const weather = new WeatherService(logger9);
+        const weather = new WeatherTriggeredTaskManager(logger9);
         await weather.initialize();
         return weather;
         

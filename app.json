@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "CyntientOps Mobile",
+    "slug": "cyntientops-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./apps/mobile-rn/assets/images/icon.png",
+    "main": "apps/mobile-rn/index.js",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./apps/mobile-rn/assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cyntientops.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./apps/mobile-rn/assets/images/icon.png",
+        "backgroundColor": "#0a0a0a"
+      },
+      "package": "com.cyntientops.mobile"
+    },
+    "web": {
+      "favicon": "./apps/mobile-rn/assets/images/icon.png",
+      "bundler": "metro"
+    },
+    "plugins": [],
+    "extra": {
+      "SUPABASE_URL": "https://your-project.supabase.co",
+      "SUPABASE_ANON_KEY": "your-anon-key",
+      "SUPABASE_SERVICE_ROLE_KEY": "your-service-role-key",
+      "SUPABASE_AI_ENABLED": "true",
+      "SUPABASE_REALTIME_ENABLED": "true",
+      "SUPABASE_ANALYTICS_ENABLED": "true",
+      "DATABASE_PATH": "/data/database.db",
+      "WEBSOCKET_URL": "wss://your-websocket-url",
+      "ENABLE_OFFLINE_MODE": "true",
+      "ENABLE_REALTIME_SYNC": "true",
+      "ENABLE_INTELLIGENCE": "true",
+      "ENABLE_WEATHER_INTEGRATION": "true",
+      "DEBUG": "true",
+      "LOG_LEVEL": "info",
+      "ENV": "development"
+    }
+  }
+}

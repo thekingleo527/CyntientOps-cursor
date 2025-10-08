@@ -138,7 +138,7 @@
       "favicon": "./assets/images/favicon.png",
       "bundler": "metro"
     },
-    "jsEngine": "hermes",
+    "jsEngine": "jsc",
     "plugins": [
       [
         "expo-location",

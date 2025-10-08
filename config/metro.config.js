@@ -9,8 +9,9 @@ const config = getDefaultConfig(projectRoot);
 // Ensure root is the project
 config.projectRoot = projectRoot;
 
-// Set the entry point for the mobile app
+// Set the correct entry point
 config.resolver.mainFields = ['react-native', 'browser', 'main'];
+config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
 
 // Package aliases for workspace packages
 config.resolver.alias = {
@@ -33,7 +34,7 @@ config.resolver.alias = {
   '@cyntientops/testing': path.resolve(workspaceRoot, 'packages/testing/src'),
 };
 
-// Watch essential app and packages
+// Watch essential app and packages (removed non-essential packages)
 config.watchFolders = [
   path.resolve(workspaceRoot, 'apps/mobile-rn'),
   path.resolve(workspaceRoot, 'packages/ui-components'),
@@ -42,14 +43,12 @@ config.watchFolders = [
   path.resolve(workspaceRoot, 'packages/database'),
   path.resolve(workspaceRoot, 'packages/intelligence-services'),
   path.resolve(workspaceRoot, 'packages/managers'),
-  path.resolve(workspaceRoot, 'packages/data-seed'),
   path.resolve(workspaceRoot, 'packages/context-engines'),
   path.resolve(workspaceRoot, 'packages/api-clients'),
   path.resolve(workspaceRoot, 'packages/command-chains'),
   path.resolve(workspaceRoot, 'packages/offline-support'),
   path.resolve(workspaceRoot, 'packages/realtime-sync'),
   path.resolve(workspaceRoot, 'packages/compliance-engine'),
-  path.resolve(workspaceRoot, 'packages/testing'),
   path.resolve(workspaceRoot, 'packages/design-tokens'),
 ];
 
@@ -59,8 +58,13 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
 ];
 
-// Asset & source extensions
-config.resolver.assetExts = [...config.resolver.assetExts, 'db', 'mp3', 'ttf', 'obj', 'otf', 'woff', 'woff2'];
+// Asset & source extensions (optimized - removed uncommon extensions)
+config.resolver.assetExts = [
+  ...config.resolver.assetExts.filter(ext => 
+    !['obj', 'psd'].includes(ext)
+  ), 
+  'db', 'mp3', 'ttf', 'otf', 'woff', 'woff2'
+];
 config.resolver.sourceExts = [...config.resolver.sourceExts, 'ts', 'tsx', 'js', 'jsx', 'json'];
 config.resolver.platforms = ['ios', 'android', 'native', 'web'];
 
@@ -76,41 +80,36 @@ config.transformer = {
   assetPlugins: ['expo-asset/tools/hashAssetFiles'],
 };
 
-if (process.env.NODE_ENV === 'development') {
-  config.transformer.getTransformOptions = async () => ({
-    transform: {
-      experimentalImportSupport: false,
-      inlineRequires: true,
-    },
-  });
-} else {
-  // Production optimizations
-  config.transformer.getTransformOptions = async () => ({
-    transform: {
-      experimentalImportSupport: false,
-      inlineRequires: true,
-    },
-  });
-}
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: false,
+    inlineRequires: true,
+    // Production-only optimizations
+    ...(process.env.NODE_ENV === 'production' && {
+      unstable_disableES6Transforms: true,
+    }),
+  },
+});
 
 // Optimize worker count for faster builds
 config.maxWorkers = Math.max(2, Math.floor(require('os').cpus().length * 0.75));
 
 // Honor EXPO/Metro cache root if provided
-// Temporarily disabled to fix caching conflict
-// const cacheRoot = process.env.METRO_CACHE_ROOT;
-// if (cacheRoot && !config.cacheStores) {
-//   const { FileStore } = require('metro-cache');
-//   config.cacheStores = [new FileStore({ 
-//     root: cacheRoot,
-//     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-//   })];
-// }
+const cacheRoot = process.env.METRO_CACHE_ROOT;
+if (cacheRoot && typeof config.cacheStores === 'undefined') {
+  const { FileStore } = require('metro-cache');
+  config.cacheStores = [new FileStore({ 
+    root: cacheRoot,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  })];
+}
 
 // Optimize resolver for faster module resolution
 config.resolver.unstable_enableSymlinks = false;
 config.resolver.unstable_enablePackageExports = true;
 config.resolver.unstable_conditionNames = ['react-native', 'browser', 'import', 'require'];
+config.resolver.hasteImplModulePath = null;
+config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
 
 // Optimize transformer for faster builds
 config.transformer.unstable_allowRequireContext = false;
@@ -122,6 +121,20 @@ config.serializer = {
   // Optimize module order for faster startup
   getPolyfills: () => [],
 };
+
+// Enable Hermes optimizations for production
+if (process.env.NODE_ENV === 'production') {
+  config.transformer.hermesParser = true;
+  config.transformer.enableBabelRCLookup = false;
+  config.transformer.babelTransformerPath = require.resolve('metro-react-native-babel-transformer');
+  config.serializer.getModulesRunBeforeMainModule = () => [];
+  // Enable RAM bundle for faster startup
+  config.serializer.createModuleIdFactory = () => (path) => {
+    const projectRootPath = config.projectRoot;
+    const relativePath = path.replace(projectRootPath, '');
+    return require('crypto').createHash('sha1').update(relativePath).digest('hex').substring(0, 8);
+  };
+}
 
 config.server = {
   ...config.server,

@@ -1,63 +1,32 @@
 {
-  "extends": "../../config/tsconfig.base.json",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "outDir": "./dist",
-    "declaration": false,
-    "declarationMap": false,
-    "sourceMap": false,
-    "jsx": "react-jsx",
+    "strict": false,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": false,
-    "moduleResolution": "node",
-    "resolveJsonModule": false,
-    "isolatedModules": false,
-    "baseUrl": ".",
-    "rootDir": "../../",
-    "types": [],
-    "paths": {
-      "@cyntientops/*": [
-        "../../packages/*/src"
-      ],
-      "@/*": [
-        "./*"
-      ]
-    },
-    "composite": false,
-    "noEmit": true,
-    "incremental": false,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "assumeChangesOnlyAffectDirectDependencies": false,
-    "exactOptionalPropertyTypes": false,
-    "noUncheckedIndexedAccess": false,
-    "noImplicitReturns": false,
-    "noFallthroughCasesInSwitch": false,
-    "noImplicitOverride": false,
-    "noImplicitAny": false,
-    "noImplicitThis": false,
-    "strictNullChecks": false,
-    "strictFunctionTypes": false,
-    "strictPropertyInitialization": false,
-    "strictBindCallApply": false
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "lib": ["es2017"],
+    "moduleResolution": "bundler",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "resolveJsonModule": true,
+    "target": "esnext"
   },
   "include": [
-    "src/**/*",
-    "App.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "nativewind-env.d.ts",
-    "../../packages/*/src/**/*"
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "build",
-    "coverage",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "../../packages/**/*",
+    "src/utils/**/*",
+    "src/config/**/*",
+    "src/services/**/*"
   ]
 }

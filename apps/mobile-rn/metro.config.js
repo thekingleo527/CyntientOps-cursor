@@ -43,4 +43,62 @@ config.resolver.nodeModulesPaths = [
   path.resolve(__dirname, 'node_modules'),
 ];
 
+// Ultra-aggressive performance optimizations
+config.transformer = {
+  ...config.transformer,
+  // Disable Hermes parser for faster compilation
+  hermesParser: false,
+  // Disable minification for development
+  minifierConfig: false,
+  // Disable source maps for speed
+  enableBabelRCLookup: false,
+  // Skip asset processing
+  assetPlugins: [],
+  // Disable async require for speed
+  asyncRequireModulePath: false,
+};
+
+// Ultra-fast resolver configuration
+config.resolver = {
+  ...config.resolver,
+  // Disable symlink resolution for speed
+  unstable_enableSymlinks: false,
+  // Minimal condition names for speed
+  unstable_conditionNames: ['react-native', 'main'],
+  // Minimal file extensions
+  sourceExts: ['js', 'jsx', 'ts', 'tsx'],
+  assetExts: ['png', 'jpg', 'jpeg'],
+  // Disable platform-specific resolution
+  platforms: ['ios', 'android', 'native', 'web'],
+  // Skip node modules resolution
+  nodeModulesPaths: [],
+};
+
+// Disable caching for maximum speed
+config.cacheStores = [];
+
+// Ultra-fast transformer
+config.transformer = {
+  ...config.transformer,
+  // Disable all optimizations for speed
+  asyncRequireModulePath: false,
+  babelTransformerPath: require.resolve('metro-react-native-babel-transformer'),
+  enableBabelRCLookup: false,
+  assetPlugins: [],
+  // Disable all processing
+  hermesParser: false,
+  minifierConfig: false,
+};
+
+// Minimal serializer
+config.serializer = {
+  ...config.serializer,
+  // Use default module ID factory
+  createModuleIdFactory: () => (path) => path,
+  // Minimal run module statement
+  getRunModuleStatement: (moduleId) => `__r(${moduleId});`,
+  // Skip all filtering for speed
+  processModuleFilter: () => true,
+};
+
 module.exports = config;

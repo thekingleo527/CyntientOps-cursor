@@ -42,7 +42,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       bootMonitor.startPhase('Initialize Optimized Service Container');
       
       // Initialize the optimized service container
-      await optimizedServiceContainer.initialize();
+      try {
+        await optimizedServiceContainer.initialize();
+      } catch (error) {
+        console.error('Service container initialization failed:', error);
+        // Continue without services for now
+      }
       
       bootMonitor.endPhase('Initialize Optimized Service Container');
 

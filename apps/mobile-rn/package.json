@@ -10,6 +10,10 @@
     "start:optimized": "yarn kill-ports && yarn clean:caches && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" NODE_ENV=development expo start -c --dev-client --max-workers 4",
     "start:ultra": "yarn kill-ports && yarn clean:caches && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" NODE_ENV=development expo start -c --dev-client --max-workers 6",
     "start:ultra-fast": "yarn kill-ports && yarn clean:caches && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" NODE_ENV=production expo start -c --dev-client --max-workers 6 --no-dev --minify",
+    "start:fast": "yarn kill-ports && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" NODE_ENV=development expo start -c --dev-client --max-workers 8 --reset-cache",
+    "start:turbo": "yarn kill-ports && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 METRO_CACHE_ROOT=\"/Volumes/FastSSD/Developer/_devdata/metro-cache\" NODE_ENV=development expo start -c --dev-client --max-workers 12 --reset-cache --no-dev",
+    "start:ultra-optimized": "yarn kill-ports && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 NODE_ENV=development expo start -c --dev-client --max-workers 16 --no-dev --minify",
+    "start:lightning": "yarn kill-ports && EXPO_DEV_SERVER_PORT=19000 RCT_METRO_PORT=8081 NODE_ENV=production expo start -c --dev-client --max-workers 20 --no-dev --minify",
     "analyze:bundle": "npx expo export --platform all --output-dir ./dist && npx bundle-analyzer ./dist/index.js",
     "performance:test": "yarn start:optimized --performance-monitoring",
     "memory:profile": "yarn start:optimized --memory-profiling",
@@ -21,6 +25,10 @@
     "service:monitor": "yarn start:ultra --service-monitoring",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "ios:fast": "NODE_ENV=development expo run:ios --no-build-cache --reset-cache",
+    "ios:turbo": "NODE_ENV=production expo run:ios --no-build-cache --reset-cache --minify",
+    "ios:ultra": "NODE_ENV=production expo run:ios --no-build-cache --reset-cache --minify --no-dev",
+    "ios:lightning": "NODE_ENV=production expo run:ios --no-build-cache --reset-cache --minify --no-dev",
     "web": "expo start --web"
   },
   "dependencies": {

@@ -18,6 +18,8 @@ export { ClientService } from './services/ClientService';
 export { OperationalDataService } from './services/OperationalDataService';
 export { ComplianceService } from './services/ComplianceService';
 export { AuthService } from './services/AuthService';
+export { AuthenticationService } from './services/AuthenticationService';
+export type { AuthenticatedUser, UserCredentials, LoginResult } from './services/AuthenticationService';
 export { RouteManager } from './services/RouteManager';
 export { NovaAIBrainService } from './services/NovaAIBrainService';
 export type {
@@ -51,9 +53,16 @@ export { SystemService } from './services/SystemService';
 export { PropertyDataService } from './services/PropertyDataService';
 export type { PropertyDetails } from './services/PropertyDataService';
 export { RealDataService } from './services/RealDataService';
+export { default as RealDataServiceDefault } from './services/RealDataService';
 export { TagSuggestionService } from './services/TagSuggestionService';
 export { SecureStorageService } from './services/SecureStorageService';
 export { CacheManager } from './services/CacheManager';
+export { OfflineTaskManager } from './services/OfflineTaskManager';
+export { OptimizedWebSocketManager } from './services/OptimizedWebSocketManager';
+export { BackupManager } from './services/BackupManager';
+export { IntelligenceService } from './services/IntelligenceService';
+export { RealTimeSyncIntegration } from './services/RealTimeSyncIntegration';
+export { PushNotificationService } from './services/PushNotificationService';
 
 // Service Container
 export { ServiceContainer } from './ServiceContainer';

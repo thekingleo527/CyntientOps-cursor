@@ -22,17 +22,17 @@ export const getSessionManager = () =>
 
 // UI Components - selective imports
 export const getGlassCard = () => 
-  import('@cyntientops/ui-components/src/components/GlassCard').then(m => m.GlassCard);
+  import('@cyntientops/ui-components/src/glass/GlassCard').then(m => m.GlassCard);
 
 export const getBuildingDetailOverview = () => 
-  import('@cyntientops/ui-components/src/components/BuildingDetailOverview').then(m => m.BuildingDetailOverview);
+  import('@cyntientops/ui-components/src/buildings/BuildingDetailOverview').then(m => m.BuildingDetailOverview);
 
 export const getWorkerDashboardMainView = () => 
-  import('@cyntientops/ui-components/src/components/WorkerDashboardMainView').then(m => m.WorkerDashboardMainView);
+  import('@cyntientops/ui-components/src/dashboards/WorkerDashboardMainView').then(m => m.WorkerDashboardMainView);
 
 // Business Core - selective imports
 export const getRealDataService = () => 
-  import('@cyntientops/business-core/src/services/RealDataService').then(m => m.default);
+  import('@cyntientops/business-core/src/services/RealDataService').then(m => m.RealDataService);
 
 export const getNYCService = () => 
   import('@cyntientops/business-core/src/services/NYCService').then(m => m.NYCService);

@@ -453,7 +453,7 @@ const resolveAppUser = (session: SessionData): AppUser => {
   if (role === 'worker' || role === 'admin') {
     // Dynamically require to avoid pulling full business-core at startup
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const RealDataService = require('@cyntientops/business-core/src/services/RealDataService').default;
+    const { RealDataService } = require('@cyntientops/business-core/src/services/RealDataService');
     const worker = RealDataService.getWorkerById(session.userId);
     if (worker) {
       return {

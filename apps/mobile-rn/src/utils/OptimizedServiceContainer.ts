@@ -3,7 +3,6 @@
  * Advanced service container with bundling optimizations and startup efficiency
  */
 
-import { InteractionManager } from 'react-native';
 import { performanceMonitor } from './PerformanceMonitor';
 import { memoryManager } from './MemoryManager';
 
@@ -98,6 +97,43 @@ class OptimizedServiceContainer {
       priority: 'medium',
       lazy: true,
       dependencies: ['logger'],
+      timeout: 10000,
+    },
+    
+    // Business services - medium priority
+    {
+      name: 'inventory',
+      priority: 'medium',
+      lazy: true,
+      dependencies: ['database', 'logger'],
+      timeout: 10000,
+    },
+    {
+      name: 'compliance',
+      priority: 'medium',
+      lazy: true,
+      dependencies: ['database', 'logger'],
+      timeout: 10000,
+    },
+    {
+      name: 'buildings',
+      priority: 'medium',
+      lazy: true,
+      dependencies: ['database', 'logger'],
+      timeout: 10000,
+    },
+    {
+      name: 'workers',
+      priority: 'medium',
+      lazy: true,
+      dependencies: ['database', 'logger'],
+      timeout: 10000,
+    },
+    {
+      name: 'clients',
+      priority: 'medium',
+      lazy: true,
+      dependencies: ['database', 'logger'],
       timeout: 10000,
     },
     
@@ -352,82 +388,100 @@ class OptimizedServiceContainer {
     // Use dynamic imports for better tree shaking
     switch (config.name) {
       case 'logger':
-        const { LoggingService } = await import('@cyntientops/business-core/src/services/LoggingService');
-        return LoggingService.getInstance();
+        const { Logger } = await import('@cyntientops/business-core/src/services/LoggingService');
+        return Logger;
         
       case 'secureStorage':
         const { SecureStorageService } = await import('@cyntientops/business-core/src/services/SecureStorageService');
         return SecureStorageService.getInstance();
         
       case 'auth':
-        const { AuthService } = await import('@cyntientops/business-core/src/services/AuthService');
-        const secureStorage = this.getService('secureStorage');
-        const logger = this.getService('logger');
-        return new AuthService(secureStorage, logger);
+        const { AuthenticationService } = await import('@cyntientops/business-core/src/services/AuthenticationService');
+        const authDb = this.getService('database') as any;
+        return AuthenticationService.getInstance(authDb);
         
       case 'sessionManager':
         const { SessionManager } = await import('@cyntientops/business-core/src/services/SessionManager');
-        const secureStorage2 = this.getService('secureStorage');
-        const logger2 = this.getService('logger');
-        return new SessionManager(secureStorage2, logger2);
+        const sessionDb = this.getService('database') as any;
+        const authService = this.getService('auth') as any;
+        return SessionManager.getInstance(sessionDb, authService);
         
       case 'database':
         const { DatabaseManager } = await import('@cyntientops/database/src/DatabaseManager');
-        const logger3 = this.getService('logger');
-        const db = new DatabaseManager(logger3);
+        const appConfig = await import('../config/app.config');
+        const db = DatabaseManager.getInstance({ path: appConfig.default.databasePath });
         await db.initialize();
         return db;
         
       case 'offlineManager':
         const { OfflineTaskManager } = await import('@cyntientops/business-core/src/services/OfflineTaskManager');
-        const database = this.getService('database');
-        const logger4 = this.getService('logger');
-        const offline = new OfflineTaskManager(database, logger4);
-        await offline.initialize();
-        return offline;
+        return OfflineTaskManager.getInstance();
         
       case 'webSocket':
         const { OptimizedWebSocketManager } = await import('@cyntientops/business-core/src/services/OptimizedWebSocketManager');
         const logger5 = this.getService('logger');
-        return new OptimizedWebSocketManager(logger5);
+        return OptimizedWebSocketManager.getInstance();
         
       case 'backupManager':
         const { BackupManager } = await import('@cyntientops/business-core/src/services/BackupManager');
-        const database2 = this.getService('database');
-        const logger6 = this.getService('logger');
-        return new BackupManager(database2, logger6);
+        const backupDb = this.getService('database') as any;
+        return BackupManager.getInstance(backupDb);
         
       case 'pushNotifications':
         const { PushNotificationService } = await import('@cyntientops/business-core/src/services/PushNotificationService');
-        const logger7 = this.getService('logger');
-        const push = new PushNotificationService(logger7);
-        await push.initialize();
-        return push;
+        return PushNotificationService.getInstance();
         
       case 'intelligence':
         const { IntelligenceService } = await import('@cyntientops/business-core/src/services/IntelligenceService');
-        const database3 = this.getService('database');
-        const logger8 = this.getService('logger');
-        const intel = new IntelligenceService(database3, logger8);
-        await intel.initialize();
-        return intel;
+        return IntelligenceService.getInstance();
         
       case 'weather':
         const { WeatherTriggeredTaskManager } = await import('@cyntientops/business-core/src/services/WeatherTriggeredTaskManager');
-        const logger9 = this.getService('logger');
-        const weather = new WeatherTriggeredTaskManager(logger9);
-        await weather.initialize();
-        return weather;
+        const serviceContainer = this;
+        const cacheManager = this.getService('database') as any;
+        return new WeatherTriggeredTaskManager(serviceContainer, cacheManager);
         
       case 'realTimeSync':
         const { RealTimeSyncIntegration } = await import('@cyntientops/business-core/src/services/RealTimeSyncIntegration');
-        const database4 = this.getService('database');
-        const offlineManager = this.getService('offlineManager');
-        const webSocket = this.getService('webSocket');
-        const logger10 = this.getService('logger');
-        const sync = new RealTimeSyncIntegration(database4, offlineManager, webSocket, logger10);
-        await sync.initialize();
+        const { RealTimeMessageRouter } = await import('@cyntientops/business-core/src/services/RealTimeMessageRouter');
+        type MessageContext = import('@cyntientops/business-core/src/services/RealTimeMessageRouter').MessageContext;
+        const { OfflineSupportManager } = await import('@cyntientops/business-core/src/services/OfflineSupportManager');
+        const sync = RealTimeSyncIntegration.getInstance();
+        const wsMgr = this.getService('webSocket') as any;
+        const messageRouter = RealTimeMessageRouter.getInstance();
+        const offlineMgr = this.getService('offlineManager') as any;
+        const context: MessageContext = {
+          userId: '',
+          userRole: 'worker',
+          buildingIds: [],
+          permissions: []
+        };
+        await sync.initialize(wsMgr, messageRouter, offlineMgr, context);
         return sync;
+        
+      case 'inventory':
+        const { InventoryService } = await import('@cyntientops/business-core/src/services/InventoryService');
+        const inventoryDb = this.getService('database') as any;
+        return InventoryService.getInstance(inventoryDb);
+        
+      case 'compliance':
+        const { ComplianceService } = await import('@cyntientops/business-core/src/services/ComplianceService');
+        const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+        const container = ServiceContainer.getInstance();
+        return ComplianceService.getInstance(container);
+        
+      case 'buildings':
+        const { BuildingService } = await import('@cyntientops/business-core/src/services/BuildingService');
+        return new BuildingService();
+        
+      case 'workers':
+        const { WorkerService } = await import('@cyntientops/business-core/src/services/WorkerService');
+        const workerDb = this.getService('database') as any;
+        return new WorkerService(workerDb);
+        
+      case 'clients':
+        const { ClientService } = await import('@cyntientops/business-core/src/services/ClientService');
+        return new ClientService();
         
       default:
         throw new Error(`Unknown service: ${config.name}`);
@@ -439,7 +493,11 @@ class OptimizedServiceContainer {
    */
   getService<T>(serviceName: string): T | null {
     const service = this.services.get(serviceName);
-    return service?.isLoaded ? service.instance : null;
+    if (!service?.isLoaded) {
+      console.warn(`Service ${serviceName} not loaded yet`);
+      return null;
+    }
+    return service.instance;
   }
 
   /**
@@ -516,6 +574,41 @@ class OptimizedServiceContainer {
         console.warn(`Failed to cleanup service ${serviceName}:`, error);
       }
     }
+  }
+
+  /**
+   * Get inventory service
+   */
+  get inventory() {
+    return this.getService('inventory');
+  }
+
+  /**
+   * Get compliance service
+   */
+  get compliance() {
+    return this.getService('compliance');
+  }
+
+  /**
+   * Get building service
+   */
+  get buildings() {
+    return this.getService('buildings');
+  }
+
+  /**
+   * Get worker service
+   */
+  get workers() {
+    return this.getService('workers');
+  }
+
+  /**
+   * Get client service
+   */
+  get clients() {
+    return this.getService('clients');
   }
 
   /**

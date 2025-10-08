@@ -18,7 +18,7 @@ import {
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
-import { LegacyAnalyticsDashboard, AnalyticsData } from '@cyntientops/ui-components/analytics/components/AnalyticsDashboard';
+import { AnalyticsDashboard, AnalyticsData } from '@cyntientops/ui-components';
 import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientops/intelligence-services';
 import { Logger } from '@cyntientops/business-core';
 

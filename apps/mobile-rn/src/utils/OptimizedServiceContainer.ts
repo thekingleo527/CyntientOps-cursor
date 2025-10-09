@@ -50,39 +50,46 @@ class OptimizedServiceContainer {
       name: 'auth',
       priority: 'critical',
       lazy: false,
-      dependencies: ['logger', 'secureStorage'],
+      dependencies: ['logger', 'secureStorage', 'database'],
       timeout: 2000,
     },
     {
       name: 'sessionManager',
       priority: 'critical',
       lazy: false,
-      dependencies: ['logger', 'secureStorage'],
+      dependencies: ['database', 'auth'],
       timeout: 2000,
     },
     
     // High priority services - loaded after critical
     {
       name: 'database',
-      priority: 'high',
-      lazy: true,
+      priority: 'critical',
+      lazy: false,
       dependencies: ['logger'],
       timeout: 5000,
     },
     {
-      name: 'offlineManager',
+      name: 'offlineSupport',
       priority: 'high',
       lazy: true,
-      dependencies: ['database', 'logger'],
+      dependencies: ['logger'],
       timeout: 5000,
     },
     
     // Medium priority services - loaded in background
     {
-      name: 'webSocket',
+      name: 'optimizedWebSocket',
       priority: 'medium',
       lazy: true,
       dependencies: ['logger'],
+      timeout: 10000,
+    },
+    {
+      name: 'messageRouter',
+      priority: 'medium',
+      lazy: true,
+      dependencies: [],
       timeout: 10000,
     },
     {
@@ -97,6 +104,20 @@ class OptimizedServiceContainer {
       priority: 'medium',
       lazy: true,
       dependencies: ['logger'],
+      timeout: 10000,
+    },
+    {
+      name: 'clockIn',
+      priority: 'medium',
+      lazy: true,
+      dependencies: ['database'],
+      timeout: 10000,
+    },
+    {
+      name: 'apiClients',
+      priority: 'medium',
+      lazy: true,
+      dependencies: [],
       timeout: 10000,
     },
     
@@ -153,10 +174,10 @@ class OptimizedServiceContainer {
       timeout: 15000,
     },
     {
-      name: 'realTimeSync',
+      name: 'syncIntegration',
       priority: 'low',
       lazy: true,
-      dependencies: ['database', 'offlineManager', 'webSocket', 'logger'],
+      dependencies: ['database', 'offlineSupport', 'optimizedWebSocket', 'messageRouter', 'logger'],
       timeout: 15000,
     },
   ];
@@ -396,60 +417,106 @@ class OptimizedServiceContainer {
         return SecureStorageService.getInstance();
         
       case 'auth':
-        const { AuthenticationService } = await import('@cyntientops/business-core/src/services/AuthenticationService');
-        const authDb = this.getService('database') as any;
-        return AuthenticationService.getInstance(authDb);
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.auth;
+        }
         
       case 'sessionManager':
-        const { SessionManager } = await import('@cyntientops/business-core/src/services/SessionManager');
-        const sessionDb = this.getService('database') as any;
-        const authService = this.getService('auth') as any;
-        return SessionManager.getInstance(sessionDb, authService);
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.sessionManager;
+        }
         
       case 'database':
-        const { DatabaseManager } = await import('@cyntientops/database/src/DatabaseManager');
-        const appConfig = await import('../config/app.config');
-        const db = DatabaseManager.getInstance({ path: appConfig.default.databasePath });
-        await db.initialize();
-        return db;
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.database;
+        }
         
-      case 'offlineManager':
-        const { OfflineTaskManager } = await import('@cyntientops/business-core/src/services/OfflineTaskManager');
-        return OfflineTaskManager.getInstance();
+      case 'offlineSupport':
+        {
+          const { OfflineSupportManager } = await import('@cyntientops/business-core/src/services/OfflineSupportManager');
+          const offline = OfflineSupportManager.getInstance({
+            cacheConfig: { maxSize: 1000, ttl: 5 * 60 * 1000, compressionEnabled: true },
+            syncBatchSize: 10,
+            syncInterval: 30000,
+            maxRetries: 3,
+            retryDelay: 5000,
+          });
+          await offline.initialize();
+          return offline;
+        }
         
-      case 'webSocket':
-        const { OptimizedWebSocketManager } = await import('@cyntientops/business-core/src/services/OptimizedWebSocketManager');
-        const logger5 = this.getService('logger');
-        return OptimizedWebSocketManager.getInstance();
+      case 'optimizedWebSocket':
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.optimizedWebSocket;
+        }
+
+      case 'messageRouter':
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.messageRouter;
+        }
         
       case 'backupManager':
-        const { BackupManager } = await import('@cyntientops/business-core/src/services/BackupManager');
-        const backupDb = this.getService('database') as any;
-        return BackupManager.getInstance(backupDb);
+        {
+          // ServiceContainer does not expose a backupManager getter; fallback to direct instance if needed
+          const { BackupManager } = await import('@cyntientops/business-core/src/services/BackupManager');
+          const backupDb = this.getService('database') as any;
+          return BackupManager.getInstance(backupDb);
+        }
         
       case 'pushNotifications':
-        const { PushNotificationService } = await import('@cyntientops/business-core/src/services/PushNotificationService');
-        return PushNotificationService.getInstance();
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.pushNotifications;
+        }
         
       case 'intelligence':
-        const { IntelligenceService } = await import('@cyntientops/business-core/src/services/IntelligenceService');
-        return IntelligenceService.getInstance();
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.intelligence;
+        }
         
       case 'weather':
-        const { WeatherTriggeredTaskManager } = await import('@cyntientops/business-core/src/services/WeatherTriggeredTaskManager');
-        const serviceContainer = this;
-        const cacheManager = this.getService('database') as any;
-        return new WeatherTriggeredTaskManager(serviceContainer, cacheManager);
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.weatherTasks;
+        }
         
-      case 'realTimeSync':
+      case 'syncIntegration':
         const { RealTimeSyncIntegration } = await import('@cyntientops/business-core/src/services/RealTimeSyncIntegration');
-        const { RealTimeMessageRouter } = await import('@cyntientops/business-core/src/services/RealTimeMessageRouter');
         type MessageContext = import('@cyntientops/business-core/src/services/RealTimeMessageRouter').MessageContext;
-        const { OfflineSupportManager } = await import('@cyntientops/business-core/src/services/OfflineSupportManager');
         const sync = RealTimeSyncIntegration.getInstance();
-        const wsMgr = this.getService('webSocket') as any;
-        const messageRouter = RealTimeMessageRouter.getInstance();
-        const offlineMgr = this.getService('offlineManager') as any;
+        const wsMgr = this.getService('optimizedWebSocket') as any;
+        const messageRouter = this.getService('messageRouter') as any;
+        const offlineMgr = this.getService('offlineSupport') as any;
         const context: MessageContext = {
           userId: '',
           userRole: 'worker',
@@ -458,30 +525,74 @@ class OptimizedServiceContainer {
         };
         await sync.initialize(wsMgr, messageRouter, offlineMgr, context);
         return sync;
+
+      case 'clockIn':
+        {
+          const { ClockInManager } = await import('@cyntientops/managers');
+          const clockDb = this.getService('database') as any;
+          return ClockInManager.getInstance(clockDb);
+        }
+
+      case 'apiClients':
+        {
+          const { APIClientManager } = await import('@cyntientops/api-clients');
+          const appConfig = (await import('../config/app.config')).default;
+          const manager = APIClientManager.getInstance({
+            dsnyApiKey: appConfig.dsnyApiKey,
+            hpdApiKey: appConfig.hpdApiKey,
+            dobApiKey: appConfig.dobApiKey,
+            weatherApiKey: appConfig.weatherApiKey,
+          });
+          try {
+            await manager.initialize();
+          } catch {}
+          return manager;
+        }
         
       case 'inventory':
-        const { InventoryService } = await import('@cyntientops/business-core/src/services/InventoryService');
-        const inventoryDb = this.getService('database') as any;
-        return InventoryService.getInstance(inventoryDb);
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.inventory;
+        }
         
       case 'compliance':
-        const { ComplianceService } = await import('@cyntientops/business-core/src/services/ComplianceService');
-        const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-        const container = ServiceContainer.getInstance();
-        return ComplianceService.getInstance(container);
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.compliance;
+        }
         
       case 'buildings':
-        const { BuildingService } = await import('@cyntientops/business-core/src/services/BuildingService');
-        return new BuildingService();
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.buildings;
+        }
         
       case 'workers':
-        const { WorkerService } = await import('@cyntientops/business-core/src/services/WorkerService');
-        const workerDb = this.getService('database') as any;
-        return new WorkerService(workerDb);
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.workers;
+        }
         
       case 'clients':
-        const { ClientService } = await import('@cyntientops/business-core/src/services/ClientService');
-        return new ClientService();
+        {
+          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+          const appConfig = (await import('../config/app.config')).default;
+          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+          await container.initialize();
+          return container.client;
+        }
         
       default:
         throw new Error(`Unknown service: ${config.name}`);
@@ -493,11 +604,7 @@ class OptimizedServiceContainer {
    */
   getService<T>(serviceName: string): T | null {
     const service = this.services.get(serviceName);
-    if (!service?.isLoaded) {
-      console.warn(`Service ${serviceName} not loaded yet`);
-      return null;
-    }
-    return service.instance;
+    return service?.isLoaded ? service.instance : null;
   }
 
   /**
@@ -627,6 +734,28 @@ class OptimizedServiceContainer {
     this.initializationPromise = null;
     
     console.log('🧹 Service container destroyed');
+  }
+
+  // Getter shortcuts to mirror expected usage in screens
+  get database(): any { return this.getService('database'); }
+  get auth(): any { return this.getService('auth'); }
+  get sessionManager(): any { return this.getService('sessionManager'); }
+  get optimizedWebSocket(): any { return this.getService('optimizedWebSocket'); }
+  get messageRouter(): any { return this.getService('messageRouter'); }
+  get offlineSupport(): any { return this.getService('offlineSupport'); }
+  get syncIntegration(): any { return this.getService('syncIntegration'); }
+  get inventory(): any { return this.getService('inventory'); }
+  get compliance(): any { return this.getService('compliance'); }
+  get buildings(): any { return this.getService('buildings'); }
+  get workers(): any { return this.getService('workers'); }
+  get clients(): any { return this.getService('clients'); }
+  get apiClients(): any { return this.getService('apiClients'); }
+  get clockIn(): any { return this.getService('clockIn'); }
+  get realTimeOrchestrator(): any {
+    // Use ServiceContainer for orchestration layer to avoid duplication
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { ServiceContainer } = require('@cyntientops/business-core/src/ServiceContainer');
+    return ServiceContainer.getInstance().realTimeOrchestrator;
   }
 }
 

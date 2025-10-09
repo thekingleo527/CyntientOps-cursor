@@ -6746,6 +6746,11 @@ expo-linear-gradient@^12.0.0:
   resolved "https://registry.npmjs.org/expo-linear-gradient/-/expo-linear-gradient-12.7.2.tgz"
   integrity sha512-Wwb2EF18ywgrlTodcXJ6Yt/UEcKitRMdXPNyP/IokmeKh4emoq9DxZJpZdkXm3HUTLlbRpi6/t32jrFVqXB9AQ==
 
+expo-linear-gradient@^15.0.7:
+  version "15.0.7"
+  resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-15.0.7.tgz#d1ebbda5ecc58afb58398f5a06affd0e83894149"
+  integrity sha512-yF+y+9Shpr/OQFfy/wglB/0bykFMbwHBTuMRa5Of/r2P1wbkcacx8rg0JsUWkXH/rn2i2iWdubyqlxSJa3ggZA==
+
 expo-local-authentication@^17.0.7:
   version "17.0.7"
   resolved "https://registry.npmjs.org/expo-local-authentication/-/expo-local-authentication-17.0.7.tgz"
@@ -6829,6 +6834,13 @@ expo-sqlite@~13.2.2:
   version "13.2.2"
   resolved "https://registry.npmjs.org/expo-sqlite/-/expo-sqlite-13.2.2.tgz"
   integrity sha512-aad52QL0Nbe5+KTlwNPEaSro9l39H5dWtGrykwWRvnUbAC9FMP+6ixSKtcNGNTEb7BHKx5AfuFVy+vxKVAOX1Q==
+  dependencies:
+    "@expo/websql" "^1.0.1"
+
+expo-sqlite@~14.0.0:
+  version "14.0.6"
+  resolved "https://registry.yarnpkg.com/expo-sqlite/-/expo-sqlite-14.0.6.tgz#6306ff523e6d0a27ec812b1897592269acacf4da"
+  integrity sha512-T3YNx7LT7lM4UQRgi8ml+cj0Wf3Ep09+B4CVaWtUCjdyYJIZjsHDT65hypKG+r6btTLLEd11hjlrstNQhzt5gQ==
   dependencies:
     "@expo/websql" "^1.0.1"
 

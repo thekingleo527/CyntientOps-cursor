@@ -18,10 +18,11 @@ import { ClientViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { ServiceContainer, PropertyDataService } from '@cyntientops/business-core';
+import { PropertyDataService } from '@cyntientops/business-core';
 // Removed ViolationDataService - now using real ComplianceService
 import { APIClientManager } from '@cyntientops/api-clients';
 import { Logger } from '@cyntientops/business-core';
+import { useServices } from '../providers/AppProvider';
 
 interface ClientDashboardScreenProps {
   clientId: string;
@@ -42,6 +43,7 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
   const [refreshTick, setRefreshTick] = useState(0);
   const [violationsData, setViolationsData] = useState<any>(null);
   const [violationsLoading, setViolationsLoading] = useState(false);
+  const services = useServices();
 
   useEffect(() => {
     initializeViewModel();
@@ -58,7 +60,6 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
 
   // Subscribe to portfolio/building updates and refresh
   useEffect(() => {
-    const services = ServiceContainer.getInstance();
     const id = `client-dashboard-${clientId}`;
     try {
       services.realTimeOrchestrator.addUpdateListener(id, (update: any) => {
@@ -91,20 +92,9 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
       setIsLoading(true);
       setError(null);
 
-      // Initialize all required services
-      const databaseManager = DatabaseManager.getInstance({
-        path: config.databasePath
-      });
-      await databaseManager.initialize();
-
-      const serviceContainer = ServiceContainer.getInstance();
-      const apiClientManager = APIClientManager.getInstance();
-      const intelligenceService = IntelligenceService.getInstance(
-        databaseManager,
-        serviceContainer,
-        apiClientManager
-      );
-
+      // Initialize all required services via optimized container
+      const databaseManager = services.database as DatabaseManager;
+      const intelligenceService = services.intelligence as ReturnType<typeof IntelligenceService.getInstance>;
       const notificationManager = NotificationManager.getInstance(databaseManager);
 
       // Initialize ViewModel
@@ -129,7 +119,6 @@ export const ClientDashboardScreen: React.FC<ClientDashboardScreenProps> = ({
   const loadViolationsData = async (buildingId: string) => {
     try {
       setViolationsLoading(true);
-      const services = ServiceContainer.getInstance();
       const complianceService = services.compliance;
       
       // Load real violations data

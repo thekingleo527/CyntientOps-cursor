@@ -644,7 +644,7 @@ export class OperationalDataManager {
     
     {
       building: "CyntientOps HQ",
-      taskName: "Management Oversight",
+      taskName: "Management Oversight + Morning Operations",
       assignedWorker: "Shawn Magloire",
       category: "Management",
       skillLevel: "Advanced",

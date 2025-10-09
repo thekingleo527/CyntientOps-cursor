@@ -12,11 +12,12 @@ import { WorkerDashboardViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { ClockInManager, LocationManager, NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { ServiceContainer, Logger } from '@cyntientops/business-core';
+import { Logger } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
 import { ErrorBoundary } from '@cyntientops/ui-components';
 import { useNavigation } from '@react-navigation/native';
 import config from '../config/app.config';
+import { useServices } from '../providers/AppProvider';
 
 interface WorkerDashboardScreenProps {
   workerId: string;
@@ -45,6 +46,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   const mountedRef = useRef(true);
   const subscriptionRef = useRef<string | null>(null);
   const viewModelRef = useRef<WorkerDashboardViewModel | null>(null);
+  const services = useServices();
 
   // Real-time sync for tasks
   const taskSync = useRealTimeSync({
@@ -83,7 +85,6 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
       mountedRef.current = false;
       if (subscriptionRef.current) {
         try {
-          const services = ServiceContainer.getInstance();
           services.realTimeOrchestrator.removeUpdateListener(subscriptionRef.current);
         } catch (error) {
           Logger.warn('Failed to remove realtime listener on unmount', error, 'WorkerDashboardScreen');
@@ -109,7 +110,6 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   useEffect(() => {
     if (!mountedRef.current) return;
 
-    const services = ServiceContainer.getInstance();
     const id = `worker-dashboard-${workerId}`;
     subscriptionRef.current = id;
     
@@ -163,20 +163,9 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
         }
       }
 
-      // Initialize all required services
-      const databaseManager = DatabaseManager.getInstance({
-        path: config.databasePath
-      });
-      await databaseManager.initialize();
-
-      const serviceContainer = ServiceContainer.getInstance();
-      const apiClientManager = APIClientManager.getInstance();
-      const intelligenceService = IntelligenceService.getInstance(
-        databaseManager,
-        serviceContainer,
-        apiClientManager
-      );
-
+      // Initialize all required services via optimized container
+      const databaseManager = services.database as DatabaseManager;
+      const intelligenceService = services.intelligence as ReturnType<typeof IntelligenceService.getInstance>;
       const clockInManager = ClockInManager.getInstance(databaseManager);
       const locationManager = LocationManager.getInstance(databaseManager);
       const notificationManager = NotificationManager.getInstance(databaseManager);
@@ -199,7 +188,6 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
 
         // Initialize real-time sync
         try {
-          const services = ServiceContainer.getInstance();
           await services.syncIntegration.initialize(
             services.optimizedWebSocket,
             services.messageRouter,

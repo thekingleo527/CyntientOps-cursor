@@ -20,10 +20,11 @@ import { AdminViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { ServiceContainer, PropertyDataService } from '@cyntientops/business-core';
+import { PropertyDataService } from '@cyntientops/business-core';
 // Removed ViolationDataService - now using real ComplianceService
 import { APIClientManager } from '@cyntientops/api-clients';
 import { Logger } from '@cyntientops/business-core';
+import { useServices } from '../providers/AppProvider';
 
 interface AdminDashboardScreenProps {
   onNavigateToWorker?: (workerId: string) => void;
@@ -43,6 +44,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
   const [portfolioViolations, setPortfolioViolations] = useState<any>(null);
   const [violationsLoading, setViolationsLoading] = useState(false);
   const [propertyViolations, setPropertyViolations] = useState<Map<string, any>>(new Map());
+  const services = useServices();
 
   useEffect(() => {
     initializeViewModel();
@@ -55,7 +57,6 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
 
   // Subscribe to real-time updates for admin critical events and refresh
   useEffect(() => {
-    const services = ServiceContainer.getInstance();
     const id = 'admin-dashboard';
     try {
       services.realTimeOrchestrator.addUpdateListener(id, (update: any) => {
@@ -88,20 +89,9 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
       setIsLoading(true);
       setError(null);
 
-      // Initialize all required services
-      const databaseManager = DatabaseManager.getInstance({
-        path: config.databasePath
-      });
-      await databaseManager.initialize();
-
-      const serviceContainer = ServiceContainer.getInstance();
-      const apiClientManager = APIClientManager.getInstance();
-      const intelligenceService = IntelligenceService.getInstance(
-        databaseManager,
-        serviceContainer,
-        apiClientManager
-      );
-
+      // Initialize all required services via optimized container
+      const databaseManager = services.database as DatabaseManager;
+      const intelligenceService = services.intelligence as ReturnType<typeof IntelligenceService.getInstance>;
       const notificationManager = NotificationManager.getInstance(databaseManager);
 
       // Initialize ViewModel
@@ -126,7 +116,6 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
   const loadPortfolioViolationsData = async () => {
     try {
       setViolationsLoading(true);
-      const services = ServiceContainer.getInstance();
       const complianceService = services.compliance;
       const allProperties = PropertyDataService.getAllProperties();
       

@@ -60,28 +60,28 @@ export const EnhancedTabNavigator: React.FC<EnhancedTabNavigatorProps> = ({
         />
         <Tab.Screen
           name="Map"
-          children={() => <WorkerMapTab userId={userId} />}
+          children={() => <WorkerMapTab userId={userId} userName={userName} userRole="worker" />}
           options={{
             tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="map" size={size} color={color} />,
           }}
         />
         <Tab.Screen
           name="Schedule"
-          children={() => <WorkerScheduleTab userId={userId} />}
+          children={() => <WorkerScheduleTab userId={userId} userName={userName} userRole="worker" />}
           options={{
             tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="calendar" size={size} color={color} />,
           }}
         />
         <Tab.Screen
           name="Intelligence"
-          children={() => <WorkerIntelligenceTab userId={userId} />}
+          children={() => <WorkerIntelligenceTab userId={userId} userName={userName} userRole="worker" />}
           options={{
             tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="lightbulb" size={size} color={color} />,
           }}
         />
         <Tab.Screen
           name="Departure"
-          children={() => <WorkerSiteDepartureTab userId={userId} />}
+          children={() => <WorkerSiteDepartureTab userId={userId} userName={userName} userRole="worker" />}
           options={{
             tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="logout" size={size} color={color} />,
           }}
@@ -112,14 +112,14 @@ export const EnhancedTabNavigator: React.FC<EnhancedTabNavigatorProps> = ({
         />
         <Tab.Screen
           name="Portfolio"
-          children={() => <ClientPortfolioTab userId={userId} />}
+          children={() => <ClientPortfolioTab userId={userId} userName={userName} userRole="client" />}
           options={{
             tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="briefcase" size={size} color={color} />,
           }}
         />
         <Tab.Screen
           name="Intelligence"
-          children={() => <ClientIntelligenceTab userId={userId} />}
+          children={() => <ClientIntelligenceTab userId={userId} userName={userName} userRole="client" />}
           options={{
             tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="lightbulb" size={size} color={color} />,
           }}
@@ -150,21 +150,21 @@ export const EnhancedTabNavigator: React.FC<EnhancedTabNavigatorProps> = ({
       />
       <Tab.Screen
         name="Workers"
-        children={() => <AdminWorkersTab userId={userId} />}
+        children={() => <AdminWorkersTab userId={userId} userName={userName} userRole="admin" />}
         options={{
           tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="account-group" size={size} color={color} />,
         }}
       />
       <Tab.Screen
         name="Portfolio"
-        children={() => <AdminPortfolioTab userId={userId} />}
+        children={() => <AdminPortfolioTab userId={userId} userName={userName} userRole="admin" />}
         options={{
           tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="briefcase" size={size} color={color} />,
         }}
       />
       <Tab.Screen
         name="Intelligence"
-        children={() => <AdminIntelligenceTab userId={userId} />}
+        children={() => <AdminIntelligenceTab userId={userId} userName={userName} userRole="admin" />}
         options={{
           tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="lightbulb" size={size} color={color} />,
         }}

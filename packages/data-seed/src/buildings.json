@@ -745,6 +745,13 @@
     "roofDrains": true,
     "backyardDrains": false,
     "drainCheckRequired": "seasonal",
-    "specialNotes": "Small building with stairwell and elevator. <9 units - bins set out on sidewalk."
+    "specialNotes": "Small building with stairwell and elevator. <9 units - bins set out on sidewalk.",
+    "hvacFilters": {
+      "lastChanged": "2025-10-08T00:00:00Z",
+      "nextDue": "2025-11-08T00:00:00Z",
+      "filterType": "MERV-8",
+      "quantity": 2,
+      "assignedWorker": "Edwin Lema"
+    }
   }
 ]

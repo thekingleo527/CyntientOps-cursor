@@ -31,9 +31,13 @@
 
 ## 🎉 iOS APP SUCCESSFULLY RUNNING - October 8, 2025
 
+### **Current Status: Restoring Full App (In Progress)**
+**Phase**: Incremental restoration of navigation and screens
+**Current State**: Basic infrastructure restored, fixing missing dependencies
+
 ### **Achievement: App Running in iOS Simulator ✅**
 **Duration**: 8+ hours of intensive troubleshooting
-**Result**: iOS app builds, bundles, and runs successfully in simulator
+**Result**: Minimal app builds, bundles, and runs successfully in simulator
 
 ### **Critical Issues Resolved**
 
@@ -592,3 +596,229 @@ After comprehensive forensic analysis, the app shows **extensive optimization wo
 **Session Goal Achieved:** ✅ Clean, production-ready codebase with zero configuration conflicts, stable bundling, and all systems operational
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---
+
+## 🚧 NEXT STEPS - INCREMENTAL APP RESTORATION (October 8, 2025 Evening)
+
+### **Current Situation**
+- **Minimal app working**: iOS simulator shows "⚡ Lightning" test screen
+- **Full app in git history**: Commit `c507d3d` has complete implementation
+- **Restoration started**: Partially restored navigation, screens, utils
+
+### **Files Restored So Far** ✅
+- `src/screens/LoginScreen.tsx` - Login UI
+- `src/navigation/AppNavigator.tsx` - Main navigation
+- `src/navigation/tabs/` - All tab navigators (Admin, Client, Worker)
+- `src/screens/AdminDashboardScreen.tsx` - Admin dashboard
+- `src/screens/ClientDashboardScreen.tsx` - Client dashboard  
+- `src/screens/WorkerDashboardScreen.tsx` - Worker dashboard
+- `src/screens/ProfileScreen.tsx` - User profile
+- `src/providers/AppProvider.tsx` - App context provider
+- `src/utils/` - All optimization utilities (AssetOptimizer, BootMonitor, etc.)
+- `src/config/app.config.ts` - App configuration
+
+### **Current Error** ⚠️
+Metro bundler cannot resolve imports - likely due to:
+1. Missing dependencies in package.json (partially added)
+2. Yarn hoisting issues in monorepo
+3. Metro config needs monorepo resolver paths
+
+### **Dependencies Added to package.json** ✅
+```json
+{
+  "@react-navigation/bottom-tabs": "^7.4.8",
+  "@react-navigation/native": "^7.1.18",
+  "@react-navigation/native-stack": "^7.3.27",
+  "expo-asset": "^12.0.9",
+  "expo-blur": "^15.0.7",
+  "expo-crypto": "^15.0.7",
+  "expo-file-system": "~19.0.16",
+  "expo-haptics": "^15.0.7",
+  "expo-image-manipulator": "~14.0.7",
+  "expo-speech": "^14.0.7",
+  "react-native-crypto": "^2.2.1",
+  "react-native-gesture-handler": "^2.28.0",
+  "react-native-randombytes": "^3.6.2",
+  "react-native-reanimated": "^4.1.2",
+  "react-native-safe-area-context": "~5.6.0",
+  "react-native-screens": "~4.16.0"
+}
+```
+
+### **Metro Config Updated** ✅
+Added monorepo resolution paths:
+```javascript
+config.watchFolders = [workspaceRoot];
+config.resolver.nodeModulesPaths = [
+  path.resolve(projectRoot, 'node_modules'),
+  path.resolve(workspaceRoot, 'node_modules'),
+];
+```
+
+### **Immediate Next Actions** (In Order)
+
+#### 1. **Fix Dependency Installation** 🔧
+```bash
+cd /Volumes/FastSSD/Developer/Projects/CyntientOps-MP/apps/mobile-rn
+yarn install --force
+# OR from root if needed
+cd ../..
+yarn install
+```
+
+#### 2. **Verify Utils Files Exist** ✅
+Check that all restored:
+- `src/utils/AssetOptimizer.ts`
+- `src/utils/BootMonitor.ts`  
+- `src/utils/NativeImageCompressor.ts`
+- `src/utils/CompressionMonitor.ts`
+- `src/utils/OptimizedServiceContainer.ts` (with WebSocket fix!)
+- `src/utils/PerformanceMonitor.ts`
+
+#### 3. **Test Metro Bundle** 📦
+```bash
+# Restart Metro with clean cache
+yarn start:clean
+# OR
+yarn start
+```
+
+Press `r` in Metro to reload bundle. Check for import errors.
+
+#### 4. **If Bundle Succeeds** ✅
+Test in simulator:
+- Should show Login screen (not "Lightning" screen)
+- Try logging in with test user
+- Check navigation tabs appear
+
+#### 5. **Still Missing - Restore These Next** 📋
+
+**Screens to Restore**:
+- [ ] `src/screens/BuildingDetailScreen.tsx`
+- [ ] `src/screens/ClockInModal.tsx`
+- [ ] `src/screens/ComplianceSuiteScreen.tsx`
+- [ ] `src/screens/DailyRoutineScreen.tsx`
+- [ ] `src/screens/WeeklyRoutineScreen.tsx`
+- [ ] `src/screens/TaskTimelineScreen.tsx`
+- [ ] `src/screens/MultisiteDepartureScreen.tsx`
+- [ ] `src/screens/WorkerManagementScreen.tsx`
+- [ ] `src/screens/compliance/DOBDetailScreen.tsx`
+- [ ] `src/screens/compliance/DSNYDetailScreen.tsx`
+- [ ] `src/screens/compliance/HPDDetailScreen.tsx`
+- [ ] `src/screens/compliance/LL97DetailScreen.tsx`
+
+**Components to Restore**:
+- [ ] `src/components/EmergencyQuickAccess.tsx`
+- [ ] `src/components/LazyComponentLoader.tsx`
+- [ ] `src/components/WeatherAlertBanner.tsx`
+
+**Modals to Restore**:
+- [ ] `src/modals/DOBPermitsSheet.tsx`
+- [ ] `src/modals/DSNYViolationsSheet.tsx`
+- [ ] `src/modals/HPDViolationsSheet.tsx`
+- [ ] `src/modals/PhotoCaptureModal.tsx`
+
+**Services to Restore**:
+- [ ] `src/services/LazyServiceLoader.ts`
+
+**Enhanced Navigation**:
+- [ ] `src/navigation/EnhancedTabNavigator.tsx`
+
+#### 6. **Test Each Addition** ⚠️
+After restoring each group:
+1. Run `yarn install` if new deps needed
+2. Restart Metro
+3. Test in simulator
+4. Fix any import/bundling errors before adding more
+
+### **Key Lessons Learned** 💡
+
+1. **Config Type Strictness**: Expo/Metro are strict about types in app.json - booleans where strings expected cause failures
+2. **Cache Persistence**: Multiple cache layers (Metro, Expo, iOS app) - need nuclear clearing sometimes
+3. **Monorepo Resolution**: Metro needs explicit paths to resolve hoisted dependencies
+4. **Incremental Restoration**: Add features gradually, test each addition
+5. **Git is Lifesaver**: Full app still exists in history at `c507d3d`
+
+### **Working Minimal Config** ✅
+
+**app.json** (simplified, no problematic booleans):
+```json
+{
+  "expo": {
+    "name": "CyntientOps",
+    "slug": "cyntientops-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.cyntientops.mobile"
+    },
+    "android": {
+      "package": "com.cyntientops.mobile"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [],
+    "extra": {
+      "eas": {
+        "projectId": "e59805da-6423-4c79-ba1a-d277633f0875"
+      }
+    }
+  }
+}
+```
+
+**Podfile** (explicit project):
+```ruby
+project 'CyntientOps.xcodeproj'
+```
+
+### **Commands Quick Reference** 📝
+
+```bash
+# Start Metro
+cd apps/mobile-rn && yarn start
+
+# Clean start Metro
+cd apps/mobile-rn && yarn start:clean
+
+# Install dependencies
+yarn install
+
+# Run iOS build
+yarn mobile:ios
+
+# Kill ports
+lsof -nP -i:8081 -t | xargs kill -9
+
+# Restore file from git
+git checkout c507d3d -- path/to/file
+
+# Check git history
+git log --oneline -10
+```
+
+### **Full App Commit Reference** 📚
+- **Working minimal**: `0a3b060` (current main)
+- **Full app**: `c507d3d` (all screens, navigation, services)
+- **Before issues**: Multiple commits with different features
+
+To see what changed:
+```bash
+git diff c507d3d 0a3b060 --stat
+```
+
+---
+
+**Last Updated**: October 8, 2025, 7:45 PM
+**Next Model**: Start by running `yarn install` and checking Metro bundle
+**Priority**: Get login screen working, then add features incrementally

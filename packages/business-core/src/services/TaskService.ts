@@ -226,6 +226,58 @@ export class TaskService {
   getAllRoutines(): RoutineTask[] {
     return [...this.routines];
   }
+
+  /**
+   * Get routines for a specific building
+   */
+  getRoutinesForBuilding(buildingId: string): RoutineTask[] {
+    return this.routines.filter(r => r.buildingId === buildingId);
+  }
+
+  /**
+   * Get current task for a worker (task within time window)
+   */
+  getCurrentTask(workerId: string): OperationalDataTaskAssignment | null {
+    const schedule = this.generateWorkerTasks(workerId);
+    return schedule.now[0] || null;
+  }
+
+  /**
+   * Get next task for a worker (upcoming task before start time)
+   */
+  getNextTask(workerId: string): OperationalDataTaskAssignment | null {
+    const schedule = this.generateWorkerTasks(workerId);
+    return schedule.next[0] || null;
+  }
+
+  /**
+   * Get task completion stats for today
+   */
+  getTodayCompletionStats(workerId: string): {
+    completed: number;
+    total: number;
+    rate: number;
+  } {
+    const schedule = this.generateWorkerTasks(workerId);
+    const completed = schedule.completed.length;
+    const total = schedule.today.length;
+
+    return {
+      completed,
+      total,
+      rate: total > 0 ? completed / total : 0
+    };
+  }
+
+  /**
+   * Format hour to 12-hour format
+   */
+  formatHour(hour: number): string {
+    if (hour === 0) return '12:00 AM';
+    if (hour < 12) return `${hour}:00 AM`;
+    if (hour === 12) return '12:00 PM';
+    return `${hour - 12}:00 PM`;
+  }
 }
 
 export default TaskService;

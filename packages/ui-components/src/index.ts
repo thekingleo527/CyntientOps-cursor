@@ -316,3 +316,11 @@ export type { MobileOptimizedCardProps } from './cards/MobileOptimizedCard';
 export { default as AnalyticsDashboardExample } from './cards/AnalyticsDashboardExample';
 export { default as DashboardIntegrationExamples } from './cards/DashboardIntegrationExamples';
 
+// Task & Routine Cards
+export { TaskCard } from './cards/TaskCard';
+export type { TaskCardProps } from './cards/TaskCard';
+export { RoutineCard } from './cards/RoutineCard';
+export type { RoutineCardProps } from './cards/RoutineCard';
+export { DSNYScheduleCard } from './cards/DSNYScheduleCard';
+export type { DSNYScheduleCardProps } from './cards/DSNYScheduleCard';
+

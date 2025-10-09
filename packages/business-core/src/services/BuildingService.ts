@@ -536,4 +536,116 @@ export class BuildingService {
       return false;
     }
   }
+
+  /**
+   * Get DSNY collection schedule for a building
+   */
+  public getDSNYSchedule(buildingId: string): {
+    collectionDays: string[];
+    setOutWorker: string | null;
+    setOutTime: string | null;
+    bringInWorker: string | null;
+    bringInTime: string | null;
+    nextCollection: Date | null;
+    hasBinSetOut: boolean;
+  } {
+    // Get all routines for this building
+    const routines = this.operationalDataService.getTasksForBuilding(buildingId);
+
+    // Find DSNY-related tasks
+    const dsnyTasks = routines.filter(task =>
+      task.category === 'Sanitation' &&
+      (task.title.includes('DSNY') || task.title.includes('Bin') || task.title.includes('Trash'))
+    );
+
+    // Extract set-out and bring-in tasks
+    const setOutTasks = dsnyTasks.filter(task => task.title.includes('Set Out'));
+    const bringInTasks = dsnyTasks.filter(task => task.title.includes('Bring In'));
+
+    // Get collection days from tasks
+    const collectionDays: string[] = [];
+    dsnyTasks.forEach(task => {
+      if (task.daysOfWeek) {
+        const days = task.daysOfWeek.split(',');
+        days.forEach(day => {
+          if (!collectionDays.includes(day.trim())) {
+            collectionDays.push(day.trim());
+          }
+        });
+      }
+    });
+
+    // Get workers and times
+    const setOutWorker = setOutTasks[0]?.assignedWorker || null;
+    const setOutTime = setOutTasks[0]?.startHour ? this.formatHour(setOutTasks[0].startHour) : null;
+    const bringInWorker = bringInTasks[0]?.assignedWorker || null;
+    const bringInTime = bringInTasks[0]?.startHour ? this.formatHour(bringInTasks[0].startHour) : null;
+
+    // Calculate next collection date
+    const nextCollection = this.getNextCollectionDate(collectionDays);
+
+    // Check if building has bin set-out (from building data)
+    const building = this.getBuildingById(buildingId);
+    const hasBinSetOut = building?.garbageBinSetOut || false;
+
+    return {
+      collectionDays,
+      setOutWorker,
+      setOutTime,
+      bringInWorker,
+      bringInTime,
+      nextCollection,
+      hasBinSetOut
+    };
+  }
+
+  /**
+   * Get next collection date based on collection days
+   */
+  private getNextCollectionDate(collectionDays: string[]): Date | null {
+    if (collectionDays.length === 0) return null;
+
+    const dayMap: { [key: string]: number } = {
+      'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3,
+      'Thursday': 4, 'Friday': 5, 'Saturday': 6
+    };
+
+    const today = new Date();
+    const currentDay = today.getDay();
+
+    // Convert collection days to day numbers
+    const collectionDayNumbers = collectionDays
+      .map(day => dayMap[day.trim()])
+      .filter(num => num !== undefined)
+      .sort((a, b) => a - b);
+
+    // Find next collection day
+    let nextDay = collectionDayNumbers.find(day => day > currentDay);
+
+    // If no day found this week, use first day of next week
+    if (nextDay === undefined) {
+      nextDay = collectionDayNumbers[0];
+    }
+
+    // Calculate date
+    const daysUntilCollection = nextDay <= currentDay
+      ? (7 - currentDay + nextDay)
+      : (nextDay - currentDay);
+
+    const nextCollection = new Date(today);
+    nextCollection.setDate(today.getDate() + daysUntilCollection);
+    nextCollection.setHours(8, 0, 0, 0); // Default collection time 8 AM
+
+    return nextCollection;
+  }
+
+  /**
+   * Format hour to 12-hour format
+   */
+  private formatHour(hour: number): string {
+    if (hour === 0) return '12:00 AM';
+    if (hour < 12) return `${hour}:00 AM`;
+    if (hour === 12) return '12:00 PM';
+    return `${hour - 12}:00 PM`;
+  }
 }

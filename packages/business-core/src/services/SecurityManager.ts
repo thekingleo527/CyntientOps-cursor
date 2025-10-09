@@ -7,7 +7,7 @@
 import { DatabaseManager } from '@cyntientops/database';
 import { UserRole } from '@cyntientops/domain-schema';
 import { Logger } from './LoggingService';
-import * as bcrypt from 'bcryptjs';
+import CryptoJS from 'crypto-js';
 
 export interface SecurityPolicy {
   id: string;
@@ -272,7 +272,7 @@ export class SecurityManager {
 
   public async hashPassword(password: string): Promise<string> {
     const saltRounds = 12;
-    return await bcrypt.hash(password, saltRounds);
+    return CryptoJS.SHA256(password + 'cyntientops_salt').toString();
   }
 
   public async authenticateUser(userId: string, password: string): Promise<boolean> {
@@ -287,7 +287,8 @@ export class SecurityManager {
       }
       
       // Use bcrypt to compare password with stored hash
-      const isValid = await bcrypt.compare(password, worker.password);
+      const hashedInput = CryptoJS.SHA256(password + 'cyntientops_salt').toString();
+      const isValid = hashedInput === worker.password;
       
       this.logSecurityEvent(userId, 'authentication', 'login_attempt', isValid ? 'success' : 'failure');
       

@@ -28,6 +28,7 @@ class OptimizedServiceContainer {
   private loadingPromises = new Map<string, Promise<any>>();
   private isInitialized = false;
   private initializationPromise: Promise<void> | null = null;
+  private sharedServiceContainer: any = null;
 
   // Service configurations with optimized loading strategies
   private serviceConfigs: ServiceConfig[] = [
@@ -201,6 +202,7 @@ class OptimizedServiceContainer {
       return this.initializationPromise;
     }
 
+    // Prevent multiple initialization attempts
     this.initializationPromise = this._doInitialize();
     return this.initializationPromise;
   }
@@ -210,6 +212,11 @@ class OptimizedServiceContainer {
     performanceMonitor.startMeasurement('service_container_init', 'bundle');
 
     try {
+      // Prevent concurrent initialization
+      if (this.isInitialized) {
+        return;
+      }
+
       // Load critical services first
       await this._loadCriticalServices();
       
@@ -225,6 +232,9 @@ class OptimizedServiceContainer {
     } catch (error) {
       performanceMonitor.endMeasurement('service_container_init');
       console.error('Failed to initialize service container:', error);
+      // Reset initialization state on error
+      this.isInitialized = false;
+      this.initializationPromise = null;
       throw error;
     }
   }
@@ -403,6 +413,21 @@ class OptimizedServiceContainer {
   }
 
   /**
+   * Get or create shared ServiceContainer instance
+   */
+  private async _getSharedServiceContainer(): Promise<any> {
+    if (!this.sharedServiceContainer) {
+      const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
+      const appConfig = (await import('../config/app.config')).default;
+      this.sharedServiceContainer = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
+      if (!this.sharedServiceContainer.isInitialized) {
+        await this.sharedServiceContainer.initialize();
+      }
+    }
+    return this.sharedServiceContainer;
+  }
+
+  /**
    * Create service instance with dynamic imports
    */
   private async _createServiceInstance(config: ServiceConfig): Promise<any> {
@@ -418,28 +443,19 @@ class OptimizedServiceContainer {
         
       case 'auth':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.auth;
         }
         
       case 'sessionManager':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.sessionManager;
         }
         
       case 'database':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.database;
         }
         
@@ -459,19 +475,13 @@ class OptimizedServiceContainer {
         
       case 'optimizedWebSocket':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.optimizedWebSocket;
         }
 
       case 'messageRouter':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.messageRouter;
         }
         
@@ -485,28 +495,19 @@ class OptimizedServiceContainer {
         
       case 'pushNotifications':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.pushNotifications;
         }
         
       case 'intelligence':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.intelligence;
         }
         
       case 'weather':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.weatherTasks;
         }
         
@@ -551,46 +552,31 @@ class OptimizedServiceContainer {
         
       case 'inventory':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.inventory;
         }
         
       case 'compliance':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.compliance;
         }
         
       case 'buildings':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.buildings;
         }
         
       case 'workers':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.workers;
         }
         
       case 'clients':
         {
-          const { ServiceContainer } = await import('@cyntientops/business-core/src/ServiceContainer');
-          const appConfig = (await import('../config/app.config')).default;
-          const container = ServiceContainer.getInstance({ databasePath: appConfig.databasePath });
-          await container.initialize();
+          const container = await this._getSharedServiceContainer();
           return container.client;
         }
         
@@ -752,10 +738,11 @@ class OptimizedServiceContainer {
   get apiClients(): any { return this.getService('apiClients'); }
   get clockIn(): any { return this.getService('clockIn'); }
   get realTimeOrchestrator(): any {
-    // Use ServiceContainer for orchestration layer to avoid duplication
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { ServiceContainer } = require('@cyntientops/business-core/src/ServiceContainer');
-    return ServiceContainer.getInstance().realTimeOrchestrator;
+    // Use shared ServiceContainer instance
+    if (!this.sharedServiceContainer) {
+      throw new Error('ServiceContainer not initialized. Call initialize() first.');
+    }
+    return this.sharedServiceContainer.realTimeOrchestrator;
   }
 }
 

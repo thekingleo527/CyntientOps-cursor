@@ -16,11 +16,10 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
+import { GlassCard, GlassIntensity, CornerRadius, TaskCard } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TaskService, TaskSchedule } from '@cyntientops/business-core';
 import { WeatherRibbonView } from '@cyntientops/ui-components';
-import { TaskTimelineView } from '@cyntientops/ui-components';
 import { OperationalDataTaskAssignment, WeatherSnapshot, WeatherForecast } from '@cyntientops/domain-schema';
 import { Logger } from '@cyntientops/business-core';
 
@@ -211,6 +210,52 @@ export const WorkerScheduleTab: React.FC<WorkerScheduleTabProps> = ({
     );
   };
 
+  const formatHour = (hour: number): string => {
+    const taskService = TaskService.getInstance();
+    return taskService.formatHour(hour);
+  };
+
+  const handleTaskComplete = (taskId: string) => {
+    Logger.info(`Task completed: ${taskId}`, 'WorkerScheduleTab');
+    // TODO: Implement task completion logic
+  };
+
+  const handleReportIssue = (taskId: string) => {
+    Logger.info(`Issue reported for task: ${taskId}`, 'WorkerScheduleTab');
+    // TODO: Implement issue reporting logic
+  };
+
+  const renderTaskCard = (task: OperationalDataTaskAssignment, status: 'now' | 'next' | 'today' | 'completed') => {
+    const statusConfig = {
+      now: { icon: '🟢', label: 'NOW', color: '#10b981' },
+      next: { icon: '⏭️', label: 'NEXT', color: '#3b82f6' },
+      today: { icon: '📋', label: 'TODAY', color: '#6b7280' },
+      completed: { icon: '✅', label: 'COMPLETED', color: '#059669' }
+    };
+
+    const config = statusConfig[status];
+
+    return (
+      <TaskCard
+        key={task.id}
+        status={status}
+        statusIcon={config.icon}
+        statusLabel={config.label}
+        statusColor={config.color}
+        title={task.title}
+        building={task.buildingName}
+        timeRange={`${formatHour(task.metadata?.startHour || 0)} - ${formatHour(task.metadata?.endHour || 0)}`}
+        duration={`${task.estimatedDuration} min`}
+        category={task.category}
+        skillLevel={task.skillLevel || 'Basic'}
+        requiresPhoto={task.requiresPhoto}
+        onPress={() => Logger.info(`Task pressed: ${task.id}`, 'WorkerScheduleTab')}
+        onComplete={status === 'now' ? () => handleTaskComplete(task.id) : undefined}
+        onIssue={status === 'now' ? () => handleReportIssue(task.id) : undefined}
+      />
+    );
+  };
+
   const renderTodayView = () => {
     if (!taskSchedule) return null;
 
@@ -230,7 +275,7 @@ export const WorkerScheduleTab: React.FC<WorkerScheduleTabProps> = ({
               </Text>
             </View>
           </View>
-          
+
           <View style={styles.clockActions}>
             {clockInStatus === 'out' ? (
               <TouchableOpacity style={styles.clockInButton} onPress={handleClockIn}>
@@ -249,39 +294,48 @@ export const WorkerScheduleTab: React.FC<WorkerScheduleTabProps> = ({
           </View>
         </GlassCard>
 
-        {/* Current Tasks */}
+        {/* Current Tasks - NOW */}
         {taskSchedule.now.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Happening Now</Text>
-            <TaskTimelineView
-              tasks={taskSchedule.now}
-              showWeatherImpact={true}
-              weatherImpacts={weatherImpacts}
-            />
+            <Text style={styles.sectionTitle}>🟢 Happening Now</Text>
+            {taskSchedule.now.map(task => renderTaskCard(task, 'now'))}
           </View>
         )}
 
-        {/* Next Tasks */}
+        {/* Next Tasks - NEXT */}
         {taskSchedule.next.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Up Next</Text>
-            <TaskTimelineView
-              tasks={taskSchedule.next}
-              showWeatherImpact={true}
-              weatherImpacts={weatherImpacts}
-            />
+            <Text style={styles.sectionTitle}>⏭️ Up Next</Text>
+            {taskSchedule.next.map(task => renderTaskCard(task, 'next'))}
           </View>
         )}
 
-        {/* All Today's Tasks */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>All Today's Tasks</Text>
-          <TaskTimelineView
-            tasks={taskSchedule.today}
-            showWeatherImpact={true}
-            weatherImpacts={weatherImpacts}
-          />
-        </View>
+        {/* All Today's Tasks - TODAY */}
+        {taskSchedule.today.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>📋 All Today's Tasks</Text>
+            {taskSchedule.today.map(task => renderTaskCard(task, 'today'))}
+          </View>
+        )}
+
+        {/* Completed Tasks */}
+        {taskSchedule.completed.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>✅ Completed</Text>
+            {taskSchedule.completed.map(task => renderTaskCard(task, 'completed'))}
+          </View>
+        )}
+
+        {/* No tasks message */}
+        {taskSchedule.today.length === 0 && (
+          <GlassCard
+            intensity={GlassIntensity.thin}
+            cornerRadius={CornerRadius.medium}
+            style={styles.noTasksCard}
+          >
+            <Text style={styles.noTasksText}>No tasks scheduled for today</Text>
+          </GlassCard>
+        )}
       </View>
     );
   };
@@ -499,6 +553,16 @@ const styles = StyleSheet.create({
     color: Colors.text.secondary,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  noTasksCard: {
+    padding: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noTasksText: {
+    fontSize: 16,
+    color: Colors.text.secondary,
+    textAlign: 'center',
   },
 });
 

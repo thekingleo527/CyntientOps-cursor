@@ -10,11 +10,17 @@ import { WorkerProfile } from '@cyntientops/domain-schema';
 import workersData from '@cyntientops/data-seed/src/workers.json';
 import clientsData from '@cyntientops/data-seed/src/clients.json';
 import { Logger } from './LoggingService';
-import bcrypt from 'bcryptjs';
+import CryptoJS from 'crypto-js';
 
-// Generate hashed passwords for security
+// Generate hashed passwords for security using React Native compatible crypto
 const generateHashedPassword = (plainPassword: string): string => {
-  return bcrypt.hashSync(plainPassword, 10);
+  return CryptoJS.SHA256(plainPassword + 'cyntientops_salt').toString();
+};
+
+// Compare password with hash
+const comparePassword = (plainPassword: string, hashedPassword: string): boolean => {
+  const hashedInput = CryptoJS.SHA256(plainPassword + 'cyntientops_salt').toString();
+  return hashedInput === hashedPassword;
 };
 
 // Default password for all users (in production, each user should have unique passwords)
@@ -167,8 +173,8 @@ export class AuthenticationService {
         };
       }
 
-      // Verify password using bcrypt
-      if (!bcrypt.compareSync(password, credentials.password)) {
+      // Verify password using React Native compatible crypto
+      if (!comparePassword(password, credentials.password)) {
         return {
           success: false,
           error: 'Invalid password'

@@ -724,7 +724,7 @@
     "@babel/helper-module-transforms" "^7.27.1"
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-modules-commonjs@^7.0.0", "@babel/plugin-transform-modules-commonjs@^7.13.8", "@babel/plugin-transform-modules-commonjs@^7.24.8", "@babel/plugin-transform-modules-commonjs@^7.27.1":
+"@babel/plugin-transform-modules-commonjs@^7.0.0", "@babel/plugin-transform-modules-commonjs@^7.13.8", "@babel/plugin-transform-modules-commonjs@^7.22.0", "@babel/plugin-transform-modules-commonjs@^7.24.8", "@babel/plugin-transform-modules-commonjs@^7.27.1":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-modules-commonjs/-/plugin-transform-modules-commonjs-7.27.1.tgz#8e44ed37c2787ecc23bdc367f49977476614e832"
   integrity sha512-OJguuwlTYlN0gBZFRPqwOGNWssZjfIUdS7HMYtN8c1KmwpwHFBwTeFZrg9XZa+DFTitWOW5iTAG7tyCUPsCCyw==
@@ -879,7 +879,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-react-jsx@^7.0.0", "@babel/plugin-transform-react-jsx@^7.25.2", "@babel/plugin-transform-react-jsx@^7.27.1":
+"@babel/plugin-transform-react-jsx@^7.0.0", "@babel/plugin-transform-react-jsx@^7.22.0", "@babel/plugin-transform-react-jsx@^7.25.2", "@babel/plugin-transform-react-jsx@^7.27.1":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.27.1.tgz#1023bc94b78b0a2d68c82b5e96aed573bcfb9db0"
   integrity sha512-2KH4LWGSrJIkVf5tSiBFYuXDAoWRq2MMwgivCf+93dd0GQi8RXLjKA/0EvRnVV5G0hrHczsquXuD01L8s6dmBw==
@@ -11979,15 +11979,10 @@ react-shallow-renderer@^16.15.0:
     object-assign "^4.1.1"
     react-is "^16.12.0 || ^17.0.0 || ^18.0.0"
 
-react@19.1.0:
+react@19.1.0, react@>=18.0.0:
   version "19.1.0"
   resolved "https://registry.yarnpkg.com/react/-/react-19.1.0.tgz#926864b6c48da7627f004795d6cce50e90793b75"
   integrity sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==
-
-react@>=18.0.0:
-  version "19.2.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-19.2.0.tgz#d33dd1721698f4376ae57a54098cb47fc75d93a5"
-  integrity sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ==
 
 react@^18.0.0:
   version "18.3.1"

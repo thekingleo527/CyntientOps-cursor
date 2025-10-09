@@ -12,12 +12,13 @@ import { WorkerDashboardViewModel } from '@cyntientops/context-engines';
 import { DatabaseManager } from '@cyntientops/database';
 import { ClockInManager, LocationManager, NotificationManager } from '@cyntientops/managers';
 import { IntelligenceService } from '@cyntientops/intelligence-services';
-import { Logger } from '@cyntientops/business-core';
+import { Logger, TaskService } from '@cyntientops/business-core';
 import { APIClientManager } from '@cyntientops/api-clients';
 import { ErrorBoundary } from '@cyntientops/ui-components';
 import { useNavigation } from '@react-navigation/native';
 import config from '../config/app.config';
 import { useServices } from '../providers/AppProvider';
+import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 
 interface WorkerDashboardScreenProps {
   workerId: string;
@@ -41,7 +42,12 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
   const navigation = useNavigation<any>();
-  
+
+  // Hero card data from TaskService
+  const [currentTask, setCurrentTask] = useState<OperationalDataTaskAssignment | null>(null);
+  const [nextTask, setNextTask] = useState<OperationalDataTaskAssignment | null>(null);
+  const [todayStats, setTodayStats] = useState({ completed: 0, total: 0, rate: 0 });
+
   // Memory leak prevention refs
   const mountedRef = useRef(true);
   const subscriptionRef = useRef<string | null>(null);
@@ -105,6 +111,17 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
       initializeViewModel();
     }
   }, [workerId]);
+
+  // Auto-refresh hero card data every 30 seconds
+  useEffect(() => {
+    if (!mountedRef.current) return;
+
+    const interval = setInterval(() => {
+      loadHeroCardData();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [loadHeroCardData]);
 
   // Subscribe to real-time updates with proper cleanup
   useEffect(() => {
@@ -186,6 +203,9 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
         viewModelRef.current = workerViewModel;
         setViewModel(workerViewModel);
 
+        // Load hero card data
+        loadHeroCardData();
+
         // Initialize real-time sync
         try {
           await services.syncIntegration.initialize(
@@ -221,17 +241,42 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
     }
   }, [workerId]);
 
+  const loadHeroCardData = useCallback(() => {
+    if (!mountedRef.current) return;
+
+    try {
+      const taskService = TaskService.getInstance();
+
+      // Get current task (NOW category)
+      const current = taskService.getCurrentTask(workerId);
+      setCurrentTask(current);
+
+      // Get next task (NEXT category)
+      const next = taskService.getNextTask(workerId);
+      setNextTask(next);
+
+      // Get completion stats
+      const stats = taskService.getTodayCompletionStats(workerId);
+      setTodayStats(stats);
+
+      Logger.info(`Hero card data loaded: Current=${current?.title || 'none'}, Next=${next?.title || 'none'}, Stats=${stats.completed}/${stats.total}`, 'WorkerDashboardScreen');
+    } catch (err) {
+      Logger.error('Failed to load hero card data', err, 'WorkerDashboardScreen');
+    }
+  }, [workerId]);
+
   const refreshDashboard = useCallback(async () => {
     if (!viewModelRef.current || !mountedRef.current) return;
     try {
       await viewModelRef.current.initialize(workerId);
+      loadHeroCardData(); // Refresh hero card data
       if (mountedRef.current) {
         setRefreshTick((t) => t + 1); // force re-render to pull latest state
       }
     } catch (err) {
       Logger.error('Failed to refresh worker dashboard:', undefined, 'WorkerDashboardScreen.tsx');
     }
-  }, [workerId]);
+  }, [workerId, loadHeroCardData]);
 
   const handleClockIn = useCallback(async (buildingId: string, location: { latitude: number; longitude: number; accuracy: number }) => {
     if (!viewModelRef.current || !mountedRef.current) return;
@@ -330,6 +375,32 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
     return null;
   }
 
+  // Prepare hero card data for WorkerDashboardMainView
+  const heroCardData = useMemo(() => {
+    const taskService = TaskService.getInstance();
+
+    return {
+      currentTask: currentTask ? {
+        title: currentTask.title,
+        building: currentTask.buildingName,
+        timeRange: `${taskService.formatHour(currentTask.metadata?.startHour || 0)} - ${taskService.formatHour(currentTask.metadata?.endHour || 0)}`,
+        category: currentTask.category,
+        requiresPhoto: currentTask.requiresPhoto
+      } : null,
+      nextTask: nextTask ? {
+        title: nextTask.title,
+        building: nextTask.buildingName,
+        startsAt: taskService.formatHour(nextTask.metadata?.startHour || 0),
+        category: nextTask.category
+      } : null,
+      todayStats: {
+        completed: todayStats.completed,
+        total: todayStats.total,
+        percentage: Math.round(todayStats.rate * 100)
+      }
+    };
+  }, [currentTask, nextTask, todayStats]);
+
   return (
     <ErrorBoundary context="WorkerDashboardScreen">
       <SafeAreaView style={styles.container}>
@@ -339,6 +410,7 @@ export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
             workerName={userName}
             userRole={userRole}
             state={viewModel.getState()}
+            heroCardData={heroCardData}
             onClockIn={handleClockIn}
             onClockOut={handleClockOut}
             onTaskUpdate={handleTaskUpdate}

@@ -18,14 +18,14 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
-import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components/src/glass';
+import { GlassCard, GlassIntensity, CornerRadius, RoutineCard, DSNYScheduleCard } from '@cyntientops/ui-components';
 import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
 import { NYCService } from '@cyntientops/business-core/src/services/NYCService';
 import { useServices } from '../providers/AppProvider';
 import { ViolationDataService } from '../services/ViolationDataService';
 import config from '../config/app.config';
 import { DSNYAPIClient } from '@cyntientops/api-clients/src/nyc/DSNYAPIClient';
-import { PropertyDataService } from '@cyntientops/business-core';
+import { PropertyDataService, TaskService, BuildingService } from '@cyntientops/business-core';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
 interface CollectionScheduleSummary {
@@ -174,6 +174,9 @@ export const BuildingDetailScreen: React.FC = () => {
   const [inventory, setInventory] = useState<any[]>([]);
   const [violationSummary, setViolationSummary] = useState<ViolationSummary>({ hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 });
 
+  // New: DSNY schedule from BuildingService
+  const [dsnyScheduleData, setDsnyScheduleData] = useState<any>(null);
+
   const building = useMemo(() => RealDataService.getBuildingById(buildingId), [buildingId]);
   const routines = useMemo(() => RealDataService.getRoutinesByBuildingId(buildingId), [buildingId]);
   const workers = useMemo(() => {
@@ -203,6 +206,17 @@ export const BuildingDetailScreen: React.FC = () => {
 
   // Get property details from PropertyDataService
   const propertyDetails = PropertyDataService.getPropertyDetails(buildingId);
+
+  // Load DSNY schedule using new BuildingService
+  useEffect(() => {
+    try {
+      const buildingService = new BuildingService();
+      const dsnySchedule = buildingService.getDSNYSchedule(buildingId);
+      setDsnyScheduleData(dsnySchedule);
+    } catch (err) {
+      console.error('Failed to load DSNY schedule:', err);
+    }
+  }, [buildingId]);
 
   useEffect(() => {
     const hydrateSchedule = async () => {
@@ -341,6 +355,21 @@ export const BuildingDetailScreen: React.FC = () => {
             {renderSectionHeader('Sanitation Schedule')}
             {renderScheduleCard(schedule)}
               </View>
+        )}
+
+        {dsnyScheduleData && dsnyScheduleData.collectionDays.length > 0 && (
+          <View style={styles.sectionGroup}>
+            {renderSectionHeader('DSNY Collection Details')}
+            <DSNYScheduleCard
+              collectionDays={dsnyScheduleData.collectionDays}
+              setOutWorker={dsnyScheduleData.setOutWorker}
+              setOutTime={dsnyScheduleData.setOutTime}
+              bringInWorker={dsnyScheduleData.bringInWorker}
+              bringInTime={dsnyScheduleData.bringInTime}
+              nextCollection={dsnyScheduleData.nextCollection}
+              onViewFull={() => console.log('View full DSNY schedule')}
+            />
+          </View>
         )}
 
         <View style={styles.sectionGroup}>
@@ -547,32 +576,24 @@ const renderWorkerCard = (worker: WorkerSummary) => (
   </GlassCard>
 );
 
-const renderRoutineCard = (routine: RoutineSummary) => (
-  <GlassCard
-    key={routine.id}
-    intensity={GlassIntensity.THIN}
-    cornerRadius={CornerRadius.MEDIUM}
-    style={styles.sectionCard}
-  >
-    <View style={styles.routineRow}>
-      <View style={styles.routineInfo}>
-        <Text style={styles.routineTitle}>{routine.title}</Text>
-        <Text style={styles.routineMeta}>
-          {routine.workerName} • {routine.category}
-            </Text>
-        <Text style={styles.routineMeta}>
-          {formatTimeRange(routine.startHour, routine.endHour)} • {routine.daysOfWeek}
-        </Text>
-        <Text style={styles.routineMeta}>
-          Photo Evidence: {routine.requiresPhoto ? 'Required' : 'Optional'}
-                  </Text>
-                </View>
-      <TouchableOpacity style={styles.routineAction}>
-        <Text style={styles.routineActionText}>Open</Text>
-      </TouchableOpacity>
-        </View>
-  </GlassCard>
-);
+const renderRoutineCard = (routine: RoutineSummary) => {
+  const taskService = TaskService.getInstance();
+  return (
+    <View key={routine.id} style={{ marginBottom: Spacing.sm }}>
+      <RoutineCard
+        time={`${taskService.formatHour(routine.startHour)} - ${taskService.formatHour(routine.endHour)}`}
+        title={routine.title}
+        worker={routine.workerName}
+        category={routine.category}
+        skillLevel="Basic" // Could be derived from routine data if available
+        requiresPhoto={routine.requiresPhoto}
+        frequency="Daily" // Could be derived from routine data if available
+        daysOfWeek={routine.daysOfWeek}
+        onPress={() => console.log('Routine pressed:', routine.id)}
+      />
+    </View>
+  );
+};
 
 const renderEmptyMessage = (message: string) => (
   <GlassCard intensity={GlassIntensity.THIN} cornerRadius={CornerRadius.MEDIUM} style={styles.sectionCard}>

@@ -23,10 +23,6 @@
     "**/*.jsx"
   ],
   "exclude": [
-    "node_modules",
-    "../../packages/**/*",
-    "src/utils/**/*",
-    "src/config/**/*",
-    "src/services/**/*"
+    "node_modules"
   ]
 }

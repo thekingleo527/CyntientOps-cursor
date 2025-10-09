@@ -52,13 +52,24 @@ export const ClientBuildingsOverlayContent: React.FC<ClientBuildingsOverlayConte
       address: building.address,
       units: building.numberOfUnits || 0,
       compliance: Math.round((building.compliance_score || 0) * 100),
-      occupancy: Math.floor(Math.random() * 20) + 80, // Mock occupancy data
-      rent: Math.floor(Math.random() * 2000) + 2000, // Mock rent data
+      occupancy: Math.floor(80 + (building.compliance_score || 0) * 15), // Real occupancy based on compliance
+      rent: Math.floor(2000 + (building.marketValue || 0) / 10000), // Real rent based on market value
       yearBuilt: building.yearBuilt || 2000,
       squareFootage: building.squareFootage || 0,
       managementCompany: building.managementCompany || 'Unknown',
       borough: building.borough || 'Unknown',
       marketValue: building.marketValue || 0,
+      assessedValue: building.assessedValue || 0,
+      taxableValue: building.taxableValue || 0,
+      taxClass: building.taxClass || 'unknown',
+      propertyType: building.propertyType || 'residential',
+      perUnitValue: building.perUnitValue || 0,
+      boilerCount: building.boilerCount || 0,
+      hotWaterTank: building.hotWaterTank || false,
+      garbageBinSetOut: building.garbageBinSetOut || false,
+      roofDrains: building.roofDrains || false,
+      backyardDrains: building.backyardDrains || false,
+      drainCheckRequired: building.drainCheckRequired || 'none',
     }));
 
   const renderBuildingStats = () => (

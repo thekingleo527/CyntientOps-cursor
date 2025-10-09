@@ -3,10 +3,53 @@
  * Purpose: Automated backup and recovery system for data protection
  */
 
-import { DatabaseManager } from '@cyntientops/database';
+// import { DatabaseManager } from '@cyntientops/database';
 import { ErrorHandler, ErrorCategory, ErrorSeverity } from './ErrorHandler';
 import { Logger } from './LoggingService';
 import { AuditTrailManager, AuditEventType, AuditSeverity } from './AuditTrailManager';
+
+// Temporary DatabaseManager interface for React Native compatibility
+interface LocalDatabaseManager {
+  [key: string]: any;
+}
+
+// React Native compatible process object
+declare const process: {
+  env: { [key: string]: string | undefined };
+};
+
+// Type definitions
+export interface BackupConfig {
+  id: string;
+  name: string;
+  type: 'full' | 'incremental' | 'differential';
+  schedule: string;
+  retention: number;
+  retentionCount: number;
+  enabled: boolean;
+  tables?: string[];
+  includeData?: boolean;
+  compression?: boolean;
+  encryption?: boolean;
+  destination: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface BackupRecord {
+  id: string;
+  configId: string;
+  type: 'full' | 'incremental' | 'differential';
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  startTime: Date;
+  endTime?: Date;
+  size?: number;
+  checksum?: string;
+  filePath?: string;
+  errorMessage?: string;
+  metadata?: any;
+  createdAt: Date;
+}
 // Note: Using expo-file-system for React Native compatibility instead of Node.js fs
 // import * as FileSystem from 'expo-file-system';
 // Note: Using path utilities from expo-file-system for React Native compatibility
@@ -35,7 +78,7 @@ const fs = {
   },
   readFileSync: (path: string) => {
     // Placeholder: return empty buffer
-    return Buffer.from('');
+    return new Uint8Array(0);
   },
   unlinkSync: (path: string) => {
     // Placeholder: no-op for now
@@ -71,35 +114,6 @@ export enum BackupRetention {
   YEARLY = 'yearly'
 }
 
-export interface BackupConfig {
-  id: string;
-  name: string;
-  type: BackupType;
-  schedule: string; // Cron expression
-  retention: BackupRetention;
-  retentionCount: number;
-  enabled: boolean;
-  compression: boolean;
-  encryption: boolean;
-  destination: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface BackupRecord {
-  id: string;
-  configId: string;
-  type: BackupType;
-  status: BackupStatus;
-  startTime: Date;
-  endTime?: Date;
-  size: number;
-  checksum: string;
-  filePath: string;
-  errorMessage?: string;
-  metadata: Record<string, any>;
-  createdAt: Date;
-}
 
 export interface RestoreRequest {
   id: string;
@@ -126,23 +140,23 @@ export interface BackupStats {
 
 export class BackupManager {
   private static instance: BackupManager;
-  private database: DatabaseManager;
+  private database: LocalDatabaseManager;
   private errorHandler: ErrorHandler;
   private auditTrail: AuditTrailManager;
   private backupDirectory: string;
   private encryptionKey: string;
 
-  private constructor(database: DatabaseManager) {
+  private constructor(database: LocalDatabaseManager) {
     this.database = database;
     this.errorHandler = ErrorHandler.getInstance();
-    this.auditTrail = AuditTrailManager.getInstance(database);
+    this.auditTrail = AuditTrailManager.getInstance(database as any);
     this.backupDirectory = process.env.BACKUP_DIRECTORY || './backups';
     this.encryptionKey = this.getEncryptionKey();
     
     this.ensureBackupDirectory();
   }
 
-  public static getInstance(database: DatabaseManager): BackupManager {
+  public static getInstance(database: LocalDatabaseManager): BackupManager {
     if (!BackupManager.instance) {
       BackupManager.instance = new BackupManager(database);
     }
@@ -217,7 +231,7 @@ export class BackupManager {
     try {
       const result = await this.database.query('SELECT * FROM backup_configs ORDER BY created_at DESC');
       
-      return result.map(config => ({
+      return result.map((config: any) => ({
         ...config,
         enabled: Boolean(config.enabled),
         compression: Boolean(config.compression),
@@ -249,7 +263,7 @@ export class BackupManager {
         id: backupId,
         configId,
         type,
-        status: BackupStatus.IN_PROGRESS,
+        status: 'running',
         startTime,
         size: 0,
         checksum: '',
@@ -312,18 +326,21 @@ export class BackupManager {
       // const backup = await this.database.backup(dbPath, backupRecord.filePath);
       
       // Calculate file size and checksum
+      if (!backupRecord.filePath) {
+        throw new Error('Backup file path is undefined');
+      }
       const stats = fs.statSync(backupRecord.filePath);
       const fileBuffer = fs.readFileSync(backupRecord.filePath);
       // TODO: Implement proper checksum with expo-crypto
       const checksum = 'placeholder-checksum'; // Placeholder - should use proper hashing
 
       // Apply compression if enabled
-      if (config.compression) {
+      if (config.compression && backupRecord.filePath) {
         await this.compressBackup(backupRecord.filePath);
       }
 
       // Apply encryption if enabled
-      if (config.encryption) {
+      if (config.encryption && backupRecord.filePath) {
         await this.encryptBackup(backupRecord.filePath);
       }
 
@@ -335,7 +352,7 @@ export class BackupManager {
 
     } catch (error) {
       // Clean up failed backup file
-      if (fs.existsSync(backupRecord.filePath)) {
+      if (backupRecord.filePath && fs.existsSync(backupRecord.filePath)) {
         fs.unlinkSync(backupRecord.filePath);
       }
       throw error;
@@ -419,14 +436,18 @@ export class BackupManager {
 
   private async performRestore(backup: BackupRecord, targetDatabase: string): Promise<void> {
     try {
+      if (!backup.filePath) {
+        throw new Error('Backup file path is undefined');
+      }
+      
       // Decrypt if needed
       let sourcePath = backup.filePath;
-      if (backup.metadata.encrypted) {
+      if (backup.metadata?.encrypted) {
         sourcePath = await this.decryptBackup(backup.filePath);
       }
 
       // Decompress if needed
-      if (backup.metadata.compressed) {
+      if (backup.metadata?.compressed) {
         sourcePath = await this.decompressBackup(sourcePath);
       }
 
@@ -471,7 +492,7 @@ export class BackupManager {
         [limit]
       );
 
-      return result.map(record => ({
+      return result.map((record: any) => ({
         ...record,
         startTime: new Date(record.startTime),
         endTime: record.endTime ? new Date(record.endTime) : undefined,
@@ -531,7 +552,7 @@ export class BackupManager {
       let deletedCount = 0;
 
       for (const config of configs) {
-        const cutoffDate = this.calculateCutoffDate(config.retention, config.retentionCount);
+        const cutoffDate = this.calculateCutoffDate(config.retention as any, config.retentionCount);
         
         const oldBackups = await this.database.query(
           'SELECT * FROM backup_records WHERE config_id = ? AND created_at < ?',

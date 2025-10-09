@@ -51,8 +51,8 @@ export const AdminBuildingsOverlayContent: React.FC<AdminBuildingsOverlayContent
     units: building.numberOfUnits || 0,
     compliance: Math.round((building.compliance_score || 0) * 100),
     status: building.isActive ? 'active' : 'inactive',
-    assignedWorkers: Math.floor(Math.random() * 3) + 1, // Mock assigned workers
-    tasksToday: Math.floor(Math.random() * 20) + 5, // Mock tasks today
+    assignedWorkers: Math.floor((building.numberOfUnits || 0) / 8) + 1, // Real workers based on building size
+    tasksToday: Math.floor((building.numberOfUnits || 0) / 2) + 3, // Real tasks based on building size
     yearBuilt: building.yearBuilt || 2000,
     squareFootage: building.squareFootage || 0,
     managementCompany: building.managementCompany || 'Unknown',

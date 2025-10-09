@@ -298,3 +298,21 @@ export { BuildingMapView } from './maps/BuildingMapView';
 // Analytics Components
 export { AnalyticsDashboard } from './analytics/components/AnalyticsDashboard';
 
+// Analytics Cards
+export { default as RouteEfficiencyCard } from './cards/RouteEfficiencyCard';
+export type { RouteEfficiencyCardProps } from './cards/RouteEfficiencyCard';
+export { default as TimeAllocationCard } from './cards/TimeAllocationCard';
+export type { TimeAllocationCardProps } from './cards/TimeAllocationCard';
+export { default as GeographicCoverageCard } from './cards/GeographicCoverageCard';
+export type { GeographicCoverageCardProps } from './cards/GeographicCoverageCard';
+export { default as WorkloadBalanceCard } from './cards/WorkloadBalanceCard';
+export type { WorkloadBalanceCardProps, WorkerWorkload } from './cards/WorkloadBalanceCard';
+
+// Analytics Curation & Mobile Optimization
+export { default as AnalyticsCardCurator } from './cards/AnalyticsCardCurator';
+export type { AnalyticsCardCuratorProps } from './cards/AnalyticsCardCurator';
+export { default as MobileOptimizedCard } from './cards/MobileOptimizedCard';
+export type { MobileOptimizedCardProps } from './cards/MobileOptimizedCard';
+export { default as AnalyticsDashboardExample } from './cards/AnalyticsDashboardExample';
+export { default as DashboardIntegrationExamples } from './cards/DashboardIntegrationExamples';
+

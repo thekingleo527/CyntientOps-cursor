@@ -24,6 +24,18 @@ export interface StatCardProps {
   showBlur?: boolean;
   backgroundColor?: string;
   size?: 'small' | 'medium' | 'large';
+  // Analytics enhancements
+  analytics?: {
+    routeEfficiency?: number;
+    geographicClustering?: number;
+    timeAllocation?: {
+      cleaning: number;
+      maintenance: number;
+      sanitation: number;
+      inspection: number;
+    };
+    buildingCoverage?: number;
+  };
 }
 
 export const StatCard: React.FC<StatCardProps> = ({

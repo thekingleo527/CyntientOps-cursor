@@ -58,6 +58,40 @@
 │  └─────────────────────────────────────────────────────────┘   │
 │                                                                 │
 │  ┌─────────────────────────────────────────────────────────┐   │
+│  │                ANALYTICS DASHBOARD                      │   │
+│  │  ┌─────────────────────────────────────────────────────┐ │   │
+│  │  │ 📊 SYSTEM PERFORMANCE METRICS                      │ │   │
+│  │  │                                                     │ │   │
+│  │  │ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │ │   │
+│  │  │ │Portfolio    │ │Time         │ │Route        │   │ │   │
+│  │  │ │Efficiency   │ │Optimization │ │Efficiency   │   │ │   │
+│  │  │ │94%          │ │50m saved    │ │90% avg      │   │ │   │
+│  │  │ │+3% trend    │ │+15m vs last │ │+5% improve  │   │ │   │
+│  │  │ └─────────────┘ └─────────────┘ └─────────────┘   │ │   │
+│  │  └─────────────────────────────────────────────────────┘ │   │
+│  │                                                         │   │
+│  │  ┌─────────────────────────────────────────────────────┐ │   │
+│  │  │ ⚖️ TEAM WORKLOAD BALANCE                           │ │   │
+│  │  │                                                     │ │   │
+│  │  │ Kevin Dutan: 47 tasks (10h) - 98% efficiency      │ │   │
+│  │  │ Shawn Magloire: 20 tasks (3.15h) - 94% efficiency  │ │   │
+│  │  │ Edwin Lema: 23 tasks (7h) - 95% efficiency         │ │   │
+│  │  │                                                     │ │   │
+│  │  │ Balance Score: 82% - Well Balanced                 │ │   │
+│  │  └─────────────────────────────────────────────────────┘ │   │
+│  │                                                         │   │
+│  │  ┌─────────────────────────────────────────────────────┐ │   │
+│  │  │ 🗺️ ROUTE OPTIMIZATION                              │ │   │
+│  │  │                                                     │ │   │
+│  │  │ Shawn Magloire: 90% efficiency - 30m saved         │ │   │
+│  │  │ Kevin Dutan: 85% efficiency - 15m saved            │ │   │
+│  │  │ Edwin Lema: 75% efficiency - 5m saved              │ │   │
+│  │  │                                                     │ │   │
+│  │  │ Geographic Clustering: 83% average                 │ │   │
+│  │  └─────────────────────────────────────────────────────┘ │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐   │
 │  │                INTELLIGENCE PANEL TABS                  │   │
 │  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐      │   │
 │  │  │Overview │ │Workers  │ │Buildings│ │Analytics│      │   │
@@ -192,6 +226,12 @@
 │  │  │ 🔧 Edwin Lema: HVAC + Systems Maintenance          │   │
 │  │  │    • Tue/Thu: 8-10 AM Portfolio Maintenance            │   │
 │  │  │    • Floating Handyman Specialist                   │   │
+│  │  │                                                      │   │
+│  │  │ 📊 ANALYTICS INTEGRATION                            │   │
+│  │  │    • Route Efficiency Cards                         │   │
+│  │  │    • Workload Balance Dashboard                     │   │
+│  │  │    • Time Allocation Analytics                      │   │
+│  │  │    • Geographic Coverage Metrics                    │   │
 │  └─────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
 ```

@@ -34,6 +34,7 @@
     "check:circular-deps": "madge --circular --ts-config apps/mobile-rn/tsconfig.json .",
     "dev:mobile": "nx run mobile-rn:start",
     "dev:web": "nx run web-dashboard:dev",
+    "dev:admin": "nx run admin-portal:dev",
     "validate:data": "nx run data-seed:validate",
     "build:all": "nx run-many --target=build",
     "build:design-tokens": "nx run design-tokens:build",
@@ -55,7 +56,13 @@
     "install:apps": "echo 'Use yarn install at repo root; this script is deprecated.'",
     "install:packages": "echo 'Use yarn install at repo root; per-package installs are deprecated.'",
     "android": "cd apps/mobile-rn && yarn expo run:android",
-    "ios": "cd apps/mobile-rn && yarn expo run:ios"
+    "ios": "cd apps/mobile-rn && yarn expo run:ios",
+    "web": "cd apps/web-dashboard && npm run dev",
+    "admin": "cd apps/admin-portal && npm run dev",
+    "build:web": "cd apps/web-dashboard && npm run build",
+    "build:admin": "cd apps/admin-portal && npm run build",
+    "start:web": "cd apps/web-dashboard && npm run start",
+    "start:admin": "cd apps/admin-portal && npm run start"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

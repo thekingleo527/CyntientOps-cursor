@@ -7,6 +7,7 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { Building } from '@cyntientops/domain-schema';
+import { getBuildingImage } from '../utils/BuildingImageUtils';
 
 interface BuildingMarkerProps {
   building: Building;
@@ -66,9 +67,9 @@ export const BuildingMarker: React.FC<BuildingMarkerProps> = ({
           }
         ]}>
           {/* Building Image */}
-          {building.imageAssetName ? (
+          {getBuildingImage(building) ? (
             <Image
-              source={{ uri: `https://example.com/images/${building.imageAssetName}.jpg` }}
+              source={getBuildingImage(building)}
               style={[
                 styles.buildingImage,
                 {
@@ -77,7 +78,6 @@ export const BuildingMarker: React.FC<BuildingMarkerProps> = ({
                   borderRadius: (innerSize * 0.8) / 2,
                 }
               ]}
-              defaultSource={{ uri: 'https://via.placeholder.com/24x24/4A90E2/FFFFFF?text=B' }}
             />
           ) : (
             /* Building Type Icon Fallback */

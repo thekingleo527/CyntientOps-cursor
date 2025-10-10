@@ -4556,6 +4556,11 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
+await-lock@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/await-lock/-/await-lock-2.2.2.tgz#a95a9b269bfd2f69d22b17a321686f551152bcef"
+  integrity sha512-aDczADvlvTGajTDjcjpJMqRkOF6Qdz3YbPZm/PyW6tKPkx2hlYBzxMhEywM/tU72HrVZjgl5VCdRuMlA7pZ8Gw==
+
 axios@^1.12.2, axios@^1.6.0:
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.12.2.tgz#6c307390136cf7a2278d09cec63b136dfc6e6da7"
@@ -6822,10 +6827,29 @@ expo-dev-client@^6.0.13:
     expo-manifests "~1.0.8"
     expo-updates-interface "~2.0.0"
 
+expo-dev-client@~6.0.14:
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/expo-dev-client/-/expo-dev-client-6.0.14.tgz#08a312a7ff02833925f3e77be03f4edd44128bdf"
+  integrity sha512-F8pRAiuxafp1R3C+Evzc/bKFF7dugJumicto6EOkD4HzBxyQWyACGhvnnABf889NNo0zWnenVPmzhW1EFdNvSQ==
+  dependencies:
+    expo-dev-launcher "6.0.14"
+    expo-dev-menu "7.0.14"
+    expo-dev-menu-interface "2.0.0"
+    expo-manifests "~1.0.8"
+    expo-updates-interface "~2.0.0"
+
 expo-dev-launcher@6.0.13:
   version "6.0.13"
   resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-6.0.13.tgz#76b6271e51493991ffde8e2fe664978e0435eb63"
   integrity sha512-NmUOXKpSN0HaRneY4jeBgLpEYradw/uNHNGYVlE6bPTUXBw2P6cLChGqeclzq/Dj5eHoSCfSOgyFRfvfH1BcfQ==
+  dependencies:
+    expo-dev-menu "7.0.13"
+    expo-manifests "~1.0.8"
+
+expo-dev-launcher@6.0.14:
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-6.0.14.tgz#e20ef0b0ff9d685e5a5fcc9271f31c8b314a46b1"
+  integrity sha512-0jwv2MKNylYVFRDa5/f29focZkcjy1ZVi6NOnWuQ1eJauw4eAT8jWbQ2J4iftM5vANcaoy0AxtQa/jkw5caAyg==
   dependencies:
     expo-dev-menu "7.0.13"
     expo-manifests "~1.0.8"
@@ -6839,6 +6863,13 @@ expo-dev-menu@7.0.13:
   version "7.0.13"
   resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-7.0.13.tgz#c15597289df87fc32e259147039bca559a41acb8"
   integrity sha512-jxT19gqgCCGhi8AhoVTULwEPZK1PaaevLnLRzCo/1fKVM4YaEV0RgJPPuSe4xVloUWYVkCmfn0t32IPBHp2SSA==
+  dependencies:
+    expo-dev-menu-interface "2.0.0"
+
+expo-dev-menu@7.0.14:
+  version "7.0.14"
+  resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-7.0.14.tgz#41dbf41ecb4b48431cff78ef42f33bfb33ac0a25"
+  integrity sha512-nWyzSztFWfnhDOiKJ6DuZLjIbq+tG9e5y4TDmW6wYlSKKPBXbdOn2UdxaknhSqZrw6NwWMcjyhS+QG4MoDGD8w==
   dependencies:
     expo-dev-menu-interface "2.0.0"
 
@@ -7032,12 +7063,12 @@ expo-sqlite@~13.2.2:
   dependencies:
     "@expo/websql" "^1.0.1"
 
-expo-sqlite@~14.0.0:
-  version "14.0.6"
-  resolved "https://registry.yarnpkg.com/expo-sqlite/-/expo-sqlite-14.0.6.tgz#6306ff523e6d0a27ec812b1897592269acacf4da"
-  integrity sha512-T3YNx7LT7lM4UQRgi8ml+cj0Wf3Ep09+B4CVaWtUCjdyYJIZjsHDT65hypKG+r6btTLLEd11hjlrstNQhzt5gQ==
+expo-sqlite@~16.0.8:
+  version "16.0.8"
+  resolved "https://registry.yarnpkg.com/expo-sqlite/-/expo-sqlite-16.0.8.tgz#c2fb269ebc601d79c20cb1c83423e8d695013848"
+  integrity sha512-xw776gFgH4ZM5oGs0spSLNmkHO/kJ/EuRXGzE4/22yII9EmG84vm7aM/M2aEb8taBTqwhSGYUpkwkRT5YFFmsg==
   dependencies:
-    "@expo/websql" "^1.0.1"
+    await-lock "^2.2.2"
 
 expo-status-bar@^3.0.8:
   version "3.0.8"

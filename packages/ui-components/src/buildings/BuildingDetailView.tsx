@@ -14,7 +14,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  Dimensions
+  Dimensions,
+  Image
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
@@ -26,6 +27,7 @@ import { BuildingComplianceTab } from './tabs/BuildingComplianceTab';
 import { BuildingResourcesTab } from './tabs/BuildingResourcesTab';
 import { BuildingEmergencyTab } from './tabs/BuildingEmergencyTab';
 import { BuildingReportsTab } from './tabs/BuildingReportsTab';
+import { getBuildingImage } from '../utils/BuildingImageUtils';
 
 export interface BuildingDetailViewProps {
   container: ServiceContainer;
@@ -286,6 +288,16 @@ export const BuildingDetailView: React.FC<BuildingDetailViewProps> = ({
     }
   };
 
+  const getComplianceGrade = (score: number): string => {
+    if (score >= 0.95) return 'A';
+    if (score >= 0.90) return 'A-';
+    if (score >= 0.85) return 'B+';
+    if (score >= 0.80) return 'B';
+    if (score >= 0.75) return 'B-';
+    return 'C';
+  };
+
+
   const renderTabContent = () => {
     if (!buildingData) return null;
 
@@ -383,19 +395,32 @@ export const BuildingDetailView: React.FC<BuildingDetailViewProps> = ({
               <Text style={styles.backButtonText}>← Back</Text>
             </TouchableOpacity>
           )}
-          <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle}>{buildingData.building.name}</Text>
-            <Text style={styles.headerSubtitle}>{buildingData.building.address}</Text>
-          </View>
-          <View style={styles.headerStatus}>
-            <View style={[
-              styles.statusIndicator,
-              { backgroundColor: buildingData.building.status === 'active' ? Colors.status.success : Colors.status.warning }
-            ]} />
-            <Text style={styles.statusText}>
-              {buildingData.building.status.charAt(0).toUpperCase() + buildingData.building.status.slice(1)}
-            </Text>
-          </View>
+        </View>
+      </View>
+
+      {/* Banner Information */}
+      <View style={styles.bannerContainer}>
+        <View style={styles.bannerImageContainer}>
+          {getBuildingImage(buildingData.building) ? (
+            <Image 
+              source={getBuildingImage(buildingData.building)} 
+              style={styles.bannerImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <Text style={styles.bannerImagePlaceholder}>BUILDING BANNER IMAGE</Text>
+          )}
+        </View>
+        <View style={styles.bannerInfo}>
+          <Text style={styles.bannerBuildingType}>
+            🏢 Historic Building • {buildingData.building.metrics?.taskCount || 0} Units • ${((buildingData.building.metrics?.costPerSqFt || 0) * (buildingData.building.metrics?.taskCount || 1) / 1000).toFixed(1)}M Value
+          </Text>
+          <Text style={styles.bannerCompliance}>
+            📊 {Math.round((buildingData.compliance.score || 0) * 100)}% Compliance ({getComplianceGrade(buildingData.compliance.score || 0)}) • 🏛️ Historic District
+          </Text>
+          <Text style={styles.bannerAddress}>
+            📍 {buildingData.building.address}
+          </Text>
         </View>
       </View>
 
@@ -572,6 +597,46 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+  },
+  bannerContainer: {
+    backgroundColor: Colors.glass.regular,
+    padding: Spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.glass.border,
+  },
+  bannerImageContainer: {
+    height: 120,
+    backgroundColor: Colors.glass.thin,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+    overflow: 'hidden',
+  },
+  bannerImage: {
+    width: '100%',
+    height: '100%',
+  },
+  bannerImagePlaceholder: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
+    fontWeight: '600',
+  },
+  bannerInfo: {
+    gap: Spacing.xs,
+  },
+  bannerBuildingType: {
+    ...Typography.bodyMedium,
+    color: Colors.text.primary,
+    fontWeight: '600',
+  },
+  bannerCompliance: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
+  },
+  bannerAddress: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
   },
 });
 

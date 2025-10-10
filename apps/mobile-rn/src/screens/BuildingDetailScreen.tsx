@@ -27,6 +27,7 @@ import config from '../config/app.config';
 import { DSNYAPIClient } from '@cyntientops/api-clients/src/nyc/DSNYAPIClient';
 import { PropertyDataService, TaskService, BuildingService } from '@cyntientops/business-core';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { getBuildingImage } from '@cyntientops/ui-components/src/utils/BuildingImageUtils';
 
 interface CollectionScheduleSummary {
   bin: string;
@@ -293,7 +294,7 @@ export const BuildingDetailScreen: React.FC = () => {
         const data = { violations: [], dsnyViolations: { summons: [] }, permits: [] };
         // Map to ViolationSummary shape
         const hpdCount = Array.isArray(data.violations) ? data.violations.length : 0;
-        const dsnyCount = data.dsnyViolations && !data.dsnyViolations.isEmpty ? data.dsnyViolations.summons.length : 0;
+        const dsnyCount = data.dsnyViolations && data.dsnyViolations.summons && data.dsnyViolations.summons.length > 0 ? data.dsnyViolations.summons.length : 0;
         const dobCount = Array.isArray(data.permits) ? data.permits.length : 0;
         const outstanding = (data.dsnyViolations?.summons || []).reduce((sum: number, s: any) => sum + (parseFloat(s.balance_due) || 0), 0);
         const score = Math.max(0, Math.min(100, 100 - Math.round(hpdCount * 2 + dobCount + Math.min(outstanding / 1000, 40) + dsnyCount)));
@@ -413,11 +414,31 @@ export const BuildingDetailScreen: React.FC = () => {
 };
 
 const renderHero = (building: any, complianceScore: number) => {
-  const imageSource = building.imageAssetName
-    ? { uri: `https://images.cyntientops.com/buildings/${building.imageAssetName}.jpg` }
-    : undefined;
+  const imageSource = getBuildingImage(building);
 
-    return (
+  const formatCurrency = (value: number): string => {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(1)}M`;
+    }
+    return `$${(value / 1000).toFixed(0)}K`;
+  };
+
+  const getBuildingType = (building: any): string => {
+    if (building.numberOfUnits === 0) return 'Empty Commercial';
+    if (building.name.includes('Museum')) return 'Museum Building';
+    return 'Historic Building';
+  };
+
+  const getComplianceGrade = (score: number): string => {
+    if (score >= 95) return 'A';
+    if (score >= 90) return 'A-';
+    if (score >= 85) return 'B+';
+    if (score >= 80) return 'B';
+    if (score >= 75) return 'B-';
+    return 'C';
+  };
+
+  return (
     <GlassCard intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD} style={styles.heroCard}>
       <View style={styles.heroContent}>
         <View style={styles.heroText}>
@@ -430,7 +451,20 @@ const renderHero = (building: any, complianceScore: number) => {
           </View>
         </View>
         {imageSource ? <Image source={imageSource} style={styles.heroImage as any} resizeMode="cover" /> : null}
-                  </View>
+      </View>
+      
+      {/* Banner Information Section */}
+      <View style={styles.bannerInfo}>
+        <Text style={styles.bannerBuildingType}>
+          🏢 {getBuildingType(building)} • {building.numberOfUnits || 0} Units • {formatCurrency(building.marketValue || 0)} Value
+        </Text>
+        <Text style={styles.bannerCompliance}>
+          📊 {complianceScore}% Compliance ({getComplianceGrade(complianceScore)}) • 🏛️ Historic District
+        </Text>
+        <Text style={styles.bannerAddress}>
+          📍 {building.address}
+        </Text>
+      </View>
     </GlassCard>
   );
 };
@@ -973,6 +1007,27 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     fontWeight: '500',
     color: '#ffffff',
+  },
+  bannerInfo: {
+    marginTop: Spacing.lg,
+    paddingTop: Spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  bannerBuildingType: {
+    ...Typography.bodyMedium,
+    color: '#ffffff',
+    marginBottom: Spacing.xs,
+    fontWeight: '600',
+  },
+  bannerCompliance: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.xs,
+  },
+  bannerAddress: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
   },
 });
 

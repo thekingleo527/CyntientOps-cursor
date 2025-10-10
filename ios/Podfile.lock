@@ -211,15 +211,23 @@ PODS:
     - ExpoModulesCore
   - ExpoBackgroundFetch (14.0.7):
     - ExpoModulesCore
+  - ExpoBlur (15.0.7):
+    - ExpoModulesCore
   - ExpoCamera (17.0.8):
     - ExpoModulesCore
     - ZXingObjC/OneD
     - ZXingObjC/PDF417
   - ExpoContacts (15.0.9):
     - ExpoModulesCore
+  - ExpoCrypto (15.0.7):
+    - ExpoModulesCore
+  - ExpoDevice (8.0.9):
+    - ExpoModulesCore
   - ExpoFileSystem (19.0.16):
     - ExpoModulesCore
   - ExpoFont (14.0.8):
+    - ExpoModulesCore
+  - ExpoHaptics (15.0.7):
     - ExpoModulesCore
   - ExpoKeepAwake (15.0.7):
     - ExpoModulesCore
@@ -253,6 +261,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - ExpoRandom (14.0.1):
+    - ExpoModulesCore
   - ExpoSecureStore (15.0.7):
     - ExpoModulesCore
   - EXTaskManager (14.0.7):
@@ -1543,6 +1553,32 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
+  - react-native-blur (4.4.1):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - react-native-get-random-values (1.11.0):
+    - React-Core
+  - react-native-netinfo (11.4.1):
+    - React-Core
   - react-native-safe-area-context (5.6.1):
     - hermes-engine
     - RCTRequired
@@ -1962,6 +1998,28 @@ PODS:
     - React-utils (= 0.81.4)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.81.4)
+  - RNCAsyncStorage (2.2.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - RNReanimated (4.1.2):
     - hermes-engine
     - RCTRequired
@@ -2083,6 +2141,30 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - RNSentry (6.22.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Sentry/HybridSDK (= 8.56.2)
+    - Yoga
   - RNWorklets (0.5.1):
     - hermes-engine
     - RCTRequired
@@ -2154,6 +2236,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - Sentry/HybridSDK (8.56.2)
   - UMAppLoader (6.0.7)
   - Yoga (0.0.0)
   - ZXingObjC/Core (3.6.9)
@@ -2176,15 +2259,20 @@ DEPENDENCIES:
   - expo-dev-menu-interface (from `../node_modules/expo-dev-menu-interface/ios`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoBackgroundFetch (from `../node_modules/expo-background-fetch/ios`)
+  - ExpoBlur (from `../node_modules/expo-blur/ios`)
   - ExpoCamera (from `../node_modules/expo-camera/ios`)
   - ExpoContacts (from `../node_modules/expo-contacts/ios`)
-  - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
+  - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
+  - ExpoDevice (from `../node_modules/expo-device/ios`)
+  - ExpoFileSystem (from `../node_modules/expo/node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
+  - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLocalAuthentication (from `../node_modules/expo-local-authentication/ios`)
   - ExpoLocation (from `../node_modules/expo-location/ios`)
   - ExpoMediaLibrary (from `../node_modules/expo-media-library/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
+  - ExpoRandom (from `../node_modules/expo-random/ios`)
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
   - EXTaskManager (from `../node_modules/expo-task-manager/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
@@ -2224,6 +2312,9 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
+  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -2256,14 +2347,17 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNWorklets (from `../node_modules/react-native-worklets`)
   - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
+    - Sentry
     - ZXingObjC
 
 EXTERNAL SOURCES:
@@ -2293,14 +2387,22 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-asset/ios"
   ExpoBackgroundFetch:
     :path: "../node_modules/expo-background-fetch/ios"
+  ExpoBlur:
+    :path: "../node_modules/expo-blur/ios"
   ExpoCamera:
     :path: "../node_modules/expo-camera/ios"
   ExpoContacts:
     :path: "../node_modules/expo-contacts/ios"
+  ExpoCrypto:
+    :path: "../node_modules/expo-crypto/ios"
+  ExpoDevice:
+    :path: "../node_modules/expo-device/ios"
   ExpoFileSystem:
-    :path: "../node_modules/expo-file-system/ios"
+    :path: "../node_modules/expo/node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../node_modules/expo-font/ios"
+  ExpoHaptics:
+    :path: "../node_modules/expo-haptics/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoLocalAuthentication:
@@ -2311,6 +2413,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-media-library/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
+  ExpoRandom:
+    :path: "../node_modules/expo-random/ios"
   ExpoSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
   EXTaskManager:
@@ -2388,6 +2492,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
+  react-native-get-random-values:
+    :path: "../node_modules/react-native-get-random-values"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   React-NativeModulesApple:
@@ -2452,10 +2562,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeDependencies:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNWorklets:
     :path: "../node_modules/react-native-worklets"
   UMAppLoader:
@@ -2477,15 +2591,20 @@ SPEC CHECKSUMS:
   expo-dev-menu-interface: 600df12ea01efecdd822daaf13cc0ac091775533
   ExpoAsset: 9ba6fbd677fb8e241a3899ac00fa735bc911eadf
   ExpoBackgroundFetch: ed6e4bf58cab43d3d3fa29ece1661d88a08c882d
+  ExpoBlur: 2dd8f64aa31f5d405652c21d3deb2d2588b1852f
   ExpoCamera: e75f6807a2c047f3338bbadd101af4c71a1d13a5
   ExpoContacts: daf63b6345b974e62e192d7b43ce3e027b4eb4cc
+  ExpoCrypto: c1fbce112d1b6b79652bbe380b4fd4cc91676595
+  ExpoDevice: 148accb4071873d19fba80a2506c58ffa433d620
   ExpoFileSystem: f4bf6bac4ede3b6671c22777f01102a02a028412
   ExpoFont: 86ceec09ffed1c99cfee36ceb79ba149074901b5
+  ExpoHaptics: 807476b0c39e9d82b7270349d6487928ce32df84
   ExpoKeepAwake: 1a2e820692e933c94a565ec3fbbe38ac31658ffe
   ExpoLocalAuthentication: ea7b9878fefac9ae38dc5766af00b52cac55c51b
   ExpoLocation: 93d7faa0c2adbd5a04686af0c1a61bc6ed3ee2f7
   ExpoMediaLibrary: 641a6952299b395159ccd459bd8f5f6764bf55fe
   ExpoModulesCore: e646280de9e06297a3668c568ddc6b8564fa2896
+  ExpoRandom: d1444df65007bdd4070009efd5dab18e20bf0f00
   ExpoSecureStore: 9c6571fe3fcb045a671c4011c451546eaaab98fd
   EXTaskManager: cf225704fab8de8794a6f57f7fa41a90c0e2cd47
   EXUpdatesInterface: 5adf50cb41e079c861da6d9b4b954c3db9a50734
@@ -2524,6 +2643,9 @@ SPEC CHECKSUMS:
   React-logger: 7b234de35acb469ce76d6bbb0457f664d6f32f62
   React-Mapbuffer: fbe1da882a187e5898bdf125e1cc6e603d27ecae
   React-microtasksnativemodule: 76905804171d8ccbe69329fc84c57eb7934add7f
+  react-native-blur: 1b00ef07fe0efdc0c40b37139a5268ccad73c72d
+  react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
+  react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-safe-area-context: 42a1b4f8774b577d03b53de7326e3d5757fe9513
   React-NativeModulesApple: a9464983ccc0f66f45e93558671f60fc7536e438
   React-oscompat: 73db7dbc80edef36a9d6ed3c6c4e1724ead4236d
@@ -2556,9 +2678,12 @@ SPEC CHECKSUMS:
   ReactCodegen: a15ad48730e9fb2a51a4c9f61fe1ed253dfcf10f
   ReactCommon: 149b6c05126f2e99f2ed0d3c63539369546f8cae
   ReactNativeDependencies: ed6d1e64802b150399f04f1d5728ec16b437251e
+  RNCAsyncStorage: 3a4f5e2777dae1688b781a487923a08569e27fe4
   RNReanimated: d87360cba850e1df46f5b74d6ee74653a520b631
   RNScreens: d8d6f1792f6e7ac12b0190d33d8d390efc0c1845
+  RNSentry: 335031a0c365889cf8f217eefca1af5c5f05f84b
   RNWorklets: 76fce72926e28e304afb44f0da23b2d24f2c1fa0
+  Sentry: b53951377b78e21a734f5dc8318e333dbfc682d7
   UMAppLoader: e1234c45d2b7da239e9e90fc4bbeacee12afd5b6
   Yoga: 051f086b5ccf465ff2ed38a2cf5a558ae01aaaa1
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5

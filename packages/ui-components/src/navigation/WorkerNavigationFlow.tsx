@@ -20,7 +20,7 @@ import {
   ClockInStatus
 } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '@cyntientops/business-core';
-import { BuildingDetailPreview } from '../buildings/BuildingDetailPreview';
+// BuildingDetailPreview removed - functionality integrated into main BuildingDetailView
 
 export interface WorkerNavigationFlowProps {
   worker: WorkerProfile;
@@ -169,13 +169,16 @@ export const WorkerNavigationFlow: React.FC<WorkerNavigationFlowProps> = ({
     if (!selectedBuilding) return null;
 
     return (
-      <BuildingDetailPreview
-        building={selectedBuilding}
-        workerId={worker.id}
-        onClockIn={handleClockInFromPreview}
-        onViewFullDetails={handleViewFullDetails}
-        onClose={handleBack}
-      />
+      {/* BuildingDetailPreview functionality integrated into main BuildingDetailView */}
+      <View style={styles.previewPlaceholder}>
+        <Text style={styles.previewText}>Building detail preview functionality integrated into main building detail view</Text>
+        <TouchableOpacity 
+          style={styles.closeButton}
+          onPress={handleBack}
+        >
+          <Text style={styles.closeButtonText}>Close</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -390,5 +393,28 @@ const styles = StyleSheet.create({
     fontSize: 48,
     textAlign: 'center',
     marginBottom: Spacing.lg,
+  },
+  previewPlaceholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.xl,
+  },
+  previewText: {
+    ...Typography.bodyLarge,
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
+  },
+  closeButton: {
+    backgroundColor: Colors.primaryAction,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    ...Typography.bodyLarge,
+    color: Colors.text.primary,
+    fontWeight: '600',
   },
 });

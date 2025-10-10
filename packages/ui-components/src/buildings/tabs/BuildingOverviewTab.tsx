@@ -19,6 +19,7 @@ import {
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { ServiceContainer } from '@cyntientops/business-core';
+import { getBuildingImage } from '../../utils/BuildingImageUtils';
 
 export interface BuildingOverviewTabProps {
   buildingId: string;
@@ -242,12 +243,8 @@ export const BuildingOverviewTab: React.FC<BuildingOverviewTabProps> = ({
     }
   };
 
-  const getBuildingImageSource = (imageAssetName: string) => {
-    // Return the actual building image based on the asset name
-    // In a real app, these would be actual image assets
-    return {
-      uri: `https://via.placeholder.com/400x300/4A90E2/FFFFFF?text=${encodeURIComponent(buildingName)}`
-    };
+  const getBuildingImageSource = (building: any) => {
+    return getBuildingImage(building);
   };
 
   const getStatusColor = (score: number) => {
@@ -308,7 +305,7 @@ export const BuildingOverviewTab: React.FC<BuildingOverviewTabProps> = ({
               </View>
             )}
             <Image
-              source={getBuildingImageSource(building.imageAssetName)}
+              source={getBuildingImageSource(building)}
               style={styles.buildingImage}
               onLoad={() => setImageLoading(false)}
               onError={() => setImageLoading(false)}

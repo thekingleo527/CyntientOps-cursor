@@ -6,10 +6,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { ServiceContainer } from '@cyntientops/business-core';
+import { getBuildingImage } from '../../utils/BuildingImageUtils';
 
 export interface BuildingManagementProps {
   onBuildingPress?: (buildingId: string) => void;
@@ -133,6 +134,17 @@ export const BuildingManagement: React.FC<BuildingManagementProps> = ({
             onPress={() => onBuildingPress?.(building.id)}
           >
             <View style={styles.buildingHeader}>
+              <View style={styles.buildingImageContainer}>
+                {getBuildingImage(building) ? (
+                  <Image
+                    source={getBuildingImage(building)}
+                    style={styles.buildingImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Text style={styles.buildingIcon}>🏢</Text>
+                )}
+              </View>
               <View style={styles.buildingInfo}>
                 <Text style={styles.buildingName}>{building.name}</Text>
                 <Text style={styles.buildingAddress}>{building.address}</Text>
@@ -251,6 +263,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.md,
+  },
+  buildingImageContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Colors.glass.thin,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+    overflow: 'hidden',
+  },
+  buildingImage: {
+    width: '100%',
+    height: '100%',
+  },
+  buildingIcon: {
+    fontSize: 24,
+    color: Colors.text.secondary,
   },
   buildingInfo: {
     flex: 1,

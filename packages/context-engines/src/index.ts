@@ -25,7 +25,7 @@ export {
 
 export { default as ClientDashboardComplianceIntegration } from './ClientDashboardComplianceIntegration';
 export { default as AdminDashboardComplianceIntegration } from './AdminDashboardComplianceIntegration';
-export { default as BuildingDetailComplianceIntegration } from './BuildingDetailComplianceIntegration';
+// BuildingDetailComplianceIntegration removed - functionality integrated into main BuildingDetailView
 
 // Context Engines
 export { WorkerContextEngine } from './WorkerContextEngine';

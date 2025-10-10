@@ -50,23 +50,40 @@
     "supercluster": "^8.0.1",
     "y-indexeddb": "^9.0.12",
     "yjs": "^13.6.27",
+    "zod": "^3.22.4",
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
     "@nx/js": "^18.0.0",
     "@nx/react-native": "^18.0.0",
     "@nx/workspace": "^18.0.0",
     "@react-native-community/cli": "^20.0.2",
     "@react-native/eslint-config": "^0.81.1",
+    "@types/babel__core": "^7.1.20",
+    "@types/babel__generator": "^7.6.8",
+    "@types/babel__template": "^7.4.4",
+    "@types/babel__traverse": "^7.20.5",
     "@types/geokdbush": "^1.1.5",
+    "@types/graceful-fs": "^4.1.9",
+    "@types/istanbul-lib-coverage": "^2.0.4",
+    "@types/istanbul-lib-report": "^3.0.0",
+    "@types/istanbul-reports": "^3.0.1",
+    "@types/node": "^20.0.0",
     "@types/node-forge": "^1.3.14",
     "@types/react": "~19.1.17",
+    "@types/stack-utils": "^2.0.3",
     "@types/supercluster": "^7.1.3",
+    "@types/yargs": "^17.0.24",
+    "@types/yargs-parser": "^21.0.3",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",
     "babel-plugin-import": "^1.13.8",
     "babel-plugin-transform-remove-console": "^6.9.4",
+    "eslint": "^8.57.0",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react-native": "^5.0.0",
     "madge": "^8.0.0",
     "nx": "^18.0.0",
+    "prettier": "^3.0.0",
     "typescript": "^5.9.2"
   },
   "pathMappings": {
@@ -77,6 +94,340 @@
   "nxJsonPlugins": [],
   "fileMap": {
     "projectFileMap": {
+      "compliance-engine": [
+        {
+          "file": "packages/compliance-engine/package.json",
+          "hash": "15868579305933151825",
+          "deps": [
+            "domain-schema",
+            "api-clients",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/compliance-engine/project.json",
+          "hash": "15010440446578657617"
+        },
+        {
+          "file": "packages/compliance-engine/src/ComplianceCache.ts",
+          "hash": "13622126453412583408",
+          "deps": [
+            "database"
+          ]
+        },
+        {
+          "file": "packages/compliance-engine/src/ComplianceCalculator.ts",
+          "hash": "8743460565334745883",
+          "deps": [
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/compliance-engine/src/ComplianceDashboardService.ts",
+          "hash": "6855836751297623444",
+          "deps": [
+            "api-clients"
+          ]
+        },
+        {
+          "file": "packages/compliance-engine/src/ComplianceDashboardTest.ts",
+          "hash": "6580525974439653588",
+          "deps": [
+            "api-clients"
+          ]
+        },
+        {
+          "file": "packages/compliance-engine/src/ViolationProcessor.ts",
+          "hash": "1417798803990968340"
+        },
+        {
+          "file": "packages/compliance-engine/src/index.ts",
+          "hash": "6814529024497765916",
+          "deps": [
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/compliance-engine/tsconfig.json",
+          "hash": "9746117707584372279"
+        }
+      ],
+      "design-tokens": [
+        {
+          "file": "packages/design-tokens/jest.config.ts",
+          "hash": "2540141947448517216"
+        },
+        {
+          "file": "packages/design-tokens/package.json",
+          "hash": "2644967112774840746",
+          "deps": [
+            "npm:typescript",
+            "npm:@types/react"
+          ]
+        },
+        {
+          "file": "packages/design-tokens/project.json",
+          "hash": "15654075528537152772"
+        },
+        {
+          "file": "packages/design-tokens/src/colors.ts",
+          "hash": "7313569410994403716"
+        },
+        {
+          "file": "packages/design-tokens/src/components/GlassButton.tsx",
+          "hash": "14664156458801446646",
+          "deps": [
+            "npm:react",
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "packages/design-tokens/src/components/GlassCard.tsx",
+          "hash": "1505164852205213095",
+          "deps": [
+            "npm:react",
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "packages/design-tokens/src/index.ts",
+          "hash": "5726948443141505795"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/animations.ts",
+          "hash": "6861492684312414945"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/colors.ts",
+          "hash": "11668524811508573167"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/glassmorphism.ts",
+          "hash": "2190713942589061110",
+          "deps": [
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/gradients.ts",
+          "hash": "894281856679980773"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/shadows.ts",
+          "hash": "3260748353528967336"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/spacing.ts",
+          "hash": "13827618929632807015"
+        },
+        {
+          "file": "packages/design-tokens/src/tokens/typography.ts",
+          "hash": "10206370693186615436"
+        },
+        {
+          "file": "packages/design-tokens/src/user-experience.ts",
+          "hash": "6147373631086948823"
+        },
+        {
+          "file": "packages/design-tokens/tsconfig.json",
+          "hash": "16207454915138889287"
+        },
+        {
+          "file": "packages/design-tokens/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "context-engines": [
+        {
+          "file": "packages/context-engines/jest.config.ts",
+          "hash": "5101961748209147769"
+        },
+        {
+          "file": "packages/context-engines/package.json",
+          "hash": "16107283190777046738",
+          "deps": [
+            "domain-schema",
+            "database",
+            "business-core",
+            "managers",
+            "intelligence-services",
+            "compliance-engine",
+            "api-clients",
+            "npm:react",
+            "npm:react-native",
+            "npm:uuid",
+            "npm:@types/uuid",
+            "npm:typescript",
+            "npm:jest",
+            "npm:@types/jest"
+          ]
+        },
+        {
+          "file": "packages/context-engines/project.json",
+          "hash": "1317032141572244102"
+        },
+        {
+          "file": "packages/context-engines/src/AdminContextEngine.ts",
+          "hash": "16924563150826125126",
+          "deps": [
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/database"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/AdminDashboardComplianceIntegration.tsx",
+          "hash": "13366315120330094360",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/AdminDashboardViewModel.ts",
+          "hash": "7075784936424931197",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/AdminViewModel.ts",
+          "hash": "14375429455326792477",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/managers",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/BuildingDetailComplianceIntegration.tsx",
+          "hash": "15056933315003560990",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/BuildingDetailViewModel.ts",
+          "hash": "1969360178220344355",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/ClientDashboardComplianceIntegration.tsx",
+          "hash": "12805718279857862758",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/ClientDashboardViewModel.ts",
+          "hash": "7506747579329082157",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/ClientViewModel.ts",
+          "hash": "5627867175170044301",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/managers",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/ComplianceDashboardIntegration.ts",
+          "hash": "6725622972785776714",
+          "deps": [
+            "npm:react",
+            "business-core",
+            "compliance-engine",
+            "api-clients"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/SiteDepartureViewModel.ts",
+          "hash": "17853550945539723235",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/TaskDetailViewModel.ts",
+          "hash": "4649758077365978716",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/WorkerContextEngine.ts",
+          "hash": "14464363071771962536",
+          "deps": [
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/database"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/WorkerDashboardViewModel.ts",
+          "hash": "18420062717057479791",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/business-core",
+            [
+              "npm:@cyntientops/api-clients",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/WorkerViewModel.ts",
+          "hash": "9760973625966912108",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/managers",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/context-engines/src/index.ts",
+          "hash": "3870351710505152603"
+        },
+        {
+          "file": "packages/context-engines/src/useBuildingDetailViewModel.ts",
+          "hash": "11398918719193412861",
+          "deps": [
+            "npm:react",
+            "business-core"
+          ]
+        },
+        {
+          "file": "packages/context-engines/tsconfig.json",
+          "hash": "16536117157936584739"
+        },
+        {
+          "file": "packages/context-engines/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
       "domain-schema": [
         {
           "file": "packages/domain-schema/jest.config.ts",
@@ -142,137 +493,6 @@
           "hash": "2684171098582105912"
         }
       ],
-      "admin-portal": [
-        {
-          "file": "apps/admin-portal/project.json",
-          "hash": "8598826710472841086"
-        }
-      ],
-      "api-clients": [
-        {
-          "file": "packages/api-clients/jest.config.ts",
-          "hash": "17908484330401986338"
-        },
-        {
-          "file": "packages/api-clients/package.json",
-          "hash": "4455969675523299592",
-          "deps": [
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/api-clients/project.json",
-          "hash": "11282684033970059059"
-        },
-        {
-          "file": "packages/api-clients/src/index.ts",
-          "hash": "3373244641132418760"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/Complaints311APIClient.ts",
-          "hash": "14653464814529835674",
-          "deps": [
-            "database"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/DOBAPIClient.ts",
-          "hash": "1732198634364152764",
-          "deps": [
-            "npm:axios",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/DOFAPIClient.ts",
-          "hash": "16722775121606964871",
-          "deps": [
-            "database"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/DSNYAPIClient.ts",
-          "hash": "6631370239794506558",
-          "deps": [
-            "npm:axios",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/DSNYViolationsService.ts",
-          "hash": "12310468264407882884",
-          "deps": [
-            "npm:@cyntientops/database"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/FDNYAPIClient.ts",
-          "hash": "17603376288147746608",
-          "deps": [
-            "database"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/HPDAPIClient.ts",
-          "hash": "17558305568452114870",
-          "deps": [
-            "npm:axios",
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/nyc/HistoricalDataService.ts",
-          "hash": "587689883121735511"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/NYCAPIService.ts",
-          "hash": "16210931825121985104"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/NYCComplianceService.ts",
-          "hash": "6850574661070856458"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/NYCDataCoordinator.ts",
-          "hash": "14119235417298169773"
-        },
-        {
-          "file": "packages/api-clients/src/nyc/NYCDataModels.ts",
-          "hash": "9478623056123810280"
-        },
-        {
-          "file": "packages/api-clients/src/property/PropertyValueService.ts",
-          "hash": "6811458257208561086",
-          "deps": [
-            "npm:@cyntientops/database"
-          ]
-        },
-        {
-          "file": "packages/api-clients/src/quickbooks/QuickBooksAPIClient.ts",
-          "hash": "9422606207050662987"
-        },
-        {
-          "file": "packages/api-clients/src/weather/WeatherAPIClient.ts",
-          "hash": "3228828546403641389",
-          "deps": [
-            "npm:axios"
-          ]
-        },
-        {
-          "file": "packages/api-clients/tsconfig.json",
-          "hash": "8369358470589601419"
-        },
-        {
-          "file": "packages/api-clients/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        }
-      ],
-      "web-dashboard": [
-        {
-          "file": "apps/web-dashboard/project.json",
-          "hash": "14969217070464133782"
-        }
-      ],
       "command-chains": [
         {
           "file": "packages/command-chains/jest.config.ts",
@@ -314,122 +534,6 @@
           "hash": "2684171098582105912"
         }
       ],
-      "realtime-sync": [
-        {
-          "file": "packages/realtime-sync/jest.config.ts",
-          "hash": "18361030856235074667"
-        },
-        {
-          "file": "packages/realtime-sync/package.json",
-          "hash": "12968033561484033605",
-          "deps": [
-            "domain-schema",
-            "database",
-            "offline-support"
-          ]
-        },
-        {
-          "file": "packages/realtime-sync/project.json",
-          "hash": "7175139258756826395"
-        },
-        {
-          "file": "packages/realtime-sync/src/WebSocketManager.ts",
-          "hash": "1235182075036252325",
-          "deps": [
-            "npm:@cyntientops/business-core/src/utils/EventEmitter"
-          ]
-        },
-        {
-          "file": "packages/realtime-sync/src/conflicts/ConflictDetector.ts",
-          "hash": "8573687512509988047"
-        },
-        {
-          "file": "packages/realtime-sync/src/conflicts/ConflictResolver.ts",
-          "hash": "8763666323440003909"
-        },
-        {
-          "file": "packages/realtime-sync/src/conflicts/ThreeWayMerge.ts",
-          "hash": "16420598807125440807"
-        },
-        {
-          "file": "packages/realtime-sync/src/delta/DeltaSyncService.ts",
-          "hash": "199293675473487671"
-        },
-        {
-          "file": "packages/realtime-sync/src/index.ts",
-          "hash": "13646098761652052440"
-        },
-        {
-          "file": "packages/realtime-sync/tsconfig.json",
-          "hash": "66947996900808608"
-        },
-        {
-          "file": "packages/realtime-sync/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        }
-      ],
-      "data-seed": [
-        {
-          "file": "packages/data-seed/jest.config.ts",
-          "hash": "16144226057978376781"
-        },
-        {
-          "file": "packages/data-seed/package.json",
-          "hash": "13394419177038468794",
-          "deps": [
-            "api-clients"
-          ]
-        },
-        {
-          "file": "packages/data-seed/project.json",
-          "hash": "575674280499301376"
-        },
-        {
-          "file": "packages/data-seed/scripts/updatePropertyValues.ts",
-          "hash": "2969515422087911008",
-          "deps": [
-            "npm:fs",
-            "npm:path",
-            "api-clients"
-          ]
-        },
-        {
-          "file": "packages/data-seed/src/buildings.backup.json",
-          "hash": "6621289285276518829"
-        },
-        {
-          "file": "packages/data-seed/src/buildings.json",
-          "hash": "10064454908549248112"
-        },
-        {
-          "file": "packages/data-seed/src/clients.json",
-          "hash": "12483552502549408269"
-        },
-        {
-          "file": "packages/data-seed/src/index.ts",
-          "hash": "14909601796952281033"
-        },
-        {
-          "file": "packages/data-seed/src/routines-complete.json",
-          "hash": "17621779918639668700"
-        },
-        {
-          "file": "packages/data-seed/src/routines.json",
-          "hash": "1837238221295428191"
-        },
-        {
-          "file": "packages/data-seed/src/workers.json",
-          "hash": "10213392678905631330"
-        },
-        {
-          "file": "packages/data-seed/tsconfig.json",
-          "hash": "14179549052686040071"
-        },
-        {
-          "file": "packages/data-seed/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        }
-      ],
       "ui-components": [
         {
           "file": "packages/ui-components/.eslintrc.js",
@@ -441,16 +545,76 @@
         },
         {
           "file": "packages/ui-components/package.json",
-          "hash": "7775144567698458829",
+          "hash": "5658806834569326023",
           "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:expo-linear-gradient",
+            "npm:react-native-safe-area-context",
+            "npm:react-native-svg",
+            "npm:@expo/vector-icons",
+            "npm:react-native-chart-kit",
+            "npm:react-native-maps",
+            "npm:expo-image-picker",
+            "npm:expo-camera",
+            "npm:expo-media-library",
+            "npm:react-native-gesture-handler",
+            "npm:react-native-reanimated",
             "design-tokens",
             "business-core",
-            "context-engines"
+            "context-engines",
+            "compliance-engine",
+            "api-clients",
+            "npm:@types/react",
+            "npm:@types/react-native",
+            "npm:@types/react-native-vector-icons",
+            "npm:typescript"
           ]
         },
         {
           "file": "packages/ui-components/project.json",
           "hash": "10691331775312306937"
+        },
+        {
+          "file": "packages/ui-components/src/BuildingComplianceDetail.tsx",
+          "hash": "12305007488172249171",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "compliance-engine",
+            "api-clients"
+          ]
+        },
+        {
+          "file": "packages/ui-components/src/ComplianceDashboard.tsx",
+          "hash": "6777250765789367916",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "compliance-engine",
+            "api-clients"
+          ]
+        },
+        {
+          "file": "packages/ui-components/src/ComplianceDashboardExample.tsx",
+          "hash": "5942006678164488637",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "compliance-engine",
+            "npm:@cyntientops/data-seed/buildings.json"
+          ]
+        },
+        {
+          "file": "packages/ui-components/src/MobileComplianceDashboard.tsx",
+          "hash": "13539903479799953201",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "compliance-engine",
+            "api-clients"
+          ]
         },
         {
           "file": "packages/ui-components/src/admin/AdminWorkerManagementView.tsx",
@@ -766,6 +930,16 @@
           ]
         },
         {
+          "file": "packages/ui-components/src/cards/DSNYScheduleCard.tsx",
+          "hash": "554652645994265440",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "design-tokens",
+            "npm:@expo/vector-icons"
+          ]
+        },
+        {
           "file": "packages/ui-components/src/cards/DashboardIntegrationExamples.tsx",
           "hash": "2349708449184231955",
           "deps": [
@@ -812,12 +986,32 @@
           ]
         },
         {
+          "file": "packages/ui-components/src/cards/RoutineCard.tsx",
+          "hash": "8461614716887356529",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "design-tokens",
+            "npm:@expo/vector-icons"
+          ]
+        },
+        {
           "file": "packages/ui-components/src/cards/StatCard.tsx",
           "hash": "4408750968258974938",
           "deps": [
             "npm:react",
             "npm:react-native",
             "design-tokens"
+          ]
+        },
+        {
+          "file": "packages/ui-components/src/cards/TaskCard.tsx",
+          "hash": "15757547276692421177",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "design-tokens",
+            "npm:@expo/vector-icons"
           ]
         },
         {
@@ -1691,7 +1885,7 @@
         },
         {
           "file": "packages/ui-components/src/index.ts",
-          "hash": "10631025637488475469"
+          "hash": "5285658568272433811"
         },
         {
           "file": "packages/ui-components/src/intelligence/AdminIntelligencePanel.tsx",
@@ -2323,44 +2517,974 @@
           "hash": "2684171098582105912"
         }
       ],
-      "offline-support": [
+      "web-dashboard": [
         {
-          "file": "packages/offline-support/jest.config.ts",
-          "hash": "14947717933953754482"
+          "file": "apps/web-dashboard/project.json",
+          "hash": "14969217070464133782"
+        }
+      ],
+      "realtime-sync": [
+        {
+          "file": "packages/realtime-sync/jest.config.ts",
+          "hash": "18361030856235074667"
         },
         {
-          "file": "packages/offline-support/package.json",
-          "hash": "4362882305012834350",
+          "file": "packages/realtime-sync/package.json",
+          "hash": "12968033561484033605",
           "deps": [
             "domain-schema",
             "database",
-            "command-chains"
+            "offline-support"
           ]
         },
         {
-          "file": "packages/offline-support/project.json",
-          "hash": "5597704732456281035"
+          "file": "packages/realtime-sync/project.json",
+          "hash": "7175139258756826395"
         },
         {
-          "file": "packages/offline-support/src/OfflineManager.ts",
-          "hash": "16764946838082456678",
+          "file": "packages/realtime-sync/src/WebSocketManager.ts",
+          "hash": "1235182075036252325",
           "deps": [
-            "database",
-            "command-chains",
-            "npm:@react-native-community/netinfo"
+            "npm:@cyntientops/business-core/src/utils/EventEmitter"
           ]
         },
         {
-          "file": "packages/offline-support/src/index.ts",
-          "hash": "7717260997660888852"
+          "file": "packages/realtime-sync/src/conflicts/ConflictDetector.ts",
+          "hash": "8573687512509988047"
         },
         {
-          "file": "packages/offline-support/tsconfig.json",
-          "hash": "16536117157936584739"
+          "file": "packages/realtime-sync/src/conflicts/ConflictResolver.ts",
+          "hash": "8763666323440003909"
         },
         {
-          "file": "packages/offline-support/tsconfig.lib.json",
+          "file": "packages/realtime-sync/src/conflicts/ThreeWayMerge.ts",
+          "hash": "16420598807125440807"
+        },
+        {
+          "file": "packages/realtime-sync/src/delta/DeltaSyncService.ts",
+          "hash": "199293675473487671"
+        },
+        {
+          "file": "packages/realtime-sync/src/index.ts",
+          "hash": "13646098761652052440"
+        },
+        {
+          "file": "packages/realtime-sync/tsconfig.json",
+          "hash": "66947996900808608"
+        },
+        {
+          "file": "packages/realtime-sync/tsconfig.lib.json",
           "hash": "2684171098582105912"
+        }
+      ],
+      "mobile-rn": [
+        {
+          "file": "apps/mobile-rn/.env.example",
+          "hash": "7333490041846708792"
+        },
+        {
+          "file": "apps/mobile-rn/.gitignore",
+          "hash": "15875171515167088918"
+        },
+        {
+          "file": "apps/mobile-rn/.vscode/extensions.json",
+          "hash": "46217408025352634"
+        },
+        {
+          "file": "apps/mobile-rn/.vscode/settings.json",
+          "hash": "13604069932680302502"
+        },
+        {
+          "file": "apps/mobile-rn/App.js",
+          "hash": "12171562585377092175"
+        },
+        {
+          "file": "apps/mobile-rn/App.tsx",
+          "hash": "5440353975514737129",
+          "deps": [
+            "npm:react",
+            "npm:expo-status-bar"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/app.json",
+          "hash": "16433070982451012444"
+        },
+        {
+          "file": "apps/mobile-rn/assets/fonts/SpaceMono-Regular.ttf",
+          "hash": "8316399838606165836"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/AIAssistant.png",
+          "hash": "14775993215880160288"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/AppIcon.png",
+          "hash": "14279825050208488929"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/adaptive-icon.png",
+          "hash": "6165570456017765940"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/104_Franklin_Street.jpg",
+          "hash": "947379727223817610"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/112_West_18th_Street.jpg",
+          "hash": "5545903083730961012"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/115_7th_ave.JPG",
+          "hash": "11913950721278152307"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/117_West_17th_Street.jpg",
+          "hash": "2669022867411768490"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/123_1st_Avenue.jpg",
+          "hash": "14618987042990554639"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/12_West_18th_Street.jpg",
+          "hash": "17918264829775171006"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/131_Perry_Street.jpg",
+          "hash": "4579556697979863245"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/133_East_15th_Street.jpg",
+          "hash": "18236504678175477785"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/135West17thStreet.jpg",
+          "hash": "1014513000473925213"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/136_West_17th_Street.jpg",
+          "hash": "5650552729763128627"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/138West17thStreet.jpg",
+          "hash": "1080404056929477986"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/148chambers.jpg",
+          "hash": "1858072569085329730"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/178_Spring_st.jpg",
+          "hash": "12553427712774046103"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/29_31_East_20th_Street.jpg",
+          "hash": "16040108901443324895"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/36_Walker_Street.jpg",
+          "hash": "16458888757615413723"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/41_Elizabeth_Street.jpeg",
+          "hash": "6700577267984862714"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/68_Perry_Street.jpg",
+          "hash": "7291505816615066428"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/Rubin_Museum_142_148_West_17th_Street.jpg",
+          "hash": "2011613697608872520"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/buildings/Stuyvesant_Cove_Park.jpg",
+          "hash": "14064812416326434806"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/favicon.png",
+          "hash": "6165570456017765940"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/icon.png",
+          "hash": "6165570456017765940"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/notification-icon.png",
+          "hash": "6165570456017765940"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/splash-icon.png",
+          "hash": "16102135492459408350"
+        },
+        {
+          "file": "apps/mobile-rn/assets/images/splash.png",
+          "hash": "6165570456017765940"
+        },
+        {
+          "file": "apps/mobile-rn/babel.config.js",
+          "hash": "2846778437827306989"
+        },
+        {
+          "file": "apps/mobile-rn/babel.config.ultra.js",
+          "hash": "17730145023438860204"
+        },
+        {
+          "file": "apps/mobile-rn/configs/metro.config.optimized.js",
+          "hash": "12116713128928602783",
+          "deps": [
+            "npm:@expo/metro-config",
+            "npm:path",
+            "npm:os",
+            "npm:metro-cache",
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/eas.json",
+          "hash": "9791683894534777117"
+        },
+        {
+          "file": "apps/mobile-rn/index.js",
+          "hash": "6721463589810289102",
+          "deps": [
+            "npm:react-native-get-random-values",
+            "npm:expo"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/jest.config.ts",
+          "hash": "2767124540095521745"
+        },
+        {
+          "file": "apps/mobile-rn/metro.config.complex.js",
+          "hash": "13254733596413306538",
+          "deps": [
+            "npm:expo",
+            "npm:path",
+            "npm:react-native",
+            "npm:metro-react-native-babel-transformer"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/metro.config.js",
+          "hash": "12480146139462468057",
+          "deps": [
+            "npm:expo",
+            "npm:path",
+            "npm:metro-react-native-babel-transformer"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/metro.config.simple.js",
+          "hash": "7915486712639831950",
+          "deps": [
+            "npm:expo",
+            "npm:path"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/nativewind-env.d.ts",
+          "hash": "16847716270646474250"
+        },
+        {
+          "file": "apps/mobile-rn/package.json",
+          "hash": "2552066377239176803",
+          "deps": [
+            "npm:@react-navigation/bottom-tabs",
+            "npm:@react-navigation/native",
+            "npm:@react-navigation/native-stack",
+            "npm:crypto-js",
+            "npm:expo",
+            "npm:expo-asset",
+            "npm:expo-blur",
+            "npm:expo-crypto",
+            "npm:expo-dev-client",
+            "npm:expo-file-system",
+            "npm:expo-haptics",
+            "npm:expo-image-manipulator",
+            "npm:expo-linear-gradient",
+            "npm:expo-secure-store",
+            "npm:expo-speech",
+            "npm:expo-sqlite",
+            "npm:expo-status-bar",
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-crypto",
+            "npm:react-native-gesture-handler",
+            "npm:react-native-randombytes",
+            "npm:react-native-reanimated",
+            "npm:react-native-safe-area-context",
+            "npm:react-native-screens",
+            "npm:zod",
+            "ui-components",
+            "context-engines",
+            "business-core",
+            "compliance-engine",
+            "api-clients",
+            "npm:@babel/core",
+            "npm:@babel/plugin-transform-modules-commonjs",
+            "npm:@babel/plugin-transform-react-jsx"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/project.json",
+          "hash": "12091297883369727066"
+        },
+        {
+          "file": "apps/mobile-rn/scripts/build-performance.js",
+          "hash": "540804574335320375",
+          "deps": [
+            "npm:fs",
+            "npm:path",
+            "npm:child_process"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/scripts/ultra-fast-build.js",
+          "hash": "1007667662689787015",
+          "deps": [
+            "npm:child_process",
+            "npm:fs",
+            "npm:path"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/components/LazyComponentLoader.tsx",
+          "hash": "13213844388916625963",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/components/TaskCompletionCard.tsx",
+          "hash": "5517756544338537585",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "business-core",
+            "database",
+            [
+              "npm:expo-image-picker",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/components/TaskCompletionHistory.tsx",
+          "hash": "10663193412183192369",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "business-core",
+            "database"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/config/app.config.ts",
+          "hash": "16641131907398453492",
+          "deps": [
+            "npm:expo-constants"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/context/AuthContext.tsx",
+          "hash": "15850192218412992063",
+          "deps": [
+            "npm:react",
+            [
+              "npm:@cyntientops/data-seed",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/AppNavigator.tsx",
+          "hash": "16186483153428572600",
+          "deps": [
+            "npm:react",
+            "npm:@react-navigation/native",
+            "npm:@react-navigation/native-stack",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "npm:@cyntientops/business-core/src/services/AuthService",
+            "npm:@cyntientops/business-core/src/services/SessionManager",
+            "npm:@cyntientops/business-core/src/services/AuthenticationService",
+            "domain-schema",
+            [
+              "npm:@cyntientops/business-core/src/services/SecureStorageService",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/business-core/src/services/RealDataService",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/EnhancedTabNavigator.tsx",
+          "hash": "4359739834223728644",
+          "deps": [
+            "npm:react",
+            "npm:@react-navigation/bottom-tabs",
+            "npm:@expo/vector-icons"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/AdminIntelligenceTab.tsx",
+          "hash": "10868793898737967554",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@cyntientops/design-tokens",
+            "npm:@cyntientops/ui-components",
+            "npm:expo-linear-gradient",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/AdminPortfolioTab.tsx",
+          "hash": "9386878147390837347",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@cyntientops/design-tokens",
+            "npm:@cyntientops/ui-components",
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/data-seed"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/AdminWorkersTab.tsx",
+          "hash": "11241923173315564559",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@cyntientops/design-tokens",
+            "npm:@cyntientops/ui-components",
+            "npm:expo-linear-gradient",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/ClientIntelligenceTab.tsx",
+          "hash": "469641265139521570",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@cyntientops/design-tokens",
+            "npm:@cyntientops/ui-components",
+            "npm:expo-linear-gradient",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/data-seed",
+            "npm:@cyntientops/business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/ClientPortfolioTab.tsx",
+          "hash": "9331420871268853067",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@cyntientops/design-tokens",
+            "npm:@cyntientops/ui-components",
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/data-seed"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/WorkerIntelligenceTab.tsx",
+          "hash": "9627080865653120577",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@cyntientops/design-tokens",
+            "npm:@cyntientops/ui-components",
+            "npm:expo-linear-gradient",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/WorkerMapTab.tsx",
+          "hash": "12653194997839084572",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@cyntientops/design-tokens",
+            "npm:@cyntientops/ui-components",
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/data-seed"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/WorkerScheduleTab.tsx",
+          "hash": "12646598976196620213",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "design-tokens",
+            "ui-components",
+            "npm:expo-linear-gradient",
+            "business-core",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/navigation/tabs/WorkerSiteDepartureTab.tsx",
+          "hash": "9017153201655969403",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@cyntientops/design-tokens",
+            "npm:@cyntientops/ui-components",
+            "npm:expo-linear-gradient",
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/providers/AppProvider.tsx",
+          "hash": "12777894768508482736",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            [
+              "npm:@cyntientops/business-core",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/AdminDashboard.tsx",
+          "hash": "15633930421178506535",
+          "deps": [
+            "npm:react",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/AdminDashboardScreen.tsx",
+          "hash": "5542345692286664465",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "ui-components",
+            "context-engines",
+            "database",
+            "managers",
+            "intelligence-services",
+            "business-core",
+            "api-clients"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/BuildingConfigurationScreen.tsx",
+          "hash": "9022469650062386405",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "database",
+            "business-core",
+            "api-clients"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/BuildingDetailScreen.tsx",
+          "hash": "9019839517245693649",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "npm:@react-navigation/native",
+            "design-tokens",
+            "ui-components",
+            "npm:@cyntientops/business-core/src/services/RealDataService",
+            "npm:@cyntientops/business-core/src/services/NYCService",
+            "npm:@cyntientops/api-clients/src/nyc/DSNYAPIClient",
+            "business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/ClientDashboard.tsx",
+          "hash": "2516448448306024909",
+          "deps": [
+            "npm:react",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/ClientDashboardScreen.tsx",
+          "hash": "3082478219971937454",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "ui-components",
+            "context-engines",
+            "database",
+            "managers",
+            "intelligence-services",
+            "business-core",
+            "api-clients"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/ComplianceDashboardScreen.tsx",
+          "hash": "9242303424916034585",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "ui-components",
+            "context-engines",
+            "business-core",
+            "api-clients"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/DailyRoutineScreen.tsx",
+          "hash": "2519515795616632302",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "database",
+            "domain-schema",
+            "ui-components",
+            "business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/LoginScreen.tsx",
+          "hash": "15563137626402701986",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "database",
+            "domain-schema",
+            "business-core",
+            "npm:expo-linear-gradient",
+            "design-tokens",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/MultisiteDepartureScreen.tsx",
+          "hash": "7146276762675657242",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "database",
+            "domain-schema",
+            "ui-components",
+            "business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/PhotoCaptureModal.tsx",
+          "hash": "17565330118772667927",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "npm:@react-navigation/native",
+            "database",
+            "managers",
+            "npm:expo-media-library",
+            [
+              "npm:expo-image-picker",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/ProfileScreen.tsx",
+          "hash": "10384621354464581548",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "npm:@react-navigation/native",
+            "npm:@cyntientops/ui-components"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/RoutineManagementScreen.tsx",
+          "hash": "4649546738436911681",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "database",
+            "business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/TaskTimelineScreen.tsx",
+          "hash": "9901810243305826612",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "npm:@react-navigation/native",
+            "database",
+            "npm:@cyntientops/business-core/src/services/RealDataService",
+            "domain-schema",
+            "business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/UserSelectionScreen.tsx",
+          "hash": "16047137516766464945",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:expo-linear-gradient",
+            "npm:expo-blur",
+            "npm:@expo/vector-icons",
+            "npm:@react-navigation/native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/WeeklyRoutineScreen.tsx",
+          "hash": "3685045422619133722",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "database",
+            "domain-schema",
+            "ui-components",
+            "business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/WorkerDashboard.tsx",
+          "hash": "17527478721997547579",
+          "deps": [
+            "npm:react",
+            "npm:@cyntientops/ui-components"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/WorkerDashboardScreen.tsx",
+          "hash": "11801460813460088107",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "ui-components",
+            "context-engines",
+            "database",
+            "managers",
+            "intelligence-services",
+            "business-core",
+            "api-clients",
+            "npm:@react-navigation/native",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/WorkerScheduleEditorScreen.tsx",
+          "hash": "9852931682746780193",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:react-native-safe-area-context",
+            "database",
+            "business-core"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/compliance/DOBDetailScreen.tsx",
+          "hash": "5985845534902619630",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@react-navigation/native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/compliance/DSNYDetailScreen.tsx",
+          "hash": "16094185969393127198",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@react-navigation/native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/compliance/HPDDetailScreen.tsx",
+          "hash": "3531649224539354649",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@react-navigation/native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/screens/compliance/LL97DetailScreen.tsx",
+          "hash": "272952385245483831",
+          "deps": [
+            "npm:react",
+            "npm:react-native",
+            "npm:@react-navigation/native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/AssetOptimizer.ts",
+          "hash": "15435787675790965454",
+          "deps": [
+            "npm:react-native",
+            "npm:expo-asset"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/BootMonitor.ts",
+          "hash": "7128882455026503773"
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/BundleOptimizer.ts",
+          "hash": "16967335259333440002",
+          "deps": [
+            "npm:@react-navigation/native",
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/ui-components",
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/intelligence-services",
+            [
+              "npm:@react-navigation/native-stack",
+              "dynamic"
+            ],
+            [
+              "npm:@react-navigation/bottom-tabs",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/BundleSplitter.ts",
+          "hash": "17968996039017812792"
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/CompressionMonitor.ts",
+          "hash": "7688547326577382083"
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/MemoryManager.ts",
+          "hash": "8741073166699724187",
+          "deps": [
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/NativeImageCompressor.ts",
+          "hash": "13116019971371704136",
+          "deps": [
+            "npm:expo-image-manipulator",
+            "npm:expo-asset",
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/OptimizedImports.ts",
+          "hash": "14146548551225808854",
+          "deps": [
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/domain-schema",
+            "npm:@cyntientops/ui-components",
+            [
+              "npm:@cyntientops/business-core",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/ui-components",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/database",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/context-engines",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/OptimizedServiceContainer.ts",
+          "hash": "11202490125357528014",
+          "deps": [
+            [
+              "npm:@cyntientops/business-core/src/ServiceContainer",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/business-core/src/services/LoggingService",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/business-core/src/services/SecureStorageService",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/business-core/src/services/OfflineSupportManager",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/business-core/src/services/BackupManager",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/business-core/src/services/RealTimeSyncIntegration",
+              "dynamic"
+            ],
+            [
+              "npm:@cyntientops/business-core/src/services/RealTimeMessageRouter",
+              "dynamic"
+            ],
+            [
+              "managers",
+              "dynamic"
+            ],
+            [
+              "api-clients",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/PerformanceMonitor.ts",
+          "hash": "16513217421893902920",
+          "deps": [
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/src/utils/StartupOptimizer.ts",
+          "hash": "14056812393572646190"
+        },
+        {
+          "file": "apps/mobile-rn/tailwind.config.js",
+          "hash": "12531376299923713578",
+          "deps": [
+            "npm:nativewind/preset"
+          ]
+        },
+        {
+          "file": "apps/mobile-rn/tsconfig.json",
+          "hash": "2590512063443767822"
         }
       ],
       "intelligence-services": [
@@ -2508,6 +3632,47 @@
           "hash": "2684171098582105912"
         }
       ],
+      "testing": [
+        {
+          "file": "packages/testing/jest.config.ts",
+          "hash": "2242161318551511772"
+        },
+        {
+          "file": "packages/testing/package.json",
+          "hash": "14810267472232601877",
+          "deps": [
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/testing/project.json",
+          "hash": "13473855339184928302"
+        },
+        {
+          "file": "packages/testing/src/EndToEndTestSuite.ts",
+          "hash": "7401654210146761847",
+          "deps": [
+            "npm:@cyntientops/database",
+            "npm:@cyntientops/business-core",
+            "npm:@cyntientops/api-clients",
+            "npm:@cyntientops/managers",
+            "npm:@cyntientops/intelligence-services",
+            "npm:@cyntientops/data-seed"
+          ]
+        },
+        {
+          "file": "packages/testing/src/index.ts",
+          "hash": "8604911393417584409"
+        },
+        {
+          "file": "packages/testing/tsconfig.json",
+          "hash": "12144094867577172211"
+        },
+        {
+          "file": "packages/testing/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
       "business-core": [
         {
           "file": "packages/business-core/jest.config.ts",
@@ -2634,7 +3799,7 @@
         },
         {
           "file": "packages/business-core/src/index.ts",
-          "hash": "7896094590622004242"
+          "hash": "8785628213304261049"
         },
         {
           "file": "packages/business-core/src/offline/OfflineSyncManager.ts",
@@ -2691,10 +3856,10 @@
         },
         {
           "file": "packages/business-core/src/security/PasswordSecurityService.ts",
-          "hash": "13067724120518237369",
+          "hash": "935772552015817383",
           "deps": [
-            "npm:@cyntientops/database",
-            "npm:bcryptjs"
+            "database",
+            "npm:crypto-js"
           ]
         },
         {
@@ -2737,12 +3902,12 @@
         },
         {
           "file": "packages/business-core/src/services/AuthenticationService.ts",
-          "hash": "4622052663037519715",
+          "hash": "17147149313683998713",
           "deps": [
             "database",
             "domain-schema",
             "data-seed",
-            "npm:bcryptjs"
+            "npm:crypto-js"
           ]
         },
         {
@@ -2775,7 +3940,7 @@
         },
         {
           "file": "packages/business-core/src/services/BuildingService.ts",
-          "hash": "6812246407758033231",
+          "hash": "11872924952279182438",
           "deps": [
             "domain-schema"
           ]
@@ -3054,11 +4219,11 @@
         },
         {
           "file": "packages/business-core/src/services/SecurityManager.ts",
-          "hash": "10167734287493264184",
+          "hash": "1246670157285876460",
           "deps": [
             "database",
             "domain-schema",
-            "npm:bcryptjs",
+            "npm:crypto-js",
             [
               "data-seed",
               "dynamic"
@@ -3101,11 +4266,26 @@
           "hash": "15846008194868078868"
         },
         {
-          "file": "packages/business-core/src/services/TaskService.ts",
-          "hash": "11545381060932477125",
+          "file": "packages/business-core/src/services/TaskCompletionService.ts",
+          "hash": "5850943054744018938",
           "deps": [
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/data-seed"
+            "database"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/TaskNotificationService.ts",
+          "hash": "1267628215546365189",
+          "deps": [
+            "npm:expo-notifications",
+            "npm:react-native"
+          ]
+        },
+        {
+          "file": "packages/business-core/src/services/TaskService.ts",
+          "hash": "18002140123276952886",
+          "deps": [
+            "domain-schema",
+            "data-seed"
           ]
         },
         {
@@ -3157,322 +4337,236 @@
           ]
         },
         {
+          "file": "packages/business-core/src/types/TaskCompletion.ts",
+          "hash": "4413775335666096092"
+        },
+        {
           "file": "packages/business-core/src/utils/EventEmitter.ts",
           "hash": "1404248544277022245"
         },
         {
           "file": "packages/business-core/tsconfig.json",
-          "hash": "1990696696189584533"
+          "hash": "15951164807538487818"
         },
         {
           "file": "packages/business-core/tsconfig.lib.json",
           "hash": "2684171098582105912"
         }
       ],
-      "mobile-rn": [
+      "api-clients": [
         {
-          "file": "apps/mobile-rn/.env.example",
-          "hash": "7333490041846708792"
+          "file": "packages/api-clients/jest.config.ts",
+          "hash": "17908484330401986338"
         },
         {
-          "file": "apps/mobile-rn/.gitignore",
-          "hash": "15875171515167088918"
-        },
-        {
-          "file": "apps/mobile-rn/.vscode/extensions.json",
-          "hash": "46217408025352634"
-        },
-        {
-          "file": "apps/mobile-rn/.vscode/settings.json",
-          "hash": "13604069932680302502"
-        },
-        {
-          "file": "apps/mobile-rn/App.js",
-          "hash": "12171562585377092175"
-        },
-        {
-          "file": "apps/mobile-rn/App.tsx",
-          "hash": "5440353975514737129",
+          "file": "packages/api-clients/package.json",
+          "hash": "4455969675523299592",
           "deps": [
-            "npm:react",
-            "npm:expo-status-bar"
+            "domain-schema"
           ]
         },
         {
-          "file": "apps/mobile-rn/app.json",
-          "hash": "16433070982451012444"
+          "file": "packages/api-clients/project.json",
+          "hash": "11282684033970059059"
         },
         {
-          "file": "apps/mobile-rn/assets/fonts/SpaceMono-Regular.ttf",
-          "hash": "8316399838606165836"
+          "file": "packages/api-clients/src/index.ts",
+          "hash": "3373244641132418760"
         },
         {
-          "file": "apps/mobile-rn/assets/images/AIAssistant.png",
-          "hash": "14775993215880160288"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/AppIcon.png",
-          "hash": "14279825050208488929"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/adaptive-icon.png",
-          "hash": "6165570456017765940"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/104_Franklin_Street.jpg",
-          "hash": "947379727223817610"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/112_West_18th_Street.jpg",
-          "hash": "5545903083730961012"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/115_7th_ave.JPG",
-          "hash": "11913950721278152307"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/117_West_17th_Street.jpg",
-          "hash": "2669022867411768490"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/123_1st_Avenue.jpg",
-          "hash": "14618987042990554639"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/12_West_18th_Street.jpg",
-          "hash": "17918264829775171006"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/131_Perry_Street.jpg",
-          "hash": "4579556697979863245"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/133_East_15th_Street.jpg",
-          "hash": "18236504678175477785"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/135West17thStreet.jpg",
-          "hash": "1014513000473925213"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/136_West_17th_Street.jpg",
-          "hash": "5650552729763128627"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/138West17thStreet.jpg",
-          "hash": "1080404056929477986"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/148chambers.jpg",
-          "hash": "1858072569085329730"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/178_Spring_st.jpg",
-          "hash": "12553427712774046103"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/29_31_East_20th_Street.jpg",
-          "hash": "16040108901443324895"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/36_Walker_Street.jpg",
-          "hash": "16458888757615413723"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/41_Elizabeth_Street.jpeg",
-          "hash": "6700577267984862714"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/68_Perry_Street.jpg",
-          "hash": "7291505816615066428"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/Rubin_Museum_142_148_West_17th_Street.jpg",
-          "hash": "2011613697608872520"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/buildings/Stuyvesant_Cove_Park.jpg",
-          "hash": "14064812416326434806"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/favicon.png",
-          "hash": "6165570456017765940"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/icon.png",
-          "hash": "6165570456017765940"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/notification-icon.png",
-          "hash": "6165570456017765940"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/splash-icon.png",
-          "hash": "16102135492459408350"
-        },
-        {
-          "file": "apps/mobile-rn/assets/images/splash.png",
-          "hash": "6165570456017765940"
-        },
-        {
-          "file": "apps/mobile-rn/babel.config.js",
-          "hash": "231774045518377938"
-        },
-        {
-          "file": "apps/mobile-rn/babel.config.ultra.js",
-          "hash": "17730145023438860204"
-        },
-        {
-          "file": "apps/mobile-rn/configs/metro.config.optimized.js",
-          "hash": "12116713128928602783",
+          "file": "packages/api-clients/src/nyc/Complaints311APIClient.ts",
+          "hash": "14653464814529835674",
           "deps": [
-            "npm:@expo/metro-config",
+            "database"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/DOBAPIClient.ts",
+          "hash": "1732198634364152764",
+          "deps": [
+            "npm:axios",
+            "npm:@cyntientops/domain-schema"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/DOFAPIClient.ts",
+          "hash": "16722775121606964871",
+          "deps": [
+            "database"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/DSNYAPIClient.ts",
+          "hash": "6631370239794506558",
+          "deps": [
+            "npm:axios",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/DSNYViolationsService.ts",
+          "hash": "12310468264407882884",
+          "deps": [
+            "npm:@cyntientops/database"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/FDNYAPIClient.ts",
+          "hash": "17603376288147746608",
+          "deps": [
+            "database"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/HPDAPIClient.ts",
+          "hash": "17558305568452114870",
+          "deps": [
+            "npm:axios",
+            "domain-schema"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/nyc/HistoricalDataService.ts",
+          "hash": "587689883121735511"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/NYCAPIService.ts",
+          "hash": "16210931825121985104"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/NYCComplianceService.ts",
+          "hash": "7211149887942116558"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/NYCDataCoordinator.ts",
+          "hash": "14119235417298169773"
+        },
+        {
+          "file": "packages/api-clients/src/nyc/NYCDataModels.ts",
+          "hash": "14463060082218177374"
+        },
+        {
+          "file": "packages/api-clients/src/property/PropertyValueService.ts",
+          "hash": "6811458257208561086",
+          "deps": [
+            "npm:@cyntientops/database"
+          ]
+        },
+        {
+          "file": "packages/api-clients/src/quickbooks/QuickBooksAPIClient.ts",
+          "hash": "9422606207050662987"
+        },
+        {
+          "file": "packages/api-clients/src/weather/WeatherAPIClient.ts",
+          "hash": "3228828546403641389",
+          "deps": [
+            "npm:axios"
+          ]
+        },
+        {
+          "file": "packages/api-clients/tsconfig.json",
+          "hash": "8369358470589601419"
+        },
+        {
+          "file": "packages/api-clients/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "data-seed": [
+        {
+          "file": "packages/data-seed/jest.config.ts",
+          "hash": "16144226057978376781"
+        },
+        {
+          "file": "packages/data-seed/package.json",
+          "hash": "13394419177038468794",
+          "deps": [
+            "api-clients"
+          ]
+        },
+        {
+          "file": "packages/data-seed/project.json",
+          "hash": "575674280499301376"
+        },
+        {
+          "file": "packages/data-seed/scripts/updatePropertyValues.ts",
+          "hash": "2969515422087911008",
+          "deps": [
+            "npm:fs",
             "npm:path",
-            "npm:os",
-            "npm:metro-cache",
+            "api-clients"
+          ]
+        },
+        {
+          "file": "packages/data-seed/src/buildings.backup.json",
+          "hash": "6621289285276518829"
+        },
+        {
+          "file": "packages/data-seed/src/buildings.json",
+          "hash": "12295803668423896190"
+        },
+        {
+          "file": "packages/data-seed/src/clients.json",
+          "hash": "12483552502549408269"
+        },
+        {
+          "file": "packages/data-seed/src/index.ts",
+          "hash": "14909601796952281033"
+        },
+        {
+          "file": "packages/data-seed/src/routines-complete.json",
+          "hash": "17621779918639668700"
+        },
+        {
+          "file": "packages/data-seed/src/routines.json",
+          "hash": "10638633742215877621"
+        },
+        {
+          "file": "packages/data-seed/src/workers.json",
+          "hash": "10392445582962996085"
+        },
+        {
+          "file": "packages/data-seed/tsconfig.json",
+          "hash": "14179549052686040071"
+        },
+        {
+          "file": "packages/data-seed/tsconfig.lib.json",
+          "hash": "2684171098582105912"
+        }
+      ],
+      "admin-portal": [
+        {
+          "file": "apps/admin-portal/project.json",
+          "hash": "8598826710472841086"
+        }
+      ],
+      "database": [
+        {
+          "file": "packages/database/jest.config.ts",
+          "hash": "9817313040569261413"
+        },
+        {
+          "file": "packages/database/package.json",
+          "hash": "190384647026732556",
+          "deps": [
+            "npm:expo-sqlite",
+            "npm:react-native-sqlite-storage",
+            "npm:zod",
+            "npm:@types/react-native-sqlite-storage",
+            "npm:typescript",
+            "npm:react",
             "npm:react-native"
           ]
         },
         {
-          "file": "apps/mobile-rn/docs/CLEANUP_SUMMARY.md",
-          "hash": "11713091043307421506"
+          "file": "packages/database/project.json",
+          "hash": "8685686956318044927"
         },
         {
-          "file": "apps/mobile-rn/docs/CONTINUITY_REPORT.md",
-          "hash": "793736719481272464"
-        },
-        {
-          "file": "apps/mobile-rn/docs/IMAGE_COMPRESSION_GUIDE.md",
-          "hash": "13988247192023249683"
-        },
-        {
-          "file": "apps/mobile-rn/docs/OPTIMIZATION_SUMMARY.md",
-          "hash": "4093034701342165878"
-        },
-        {
-          "file": "apps/mobile-rn/docs/OPTIMIZATION_SUMMARY_FINAL.md",
-          "hash": "6874243012479295486"
-        },
-        {
-          "file": "apps/mobile-rn/docs/STARTUP_OPTIMIZATION_GUIDE.md",
-          "hash": "11930617421018504495"
-        },
-        {
-          "file": "apps/mobile-rn/eas.json",
-          "hash": "9791683894534777117"
-        },
-        {
-          "file": "apps/mobile-rn/index.js",
-          "hash": "6721463589810289102",
+          "file": "packages/database/src/DatabaseManager.ts",
+          "hash": "13659385869254442793",
           "deps": [
-            "npm:react-native-get-random-values",
-            "npm:expo"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/jest.config.ts",
-          "hash": "2767124540095521745"
-        },
-        {
-          "file": "apps/mobile-rn/metro.config.complex.js",
-          "hash": "13254733596413306538",
-          "deps": [
-            "npm:expo",
-            "npm:path",
-            "npm:react-native",
-            "npm:metro-react-native-babel-transformer"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/metro.config.js",
-          "hash": "9102376185446186830",
-          "deps": [
-            "npm:expo",
-            "npm:path"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/metro.config.simple.js",
-          "hash": "7915486712639831950",
-          "deps": [
-            "npm:expo",
-            "npm:path"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/nativewind-env.d.ts",
-          "hash": "16847716270646474250"
-        },
-        {
-          "file": "apps/mobile-rn/package.json",
-          "hash": "13907664074450084281",
-          "deps": [
-            "npm:@react-navigation/bottom-tabs",
-            "npm:@react-navigation/native",
-            "npm:@react-navigation/native-stack",
-            "npm:expo",
-            "npm:expo-asset",
-            "npm:expo-blur",
-            "npm:expo-crypto",
-            "npm:expo-file-system",
-            "npm:expo-haptics",
-            "npm:expo-image-manipulator",
-            "npm:expo-linear-gradient",
-            "npm:expo-speech",
-            "npm:expo-status-bar",
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-crypto",
-            "npm:react-native-gesture-handler",
-            "npm:react-native-randombytes",
-            "npm:react-native-reanimated",
-            "npm:react-native-safe-area-context",
-            "npm:react-native-screens",
             "npm:expo-sqlite",
-            "npm:@babel/core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/project.json",
-          "hash": "12091297883369727066"
-        },
-        {
-          "file": "apps/mobile-rn/scripts/build-performance.js",
-          "hash": "540804574335320375",
-          "deps": [
-            "npm:fs",
-            "npm:path",
-            "npm:child_process"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/scripts/ultra-fast-build.js",
-          "hash": "1007667662689787015",
-          "deps": [
-            "npm:child_process",
-            "npm:fs",
-            "npm:path"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/components/LazyComponentLoader.tsx",
-          "hash": "13213844388916625963",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/config/app.config.ts",
-          "hash": "16641131907398453492",
-          "deps": [
-            "npm:expo-constants"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/context/AuthContext.tsx",
-          "hash": "15850192218412992063",
-          "deps": [
-            "npm:react",
             [
               "npm:@cyntientops/data-seed",
               "dynamic"
@@ -3480,770 +4574,49 @@
           ]
         },
         {
-          "file": "apps/mobile-rn/src/navigation/AppNavigator.tsx",
-          "hash": "16186483153428572600",
+          "file": "packages/database/src/DatabaseSchema.ts",
+          "hash": "4780798204047000229"
+        },
+        {
+          "file": "packages/database/src/MigrationManager.ts",
+          "hash": "8212570721038271914",
           "deps": [
-            "npm:react",
-            "npm:@react-navigation/native",
-            "npm:@react-navigation/native-stack",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "npm:@cyntientops/business-core/src/services/AuthService",
-            "npm:@cyntientops/business-core/src/services/SessionManager",
-            "npm:@cyntientops/business-core/src/services/AuthenticationService",
-            "domain-schema",
-            [
-              "npm:@cyntientops/business-core/src/services/SecureStorageService",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/business-core/src/services/RealDataService",
-              "dynamic"
-            ]
+            "npm:expo-sqlite"
           ]
         },
         {
-          "file": "apps/mobile-rn/src/navigation/EnhancedTabNavigator.tsx",
-          "hash": "4359739834223728644",
+          "file": "packages/database/src/QueryBuilder.ts",
+          "hash": "11804286177909276919"
+        },
+        {
+          "file": "packages/database/src/SupabaseMigration.ts",
+          "hash": "6129563533599055260",
           "deps": [
-            "npm:react",
-            "npm:@react-navigation/bottom-tabs",
-            "npm:@expo/vector-icons"
+            "npm:@supabase/supabase-js"
           ]
         },
         {
-          "file": "apps/mobile-rn/src/navigation/tabs/AdminIntelligenceTab.tsx",
-          "hash": "10868793898737967554",
+          "file": "packages/database/src/index.ts",
+          "hash": "18090802545814900170"
+        },
+        {
+          "file": "packages/database/src/types.ts",
+          "hash": "2658025148921473655"
+        },
+        {
+          "file": "packages/database/src/utils.ts",
+          "hash": "5239238100324161431",
           "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:expo-linear-gradient",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/business-core"
+            "npm:expo-sqlite",
+            "npm:expo-file-system"
           ]
         },
         {
-          "file": "apps/mobile-rn/src/navigation/tabs/AdminPortfolioTab.tsx",
-          "hash": "9386878147390837347",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/data-seed"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/navigation/tabs/AdminWorkersTab.tsx",
-          "hash": "11241923173315564559",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:expo-linear-gradient",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/business-core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/navigation/tabs/ClientIntelligenceTab.tsx",
-          "hash": "469641265139521570",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:expo-linear-gradient",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/data-seed",
-            "npm:@cyntientops/business-core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/navigation/tabs/ClientPortfolioTab.tsx",
-          "hash": "9331420871268853067",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/data-seed"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/navigation/tabs/WorkerIntelligenceTab.tsx",
-          "hash": "9627080865653120577",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:expo-linear-gradient",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/business-core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/navigation/tabs/WorkerMapTab.tsx",
-          "hash": "12653194997839084572",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/data-seed"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/navigation/tabs/WorkerScheduleTab.tsx",
-          "hash": "2520295964033450260",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:expo-linear-gradient",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/navigation/tabs/WorkerSiteDepartureTab.tsx",
-          "hash": "9017153201655969403",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@cyntientops/design-tokens",
-            "npm:@cyntientops/ui-components",
-            "npm:expo-linear-gradient",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/providers/AppProvider.tsx",
-          "hash": "12777894768508482736",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            [
-              "npm:@cyntientops/business-core",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/AdminDashboard.tsx",
-          "hash": "15633930421178506535",
-          "deps": [
-            "npm:react",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/AdminDashboardScreen.tsx",
-          "hash": "5542345692286664465",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "ui-components",
-            "context-engines",
-            "database",
-            "managers",
-            "intelligence-services",
-            "business-core",
-            "api-clients"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/BuildingDetailScreen.tsx",
-          "hash": "5767739264505080734",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "npm:@react-navigation/native",
-            "design-tokens",
-            "npm:@cyntientops/ui-components/src/glass",
-            "npm:@cyntientops/business-core/src/services/RealDataService",
-            "npm:@cyntientops/business-core/src/services/NYCService",
-            "npm:@cyntientops/api-clients/src/nyc/DSNYAPIClient",
-            "business-core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/ClientDashboard.tsx",
-          "hash": "2516448448306024909",
-          "deps": [
-            "npm:react",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/ClientDashboardScreen.tsx",
-          "hash": "3082478219971937454",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "ui-components",
-            "context-engines",
-            "database",
-            "managers",
-            "intelligence-services",
-            "business-core",
-            "api-clients"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/DailyRoutineScreen.tsx",
-          "hash": "2519515795616632302",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "database",
-            "domain-schema",
-            "ui-components",
-            "business-core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/LoginScreen.tsx",
-          "hash": "15563137626402701986",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "database",
-            "domain-schema",
-            "business-core",
-            "npm:expo-linear-gradient",
-            "design-tokens",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/MultisiteDepartureScreen.tsx",
-          "hash": "7146276762675657242",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "database",
-            "domain-schema",
-            "ui-components",
-            "business-core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/PhotoCaptureModal.tsx",
-          "hash": "17565330118772667927",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "npm:@react-navigation/native",
-            "database",
-            "managers",
-            "npm:expo-media-library",
-            [
-              "npm:expo-image-picker",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/ProfileScreen.tsx",
-          "hash": "10384621354464581548",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "npm:@react-navigation/native",
-            "npm:@cyntientops/ui-components"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/TaskTimelineScreen.tsx",
-          "hash": "9901810243305826612",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "npm:@react-navigation/native",
-            "database",
-            "npm:@cyntientops/business-core/src/services/RealDataService",
-            "domain-schema",
-            "business-core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/UserSelectionScreen.tsx",
-          "hash": "16047137516766464945",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:expo-linear-gradient",
-            "npm:expo-blur",
-            "npm:@expo/vector-icons",
-            "npm:@react-navigation/native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/WeeklyRoutineScreen.tsx",
-          "hash": "3685045422619133722",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "database",
-            "domain-schema",
-            "ui-components",
-            "business-core"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/WorkerDashboard.tsx",
-          "hash": "17527478721997547579",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/ui-components"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/WorkerDashboardScreen.tsx",
-          "hash": "9344663856489843160",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:react-native-safe-area-context",
-            "ui-components",
-            "context-engines",
-            "database",
-            "managers",
-            "intelligence-services",
-            "business-core",
-            "api-clients",
-            "npm:@react-navigation/native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/compliance/DOBDetailScreen.tsx",
-          "hash": "5985845534902619630",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@react-navigation/native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/compliance/DSNYDetailScreen.tsx",
-          "hash": "16094185969393127198",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@react-navigation/native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/compliance/HPDDetailScreen.tsx",
-          "hash": "3531649224539354649",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@react-navigation/native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/screens/compliance/LL97DetailScreen.tsx",
-          "hash": "272952385245483831",
-          "deps": [
-            "npm:react",
-            "npm:react-native",
-            "npm:@react-navigation/native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/AssetOptimizer.ts",
-          "hash": "15435787675790965454",
-          "deps": [
-            "npm:react-native",
-            "npm:expo-asset"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/BootMonitor.ts",
-          "hash": "7128882455026503773"
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/BundleOptimizer.ts",
-          "hash": "16967335259333440002",
-          "deps": [
-            "npm:@react-navigation/native",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/ui-components",
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/intelligence-services",
-            [
-              "npm:@react-navigation/native-stack",
-              "dynamic"
-            ],
-            [
-              "npm:@react-navigation/bottom-tabs",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/BundleSplitter.ts",
-          "hash": "17968996039017812792"
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/CompressionMonitor.ts",
-          "hash": "7688547326577382083"
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/MemoryManager.ts",
-          "hash": "8741073166699724187",
-          "deps": [
-            "npm:react-native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/NativeImageCompressor.ts",
-          "hash": "13116019971371704136",
-          "deps": [
-            "npm:expo-image-manipulator",
-            "npm:expo-asset",
-            "npm:react-native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/OptimizedImports.ts",
-          "hash": "14146548551225808854",
-          "deps": [
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/ui-components",
-            [
-              "npm:@cyntientops/business-core",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/ui-components",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/database",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/context-engines",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/OptimizedServiceContainer.ts",
-          "hash": "16681494712269754051",
-          "deps": [
-            [
-              "npm:@cyntientops/business-core/src/services/LoggingService",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/business-core/src/services/SecureStorageService",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/business-core/src/ServiceContainer",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/business-core/src/services/OfflineSupportManager",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/business-core/src/services/BackupManager",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/business-core/src/services/RealTimeSyncIntegration",
-              "dynamic"
-            ],
-            [
-              "npm:@cyntientops/business-core/src/services/RealTimeMessageRouter",
-              "dynamic"
-            ],
-            [
-              "managers",
-              "dynamic"
-            ],
-            [
-              "api-clients",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/PerformanceMonitor.ts",
-          "hash": "16513217421893902920",
-          "deps": [
-            "npm:react-native"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/src/utils/StartupOptimizer.ts",
-          "hash": "14056812393572646190"
-        },
-        {
-          "file": "apps/mobile-rn/tailwind.config.js",
-          "hash": "12531376299923713578",
-          "deps": [
-            "npm:nativewind/preset"
-          ]
-        },
-        {
-          "file": "apps/mobile-rn/tsconfig.json",
-          "hash": "7178130189877565234"
-        }
-      ],
-      "compliance-engine": [
-        {
-          "file": "packages/compliance-engine/package.json",
-          "hash": "6310698307560527468",
-          "deps": [
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/compliance-engine/project.json",
-          "hash": "15010440446578657617"
-        },
-        {
-          "file": "packages/compliance-engine/src/ComplianceCache.ts",
-          "hash": "13622126453412583408",
-          "deps": [
-            "database"
-          ]
-        },
-        {
-          "file": "packages/compliance-engine/src/ComplianceCalculator.ts",
-          "hash": "16345746262750780301",
-          "deps": [
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/compliance-engine/src/ViolationProcessor.ts",
-          "hash": "1417798803990968340"
-        },
-        {
-          "file": "packages/compliance-engine/src/index.ts",
-          "hash": "9123540813649994297",
-          "deps": [
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/compliance-engine/tsconfig.json",
-          "hash": "9746117707584372279"
-        }
-      ],
-      "context-engines": [
-        {
-          "file": "packages/context-engines/jest.config.ts",
-          "hash": "5101961748209147769"
-        },
-        {
-          "file": "packages/context-engines/package.json",
-          "hash": "11228440374800086335",
-          "deps": [
-            "domain-schema",
-            "database",
-            "business-core",
-            "managers",
-            "intelligence-services"
-          ]
-        },
-        {
-          "file": "packages/context-engines/project.json",
-          "hash": "1317032141572244102"
-        },
-        {
-          "file": "packages/context-engines/src/AdminContextEngine.ts",
-          "hash": "16924563150826125126",
-          "deps": [
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/database"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/AdminDashboardViewModel.ts",
-          "hash": "7075784936424931197",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/business-core"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/AdminViewModel.ts",
-          "hash": "14375429455326792477",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/BuildingDetailViewModel.ts",
-          "hash": "1969360178220344355",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/business-core"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/ClientDashboardViewModel.ts",
-          "hash": "7506747579329082157",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/business-core"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/ClientViewModel.ts",
-          "hash": "5627867175170044301",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/SiteDepartureViewModel.ts",
-          "hash": "17853550945539723235",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/TaskDetailViewModel.ts",
-          "hash": "4649758077365978716",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/WorkerContextEngine.ts",
-          "hash": "14464363071771962536",
-          "deps": [
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/database"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/WorkerDashboardViewModel.ts",
-          "hash": "18420062717057479791",
-          "deps": [
-            "npm:react",
-            "npm:@cyntientops/domain-schema",
-            "npm:@cyntientops/business-core",
-            [
-              "npm:@cyntientops/api-clients",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/WorkerViewModel.ts",
-          "hash": "9760973625966912108",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/domain-schema"
-          ]
-        },
-        {
-          "file": "packages/context-engines/src/index.ts",
-          "hash": "13628442823384699315"
-        },
-        {
-          "file": "packages/context-engines/src/useBuildingDetailViewModel.ts",
-          "hash": "11398918719193412861",
-          "deps": [
-            "npm:react",
-            "business-core"
-          ]
-        },
-        {
-          "file": "packages/context-engines/tsconfig.json",
+          "file": "packages/database/tsconfig.json",
           "hash": "16536117157936584739"
         },
         {
-          "file": "packages/context-engines/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        }
-      ],
-      "testing": [
-        {
-          "file": "packages/testing/jest.config.ts",
-          "hash": "2242161318551511772"
-        },
-        {
-          "file": "packages/testing/package.json",
-          "hash": "14810267472232601877",
-          "deps": [
-            "domain-schema"
-          ]
-        },
-        {
-          "file": "packages/testing/project.json",
-          "hash": "13473855339184928302"
-        },
-        {
-          "file": "packages/testing/src/EndToEndTestSuite.ts",
-          "hash": "7401654210146761847",
-          "deps": [
-            "npm:@cyntientops/database",
-            "npm:@cyntientops/business-core",
-            "npm:@cyntientops/api-clients",
-            "npm:@cyntientops/managers",
-            "npm:@cyntientops/intelligence-services",
-            "npm:@cyntientops/data-seed"
-          ]
-        },
-        {
-          "file": "packages/testing/src/index.ts",
-          "hash": "8604911393417584409"
-        },
-        {
-          "file": "packages/testing/tsconfig.json",
-          "hash": "12144094867577172211"
-        },
-        {
-          "file": "packages/testing/tsconfig.lib.json",
+          "file": "packages/database/tsconfig.lib.json",
           "hash": "2684171098582105912"
         }
       ],
@@ -4332,168 +4705,43 @@
           "hash": "2684171098582105912"
         }
       ],
-      "design-tokens": [
+      "offline-support": [
         {
-          "file": "packages/design-tokens/jest.config.ts",
-          "hash": "2540141947448517216"
+          "file": "packages/offline-support/jest.config.ts",
+          "hash": "14947717933953754482"
         },
         {
-          "file": "packages/design-tokens/package.json",
-          "hash": "2644967112774840746",
+          "file": "packages/offline-support/package.json",
+          "hash": "4362882305012834350",
           "deps": [
-            "npm:typescript",
-            "npm:@types/react"
+            "domain-schema",
+            "database",
+            "command-chains"
           ]
         },
         {
-          "file": "packages/design-tokens/project.json",
-          "hash": "15654075528537152772"
+          "file": "packages/offline-support/project.json",
+          "hash": "5597704732456281035"
         },
         {
-          "file": "packages/design-tokens/src/colors.ts",
-          "hash": "7313569410994403716"
-        },
-        {
-          "file": "packages/design-tokens/src/components/GlassButton.tsx",
-          "hash": "14664156458801446646",
+          "file": "packages/offline-support/src/OfflineManager.ts",
+          "hash": "16764946838082456678",
           "deps": [
-            "npm:react",
-            "npm:react-native"
+            "database",
+            "command-chains",
+            "npm:@react-native-community/netinfo"
           ]
         },
         {
-          "file": "packages/design-tokens/src/components/GlassCard.tsx",
-          "hash": "1505164852205213095",
-          "deps": [
-            "npm:react",
-            "npm:react-native"
-          ]
+          "file": "packages/offline-support/src/index.ts",
+          "hash": "7717260997660888852"
         },
         {
-          "file": "packages/design-tokens/src/index.ts",
-          "hash": "5726948443141505795"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/animations.ts",
-          "hash": "6861492684312414945"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/colors.ts",
-          "hash": "11668524811508573167"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/glassmorphism.ts",
-          "hash": "2190713942589061110",
-          "deps": [
-            "npm:react-native"
-          ]
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/gradients.ts",
-          "hash": "894281856679980773"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/shadows.ts",
-          "hash": "3260748353528967336"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/spacing.ts",
-          "hash": "13827618929632807015"
-        },
-        {
-          "file": "packages/design-tokens/src/tokens/typography.ts",
-          "hash": "10206370693186615436"
-        },
-        {
-          "file": "packages/design-tokens/src/user-experience.ts",
-          "hash": "6147373631086948823"
-        },
-        {
-          "file": "packages/design-tokens/tsconfig.json",
-          "hash": "16207454915138889287"
-        },
-        {
-          "file": "packages/design-tokens/tsconfig.lib.json",
-          "hash": "2684171098582105912"
-        }
-      ],
-      "database": [
-        {
-          "file": "packages/database/jest.config.ts",
-          "hash": "9817313040569261413"
-        },
-        {
-          "file": "packages/database/package.json",
-          "hash": "190384647026732556",
-          "deps": [
-            "npm:expo-sqlite",
-            "npm:react-native-sqlite-storage",
-            "npm:zod",
-            "npm:@types/react-native-sqlite-storage",
-            "npm:typescript",
-            "npm:react",
-            "npm:react-native"
-          ]
-        },
-        {
-          "file": "packages/database/project.json",
-          "hash": "8685686956318044927"
-        },
-        {
-          "file": "packages/database/src/DatabaseManager.ts",
-          "hash": "13659385869254442793",
-          "deps": [
-            "npm:expo-sqlite",
-            [
-              "npm:@cyntientops/data-seed",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "packages/database/src/DatabaseSchema.ts",
-          "hash": "4767128916473367219"
-        },
-        {
-          "file": "packages/database/src/MigrationManager.ts",
-          "hash": "8212570721038271914",
-          "deps": [
-            "npm:expo-sqlite"
-          ]
-        },
-        {
-          "file": "packages/database/src/QueryBuilder.ts",
-          "hash": "11804286177909276919"
-        },
-        {
-          "file": "packages/database/src/SupabaseMigration.ts",
-          "hash": "6129563533599055260",
-          "deps": [
-            "npm:@supabase/supabase-js"
-          ]
-        },
-        {
-          "file": "packages/database/src/index.ts",
-          "hash": "18090802545814900170"
-        },
-        {
-          "file": "packages/database/src/types.ts",
-          "hash": "2658025148921473655"
-        },
-        {
-          "file": "packages/database/src/utils.ts",
-          "hash": "5239238100324161431",
-          "deps": [
-            "npm:expo-sqlite",
-            "npm:expo-file-system"
-          ]
-        },
-        {
-          "file": "packages/database/tsconfig.json",
+          "file": "packages/offline-support/tsconfig.json",
           "hash": "16536117157936584739"
         },
         {
-          "file": "packages/database/tsconfig.lib.json",
+          "file": "packages/offline-support/tsconfig.lib.json",
           "hash": "2684171098582105912"
         }
       ]
@@ -4512,12 +4760,8 @@
         "hash": "16586355814837684456"
       },
       {
-        "file": "CONTINUITY_REPORT.md",
-        "hash": "2518469314329671002"
-      },
-      {
         "file": "README.md",
-        "hash": "7913573499929071536"
+        "hash": "17338847241170949996"
       },
       {
         "file": "config/.eslintrc.js",
@@ -4537,39 +4781,87 @@
       },
       {
         "file": "config/tsconfig.base.json",
-        "hash": "805960164862367797"
+        "hash": "6470046197561606311"
       },
       {
         "file": "config/tsconfig.json",
-        "hash": "4554133361980968312"
+        "hash": "10889655365015920323"
       },
       {
         "file": "config/tsconfig.tsbuildinfo",
         "hash": "10549994677755879137"
       },
       {
+        "file": "docs/224_E_14TH_STREET_BUILDING_DETAIL_WIRE_DIAGRAM.md",
+        "hash": "1054924389925813978"
+      },
+      {
         "file": "docs/ADMIN_DASHBOARD_WIRE_DIAGRAM.md",
-        "hash": "14763829253109294801"
+        "hash": "5628870185675071242"
+      },
+      {
+        "file": "docs/ALL_WIRE_DASHBOARDS_SHEETS_UPDATE_SUMMARY.md",
+        "hash": "9063400851718527703"
+      },
+      {
+        "file": "docs/BUILDING_DETAIL_ASSESSMENT.md",
+        "hash": "7307633829120537899"
+      },
+      {
+        "file": "docs/BUILDING_DETAIL_SCREEN_TEMPLATE.md",
+        "hash": "11086231008787374518"
       },
       {
         "file": "docs/CLIENT_DASHBOARD_WIRE_DIAGRAM.md",
-        "hash": "17991313243551252865"
+        "hash": "8216558265478926508"
+      },
+      {
+        "file": "docs/COMPLETE_OPERATIONAL_PLAYBOOK.md",
+        "hash": "13483341889160285694"
+      },
+      {
+        "file": "docs/COMPLIANCE_DASHBOARD_INTEGRATION.md",
+        "hash": "13160244969923456853"
+      },
+      {
+        "file": "docs/COMPLIANCE_DASHBOARD_MOBILE_INTEGRATION.md",
+        "hash": "16898938798523629251"
+      },
+      {
+        "file": "docs/COMPLIANCE_DASHBOARD_REAL_DATA_WIRE_DIAGRAMS.md",
+        "hash": "8008908706446592659"
       },
       {
         "file": "docs/COMPLIANCE_DASHBOARD_TEST_REPORT.md",
         "hash": "3521647508639309718"
       },
       {
+        "file": "docs/COMPLIANCE_DASHBOARD_WIRE_DIAGRAMS.md",
+        "hash": "5928401726502180274"
+      },
+      {
+        "file": "docs/COMPLIANCE_DATA_FIXES.md",
+        "hash": "1355039301976409264"
+      },
+      {
+        "file": "docs/COMPLIANCE_DATA_FIXES_SUMMARY.md",
+        "hash": "3166496213413901427"
+      },
+      {
         "file": "docs/COMPLIANCE_VIEW_WIRE_DIAGRAMS.md",
-        "hash": "18302803612400333637"
+        "hash": "16779727476252940929"
       },
       {
         "file": "docs/COMPREHENSIVE_DASHBOARD_WIRE_DIAGRAMS.md",
         "hash": "4667450523576140533"
       },
       {
-        "file": "docs/CONTINUITY_REPORT.md",
-        "hash": "7678165885166505219"
+        "file": "docs/CONTINUITY_REPORT_CONSOLIDATED.md",
+        "hash": "14882628647307442594"
+      },
+      {
+        "file": "docs/DEPENDENCIES_AND_SCREENS_UPDATE_SUMMARY.md",
+        "hash": "12656427324848150505"
       },
       {
         "file": "docs/FILE_ORGANIZATION_GUIDANCE.md",
@@ -4578,6 +4870,10 @@
       {
         "file": "docs/NAVIGATION_ARCHITECTURE.md",
         "hash": "7796916385623583941"
+      },
+      {
+        "file": "docs/OPERATIONAL_DATA_INTEGRATION.md",
+        "hash": "8615438907296723743"
       },
       {
         "file": "docs/PERFORMANCE_OPTIMIZATIONS.md",
@@ -4593,11 +4889,31 @@
       },
       {
         "file": "docs/README.md",
-        "hash": "7466873090281368304"
+        "hash": "10367015341762223967"
+      },
+      {
+        "file": "docs/README_CONSOLIDATED.md",
+        "hash": "2589882375897580027"
+      },
+      {
+        "file": "docs/ROLE_BASED_BUILDING_DETAIL_INTELLIGENCE.md",
+        "hash": "15942487083503820655"
+      },
+      {
+        "file": "docs/RUNTIME_ERROR_FIX_SUMMARY.md",
+        "hash": "3474136793038061206"
+      },
+      {
+        "file": "docs/UNIFIED_BUILDING_DETAIL_SCREEN.md",
+        "hash": "7780150915131985359"
       },
       {
         "file": "docs/WORKER_DASHBOARD_WIRE_DIAGRAM.md",
-        "hash": "17179158486985872033"
+        "hash": "16493642258146789437"
+      },
+      {
+        "file": "docs/WORKER_LOCATION_BUILDING_ASSESSMENT.md",
+        "hash": "8643265638028362106"
       },
       {
         "file": "docs/archive/ACTUAL_CODEBASE_STATE_REPORT.md",
@@ -4761,7 +5077,7 @@
       },
       {
         "file": "package.json",
-        "hash": "3578359028407210449"
+        "hash": "8056629713547007900"
       },
       {
         "file": "scripts/analyze-bundle.js",
@@ -4804,8 +5120,16 @@
         "hash": "6858707099976527299"
       },
       {
+        "file": "start-ios.sh",
+        "hash": "2450460589783857072"
+      },
+      {
         "file": "supabase/config.toml",
         "hash": "17824313339316520371"
+      },
+      {
+        "file": "test-supabase-connection.js",
+        "hash": "163059973702907469"
       },
       {
         "file": "tsconfig.base.json",
@@ -4814,6 +5138,14 @@
       {
         "file": "tsconfig.json",
         "hash": "4554133361980968312"
+      },
+      {
+        "file": "tsconfig.tsbuildinfo",
+        "hash": "15795359353793877190"
+      },
+      {
+        "file": "yarn.lock",
+        "hash": "1796383601807095737"
       }
     ]
   }

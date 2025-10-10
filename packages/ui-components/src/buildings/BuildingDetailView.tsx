@@ -21,14 +21,11 @@ import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-compone
 import { NamedCoordinate, BuildingMetrics, ComplianceIssue } from '@cyntientops/domain-schema';
 import { ServiceContainer } from '@cyntientops/business-core';
 import { BuildingOverviewTab } from './tabs/BuildingOverviewTab';
-import { BuildingTasksTab } from './tabs/BuildingTasksTab';
-import { BuildingTeamTab } from './tabs/BuildingTeamTab';
-import { BuildingInventoryTab } from './tabs/BuildingInventoryTab';
+import { BuildingOperationsTab } from './tabs/BuildingOperationsTab';
 import { BuildingComplianceTab } from './tabs/BuildingComplianceTab';
-import { BuildingHistoryTab } from './tabs/BuildingHistoryTab';
-import { BuildingRoutesTab } from './tabs/BuildingRoutesTab';
-import { BuildingMediaTab } from './tabs/BuildingMediaTab';
-import { BuildingSettingsTab } from './tabs/BuildingSettingsTab';
+import { BuildingResourcesTab } from './tabs/BuildingResourcesTab';
+import { BuildingEmergencyTab } from './tabs/BuildingEmergencyTab';
+import { BuildingReportsTab } from './tabs/BuildingReportsTab';
 
 export interface BuildingDetailViewProps {
   container: ServiceContainer;
@@ -43,14 +40,11 @@ export interface BuildingDetailViewProps {
 
 export enum BuildingDetailTab {
   OVERVIEW = 'Overview',
-  TASKS = 'Tasks',
-  TEAM = 'Team',
-  INVENTORY = 'Inventory',
+  OPERATIONS = 'Operations',
   COMPLIANCE = 'Compliance',
-  HISTORY = 'History',
-  ROUTES = 'Routes',
-  MEDIA = 'Media',
-  SETTINGS = 'Settings'
+  RESOURCES = 'Resources',
+  EMERGENCY = 'Emergency',
+  REPORTS = 'Reports'
 }
 
 export interface BuildingDetailData {
@@ -266,14 +260,11 @@ export const BuildingDetailView: React.FC<BuildingDetailViewProps> = ({
   const getTabIcon = (tab: BuildingDetailTab): string => {
     switch (tab) {
       case BuildingDetailTab.OVERVIEW: return '📊';
-      case BuildingDetailTab.TASKS: return '✅';
-      case BuildingDetailTab.TEAM: return '👥';
-      case BuildingDetailTab.INVENTORY: return '📦';
+      case BuildingDetailTab.OPERATIONS: return '⚙️';
       case BuildingDetailTab.COMPLIANCE: return '🛡️';
-      case BuildingDetailTab.HISTORY: return '📅';
-      case BuildingDetailTab.ROUTES: return '🗺️';
-      case BuildingDetailTab.MEDIA: return '📷';
-      case BuildingDetailTab.SETTINGS: return '⚙️';
+      case BuildingDetailTab.RESOURCES: return '📦';
+      case BuildingDetailTab.EMERGENCY: return '🚨';
+      case BuildingDetailTab.REPORTS: return '📋';
       default: return '📊';
     }
   };
@@ -282,14 +273,14 @@ export const BuildingDetailView: React.FC<BuildingDetailViewProps> = ({
     if (!buildingData) return 0;
     
     switch (tab) {
-      case BuildingDetailTab.TASKS:
+      case BuildingDetailTab.OPERATIONS:
         return buildingData.tasks.filter(task => task.status === 'pending' || task.status === 'overdue').length;
-      case BuildingDetailTab.TEAM:
-        return buildingData.workers.filter(worker => worker.status === 'online').length;
       case BuildingDetailTab.COMPLIANCE:
         return buildingData.compliance.issues.filter(issue => issue.severity === 'critical' || issue.severity === 'high').length;
-      case BuildingDetailTab.INVENTORY:
+      case BuildingDetailTab.RESOURCES:
         return buildingData.inventory.filter(item => item.status === 'low_stock' || item.status === 'out_of_stock').length;
+      case BuildingDetailTab.EMERGENCY:
+        return buildingData.compliance.issues.filter(issue => issue.severity === 'critical').length;
       default:
         return 0;
     }
@@ -308,26 +299,14 @@ export const BuildingDetailView: React.FC<BuildingDetailViewProps> = ({
             onTaskPress={onTaskPress}
           />
         );
-      case BuildingDetailTab.TASKS:
+      case BuildingDetailTab.OPERATIONS:
         return (
-          <BuildingTasksTab
+          <BuildingOperationsTab
             tasks={buildingData.tasks}
             workers={buildingData.workers}
+            routes={buildingData.routes}
             onTaskPress={onTaskPress}
             onWorkerPress={onWorkerPress}
-          />
-        );
-      case BuildingDetailTab.TEAM:
-        return (
-          <BuildingTeamTab
-            workers={buildingData.workers}
-            onWorkerPress={onWorkerPress}
-          />
-        );
-      case BuildingDetailTab.INVENTORY:
-        return (
-          <BuildingInventoryTab
-            inventory={buildingData.inventory}
           />
         );
       case BuildingDetailTab.COMPLIANCE:
@@ -337,30 +316,28 @@ export const BuildingDetailView: React.FC<BuildingDetailViewProps> = ({
             onCompliancePress={onCompliancePress}
           />
         );
-      case BuildingDetailTab.HISTORY:
+      case BuildingDetailTab.RESOURCES:
         return (
-          <BuildingHistoryTab
-            building={buildingData.building}
-          />
-        );
-      case BuildingDetailTab.ROUTES:
-        return (
-          <BuildingRoutesTab
-            routes={buildingData.routes}
-            building={buildingData.building}
-          />
-        );
-      case BuildingDetailTab.MEDIA:
-        return (
-          <BuildingMediaTab
+          <BuildingResourcesTab
+            inventory={buildingData.inventory}
             media={buildingData.media}
+            building={buildingData.building}
           />
         );
-      case BuildingDetailTab.SETTINGS:
+      case BuildingDetailTab.EMERGENCY:
         return (
-          <BuildingSettingsTab
+          <BuildingEmergencyTab
             building={buildingData.building}
-            onBuildingUpdate={loadBuildingData}
+            workers={buildingData.workers}
+            compliance={buildingData.compliance}
+          />
+        );
+      case BuildingDetailTab.REPORTS:
+        return (
+          <BuildingReportsTab
+            building={buildingData.building}
+            metrics={buildingData.building.metrics}
+            compliance={buildingData.compliance}
           />
         );
       default:

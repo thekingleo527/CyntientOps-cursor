@@ -859,6 +859,79 @@ export const BuildingSpacesTab: React.FC<BuildingSpacesTabProps> = ({
     );
   };
 
+  const renderSmartGallery = () => {
+    return (
+      <GlassCard style={styles.smartGalleryCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
+        <Text style={styles.smartGalleryTitle}>📸 Building Gallery</Text>
+        
+        {/* Search and Filter Controls */}
+        <View style={styles.galleryControls}>
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search photos..."
+              placeholderTextColor={Colors.secondaryText}
+            />
+          </View>
+          <View style={styles.filterControls}>
+            <TouchableOpacity style={styles.filterButton}>
+              <Text style={styles.filterButtonText}>Filter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sortButton}>
+              <Text style={styles.sortButtonText}>Sort</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.viewToggleButton}>
+              <Text style={styles.viewToggleText}>Grid/List</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Smart Category Tags */}
+        <View style={styles.smartCategoriesContainer}>
+          <Text style={styles.smartCategoriesTitle}>Smart Categories</Text>
+          <View style={styles.smartCategoriesGrid}>
+            {[
+              { name: 'Building Exterior', icon: '🏢', count: 12 },
+              { name: 'Basement Boiler', icon: '⚙️', count: 8 },
+              { name: 'Roof Drains', icon: '🏠', count: 6 },
+              { name: 'Garbage Set-Out', icon: '🗑️', count: 4 },
+              { name: 'Hot Water System', icon: '🔥', count: 3 },
+              { name: 'Stairwell Access', icon: '🪜', count: 5 },
+              { name: 'Unit Entrance', icon: '🚪', count: 7 },
+              { name: 'Maintenance Areas', icon: '🔧', count: 9 }
+            ].map((category, index) => (
+              <TouchableOpacity key={index} style={styles.smartCategoryItem}>
+                <Text style={styles.smartCategoryIcon}>{category.icon}</Text>
+                <Text style={styles.smartCategoryName}>{category.name}</Text>
+                <Text style={styles.smartCategoryCount}>({category.count})</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Gallery Actions */}
+        <View style={styles.galleryActions}>
+          <TouchableOpacity style={styles.galleryActionButton}>
+            <Text style={styles.galleryActionIcon}>📸</Text>
+            <Text style={styles.galleryActionText}>Add Photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.galleryActionButton}>
+            <Text style={styles.galleryActionIcon}>✏️</Text>
+            <Text style={styles.galleryActionText}>Edit Gallery</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.galleryActionButton}>
+            <Text style={styles.galleryActionIcon}>📤</Text>
+            <Text style={styles.galleryActionText}>Export</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.galleryActionButton}>
+            <Text style={styles.galleryActionIcon}>📤</Text>
+            <Text style={styles.galleryActionText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+      </GlassCard>
+    );
+  };
+
   const renderQuickActions = () => {
     return (
       <GlassCard style={styles.quickActionsCard} intensity={GlassIntensity.REGULAR} cornerRadius={CornerRadius.CARD}>
@@ -1004,6 +1077,7 @@ export const BuildingSpacesTab: React.FC<BuildingSpacesTabProps> = ({
         </View>
 
         {renderStats()}
+        {renderSmartGallery()}
         {renderQuickActions()}
         {renderFilters()}
 
@@ -1929,6 +2003,144 @@ const styles = StyleSheet.create({
     color: Colors.primaryText,
     minHeight: 80,
     textAlignVertical: 'top',
+  },
+  // Smart Gallery Styles
+  smartGalleryCard: {
+    marginBottom: Spacing.md,
+    padding: Spacing.md,
+  },
+  smartGalleryTitle: {
+    ...Typography.subheadline,
+    color: Colors.primaryText,
+    fontWeight: '600',
+    marginBottom: Spacing.md,
+  },
+  galleryControls: {
+    marginBottom: Spacing.md,
+  },
+  searchContainer: {
+    marginBottom: Spacing.sm,
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
+    borderRadius: 8,
+    padding: Spacing.sm,
+    backgroundColor: Colors.glassOverlay,
+    ...Typography.body,
+    color: Colors.primaryText,
+  },
+  filterControls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  filterButton: {
+    flex: 1,
+    backgroundColor: Colors.glassOverlay,
+    borderRadius: 8,
+    padding: Spacing.sm,
+    marginRight: Spacing.xs,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
+  },
+  filterButtonText: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  sortButton: {
+    flex: 1,
+    backgroundColor: Colors.glassOverlay,
+    borderRadius: 8,
+    padding: Spacing.sm,
+    marginHorizontal: Spacing.xs,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
+  },
+  sortButtonText: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  viewToggleButton: {
+    flex: 1,
+    backgroundColor: Colors.glassOverlay,
+    borderRadius: 8,
+    padding: Spacing.sm,
+    marginLeft: Spacing.xs,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
+  },
+  viewToggleText: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    fontWeight: '600',
+  },
+  smartCategoriesContainer: {
+    marginBottom: Spacing.md,
+  },
+  smartCategoriesTitle: {
+    ...Typography.body,
+    color: Colors.primaryText,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+  },
+  smartCategoriesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  smartCategoryItem: {
+    width: '48%',
+    backgroundColor: Colors.glassOverlay,
+    borderRadius: 8,
+    padding: Spacing.sm,
+    marginBottom: Spacing.sm,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
+  },
+  smartCategoryIcon: {
+    fontSize: 20,
+    marginBottom: Spacing.xs,
+  },
+  smartCategoryName: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  smartCategoryCount: {
+    ...Typography.captionSmall,
+    color: Colors.secondaryText,
+  },
+  galleryActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  galleryActionButton: {
+    flex: 1,
+    backgroundColor: Colors.glassOverlay,
+    borderRadius: 8,
+    padding: Spacing.sm,
+    marginHorizontal: Spacing.xs,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderSubtle,
+  },
+  galleryActionIcon: {
+    fontSize: 16,
+    marginBottom: Spacing.xs,
+  },
+  galleryActionText: {
+    ...Typography.caption,
+    color: Colors.primaryText,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
 

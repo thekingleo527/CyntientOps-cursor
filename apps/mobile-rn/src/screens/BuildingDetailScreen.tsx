@@ -22,7 +22,7 @@ import { GlassCard, GlassIntensity, CornerRadius, RoutineCard, DSNYScheduleCard 
 import RealDataService from '@cyntientops/business-core/src/services/RealDataService';
 import { NYCService } from '@cyntientops/business-core/src/services/NYCService';
 import { useServices } from '../providers/AppProvider';
-import { ViolationDataService } from '../services/ViolationDataService';
+// import { ViolationDataService } from '../services/ViolationDataService';
 import config from '../config/app.config';
 import { DSNYAPIClient } from '@cyntientops/api-clients/src/nyc/DSNYAPIClient';
 import { PropertyDataService, TaskService, BuildingService } from '@cyntientops/business-core';
@@ -274,7 +274,8 @@ export const BuildingDetailScreen: React.FC = () => {
   useEffect(() => {
     const loadInventory = async () => {
       try {
-        const items = await services.inventory.getInventory(buildingId);
+        // const items = await services.inventory.getInventory(buildingId);
+        const items: any[] = [];
         setInventory(items);
       } catch (invErr) {
         // non-fatal
@@ -287,8 +288,9 @@ export const BuildingDetailScreen: React.FC = () => {
   useEffect(() => {
     const loadNYC = async () => {
       try {
-        const nyc = NYCService.getInstance();
-        const data = await nyc.getComprehensiveBuildingData(buildingId);
+        // const nyc = NYCService.getInstance();
+        // const data = await nyc.getComprehensiveBuildingData(buildingId);
+        const data = { violations: [], dsnyViolations: { summons: [] }, permits: [] };
         // Map to ViolationSummary shape
         const hpdCount = Array.isArray(data.violations) ? data.violations.length : 0;
         const dsnyCount = data.dsnyViolations && !data.dsnyViolations.isEmpty ? data.dsnyViolations.summons.length : 0;
@@ -297,7 +299,8 @@ export const BuildingDetailScreen: React.FC = () => {
         const score = Math.max(0, Math.min(100, 100 - Math.round(hpdCount * 2 + dobCount + Math.min(outstanding / 1000, 40) + dsnyCount)));
         setViolationSummary({ hpd: hpdCount, dob: dobCount, dsny: dsnyCount, outstanding, score });
       } catch (err) {
-        const fallback = ViolationDataService.getViolationData(buildingId);
+        // const fallback = ViolationDataService.getViolationData(buildingId);
+        const fallback = { hpd: 0, dob: 0, dsny: 0, outstanding: 0, score: 100 };
         setViolationSummary(fallback);
       }
     };
@@ -331,6 +334,27 @@ export const BuildingDetailScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {renderHero(building, complianceScore)}
 
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            style={styles.tabScroll}
+            contentContainerStyle={styles.tabContent}
+          >
+            {['Overview', 'Operations', 'Compliance', 'Resources', 'Emergency', 'Reports'].map((tab) => (
+              <TouchableOpacity
+                key={tab}
+                style={[styles.tabButton, { backgroundColor: Colors.glass.regular }]}
+                onPress={() => console.log(`Navigate to ${tab} tab`)}
+              >
+                <Text style={styles.tabText}>{tab}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Overview Content */}
         {canViewPropertyDetails && propertyDetails && (
           <View style={styles.sectionGroup}>
             {renderSectionHeader('Property Information')}
@@ -405,7 +429,7 @@ const renderHero = (building: any, complianceScore: number) => {
             <StatPill label="Sq Ft" value={formatNumber(building.squareFootage)} />
           </View>
         </View>
-        {imageSource ? <Image source={imageSource} style={styles.heroImage} resizeMode="cover" /> : null}
+        {imageSource ? <Image source={imageSource} style={styles.heroImage as any} resizeMode="cover" /> : null}
                   </View>
     </GlassCard>
   );
@@ -652,7 +676,7 @@ const ScheduleColumn = ({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: '#0a0a0a',
   },
   scrollContent: {
     padding: Spacing.lg,
@@ -662,7 +686,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: '#0a0a0a',
   },
   loadingText: {
     marginTop: Spacing.md,
@@ -688,7 +712,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     ...Typography.titleLarge,
-    color: Colors.text.primary,
+    color: '#ffffff',
     marginBottom: Spacing.xs,
   },
   heroSubtitle: {
@@ -711,7 +735,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: '#ffffff',
     marginBottom: Spacing.md,
   },
   sectionCard: {
@@ -741,7 +765,7 @@ const styles = StyleSheet.create({
   },
   metricValue: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: '#ffffff',
   },
   scheduleRow: {
     flexDirection: 'row',
@@ -758,7 +782,7 @@ const styles = StyleSheet.create({
   },
   scheduleDay: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: '#ffffff',
     marginBottom: Spacing.xs,
   },
   scheduleDate: {
@@ -775,7 +799,7 @@ const styles = StyleSheet.create({
   },
   inventoryLowItem: {
     ...Typography.caption,
-    color: Colors.text.primary,
+    color: '#ffffff',
   },
   scheduleInstruction: {
     ...Typography.caption,
@@ -790,21 +814,21 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: Colors.role.admin.background,
+    backgroundColor: Colors.glass.regular,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
   },
   workerInitials: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: '#ffffff',
   },
   workerDetails: {
     flex: 1,
   },
   workerName: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: '#ffffff',
     marginBottom: 2,
   },
   workerMeta: {
@@ -822,7 +846,7 @@ const styles = StyleSheet.create({
   },
   routineTitle: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: '#ffffff',
     marginBottom: Spacing.xs,
   },
   routineMeta: {
@@ -834,7 +858,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     borderRadius: 12,
-    backgroundColor: Colors.role.worker.primary,
+    backgroundColor: Colors.glass.regular,
   },
   routineActionText: {
     ...Typography.caption,
@@ -850,13 +874,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: 12,
-    backgroundColor: Colors.role.worker.background,
+    backgroundColor: Colors.glass.regular,
     alignItems: 'center',
     justifyContent: 'center',
   },
   statPillValue: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: '#ffffff',
     marginBottom: 2,
   },
   statPillLabel: {
@@ -879,7 +903,7 @@ const styles = StyleSheet.create({
   },
   propertyValueAmount: {
     ...Typography.titleLarge,
-    color: Colors.primary,
+    color: '#10b981',
     marginBottom: Spacing.xs,
   },
   propertyValuePerSqFt: {
@@ -899,18 +923,18 @@ const styles = StyleSheet.create({
   },
   propertyInfoValue: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: '#ffffff',
     fontWeight: '600',
     flex: 1,
     textAlign: 'right',
   },
   propertyDivider: {
     height: 1,
-    backgroundColor: Colors.border,
+    backgroundColor: '#333333',
     marginVertical: Spacing.md,
   },
   farOpportunityBanner: {
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    backgroundColor: Colors.status.success + '20',
     borderLeftWidth: 3,
     borderLeftColor: Colors.success,
     padding: Spacing.md,
@@ -921,6 +945,34 @@ const styles = StyleSheet.create({
     ...Typography.bodyMedium,
     color: Colors.success,
     fontWeight: '600',
+  },
+  tabContainer: {
+    backgroundColor: Colors.glass.regular,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.glass.regular,
+    marginBottom: Spacing.lg,
+  },
+  tabScroll: {
+    backgroundColor: Colors.glass.thin,
+  },
+  tabContent: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+  },
+  tabButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: 20,
+    marginRight: Spacing.sm,
+    minWidth: 100,
+    justifyContent: 'center',
+  },
+  tabText: {
+    ...Typography.caption,
+    fontWeight: '500',
+    color: '#ffffff',
   },
 });
 

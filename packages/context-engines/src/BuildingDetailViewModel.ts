@@ -174,11 +174,23 @@ export interface BuildingDetailState {
   lowStockCount: number;
   totalInventoryValue: number;
   
-  // Spaces & Access
+  // Resources & Media
   spaces: SpaceAccess[];
   accessCodes: AccessCode[];
   spaceSearchQuery: string;
   selectedSpaceCategory: SpaceCategory;
+  mediaGallery: Array<{
+    id: string;
+    type: 'photo' | 'video' | 'document';
+    title: string;
+    description?: string;
+    url: string;
+    thumbnailUrl?: string;
+    uploadedBy: string;
+    uploadedAt: Date;
+    tags: string[];
+  }>;
+  smartTags: string[];
   
   // Compliance
   dsnyCompliance: ComplianceStatus;
@@ -199,6 +211,38 @@ export interface BuildingDetailState {
   
   // Activity
   recentActivities: BuildingDetailActivity[];
+  
+  // Emergency
+  emergencyContacts: Array<{
+    id: string;
+    name: string;
+    role: string;
+    phone: string;
+    email?: string;
+    isEmergencyContact: boolean;
+  }>;
+  emergencyProcedures: Array<{
+    id: string;
+    title: string;
+    description: string;
+    steps: string[];
+  }>;
+  safetyEquipment: Array<{
+    id: string;
+    name: string;
+    location: string;
+    status: string;
+    lastInspected: Date;
+  }>;
+  
+  // Reports
+  buildingReports: Array<{
+    id: string;
+    title: string;
+    type: 'overview' | 'analysis' | 'standards' | 'maintenance' | 'performance';
+    generatedDate: Date;
+    data: any;
+  }>;
   
   // Statistics
   buildingStatistics?: BuildingDetailStatistics;
@@ -306,6 +350,20 @@ export function useBuildingDetailViewModel(
     accessCodes: [],
     spaceSearchQuery: '',
     selectedSpaceCategory: SpaceCategory.ALL,
+    mediaGallery: [],
+    smartTags: [
+      'Building Exterior',
+      'Basement Boiler',
+      'Roof Drains',
+      'Garbage Set-Out',
+      'Hot Water System',
+      'Stairwell Access',
+      'Unit Entrance',
+      'Maintenance Areas',
+      'Common Areas',
+      'Storage Areas',
+      'Emergency Areas'
+    ],
     dsnyCompliance: ComplianceStatus.COMPLIANT,
     fireSafetyCompliance: ComplianceStatus.COMPLIANT,
     healthCompliance: ComplianceStatus.COMPLIANT,
@@ -316,6 +374,10 @@ export function useBuildingDetailViewModel(
     rawLL97Data: [],
     facadeFilings: [],
     recentActivities: [],
+    emergencyContacts: [],
+    emergencyProcedures: [],
+    safetyEquipment: [],
+    buildingReports: [],
     buildingTasks: [],
     workerProfiles: [],
     coordinate: { latitude: 40.7589, longitude: -73.9851 }

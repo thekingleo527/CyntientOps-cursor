@@ -240,6 +240,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
   return (
     <NavigationContainer>
       <Stack.Navigator
+        id="root-stack"
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: '#0a0a0a' },

@@ -97,3 +97,14 @@ export type {
   BuildingCompletionHistory,
   TaskCompletionPhoto
 } from './types/TaskCompletion';
+
+// Operational Data Types
+export type {
+  OperationalDataTaskAssignment,
+  WorkerRoutineSchedule,
+  WorkerScheduleItem,
+  CachedBuilding,
+  CachedWorker,
+  OperationalEvent
+} from './OperationalDataManager';
+export { OperationalDataManager, operationalDataManager, CanonicalIDs } from './OperationalDataManager';

@@ -11,10 +11,14 @@ import buildingsData from './buildings.json';
 import clientsData from './clients.json';
 import routinesData from './routines.json';
 
+// Export with both names for compatibility
 export const workers = workersData;
 export const buildings = buildingsData;
 export const clients = clientsData;
 export const routines = routinesData;
+
+// Also export original names for backward compatibility
+export { workersData, buildingsData, clientsData, routinesData };
 
 // Data validation counts (must match Swift OperationalDataManager)
 export const DATA_VALIDATION = {

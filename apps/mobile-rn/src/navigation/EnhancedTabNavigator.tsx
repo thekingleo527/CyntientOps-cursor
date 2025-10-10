@@ -41,6 +41,7 @@ export const EnhancedTabNavigator: React.FC<EnhancedTabNavigatorProps> = ({
   if (userRole === 'worker') {
     return (
       <Tab.Navigator
+        id="worker-tabs"
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
@@ -93,6 +94,7 @@ export const EnhancedTabNavigator: React.FC<EnhancedTabNavigatorProps> = ({
   if (userRole === 'client') {
     return (
       <Tab.Navigator
+        id="client-tabs"
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
@@ -131,6 +133,7 @@ export const EnhancedTabNavigator: React.FC<EnhancedTabNavigatorProps> = ({
   // Admin
   return (
     <Tab.Navigator
+      id="admin-tabs"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {

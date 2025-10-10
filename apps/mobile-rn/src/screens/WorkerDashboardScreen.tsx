@@ -21,7 +21,8 @@ import { useServices } from '../providers/AppProvider';
 import { OperationalDataTaskAssignment } from '@cyntientops/domain-schema';
 
 interface WorkerDashboardScreenProps {
-  workerId: string;
+  workerId?: string;
+  userId?: string; // Alias for workerId
   onNavigateToTask?: (taskId: string) => void;
   onNavigateToBuilding?: (buildingId: string) => void;
   onLogout?: () => void;
@@ -30,13 +31,15 @@ interface WorkerDashboardScreenProps {
 }
 
 export const WorkerDashboardScreen: React.FC<WorkerDashboardScreenProps> = ({
-  workerId,
+  workerId: workerIdProp,
+  userId,
   onNavigateToTask,
   onNavigateToBuilding,
   onLogout,
   userRole = 'worker',
   userName = 'Worker'
 }) => {
+  const workerId = userId || workerIdProp || '1'; // Use userId if provided, fallback to workerId
   const [viewModel, setViewModel] = useState<WorkerDashboardViewModel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

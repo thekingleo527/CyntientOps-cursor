@@ -294,7 +294,8 @@ export { TaskTimelineView } from './timeline/TaskTimelineView';
 export { BuildingMapView } from './maps/BuildingMapView';
 
 // Analytics Components
-export { AnalyticsDashboard } from './analytics/components/AnalyticsDashboard';
+export { AnalyticsDashboard, LegacyAnalyticsDashboard } from './analytics/components/AnalyticsDashboard';
+export type { AnalyticsData, KPICard, TrendData, PerformanceMatrix, AIInsight, AnalyticsDashboardProps, LegacyAnalyticsDashboardProps } from './analytics/components/AnalyticsDashboard';
 
 // Analytics Cards
 export { default as RouteEfficiencyCard } from './cards/RouteEfficiencyCard';

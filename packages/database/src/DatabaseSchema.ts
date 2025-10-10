@@ -33,7 +33,8 @@ export class DatabaseSchema {
       this.createSupplyRequestsTable(),
       this.createBuildingActivityTable(),
       this.createDashboardUpdatesTable(),
-      this.createCacheEntriesTable()
+      this.createCacheEntriesTable(),
+      this.createRoutineTaskCompletionsTable()
     ];
   }
 
@@ -403,7 +404,12 @@ export class DatabaseSchema {
       'CREATE INDEX IF NOT EXISTS idx_dashboard_updates_worker ON dashboard_updates(worker_id);',
       'CREATE INDEX IF NOT EXISTS idx_dashboard_updates_timestamp ON dashboard_updates(timestamp);',
       'CREATE INDEX IF NOT EXISTS idx_cache_entries_key ON cache_entries(cache_key);',
-      'CREATE INDEX IF NOT EXISTS idx_cache_entries_expires ON cache_entries(expires_at);'
+      'CREATE INDEX IF NOT EXISTS idx_cache_entries_expires ON cache_entries(expires_at);',
+      'CREATE INDEX IF NOT EXISTS idx_routine_completions_routine ON routine_task_completions(routine_id);',
+      'CREATE INDEX IF NOT EXISTS idx_routine_completions_worker ON routine_task_completions(worker_id);',
+      'CREATE INDEX IF NOT EXISTS idx_routine_completions_building ON routine_task_completions(building_id);',
+      'CREATE INDEX IF NOT EXISTS idx_routine_completions_completed_at ON routine_task_completions(completed_at);',
+      'CREATE INDEX IF NOT EXISTS idx_routine_completions_status ON routine_task_completions(status);'
     ];
   }
 
@@ -578,6 +584,37 @@ export class DatabaseSchema {
         encrypted INTEGER DEFAULT 0 CHECK (encrypted IN (0, 1)),
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+  }
+
+  private createRoutineTaskCompletionsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS routine_task_completions (
+        id TEXT PRIMARY KEY,
+        routine_id TEXT NOT NULL,
+        worker_id TEXT NOT NULL,
+        building_id TEXT NOT NULL,
+        task_name TEXT NOT NULL,
+        scheduled_start TEXT NOT NULL,
+        scheduled_end TEXT NOT NULL,
+        actual_start TEXT,
+        actual_end TEXT,
+        completed_at TEXT NOT NULL,
+        status TEXT DEFAULT 'completed' CHECK (status IN ('completed', 'partial', 'skipped', 'cancelled')),
+        duration_minutes INTEGER,
+        photos TEXT DEFAULT '[]',
+        notes TEXT,
+        location_verified INTEGER DEFAULT 0 CHECK (location_verified IN (0, 1)),
+        quality_rating INTEGER CHECK (quality_rating >= 1 AND quality_rating <= 5),
+        requires_followup INTEGER DEFAULT 0 CHECK (requires_followup IN (0, 1)),
+        followup_notes TEXT,
+        metadata TEXT DEFAULT '{}',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (routine_id) REFERENCES routines(id) ON DELETE CASCADE,
+        FOREIGN KEY (worker_id) REFERENCES workers(id) ON DELETE CASCADE,
+        FOREIGN KEY (building_id) REFERENCES buildings(id) ON DELETE CASCADE
       )
     `;
   }

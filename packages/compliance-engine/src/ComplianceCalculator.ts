@@ -32,15 +32,96 @@ export class ComplianceCalculator {
   }
 
   /**
-   * Compliance score (0-100). Deduct by severity/open counts and emissions average.
-   * Inputs are generic; callers map their data to this shape.
+   * Compliance score (0-100) - Fixed for Real Data
+   * Deduct by severity/open counts, emissions, and outstanding fines.
    */
   static calculateComplianceScore(input: {
+    hpdViolations: number;
+    dsnyViolations: number;
+    fdnyFailures: number;
+    complaints311: number;
+    outstandingFines: number;
+    avgEmissions?: number;
+  }): {
+    score: number;
+    grade: string;
+    status: 'excellent' | 'good' | 'medium' | 'poor' | 'critical';
+  } {
+    let score = 100;
+    
+    // HPD violations penalty (most severe)
+    score -= input.hpdViolations * 8;
+    
+    // DSNY violations penalty
+    score -= input.dsnyViolations * 6;
+    
+    // FDNY failures penalty (fire safety critical)
+    score -= input.fdnyFailures * 10;
+    
+    // 311 complaints penalty
+    score -= input.complaints311 * 3;
+    
+    // Outstanding fines penalty
+    if (input.outstandingFines > 0) {
+      score -= Math.min(20, input.outstandingFines / 1000); // Cap at 20 points
+    }
+    
+    // Emissions penalty
+    if (input.avgEmissions && input.avgEmissions > 0) {
+      score -= Math.min(15, input.avgEmissions / 100); // Cap at 15 points
+    }
+    
+    // Ensure score doesn't go below 0
+    score = Math.max(0, score);
+    
+    // Calculate grade and status
+    let grade: string;
+    let status: 'excellent' | 'good' | 'medium' | 'poor' | 'critical';
+    
+    if (score >= 95) {
+      grade = 'A+';
+      status = 'excellent';
+    } else if (score >= 90) {
+      grade = 'A';
+      status = 'excellent';
+    } else if (score >= 85) {
+      grade = 'A-';
+      status = 'good';
+    } else if (score >= 80) {
+      grade = 'B+';
+      status = 'good';
+    } else if (score >= 75) {
+      grade = 'B';
+      status = 'medium';
+    } else if (score >= 70) {
+      grade = 'B-';
+      status = 'medium';
+    } else if (score >= 65) {
+      grade = 'C+';
+      status = 'poor';
+    } else if (score >= 60) {
+      grade = 'C';
+      status = 'poor';
+    } else if (score >= 50) {
+      grade = 'D';
+      status = 'critical';
+    } else {
+      grade = 'F';
+      status = 'critical';
+    }
+    
+    return { score: Math.round(score), grade, status };
+  }
+
+  /**
+   * Legacy method for backward compatibility
+   */
+  static calculateLegacyComplianceScore(input: {
     openCritical: number;
     openWarning: number;
     openInfo: number;
-    avgEmissions?: number; // LL97 intensity; normalize loosely
-    outstandingFines?: number; // DSNY dollars
+    avgEmissions?: number;
+    outstandingFines?: number;
   }): number {
     let score = 100;
     score -= input.openCritical * 12;

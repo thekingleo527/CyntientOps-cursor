@@ -14,7 +14,8 @@
     "lint:fix": "eslint src --ext .ts,.tsx --fix"
   },
   "dependencies": {
-    "@cyntientops/domain-schema": "*"
+    "@cyntientops/domain-schema": "*",
+    "@cyntientops/api-clients": "*"
   },
   "devDependencies": {
     "typescript": "^5.3.0"

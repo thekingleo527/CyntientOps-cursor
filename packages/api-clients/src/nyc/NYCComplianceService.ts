@@ -13,7 +13,7 @@ import { nycAPIService } from './NYCAPIService';
 export class NYCComplianceService {
   private apiService = nycAPIService;
 
-  // Process raw HPD violations into actionable compliance issues
+  // Process raw HPD violations into actionable compliance issues - Fixed for Real Data
   processHPDViolations(violations: HPDViolation[]): {
     critical: HPDViolation[];
     warning: HPDViolation[];
@@ -24,6 +24,9 @@ export class NYCComplianceService {
       critical: number;
       warning: number;
       info: number;
+      totalFines: number;
+      outstandingFines: number;
+      paidFines: number;
     };
   } {
     const critical: HPDViolation[] = [];
@@ -32,17 +35,24 @@ export class NYCComplianceService {
 
     violations.forEach(violation => {
       const isOpen = violation.currentstatus === 'OPEN' || violation.currentstatus === 'ACTIVE';
-      const isCritical = violation.violationclass === 'A' || violation.violationclass === 'B';
-      const isWarning = violation.violationclass === 'C';
+      const isCritical = violation.violationclass === 'A';
+      const isWarning = violation.violationclass === 'B';
+      const isInfo = violation.violationclass === 'C';
 
       if (isOpen && isCritical) {
         critical.push(violation);
       } else if (isOpen && isWarning) {
         warning.push(violation);
-      } else if (isOpen) {
+      } else if (isOpen && isInfo) {
         info.push(violation);
       }
     });
+
+    const totalFines = violations.reduce((sum, v) => sum + (v.penalty || 0), 0);
+    const outstandingFines = violations
+      .filter(v => v.currentstatus === 'OPEN' || v.currentstatus === 'ACTIVE')
+      .reduce((sum, v) => sum + (v.penalty || 0), 0);
+    const paidFines = totalFines - outstandingFines;
 
     return {
       critical,
@@ -54,7 +64,77 @@ export class NYCComplianceService {
         critical: critical.length,
         warning: warning.length,
         info: info.length,
+        totalFines,
+        outstandingFines,
+        paidFines,
       },
+    };
+  }
+
+  // Process DSNY violations - Fixed for Real Data
+  processDSNYViolations(violations: DSNYViolation[]): {
+    total: number;
+    open: number;
+    totalFines: number;
+    outstandingFines: number;
+    paidFines: number;
+  } {
+    const open = violations.filter(v => v.status === 'OPEN' || v.status === 'OUTSTANDING');
+    const totalFines = violations.reduce((sum, v) => sum + v.fine_amount, 0);
+    const outstandingFines = violations
+      .filter(v => v.status === 'OPEN' || v.status === 'OUTSTANDING')
+      .reduce((sum, v) => sum + v.fine_amount, 0);
+    const paidFines = totalFines - outstandingFines;
+    
+    return {
+      total: violations.length,
+      open: open.length,
+      totalFines,
+      outstandingFines,
+      paidFines
+    };
+  }
+
+  // Process FDNY inspections - Fixed for Real Data
+  processFDNYInspections(inspections: FDNYInspection[]): {
+    total: number;
+    passed: number;
+    failed: number;
+    compliance: number;
+  } {
+    const passed = inspections.filter(i => i.result === 'PASS');
+    const failed = inspections.filter(i => i.result === 'FAIL');
+    const compliance = inspections.length > 0 ? (passed.length / inspections.length) * 100 : 100;
+    
+    return {
+      total: inspections.length,
+      passed: passed.length,
+      failed: failed.length,
+      compliance: Math.round(compliance)
+    };
+  }
+
+  // Process 311 complaints - Fixed for Real Data
+  process311Complaints(complaints: Complaints311[]): {
+    total: number;
+    open: number;
+    closed: number;
+    responseTime: number;
+    satisfaction: number;
+  } {
+    const open = complaints.filter(c => c.status === 'OPEN' || c.status === 'IN_PROGRESS');
+    const closed = complaints.filter(c => c.status === 'CLOSED');
+    const responseTime = closed.length > 0 ? 
+      closed.reduce((sum, c) => sum + (c.resolution_time || 0), 0) / closed.length : 0;
+    const satisfaction = closed.length > 0 ?
+      closed.reduce((sum, c) => sum + (c.satisfaction_rating || 0), 0) / closed.length : 0;
+    
+    return {
+      total: complaints.length,
+      open: open.length,
+      closed: closed.length,
+      responseTime: Math.round(responseTime),
+      satisfaction: Math.round(satisfaction * 100) / 100
     };
   }
 

@@ -8,6 +8,8 @@
 [![Nx](https://img.shields.io/badge/Nx-Monorepo-lightgrey.svg)](https://nx.dev/)
 [![Status](https://img.shields.io/badge/status-Production%20Ready-green.svg)](#-project-status)
 
+---
+
 ## ⚠️ Project Status
 
 **This is a private development repository.** 
@@ -19,21 +21,11 @@
 
 This repository is maintained exclusively by the CyntientOps development team and authorized AI assistants for internal development purposes only.
 
-### 🚀 **Production Ready Status**
-- ✅ **All systems operational** and optimized
-- ✅ **50% Performance Improvement**: Startup time reduced from 3-4s to 1.5-2s
-- ✅ **40% Bundle Size Reduction**: From 15MB to 9MB
-- ✅ **Zero Linting Errors**: Clean, maintainable codebase
-- ✅ **Complete Data Integration**: Real operational data across all components
-- ✅ **Advanced AI Features**: Predictive maintenance and intelligent scheduling
-
-**For comprehensive project status, see [docs/README.md](./docs/README.md)**
-
 ---
 
 ## 📖 About
 
-**CyntientOps Cursor** is the React Native/TypeScript implementation of CyntientOps, achieving **100% feature parity** with the original SwiftUI application while adding enhanced ML/AI capabilities and cross-platform support. Built as a production-ready Nx monorepo, it delivers sophisticated field operations management for building maintenance teams across iOS, Android, and web platforms.
+**CyntientOps-MP** is the React Native/TypeScript implementation of CyntientOps, achieving **100% feature parity** with the original SwiftUI application while adding enhanced ML/AI capabilities and cross-platform support. Built as a production-ready Nx monorepo, it delivers sophisticated field operations management for building maintenance teams across iOS, Android, and web platforms.
 
 ### 🔄 Relationship to SwiftUI Version
 
@@ -45,27 +37,6 @@ This project is the **multiplatform successor** to the SwiftUI version located a
 - **Complete data parity**: Synchronized with SwiftUI implementation via shared data seed
 - **Enhanced offline support**: YJS-based CRDT synchronization with conflict resolution
 - **Rich developer experience**: Nx workspace with comprehensive tooling
-
-Refer to [`docs/development/CONTINUITY_REPORT.md`](./docs/development/CONTINUITY_REPORT.md) for detailed feature-by-feature implementation status. See the consolidated Documentation Index under [`docs/`](./docs/).
-
-## 📚 Documentation Structure
-
-### Development Documentation
-- [`docs/development/CONTINUITY_REPORT.md`](./docs/development/CONTINUITY_REPORT.md) - Complete development progress and status
-- [`docs/development/DEVELOPMENT_BUILD_SOLUTION.md`](./docs/development/DEVELOPMENT_BUILD_SOLUTION.md) - Development build setup and troubleshooting
-- [`docs/development/SIMULATION_REPORT.md`](./docs/development/SIMULATION_REPORT.md) - Application simulation and testing results
-
-### Setup Documentation
-- [`docs/setup/FASTSSD_SETUP.md`](./docs/setup/FASTSSD_SETUP.md) - FastSSD development environment configuration
-- [`docs/setup/FASTSSD_STATUS.md`](./docs/setup/FASTSSD_STATUS.md) - FastSSD environment status and verification
-
-### Troubleshooting Documentation
-- [`docs/troubleshooting/BUNDLING_FIX.md`](./docs/troubleshooting/BUNDLING_FIX.md) - Metro bundler issues and solutions
-
-### Setup Scripts
-- [`scripts/setup/start-fastssd.sh`](./scripts/setup/start-fastssd.sh) - FastSSD environment startup script
-- [`scripts/setup/start-ios-simulator.sh`](./scripts/setup/start-ios-simulator.sh) - iOS simulator launch script
-- [`scripts/setup/ios-sim-setup-fastssd.sh`](./scripts/setup/ios-sim-setup-fastssd.sh) - iOS simulator FastSSD setup
 
 ---
 
@@ -120,7 +91,7 @@ cyntientops-mp/
 │   │   │   ├── services/      # Business logic layer
 │   │   │   ├── hooks/         # Custom React hooks
 │   │   │   ├── types/         # TypeScript type definitions
-│   │   │   └── utils/         # Utility functions
+│   │   │   └── utils/        # Utility functions
 │   │   ├── assets/            # Images, fonts, and static resources
 │   │   ├── ios/               # iOS native configuration
 │   │   ├── android/           # Android native configuration
@@ -169,6 +140,28 @@ cyntientops-mp/
 | **context-engines** | Context awareness and intelligent decision-making | Geospatial, Time-based logic |
 | **data-seed** | Database seeding with 18 buildings, 7 workers, 120 routines | JSON, Validation |
 | **testing** | E2E testing with Detox, fixtures, and test utilities | Detox, Jest, Testing Library |
+
+---
+
+## 🎨 Design System - CyntientOps Dark Glassmorphism
+
+### **Color Palette**
+```
+🌙 Dark Base: #0F0F23 (Deep Navy)
+🔮 Glass Primary: rgba(59, 130, 246, 0.15) (Blue Glass)
+✨ Glass Secondary: rgba(139, 92, 246, 0.12) (Purple Glass)
+💎 Glass Accent: rgba(16, 185, 129, 0.18) (Green Glass)
+🌟 Text Primary: #FFFFFF (Pure White)
+🌫️ Text Secondary: rgba(255, 255, 255, 0.7) (70% White)
+🔍 Text Tertiary: rgba(255, 255, 255, 0.5) (50% White)
+```
+
+### **Glass Effects**
+- **Backdrop Blur**: 20px blur intensity
+- **Border Radius**: 16px for cards, 12px for buttons
+- **Border**: 1px solid rgba(255, 255, 255, 0.1)
+- **Shadow**: 0 8px 32px rgba(0, 0, 0, 0.3)
+- **Gradient Overlays**: Subtle gradients for depth
 
 ---
 
@@ -236,99 +229,6 @@ npm run build:intelligence
 
 ---
 
-## ✨ Recent Highlights (Oct 2025)
-
-- Building Detail
-  - Banner header (full‑width building image), compact weather ribbon (worker dashboard)
-  - Spaces tab: curated list with search, category/floor/flagged filters, intelligent ordering
-  - Gallery modal: pinch‑to‑zoom (Reanimated + RNGH), swipe, share, rich metadata
-  - Sanitation tab: routine‑derived schedule + optional DSNY overlay advisory
-  - Tasks/Routes/Maintenance: fully wired; tap‑through actions
-  - Emergency: quick actions (911, Open Map) + contacts limited to client manager + Shawn
-
-- Photo Evidence
-  - Tagging flow with space selection (GPS‑based suggestion), suggested + common tags
-  - Auto compression + thumbnails via IntelligentPhotoStorageService
-  - Smart location saved; specifyWorkerArea() to verify location; space galleries aggregate correctly
-
-- Intelligence
-  - On‑Site pill: clock‑in status + geofence proximity
-  - Weather: Open‑Meteo via WeatherAPIClient (risk guidance for WorkerDashboard)
-
-- Docs
-  - All documentation consolidated under `docs/` (with `docs/audit-reports/`)
-
----
-
-## 📸 Photo Evidence & Spaces
-
-Flow
-- Pick or Use Camera → Confirm Location & Tags → Save
-- Space suggestion: nearest space by GPS vs. space coordinates (permission-gated)
-- Tags: context suggestions (task/space/building) + common tags (sidewalk, lobby, elevator, roof, trash_area, bathroom, laundry_area, boiler_room, electrical_room, storage_room, supplies, workshop, stairwell, basement, backyard, roof_drains, backyard_drains)
-- Save: compresses & stores with smartLocation and tags; marks location_verified via specifyWorkerArea()
-
-Aggregation
-- Spaces tab pulls via `getPhotosForSpace(spaceId)` and displays tags, worker, and timestamps
-- Curated ordering prioritizes flagged spaces (no photos or stale evidence), then recent updates
-
-Gesture Zoom
-- Gallery uses a ZoomableImage (Reanimated + RNGH) component for smooth pinch‑to‑zoom + pan
-- Works cross‑platform in Expo
-
----
-
-## 📋 Available Scripts
-
-### Development
-- `npm run dev:mobile` - Start Expo mobile development server
-- `npm run dev:web` - Start Next.js web dashboard
-- `npm run validate:data` - Validate data seed integrity
-
-### Building
-- `npm run build:all` - Build all packages
-- `npm run build:design-tokens` - Build design tokens
-- `npm run build:ui-components` - Build UI components
-- `npm run build:database` - Build database layer
-- `npm run build:managers` - Build state managers
-- `npm run build:intelligence` - Build intelligence services
-- `npm run build:context` - Build context engines
-- `npm run build:commands` - Build command chains
-- `npm run build:offline` - Build offline support
-- `npm run build:realtime` - Build realtime sync
-- `npm run build:testing` - Build testing utilities
-
-### Testing
-- `npm run test:all` - Run all tests
-- `npm run test:e2e` - Run end-to-end tests
-- `npm run lint:all` - Lint all packages
-
-### Maintenance
-- `npm run clean` - Clean Nx cache and node_modules
-- `npm run install:all` - Install all workspace dependencies
-
----
-
-## 🔐 Authentication
-
-The application supports three user roles with demo credentials:
-
-### Quick Access Glass Cards (6 Workers)
-1. **Kevin Dutan** (Worker) - `kevin.dutan@francomanagement.com` / `password`
-2. **Greg Hutson** (Worker) - `greg.hutson@francomanagement.com` / `password`
-3. **Edwin Lema** (Worker) - `edwin.lema@francomanagement.com` / `password`
-4. **Mercedes Inamagua** (Worker) - `mercedes.inamagua@francomanagement.com` / `password`
-5. **Luis Lopez** (Worker) - `luis.lopez@francomanagement.com` / `password`
-6. **Shawn Magloire** (Admin) - `shawn.magloire@francomanagement.com` / `password`
-
-### All Users (14 Total)
-- **7 Workers**: Greg Hutson, Edwin Lema, Kevin Dutan, Mercedes Inamagua, Luis Lopez, Angel Guirachocha, Shawn Magloire (Admin)
-- **7 Clients/Property Managers**: david@jmrealty.org, mfarhat@farhatrealtymanagement.com, facilities@solarone.org, management@grandelizabeth.com, property@citadelrealty.com, admin@corbelproperty.com, management@chelsea115.com
-
-**Note**: All users use `password` for demo purposes. Configure real authentication in production.
-
----
-
 ## 📊 Data Infrastructure
 
 ### Buildings Portfolio
@@ -358,7 +258,7 @@ All data is centralized in `packages/data-seed/` with validation:
 - **Predictive Maintenance**: Predicts maintenance needs using historical data, seasonal factors, building age, and compliance scores
 - **K-Means Clustering**: Groups buildings by characteristics for optimized routing
 - **NLP Task Parser**: Extracts structured task data from natural language input
-- **Route Optimization**: Minimizes travel time and maximizes efficiency
+- **Route Optimization**: AI-powered multi-stop routing
 - **Anomaly Detection**: Identifies unusual patterns in maintenance history
 
 ### ML Models
@@ -459,24 +359,54 @@ All data is centralized in `packages/data-seed/` with validation:
 
 ---
 
-## 📚 Documentation
+## 📋 Available Scripts
 
-### Primary Documentation
-- **[docs/README.md](./docs/README.md)**: Complete documentation index and navigation
-- **[docs/CONTINUITY_REPORT_CONSOLIDATED.md](./docs/CONTINUITY_REPORT_CONSOLIDATED.md)**: Comprehensive project status, architecture details, and data infrastructure
-- **[docs/README_CONSOLIDATED.md](./docs/README_CONSOLIDATED.md)**: Complete project documentation and setup guide
-- **[Package READMEs](./packages/)**: Individual package documentation in each package directory
+### Development
+- `npm run dev:mobile` - Start Expo mobile development server
+- `npm run dev:web` - Start Next.js web dashboard
+- `npm run validate:data` - Validate data seed integrity
 
-### Development Guides
-- **[Contributing Guidelines](./CONTRIBUTING.md)**: How to contribute to the project (coming soon)
-- **[Architecture Decision Records](./docs/adr/)**: Key architectural decisions (coming soon)
-- **[Deployment Guide](./docs/deployment/)**: Production deployment instructions (coming soon)
+### Building
+- `npm run build:all` - Build all packages
+- `npm run build:design-tokens` - Build design tokens
+- `npm run build:ui-components` - Build UI components
+- `npm run build:database` - Build database layer
+- `npm run build:managers` - Build state managers
+- `npm run build:intelligence` - Build intelligence services
+- `npm run build:context` - Build context engines
+- `npm run build:commands` - Build command chains
+- `npm run build:offline` - Build offline support
+- `npm run build:realtime` - Build realtime sync
+- `npm run build:testing` - Build testing utilities
 
-### Additional Documentation
-- **[docs/archive/](./docs/archive/)**: Historical development reports and analysis
-- **[docs/security/](./docs/security/)**: Security architecture and implementation
-- **[docs/setup/](./docs/setup/)**: Environment setup and configuration
-- **[Wire Diagrams](./docs/)**: Complete dashboard wireframes and design specifications
+### Testing
+- `npm run test:all` - Run all tests
+- `npm run test:e2e` - Run end-to-end tests
+- `npm run lint:all` - Lint all packages
+
+### Maintenance
+- `npm run clean` - Clean Nx cache and node_modules
+- `npm run install:all` - Install all workspace dependencies
+
+---
+
+## 🔐 Authentication
+
+The application supports three user roles with demo credentials:
+
+### Quick Access Glass Cards (6 Workers)
+1. **Kevin Dutan** (Worker) - `kevin.dutan@francomanagement.com` / `password`
+2. **Greg Hutson** (Worker) - `greg.hutson@francomanagement.com` / `password`
+3. **Edwin Lema** (Worker) - `edwin.lema@francomanagement.com` / `password`
+4. **Mercedes Inamagua** (Worker) - `mercedes.inamagua@francomanagement.com` / `password`
+5. **Luis Lopez** (Worker) - `luis.lopez@francomanagement.com` / `password`
+6. **Shawn Magloire** (Admin) - `shawn.magloire@francomanagement.com` / `password`
+
+### All Users (14 Total)
+- **7 Workers**: Greg Hutson, Edwin Lema, Kevin Dutan, Mercedes Inamagua, Luis Lopez, Angel Guirachocha, Shawn Magloire (Admin)
+- **7 Clients/Property Managers**: david@jmrealty.org, mfarhat@farhatrealtymanagement.com, facilities@solarone.org, management@grandelizabeth.com, property@citadelrealty.com, admin@corbelproperty.com, management@chelsea115.com
+
+**Note**: All users use `password` for demo purposes. Configure real authentication in production.
 
 ---
 
@@ -556,7 +486,7 @@ For authorized team members and AI assistants:
 
 1. **Follow TypeScript strict mode** conventions
 2. **Write tests** for new features
-3. **Update documentation** (CONTINUITY_REPORT.md and package READMEs)
+3. **Update documentation** (CONTINUITY_REPORT_CONSOLIDATED.md and package READMEs)
 4. **Run linting and tests** before committing
 5. **Use conventional commit messages** for clear history
 
@@ -607,6 +537,20 @@ For authorized team members:
 - **Internal Documentation**: See `docs/` directory
 - **Development Issues**: Contact project lead directly
 - **Technical Questions**: Use internal communication channels
+
+---
+
+## 📚 Documentation
+
+### Primary Documentation
+- **[CONTINUITY_REPORT_CONSOLIDATED.md](./CONTINUITY_REPORT_CONSOLIDATED.md)** (Comprehensive): Complete project status, architecture details, and data infrastructure
+- **[Package READMEs](./packages/)**: Individual package documentation in each package directory
+- **[Wire Diagrams](./docs/)**: Complete dashboard wireframes and design specifications
+
+### Development Guides
+- **[Contributing Guidelines](./CONTRIBUTING.md)**: How to contribute to the project (coming soon)
+- **[Architecture Decision Records](./docs/adr/)**: Key architectural decisions (coming soon)
+- **[Deployment Guide](./docs/deployment/)**: Production deployment instructions (coming soon)
 
 ---
 

@@ -6,16 +6,17 @@
     "password": "$2b$12$oV5YekAb6lfYB/8Wu/sm3e1ijjKeZcXWB9XvK8WjlC7RUKnyeSfXC",
     "role": "worker",
     "phone": "(212) 555-0101",
-    "hourlyRate": 25,
+    "hourlyRate": 46.38,
     "skills": "Maintenance, Boiler Operations, Daily Cleaning",
     "isActive": true,
     "address": "New York, NY",
-    "shift": "9:00 AM - 3:00 PM",
+    "shift": "8:30 AM - 4:00 PM (35 hrs weekly)",
     "display_name": "Greg Hutson",
     "timezone": "America/New_York",
     "status": "Available",
     "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-09-28T00:00:00Z"
+    "updated_at": "2024-09-28T00:00:00Z",
+    "notes": "Prevailing wage, 3rd year re-hired 2022. Contract pays for 35 hours weekly."
   },
   {
     "id": "2",
@@ -28,12 +29,13 @@
     "skills": "Cleaning, Building Maintenance, Park Operations, HVAC Systems, Electrical, Plumbing, Security Systems",
     "isActive": true,
     "address": "New York, NY",
-    "shift": "6:00 AM - 3:00 PM",
+    "shift": "7:00 AM - 3:00 PM",
     "display_name": "Edwin Lema",
     "timezone": "America/New_York",
     "status": "Available",
     "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-09-28T00:00:00Z"
+    "updated_at": "2024-09-28T00:00:00Z",
+    "notes": "Portfolio-wide maintenance specialist. 22 tasks total. Weekly pay: $1,273.85 (includes weekend work). Covers Stuyvesant Cove Park, 148 Chambers Street, and 17th Street buildings. Handles roof drain checks, building walkthroughs, and miscellaneous repairs. Recently took over 3 tasks from Kevin (building systems check, stairwell mopping, bin hosing)."
   },
   {
     "id": "4",
@@ -46,11 +48,11 @@
     "skills": "Cleaning, DSNY Operations, Rubin Museum Specialist",
     "isActive": true,
     "address": "New York, NY",
-    "shift": "6:00 AM - 5:00 PM",
+    "shift": "7:00 AM - 3:00 PM",
     "display_name": "Kevin Dutan",
     "timezone": "America/New_York",
     "status": "Available",
-    "notes": "Expanded duties including Rubin Museum - 38 tasks total",
+    "notes": "Weekly pay: $1,260 ($840 cleanings + $420 garbage). Effective rate: $31.50/hour. Expanded duties including Rubin Museum - 40 tasks total (reduced from 43 after transferring 3 tasks to Edwin)",
     "created_at": "2024-01-01T00:00:00Z",
     "updated_at": "2024-09-28T00:00:00Z"
   },
@@ -61,7 +63,7 @@
     "password": "$2b$12$VxmeIBWxbKRRbPFJbI6wzOMsSgu6Gvr8SxzDe/E2Lc78.P0IUIBTq",
     "role": "worker",
     "phone": "+1-555-0105",
-    "hourlyRate": 23,
+    "hourlyRate": 27.50,
     "skills": "Glass Cleaning, Lobby Maintenance, Office Deep Clean",
     "isActive": true,
     "address": "New York, NY",
@@ -70,7 +72,8 @@
     "timezone": "America/New_York",
     "status": "Available",
     "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-09-28T00:00:00Z"
+    "updated_at": "2024-09-28T00:00:00Z",
+    "notes": "Glass cleaning & lobby maintenance specialist. 10 tasks total. Early morning glass/lobby services across 17th Street buildings and Rubin Museum. Handles office deep clean at 104 Franklin Street."
   },
   {
     "id": "6",
@@ -79,16 +82,17 @@
     "password": "$2b$12$PeVm.t2D3qJ.FpgF4phj6.RGCeVIek802hwIpLwQLQWuYc2Yjs/8q",
     "role": "worker",
     "phone": "+1-555-0106",
-    "hourlyRate": 25,
+    "hourlyRate": 35,
     "skills": "Building Maintenance, Full Service Cleaning, Elevator Operations",
     "isActive": true,
     "address": "New York, NY",
-    "shift": "7:00 AM - 4:00 PM",
+    "shift": "7:00 AM - 3:00 PM",
     "display_name": "Luis Lopez",
     "timezone": "America/New_York",
     "status": "Available",
     "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-09-28T00:00:00Z"
+    "updated_at": "2024-09-28T00:00:00Z",
+    "notes": "Weekly pay: $1050. Building unlocked at 7 AM. Bathrooms cleaned before clients arrive at 8 AM."
   },
   {
     "id": "7",
@@ -97,7 +101,7 @@
     "password": "$2b$12$a8sEx3acwo.Yd0PoE46Q3.y6SYFCvLdoWN9oZ8791jOFshls3EzOe",
     "role": "worker",
     "phone": "+1-555-0107",
-    "hourlyRate": 22,
+    "hourlyRate": 21,
     "skills": "Sanitation, Garbage Collection, DSNY Operations, Security",
     "isActive": true,
     "address": "New York, NY",
@@ -106,7 +110,8 @@
     "timezone": "America/New_York",
     "status": "Available",
     "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-09-28T00:00:00Z"
+    "updated_at": "2024-09-28T00:00:00Z",
+    "notes": "Evening sanitation & garbage specialist. 14 tasks total. Evening shift (6:00 PM - 10:00 PM). Handles DSNY coordination, garbage collection, and evening security across multiple buildings."
   },
   {
     "id": "8",
@@ -124,6 +129,7 @@
     "timezone": "America/New_York",
     "status": "Available",
     "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-09-28T00:00:00Z"
+    "updated_at": "2024-09-28T00:00:00Z",
+    "notes": "Management & oversight + advanced maintenance specialist. 23 tasks total. Highest paid worker ($35/hour). Flexible schedule. Portfolio-wide floating specialist with advanced boiler maintenance and HVAC expertise."
   }
 ]

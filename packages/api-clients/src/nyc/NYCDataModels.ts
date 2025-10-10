@@ -1,6 +1,6 @@
 // packages/api-clients/src/nyc/NYCDataModels.ts
 
-// HPD Violations Data Model
+// HPD Violations Data Model - Fixed for Real Data
 export interface HPDViolation {
   violationid: string;
   buildingid: string;
@@ -14,7 +14,7 @@ export interface HPDViolation {
   story: string;
   block: string;
   lot: string;
-  violationclass: string;
+  violationclass: 'A' | 'B' | 'C'; // Fixed class mapping
   inspectiondate: string;
   approveddate: string;
   originalcertifybydate: string;
@@ -26,7 +26,7 @@ export interface HPDViolation {
   novid: string;
   novdescription: string;
   novissueddate: string;
-  currentstatus: string;
+  currentstatus: 'OPEN' | 'CLOSED' | 'ACTIVE' | 'RESOLVED'; // Fixed status mapping
   currentstatusdate: string;
   novtype: string;
   violationstatus: string;
@@ -39,6 +39,61 @@ export interface HPDViolation {
   ntaname: string;
   bbl_10_digit: string;
   bin_10_digit: string;
+  // Added fields for real data processing
+  penalty: number; // Real penalty amount
+  isActive: boolean; // Whether violation is currently active
+  severity: 'critical' | 'high' | 'medium' | 'low'; // Severity level
+  address: string; // Full address for display
+}
+
+// DSNY Violations Data Model - Fixed for Real Data
+export interface DSNYViolation {
+  case_number: string;
+  violation_date: string;
+  issuing_agency: 'DSNY';
+  violation_type: string;
+  address: string;
+  status: 'OPEN' | 'CLOSED' | 'PAID' | 'OUTSTANDING';
+  hearing_date?: string;
+  fine_amount: number; // Real fine amount
+  description: string;
+  isActive: boolean;
+  building_id: string;
+  bbl?: string;
+  bin?: string;
+}
+
+// FDNY Inspections Data Model - Fixed for Real Data
+export interface FDNYInspection {
+  inspection_id: string;
+  building_id: string;
+  address: string;
+  inspection_date: string;
+  inspection_type: string;
+  result: 'PASS' | 'FAIL' | 'PENDING';
+  violations_found: number;
+  violations_resolved: number;
+  inspector_name: string;
+  next_inspection_date?: string;
+  bbl?: string;
+  bin?: string;
+}
+
+// 311 Complaints Data Model - Fixed for Real Data
+export interface Complaints311 {
+  complaint_id: string;
+  building_id: string;
+  address: string;
+  complaint_type: string;
+  status: 'OPEN' | 'CLOSED' | 'IN_PROGRESS';
+  created_date: string;
+  closed_date?: string;
+  resolution_time?: number; // hours
+  satisfaction_rating?: number; // 1-5 scale
+  agency: string;
+  description: string;
+  bbl?: string;
+  bin?: string;
 }
 
 // DOB Permits Data Model

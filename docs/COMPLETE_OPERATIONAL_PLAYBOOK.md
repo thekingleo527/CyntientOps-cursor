@@ -12,22 +12,30 @@
 **Geographic Coverage**: Manhattan (Chelsea, West Village, Tribeca, Lower East Side, Financial District)
 **Total Portfolio Value**: $165M+
 **Combined Square Footage**: 297,600 sq ft
-**Total Units Managed**: 153 residential + 1 commercial + 1 park
+**Total Units Managed**: 153 residential + 3 commercial + 1 park
 
 ---
 
 ## 👷 WORKER 1: GREG HUTSON
 **Role**: Building Maintenance Specialist
-**Schedule**: Monday-Friday, 9:00 AM - 3:00 PM (6 hours)
-**Hourly Rate**: $25/hour
+**Schedule**: Monday-Friday, 8:30 AM - 4:00 PM (35 hours weekly)
+**Hourly Rate**: $46.38/hour (prevailing wage, 3rd year re-hired 2022)
 **Skills**: Maintenance, Boiler Operations, Daily Cleaning
-**Primary Location**: 12 West 18th Street
-**Total Routines**: 13 tasks
+**Primary Location**: 12 West 18th Street (16 residential units + 2 commercial units)
+**Total Routines**: 15 tasks
 
 ### DAILY SCHEDULE - GREG HUTSON
 
 #### **12 West 18th Street** (Building ID: 1)
-*Primary Assignment - Full Service Building Maintenance*
+*Primary Assignment - Full Service Building Maintenance (16 residential + 2 commercial units)*
+
+**8:30-9:00 AM** | **Mail/Package Delivery**
+- Category: Operations (Basic)
+- Frequency: Daily (Mon-Fri)
+- Duration: 30 min
+- Photo Required: ❌
+- Task: Deliver mail and packages to units/doors by Greg
+- Task ID: task-119
 
 **9:00-10:00 AM** | **Sidewalk & Curb Clean**
 - Category: Cleaning (Basic)
@@ -70,12 +78,12 @@
 - Task ID: task-080
 - ⚠️ Boiler located in basement
 
-**2:00-3:00 PM (Mon/Wed)** | **Hallway Vacuum**
+**2:00-3:00 PM (Mon/Wed)** | **Hallway Sweep/Mop**
 - Category: Cleaning (Basic)
 - Frequency: Weekly (Mon/Wed)
 - Duration: 60 min
 - Photo Required: ❌
-- Task: Vacuum all hallways and common areas
+- Task: Sweep and mop all hallways and common areas (no carpets in building)
 - Task ID: task-089
 
 **3:00-4:00 PM (Tuesdays)** | **Basement & Utility Room Check**
@@ -86,12 +94,12 @@
 - Task: Inspect basement and utility room systems
 - Task ID: task-090
 
-**3:00-4:00 PM (Mon/Thu)** | **Mail Room Clean**
+**3:00-4:00 PM (Mon/Thu)** | **Basement Bathroom/Storage Area Clean**
 - Category: Cleaning (Basic)
 - Frequency: Weekly (Mon/Thu)
 - Duration: 60 min
 - Photo Required: ❌
-- Task: Clean mail room and package storage area
+- Task: Clean basement bathroom and storage area
 - Task ID: task-091
 
 **2:00-3:00 PM (Fridays)** | **Building Systems Check**
@@ -118,6 +126,15 @@
 - Task: Hose down trash bins on recycling day
 - Task ID: task-118
 
+**3:00-4:00 PM (Tues/Thu)** | **Roof Drain Check**
+- Category: Maintenance (Basic)
+- Frequency: Weekly (Tuesday/Thursday)
+- Duration: 30 min
+- Photo Required: ✅
+- Task: Check roof drains before rain/periodically to ensure proper drainage
+- Task ID: task-120
+- ⚠️ Weather dependent - check before rain events
+
 **ON-DEMAND** | **Freight Elevator Operation**
 - Category: Operations (Basic)
 - Frequency: On-Demand
@@ -127,7 +144,7 @@
 - Task ID: task-081
 
 **BUILDING DETAILS: 12 West 18th Street**
-- Units: 16 residential
+- Units: 16 residential + 2 commercial
 - Year Built: 1925
 - Square Footage: 12,000 sq ft
 - Management: J&M Realty
@@ -140,11 +157,12 @@
 
 ## 👷 WORKER 2: EDWIN LEMA
 **Role**: Cleaning & Sanitation Specialist + Advanced Maintenance
-**Schedule**: Monday-Friday, 6:00 AM - 3:00 PM (9 hours)
+**Schedule**: Monday-Friday, 7:00 AM - 3:00 PM (8 hours)
 **Hourly Rate**: $24/hour
+**Weekly Pay**: $1,273.85 (includes weekend work)
 **Skills**: Cleaning, Building Maintenance, Park Operations, HVAC Systems, Electrical, Plumbing, Security Systems
 **Coverage**: Portfolio-wide maintenance specialist
-**Total Routines**: 21 tasks
+**Total Routines**: 22 tasks
 
 ### DAILY SCHEDULE - EDWIN LEMA
 
@@ -168,66 +186,29 @@
 - Task ID: task-083
 
 #### **148 Chambers Street** (Building ID: 21)
+*Total Time: 1.5 hours (90 minutes)*
 
-**7:00-8:00 AM (Tue/Thu)** | **Bring Bins Back Inside**
-- Category: Sanitation (Basic)
-- Frequency: Weekly (Tue/Thu)
-- Duration: 60 min
-- Photo Required: ❌
-- Task: Return trash and recycling bins inside after collection
+**8:00-9:30 AM (Mon/Wed/Fri)** | **148 Chambers Street Routine**
+- Category: Cleaning & Sanitation (Combined)
+- Frequency: Weekly (Mon/Wed/Fri)
+- Duration: 90 min
+- Photo Required: ✅
+- Task: Complete building routine: bring bins inside, hose sidewalk, clean glass/windows, clean elevator, bin hosing, mop lobby, move packages to package closet
 - Task ID: task-060
+- **Combined Tasks**: Sanitation, sidewalk cleaning, glass cleaning, elevator maintenance, bin maintenance, lobby mopping, package management
+- **Travel Time**: 15 minutes from park to Chambers (7:45-8:00 AM)
 
-**7:00-8:00 AM (Tue/Thu)** | **Hose Sidewalk**
-- Category: Cleaning (Basic)
-- Frequency: Weekly (Tue/Thu)
-- Duration: 60 min
-- Photo Required: ✅
-- Task: Hose down sidewalk areas around building
-- Task ID: task-061
-
-**8:00-9:00 AM (Tue/Thu)** | **Clean Glass & Windows**
+**8:00-9:30 AM (Monthly - First Monday)** | **Monthly Stairwell Mopping**
 - Category: Cleaning (Intermediate)
-- Frequency: Weekly (Tue/Thu)
-- Duration: 60 min
+- Frequency: Monthly (First Monday)
+- Duration: 90 min
 - Photo Required: ✅
-- Task: Clean all glass surfaces and windows
-- Task ID: task-062
-
-**8:00-9:00 AM (Tue/Thu)** | **Clean Elevator**
-- Category: Cleaning (Basic)
-- Frequency: Weekly (Tue/Thu)
-- Duration: 60 min
-- Photo Required: ❌
-- Task: Clean and maintain elevator interior
-- Task ID: task-063
-
-**9:00-11:00 AM (Monthly)** | **Monthly Stairwell Cleaning**
-- Category: Cleaning (Intermediate)
-- Frequency: Monthly
-- Duration: 120 min
-- Photo Required: ✅
-- Task: Monthly deep cleaning of all stairwells
-- Task ID: task-064
-
-**11:00 AM-12:00 PM (Monthly)** | **Monthly Utility Room Check**
-- Category: Maintenance (Intermediate)
-- Frequency: Monthly
-- Duration: 60 min
-- Photo Required: ✅
-- Task: Monthly inspection and maintenance of utility room
-- Task ID: task-065
-
-**10:00-11:00 AM (Wednesdays)** | **Weekly Bin Hosing**
-- Category: Cleaning (Basic)
-- Frequency: Weekly (Wednesday)
-- Duration: 30 min
-- Photo Required: ✅
-- Task: Hose down trash bins on recycling day
-- Task ID: task-114
+- Task: Monthly deep mopping of all stairwells
+- Task ID: task-128
 
 #### **133 East 15th Street** (Building ID: 15)
 
-**9:00-10:00 AM (Mon/Wed/Fri)** | **Building Walk-Through**
+**10:00-11:00 AM (Mon/Wed/Fri)** | **Building Walk-Through**
 - Category: Inspection (Intermediate)
 - Frequency: Weekly (Mon/Wed/Fri)
 - Duration: 60 min
@@ -235,7 +216,7 @@
 - Task: Building inspection and walk-through
 - Task ID: task-084
 
-**9:00-10:00 AM (Mondays)** | **Boiler Blow-Down**
+**10:00-11:00 AM (Mondays)** | **Boiler Blow-Down - 133 East 15th Street**
 - Category: Maintenance (Advanced)
 - Frequency: Weekly (Monday)
 - Duration: 60 min
@@ -243,7 +224,7 @@
 - Task: Boiler maintenance and blow-down procedure
 - Task ID: task-085
 
-**10:00-11:00 AM (Wednesdays)** | **Weekly Bin Hosing**
+**11:00 AM-12:00 PM (Wednesdays)** | **Weekly Bin Hosing**
 - Category: Cleaning (Basic)
 - Frequency: Weekly (Wednesday)
 - Duration: 30 min
@@ -253,17 +234,11 @@
 
 #### **131 Perry Street** (Building ID: 10)
 
-**8:00-9:00 AM (Wednesdays)** | **Boiler Blow-Down**
-- Category: Maintenance (Advanced)
-- Frequency: Weekly (Wednesday)
-- Duration: 60 min
-- Photo Required: ❌
-- Task: Boiler maintenance and blow-down procedure
-- Task ID: task-011
+*No specific tasks assigned - covered by portfolio-wide maintenance*
 
 #### **135-139 West 17th Street** (Building ID: 3)
 
-**10:00-11:00 AM (Fridays)** | **Backyard Drain Check**
+**11:00 AM-12:00 PM (Fridays)** | **Backyard Drain Check**
 - Category: Maintenance (Intermediate)
 - Frequency: Weekly (Friday)
 - Duration: 60 min
@@ -271,27 +246,15 @@
 - Task: Inspect and maintain backyard drainage system
 - Task ID: task-021
 
-**10:00-11:00 AM (Tuesdays)** | **Boiler Blow-Down**
-- Category: Maintenance (Advanced)
-- Frequency: Weekly (Tuesday)
-- Duration: 60 min
-- Photo Required: ❌
-- Task: Boiler maintenance and blow-down procedure
-- Task ID: task-022
+*Boiler blow-down covered by weekly maintenance schedule*
 
 #### **138 West 17th Street** (Building ID: 5)
 
-**10:00-11:00 AM (Thursdays)** | **Boiler Blow-Down**
-- Category: Maintenance (Advanced)
-- Frequency: Weekly (Thursday)
-- Duration: 60 min
-- Photo Required: ❌
-- Task: Boiler maintenance and blow-down procedure
-- Task ID: task-033
+*Boiler blow-down covered by weekly maintenance schedule*
 
 #### **117 West 17th Street** (Building ID: 9)
 
-**10:00-11:00 AM (Bi-Monthly)** | **Water Filter Change & Roof Drain Check**
+**11:00 AM-12:00 PM (Bi-Monthly)** | **Water Filter Change & Roof Drain Check**
 - Category: Maintenance (Intermediate)
 - Frequency: Bi-Monthly
 - Duration: 60 min
@@ -299,17 +262,11 @@
 - Task: Replace water filters and inspect roof drainage
 - Task ID: task-039
 
-**11:00 AM-12:00 PM (Tuesdays)** | **Boiler Blow-Down**
-- Category: Maintenance (Advanced)
-- Frequency: Weekly (Tuesday)
-- Duration: 60 min
-- Photo Required: ❌
-- Task: Boiler maintenance and blow-down procedure
-- Task ID: task-040
+*Boiler blow-down covered by weekly maintenance schedule*
 
 #### **112 West 18th Street** (Building ID: 7)
 
-**11:00 AM-12:00 PM (Bi-Monthly)** | **Water Filter Change & Roof Drain Check**
+**12:00-1:00 PM (Bi-Monthly)** | **Water Filter Change & Roof Drain Check**
 - Category: Maintenance (Intermediate)
 - Frequency: Bi-Monthly
 - Duration: 60 min
@@ -329,7 +286,7 @@
 
 #### **115 7th Avenue** (Building ID: 19)
 
-**8:00-9:00 AM (Saturdays)** | **Weekend Sweep**
+**9:00-10:00 AM (Saturdays)** | **Weekend Sweep**
 - Category: Cleaning (Basic)
 - Frequency: Weekly (Saturday)
 - Duration: 60 min
@@ -339,7 +296,7 @@
 
 #### **PORTFOLIO-WIDE RESPONSIBILITIES**
 
-**8:00-9:00 AM (Tue/Thu Monthly)** | **HVAC Filter Maintenance**
+**9:00-10:00 AM (Tue/Thu Monthly)** | **HVAC Filter Maintenance**
 - Category: Maintenance (Intermediate)
 - Frequency: Monthly (Tue/Thu)
 - Duration: 60 min
@@ -349,7 +306,7 @@
 - **Buildings Covered**: All 18 buildings
 - **Special Notes**: 224 E 14th requires 2x MERV-8 filters every 30 days
 
-**9:00-10:00 AM (Tue/Thu Weekly)** | **Building Systems Inspection**
+**10:00-11:00 AM (Tue/Thu Weekly)** | **Building Systems Inspection**
 - Category: Maintenance (Advanced)
 - Frequency: Weekly (Tue/Thu)
 - Duration: 60 min
@@ -357,15 +314,37 @@
 - Task: Electrical, plumbing, and security system inspections across all buildings
 - Task ID: task-edwin-002
 
+**11:00-11:15 AM (Weekly - Rotating Schedule)** | **Weekly Boiler Blow-Down**
+- Category: Maintenance (Advanced)
+- Frequency: Weekly (Rotating buildings)
+- Duration: 15 min
+- Photo Required: ❌
+- Task: Weekly boiler maintenance and blow-down procedure
+- Task ID: task-edwin-003
+- **Buildings Covered**: 133 East 15th Street, 131 Perry Street, 135-139 West 17th Street, 138 West 17th Street, 117 West 17th Street
+- **Schedule**: Rotate through buildings weekly to ensure each gets monthly service
+
+**11:15-11:30 AM (Weekly - Rotating Schedule)** | **Building Walkthrough**
+- Category: Inspection (Intermediate)
+- Frequency: Weekly (Rotating buildings)
+- Duration: 15 min
+- Photo Required: ✅
+- Task: Building walkthrough inspection and systems check
+- Task ID: task-edwin-004
+- **Buildings Covered**: Same as boiler blow-down rotation
+- **Schedule**: Follows boiler blow-down schedule for comprehensive building inspection
+
 ---
 
 ## 👷 WORKER 4: KEVIN DUTAN
 **Role**: Expanded Duties + Rubin Museum Specialist
-**Schedule**: Monday-Friday, 6:00 AM - 5:00 PM (11 hours)
-**Hourly Rate**: $26/hour
+**Schedule**: Monday-Friday, 7:00 AM - 3:00 PM (8 hours)
+**Hourly Rate**: $26/hour (base rate)
+**Weekly Pay**: $1,260 ($840 cleanings + $420 garbage)
+**Effective Rate**: $31.50/hour (includes garbage collection premium)
 **Skills**: Cleaning, DSNY Operations, Museum Specialist
 **Primary Locations**: Rubin Museum + Perry Street cluster
-**Total Routines**: 38 tasks (Most routines of any worker)
+**Total Routines**: 40 tasks (Most routines of any worker)
 
 ### DAILY SCHEDULE - KEVIN DUTAN
 
@@ -453,6 +432,30 @@
 - Task: Deep clean laundry room and perform maintenance checks
 - Task ID: task-010
 
+**1:00-2:00 PM (Mon/Wed/Fri)** | **Laundry Area Maintenance - Portfolio Wide**
+- Category: Maintenance (Intermediate)
+- Frequency: Weekly (Mon/Wed/Fri)
+- Duration: 60 min
+- Photo Required: ✅
+- Task: Clean lint traps, water basins, and maintain laundry areas across portfolio
+- Task ID: task-134
+
+**2:00-3:00 PM (Tue/Fri)** | **178 Spring Street Cleaning**
+- Category: Cleaning (Basic)
+- Frequency: Weekly (Tue/Fri)
+- Duration: 60 min
+- Photo Required: ✅
+- Task: Complete cleaning routine at 178 Spring Street
+- Task ID: task-129
+
+**3:00-4:00 PM (Tue/Fri)** | **123 1st Avenue Cleaning**
+- Category: Cleaning (Basic)
+- Frequency: Weekly (Tue/Fri)
+- Duration: 60 min
+- Photo Required: ✅
+- Task: Complete cleaning routine at 123 1st Avenue
+- Task ID: task-130
+
 **10:00-11:00 AM (Wednesdays)** | **Weekly Bin Hosing**
 - Category: Cleaning (Basic)
 - Frequency: Weekly (Wednesday)
@@ -507,54 +510,65 @@
 
 #### **135-139 West 17th Street** (Building ID: 3)
 
-**10:00-11:00 AM** | **Trash Area + Sidewalk & Curb Clean**
+**10:00-11:00 AM** | **Trash Area + Sidewalk & Curb Clean + Garbage Prep**
 - Category: Cleaning (Basic)
 - Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ✅
-- Task: Clean trash area, sidewalk and curb
+- Task: Clean trash area, sidewalk and curb, bag garbage for evening collection
 - Task ID: task-017
 
-**8:00 PM-9:00 PM (Sun/Tue/Thu)** | **DSNY: Set Out Trash**
+**8:00-10:00 PM (Sun/Tue/Thu)** | **DSNY: Set Out Trash**
 - Category: Sanitation (Basic)
 - Frequency: Weekly (Sun/Tue/Thu)
-- Duration: 60 min
+- Duration: 120 min
 - Photo Required: ✅
-- Task: DSNY coordination - set out trash for collection
+- Task: DSNY coordination - set out trash for collection (garbage put out after 8 PM)
 - Task ID: task-018
 
-**2:00-3:00 PM (Tue/Fri)** | **Building Systems Status Check**
+**11:00 AM-12:00 PM (Fridays)** | **Building Systems Status Check - 135-139 West 17th**
 - Category: Maintenance (Intermediate)
-- Frequency: Weekly (Tue/Fri)
-- Duration: 60 min
+- Frequency: Weekly (Friday)
+- Duration: 15 min
 - Photo Required: ❌
-- Task: Check building systems status and functionality
-- Task ID: task-019
+- Task: Check building systems status and functionality (integrated with drain check)
+- Task ID: task-edwin-005
+- **Assigned to**: Edwin Lema
 
-**1:00-2:00 PM (Wednesdays)** | **Weekly Bin Hosing**
+**2:00-3:00 PM (Thursdays)** | **Stairwell & 6th Floor Mopping - 135-139 West 17th**
+- Category: Cleaning (Intermediate)
+- Frequency: Weekly (Thursday)
+- Duration: 60 min
+- Photo Required: ✅
+- Task: Deep mopping of stairwells and 6th floor at 135-139 West 17th Street
+- Task ID: task-edwin-006
+- **Assigned to**: Edwin Lema
+
+**1:00-2:00 PM (Wednesdays)** | **Weekly Bin Hosing - 135-139 West 17th**
 - Category: Cleaning (Basic)
 - Frequency: Weekly (Wednesday)
-- Duration: 30 min
+- Duration: 15 min
 - Photo Required: ✅
-- Task: Hose down trash bins on recycling day
-- Task ID: task-107
+- Task: Hose down trash bins on recycling day (integrated with 136 West 17th walkthrough)
+- Task ID: task-edwin-007
+- **Assigned to**: Edwin Lema
 
 #### **136 West 17th Street** (Building ID: 13)
 
-**10:00-11:00 AM** | **Trash Area + Sidewalk & Curb Clean**
+**10:00-11:00 AM** | **Trash Area + Sidewalk & Curb Clean + Garbage Prep**
 - Category: Cleaning (Basic)
 - Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ✅
-- Task: Clean trash area, sidewalk and curb
+- Task: Clean trash area, sidewalk and curb, bag garbage for evening collection
 - Task ID: task-024
 
-**8:00-9:00 PM (Sun/Tue/Thu)** | **DSNY: Set Out Trash**
+**8:00-10:00 PM (Sun/Tue/Thu)** | **DSNY: Set Out Trash**
 - Category: Sanitation (Basic)
 - Frequency: Weekly (Sun/Tue/Thu)
-- Duration: 60 min
+- Duration: 120 min
 - Photo Required: ✅
-- Task: DSNY coordination - set out trash for collection
+- Task: DSNY coordination - set out trash for collection (garbage put out after 8 PM)
 - Task ID: task-025
 
 **3:00-4:00 PM (Mon/Wed)** | **Lobby + Entrance Deep Clean**
@@ -575,20 +589,20 @@
 
 #### **138 West 17th Street** (Building ID: 5)
 
-**11:00 AM-12:00 PM** | **Trash Area + Sidewalk & Curb Clean**
+**11:00 AM-12:00 PM** | **Trash Area + Sidewalk & Curb Clean + Garbage Prep**
 - Category: Cleaning (Basic)
 - Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ✅
-- Task: Clean trash area, sidewalk and curb
+- Task: Clean trash area, sidewalk and curb, bag garbage for evening collection
 - Task ID: task-029
 
-**8:00-9:00 PM (Sun/Tue/Thu)** | **DSNY: Set Out Trash**
+**8:00-10:00 PM (Sun/Tue/Thu)** | **DSNY: Set Out Trash**
 - Category: Sanitation (Basic)
 - Frequency: Weekly (Sun/Tue/Thu)
-- Duration: 60 min
+- Duration: 120 min
 - Photo Required: ✅
-- Task: DSNY coordination - set out trash for collection
+- Task: DSNY coordination - set out trash for collection (garbage put out after 8 PM)
 - Task ID: task-030
 
 **4:00-5:00 PM (Tue/Thu)** | **Stairwell Maintenance Check**
@@ -609,13 +623,21 @@
 
 #### **117 West 17th Street** (Building ID: 9)
 
-**11:00 AM-12:00 PM** | **Trash Area Clean**
+**11:00 AM-12:00 PM** | **Trash Area Clean + Garbage Prep**
 - Category: Cleaning (Basic)
 - Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ✅
-- Task: Clean trash area and surrounding space
+- Task: Clean trash area and surrounding space, bag garbage for evening collection
 - Task ID: task-035
+
+**11:00 AM-12:00 PM (Mon/Wed/Fri)** | **Hallway Vacuum - 117 West 17th**
+- Category: Cleaning (Basic)
+- Frequency: Weekly (Mon/Wed/Fri)
+- Duration: 60 min
+- Photo Required: ❌
+- Task: Vacuum hallways at 117 West 17th Street
+- Task ID: task-132
 
 **3:00-4:00 PM** | **Building Perimeter Security Check**
 - Category: Security (Basic)
@@ -643,13 +665,21 @@
 
 #### **112 West 18th Street** (Building ID: 7)
 
-**11:00 AM-12:00 PM** | **Trash Area Clean**
+**11:00 AM-12:00 PM** | **Trash Area Clean + Garbage Prep**
 - Category: Cleaning (Basic)
 - Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ✅
-- Task: Clean trash area and surrounding space
+- Task: Clean trash area and surrounding space, bag garbage for evening collection
 - Task ID: task-043
+
+**11:00 AM-12:00 PM (Mon/Wed/Fri)** | **Hallway Vacuum - 112 West 18th**
+- Category: Cleaning (Basic)
+- Frequency: Weekly (Mon/Wed/Fri)
+- Duration: 60 min
+- Photo Required: ❌
+- Task: Vacuum hallways at 112 West 18th Street
+- Task ID: task-133
 
 **2:00-3:00 PM (Mon/Wed/Fri)** | **Trash Collection + Sorting**
 - Category: Sanitation (Basic)
@@ -740,9 +770,9 @@
 
 #### **178 Spring Street** (Building ID: 17)
 
-**2:00-3:00 PM (Mon/Wed/Fri)** | **Stair Hose & Garbage Return**
+**2:00-3:00 PM (Tue/Fri)** | **Stair Hose & Garbage Return**
 - Category: Cleaning (Basic)
-- Frequency: Weekly (Mon/Wed/Fri)
+- Frequency: Weekly (Tue/Fri)
 - Duration: 60 min
 - Photo Required: ✅
 - Task: Hose down stairs and return garbage containers
@@ -756,15 +786,6 @@
 - Task: DSNY coordination - set out trash for collection
 - Task ID: task-058
 
-#### **148 Chambers Street** (Building ID: 21)
-
-**6:00-7:00 PM (Sun/Tue/Thu)** | **Garbage & Recycling Collection**
-- Category: Sanitation (Basic)
-- Frequency: Weekly (Sun/Tue/Thu)
-- Duration: 60 min
-- Photo Required: ✅
-- Task: Collect garbage and recycling materials
-- Task ID: task-059
 
 #### **115 7th Avenue** (Building ID: 19)
 
@@ -781,7 +802,7 @@
 ## 👷 WORKER 5: MERCEDES INAMAGUA
 **Role**: Glass Cleaning & Lobby Maintenance Specialist
 **Schedule**: Monday-Saturday, 6:30 AM - 11:00 AM (4.5 hours)
-**Hourly Rate**: $23/hour
+**Hourly Rate**: $27.50/hour
 **Skills**: Glass Cleaning, Lobby Maintenance, Office Deep Clean
 **Specialty**: Early morning glass/lobby services
 **Total Routines**: 10 tasks
@@ -862,74 +883,73 @@
 
 ## 👷 WORKER 6: LUIS LOPEZ
 **Role**: General Maintenance & Full Service Cleaning
-**Schedule**: Monday-Friday, 7:00 AM - 4:00 PM (9 hours)
-**Hourly Rate**: $25/hour
+**Schedule**: Monday-Friday, 7:00 AM - 3:00 PM (8 hours)
+**Hourly Rate**: $35/hour (Weekly pay: $1050)
 **Skills**: Building Maintenance, Full Service Cleaning, Elevator Operations
-**Primary Location**: 41 Elizabeth Street
-**Total Routines**: 9 tasks
+**Primary Location**: 41 Elizabeth Street (28 units, 1880 building)
+**Management**: Remid Group
+**Total Routines**: 12 tasks
 
 ### DAILY SCHEDULE - LUIS LOPEZ
 
-#### **36 Walker Street** (Building ID: 18)
+#### **41 Elizabeth Street** (Building ID: 8)
+*Primary Assignment - Full Service (Building unlocked at 7 AM)*
 
-**7:00-8:00 AM (Mon/Wed/Fri)** | **Sidewalk Sweep**
+**7:00-8:00 AM (Mon-Fri)** | **Sidewalk Hose Down**
 - Category: Cleaning (Basic)
-- Frequency: Weekly (Mon/Wed/Fri)
+- Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ✅
-- Task: Sweep sidewalk and entrance area
-- Task ID: task-069
-
-**10:00-11:00 AM (Wednesdays)** | **Weekly Bin Hosing**
-- Category: Cleaning (Basic)
-- Frequency: Weekly (Wednesday)
-- Duration: 30 min
-- Photo Required: ✅
-- Task: Hose down trash bins on recycling day
-- Task ID: task-116
-
-#### **41 Elizabeth Street** (Building ID: 8)
-*Primary Assignment - Full Service*
+- Task: Hose down sidewalks in the morning
+- Task ID: task-071
 
 **8:00-9:00 AM (Mon-Fri)** | **Bathrooms Clean**
 - Category: Cleaning (Intermediate)
 - Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ✅
-- Task: Clean and sanitize all bathrooms
+- Task: Clean and sanitize all bathrooms (before clients arrive at 8 AM)
 - Task ID: task-070
 
-**9:00-10:00 AM (Mon-Fri)** | **Lobby & Sidewalk Clean**
+**8:00-9:00 AM (Mon-Fri)** | **Lobby & Elevator Clean**
 - Category: Cleaning (Basic)
 - Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ✅
-- Task: Clean lobby and sidewalk areas
-- Task ID: task-071
-
-**10:00-11:00 AM (Mon-Fri)** | **Elevator Clean**
-- Category: Cleaning (Basic)
-- Frequency: Daily (Mon-Fri)
-- Duration: 60 min
-- Photo Required: ❌
-- Task: Clean and maintain elevator interior
+- Task: Clean lobby and stainless steel elevator interior
 - Task ID: task-072
 
-**1:00-2:00 PM (Mon-Fri)** | **Afternoon Garbage Removal**
-- Category: Sanitation (Basic)
+**12:00-12:15 PM (Mon-Fri)** | **Bathroom Check Before Lunch**
+- Category: Cleaning (Basic)
 - Frequency: Daily (Mon-Fri)
-- Duration: 60 min
-- Photo Required: ✅
-- Task: Collect and remove garbage in afternoon
-- Task ID: task-073
+- Duration: 15 min
+- Photo Required: ❌
+- Task: Check and clean bathrooms before lunch break
+- Task ID: task-121
 
-**2:00-3:00 PM (Mon-Fri)** | **Deliver Mail & Packages**
+**1:00-2:00 PM (Mon-Fri)** | **Deliver Mail & Packages**
 - Category: Operations (Basic)
 - Frequency: Daily (Mon-Fri)
 - Duration: 60 min
 - Photo Required: ❌
 - Task: Handle mail and package delivery coordination
 - Task ID: task-074
+
+**2:00-3:00 PM (Mon-Fri)** | **Garbage Bins Set Out**
+- Category: Sanitation (Basic)
+- Frequency: Daily (Mon-Fri)
+- Duration: 30 min
+- Photo Required: ✅
+- Task: Set out garbage bins for pickup on requisite days (commercial frequency)
+- Task ID: task-073
+
+**2:00-3:00 PM (Mon-Fri)** | **Bathroom Check End of Day**
+- Category: Cleaning (Basic)
+- Frequency: Daily (Mon-Fri)
+- Duration: 15 min
+- Photo Required: ❌
+- Task: Final bathroom check and clean before end of day
+- Task ID: task-122
 
 **11:00 AM-12:00 PM (Wednesdays)** | **Weekly Bin Hosing**
 - Category: Cleaning (Basic)
@@ -939,22 +959,46 @@
 - Task: Hose down trash bins on recycling day
 - Task ID: task-117
 
-#### **104 Franklin Street** (Building ID: 4)
-
-**10:00-11:00 AM (Wednesdays)** | **Weekly Bin Hosing**
-- Category: Cleaning (Basic)
-- Frequency: Weekly (Wednesday)
+**1:00-2:00 PM (Fridays)** | **Weekly Water Filter Cleaning**
+- Category: Maintenance (Basic)
+- Frequency: Weekly (Friday)
 - Duration: 30 min
 - Photo Required: ✅
-- Task: Hose down trash bins on recycling day
-- Task ID: task-115
+- Task: Weekly cleaning of water filters in boiler room
+- Task ID: task-126
+
+#### **MONTHLY TASKS**
+
+**8:00-10:00 AM (First Monday)** | **Monthly Stairwell Mopping**
+- Category: Cleaning (Intermediate)
+- Frequency: Monthly (First Monday)
+- Duration: 120 min
+- Photo Required: ✅
+- Task: Monthly deep mopping of all stairwells
+- Task ID: task-123
+
+**10:00-11:00 AM (First Tuesday)** | **Monthly Cooling Tower Visual Inspection**
+- Category: Maintenance (Intermediate)
+- Frequency: Monthly (First Tuesday)
+- Duration: 60 min
+- Photo Required: ✅
+- Task: Monthly visual inspection of cooling tower system
+- Task ID: task-124
+
+**11:00 AM-12:00 PM (First Wednesday)** | **Monthly Water Tank Refill**
+- Category: Maintenance (Basic)
+- Frequency: Monthly (First Wednesday)
+- Duration: 60 min
+- Photo Required: ✅
+- Task: Monthly water tank refill and inspection
+- Task ID: task-125
 
 ---
 
 ## 👷 WORKER 7: ANGEL GUIRACHOCHA
 **Role**: Evening Sanitation & Garbage Specialist
 **Schedule**: Monday-Friday, 6:00 PM - 10:00 PM (4 hours) - **EVENING SHIFT**
-**Hourly Rate**: $22/hour
+**Hourly Rate**: $21/hour
 **Skills**: Sanitation, Garbage Collection, DSNY Operations, Security
 **Specialty**: Evening garbage collection and DSNY coordination
 **Total Routines**: 14 tasks

@@ -14,7 +14,7 @@ config.watchFolders = [workspaceRoot];
 config.resolver = {
   ...config.resolver,
   platforms: ['ios', 'android', 'native', 'web'],
-  sourceExts: ['js', 'jsx', 'json', 'ts', 'tsx'],
+  sourceExts: ['js', 'jsx', 'json', 'ts', 'tsx', 'cjs', 'mjs'],
   resolverMainFields: ['react-native', 'browser', 'main'],
   unstable_enablePackageExports: false,
   unstable_conditionNames: ['react-native', 'browser', 'require'],
@@ -32,42 +32,41 @@ config.resolver = {
     'crypto-js': path.resolve(workspaceRoot, 'node_modules/crypto-js'),
   },
   
-  // Block problematic Node.js modules
+  // Block problematic Node.js modules and duplicate react-native
   blockList: [
     /node_modules\/bcryptjs\/.*/,
+    // Block duplicate/nested react-native installations
+    /.*\/node_modules\/.*\/node_modules\/react-native\/.*/,
   ],
+
+  // Ensure we use the root react-native
+  extraNodeModules: {
+    'react-native': path.resolve(workspaceRoot, 'node_modules/react-native'),
+  },
 };
 
 // Fix for React 19 compatibility
 config.transformer = {
   ...config.transformer,
+  babelTransformerPath: require.resolve('metro-react-native-babel-transformer'),
   minifierConfig: {
     keep_fnames: true,
     mangle: {
       keep_fnames: true,
     },
   },
+  getTransformOptions: async () => ({
+    transform: {
+      experimentalImportSupport: false,
+      inlineRequires: true,
+    },
+  }),
 };
 
-// Server configuration
+// Server configuration - Let Metro auto-select available port
 config.server = {
   ...config.server,
-  port: 8081,
-  enhanceMiddleware: (middleware) => {
-    return (req, res, next) => {
-      // Handle CORS for development
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      
-      if (req.method === 'OPTIONS') {
-        res.sendStatus(200);
-        return;
-      }
-      
-      return middleware(req, res, next);
-    };
-  },
+  // Port will be auto-selected by Metro if 8081 is busy
 };
 
 module.exports = config;

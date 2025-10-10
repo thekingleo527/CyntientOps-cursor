@@ -1,5 +1,5 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "strict": false,
     "skipLibCheck": true,
@@ -9,12 +9,13 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "lib": ["es2017"],
+    "lib": ["es2017", "dom"],
     "moduleResolution": "bundler",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "resolveJsonModule": true,
-    "target": "esnext"
+    "target": "esnext",
+    "types": ["node", "react"]
   },
   "include": [
     "**/*.ts",

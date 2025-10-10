@@ -63,6 +63,9 @@ export { BackupManager } from './services/BackupManager';
 export { IntelligenceService } from './services/IntelligenceService';
 export { RealTimeSyncIntegration } from './services/RealTimeSyncIntegration';
 export { PushNotificationService } from './services/PushNotificationService';
+export { TaskCompletionService } from './services/TaskCompletionService';
+export { TaskNotificationService } from './services/TaskNotificationService';
+export type { NotificationConfig, ScheduledNotification } from './services/TaskNotificationService';
 
 // Service Container
 export { ServiceContainer } from './ServiceContainer';
@@ -86,3 +89,11 @@ export { getSupabaseClient, resetSupabaseClient, isSupabaseConfigured } from './
 
 // Types
 export type { ServiceContainerConfig } from './ServiceContainer';
+export type {
+  RoutineTaskCompletion,
+  TaskCompletionInput,
+  TaskCompletionStats,
+  WorkerCompletionHistory,
+  BuildingCompletionHistory,
+  TaskCompletionPhoto
+} from './types/TaskCompletion';

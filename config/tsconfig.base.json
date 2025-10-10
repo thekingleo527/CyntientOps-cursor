@@ -20,7 +20,8 @@
     "baseUrl": ".",
     "paths": {
       "@cyntientops/*": ["packages/*/src"]
-    }
+    },
+    "types": []
   },
   "include": [],
   "exclude": [

@@ -13,7 +13,7 @@
     "startHour": 6,
     "endHour": 7,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -30,7 +30,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Wednesday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -47,7 +47,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -64,7 +64,7 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -81,7 +81,7 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -98,7 +98,7 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -115,7 +115,7 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -132,7 +132,7 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -149,7 +149,7 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -166,25 +166,8 @@
     "startHour": 14,
     "endHour": 15,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
-  },
-  {
-    "id": "task-011",
-    "title": "Boiler Blow-Down - 131 Perry",
-    "description": "Boiler maintenance and blow-down procedure",
-    "building": "131 Perry Street",
-    "buildingId": "10",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Maintenance",
-    "skillLevel": "Advanced",
-    "recurrence": "Weekly",
-    "startHour": 8,
-    "endHour": 9,
-    "daysOfWeek": "Wednesday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
   },
   {
     "id": "task-012",
@@ -200,7 +183,7 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -217,7 +200,7 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -234,7 +217,7 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -251,7 +234,7 @@
     "startHour": 15,
     "endHour": 16,
     "daysOfWeek": "Monday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -268,13 +251,13 @@
     "startHour": 19,
     "endHour": 20,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-017",
     "title": "Trash Area + Sidewalk & Curb Clean - 135-139 West 17th",
-    "description": "Clean trash area, sidewalk and curb",
+    "description": "Clean trash area, sidewalk and curb, bag garbage for evening collection",
     "building": "135-139 West 17th Street",
     "buildingId": "3",
     "assignedWorker": "Kevin Dutan",
@@ -285,13 +268,13 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-018",
     "title": "DSNY: Set Out Trash - 135-139 West 17th",
-    "description": "DSNY coordination - set out trash for collection",
+    "description": "DSNY coordination - set out trash for collection (garbage put out after 8 PM)",
     "building": "135-139 West 17th Street",
     "buildingId": "3",
     "assignedWorker": "Kevin Dutan",
@@ -300,27 +283,28 @@
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 20,
-    "endHour": 21,
+    "endHour": 22,
     "daysOfWeek": "Sunday,Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
-    "id": "task-019",
+    "id": "task-edwin-005",
     "title": "Building Systems Status Check - 135-139 West 17th",
-    "description": "Check building systems status and functionality",
+    "description": "Check building systems status and functionality (integrated with drain check)",
     "building": "135-139 West 17th Street",
     "buildingId": "3",
-    "assignedWorker": "Kevin Dutan",
-    "workerId": "4",
+    "assignedWorker": "Edwin Lema",
+    "workerId": "2",
     "category": "Maintenance",
     "skillLevel": "Intermediate",
     "recurrence": "Weekly",
-    "startHour": 14,
-    "endHour": 15,
-    "daysOfWeek": "Tuesday,Friday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
+    "startHour": 11,
+    "endHour": 12,
+    "daysOfWeek": "Friday",
+    "estimatedDuration": 15,
+    "requiresPhoto": false,
+    "notes": "Integrated with Friday drain check - Edwin's 3pm hard stop respected"
   },
   {
     "id": "task-020",
@@ -336,7 +320,7 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -353,25 +337,8 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
-  },
-  {
-    "id": "task-022",
-    "title": "Boiler Blow-Down - 135-139 West 17th",
-    "description": "Boiler maintenance and blow-down procedure",
-    "building": "135-139 West 17th Street",
-    "buildingId": "3",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Maintenance",
-    "skillLevel": "Advanced",
-    "recurrence": "Weekly",
-    "startHour": 10,
-    "endHour": 11,
-    "daysOfWeek": "Tuesday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
   },
   {
     "id": "task-023",
@@ -387,13 +354,13 @@
     "startHour": 21,
     "endHour": 22,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
     "id": "task-024",
     "title": "Trash Area + Sidewalk & Curb Clean - 136 West 17th",
-    "description": "Clean trash area, sidewalk and curb",
+    "description": "Clean trash area, sidewalk and curb, bag garbage for evening collection",
     "building": "136 West 17th Street",
     "buildingId": "13",
     "assignedWorker": "Kevin Dutan",
@@ -404,13 +371,13 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-025",
     "title": "DSNY: Set Out Trash - 136 West 17th",
-    "description": "DSNY coordination - set out trash for collection",
+    "description": "DSNY coordination - set out trash for collection (garbage put out after 8 PM)",
     "building": "136 West 17th Street",
     "buildingId": "13",
     "assignedWorker": "Kevin Dutan",
@@ -419,9 +386,9 @@
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 20,
-    "endHour": 21,
+    "endHour": 22,
     "daysOfWeek": "Sunday,Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -438,7 +405,7 @@
     "startHour": 15,
     "endHour": 16,
     "daysOfWeek": "Monday,Wednesday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -455,7 +422,7 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -478,7 +445,7 @@
   {
     "id": "task-029",
     "title": "Trash Area + Sidewalk & Curb Clean - 138 West 17th",
-    "description": "Clean trash area, sidewalk and curb",
+    "description": "Clean trash area, sidewalk and curb, bag garbage for evening collection",
     "building": "138 West 17th Street",
     "buildingId": "5",
     "assignedWorker": "Kevin Dutan",
@@ -489,13 +456,13 @@
     "startHour": 11,
     "endHour": 12,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-030",
     "title": "DSNY: Set Out Trash - 138 West 17th",
-    "description": "DSNY coordination - set out trash for collection",
+    "description": "DSNY coordination - set out trash for collection (garbage put out after 8 PM)",
     "building": "138 West 17th Street",
     "buildingId": "5",
     "assignedWorker": "Kevin Dutan",
@@ -504,9 +471,9 @@
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 20,
-    "endHour": 21,
+    "endHour": 22,
     "daysOfWeek": "Sunday,Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -523,7 +490,7 @@
     "startHour": 16,
     "endHour": 17,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -540,25 +507,8 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
-  },
-  {
-    "id": "task-033",
-    "title": "Boiler Blow-Down - 138 West 17th (Edwin)",
-    "description": "Boiler maintenance and blow-down procedure",
-    "building": "138 West 17th Street",
-    "buildingId": "5",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Maintenance",
-    "skillLevel": "Advanced",
-    "recurrence": "Weekly",
-    "startHour": 10,
-    "endHour": 11,
-    "daysOfWeek": "Thursday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
   },
   {
     "id": "task-034",
@@ -580,7 +530,7 @@
   {
     "id": "task-035",
     "title": "Trash Area Clean - 117 West 17th",
-    "description": "Clean trash area and surrounding space",
+    "description": "Clean trash area and surrounding space, bag garbage for evening collection",
     "building": "117 West 17th Street",
     "buildingId": "9",
     "assignedWorker": "Kevin Dutan",
@@ -591,7 +541,7 @@
     "startHour": 11,
     "endHour": 12,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -608,7 +558,7 @@
     "startHour": 15,
     "endHour": 16,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -625,7 +575,7 @@
     "startHour": 15,
     "endHour": 16,
     "daysOfWeek": "Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -642,7 +592,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -658,25 +608,8 @@
     "recurrence": "Bi-Monthly",
     "startHour": 10,
     "endHour": 11,
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
-  },
-  {
-    "id": "task-040",
-    "title": "Boiler Blow-Down - 117 West 17th (Edwin)",
-    "description": "Boiler maintenance and blow-down procedure",
-    "building": "117 West 17th Street",
-    "buildingId": "9",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Maintenance",
-    "skillLevel": "Advanced",
-    "recurrence": "Weekly",
-    "startHour": 11,
-    "endHour": 12,
-    "daysOfWeek": "Tuesday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
   },
   {
     "id": "task-041",
@@ -714,7 +647,7 @@
   {
     "id": "task-043",
     "title": "Trash Area Clean - 112 West 18th",
-    "description": "Clean trash area and surrounding space",
+    "description": "Clean trash area and surrounding space, bag garbage for evening collection",
     "building": "112 West 18th Street",
     "buildingId": "7",
     "assignedWorker": "Kevin Dutan",
@@ -725,7 +658,7 @@
     "startHour": 11,
     "endHour": 12,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -742,7 +675,7 @@
     "startHour": 14,
     "endHour": 15,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -759,7 +692,7 @@
     "startHour": 6,
     "endHour": 7,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -775,7 +708,7 @@
     "recurrence": "Bi-Monthly",
     "startHour": 11,
     "endHour": 12,
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -808,7 +741,7 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -825,7 +758,7 @@
     "startHour": 11,
     "endHour": 12,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -848,7 +781,7 @@
   {
     "id": "task-051",
     "title": "DSNY: Set Out Trash - Rubin Museum",
-    "description": "DSNY coordination - set out trash for collection",
+    "description": "DSNY coordination - set out trash for collection (garbage put out after 8 PM)",
     "building": "Rubin Museum (142–148 W 17th)",
     "buildingId": "14",
     "assignedWorker": "Kevin Dutan",
@@ -857,9 +790,9 @@
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 20,
-    "endHour": 21,
+    "endHour": 22,
     "daysOfWeek": "Sunday,Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -876,7 +809,7 @@
     "startHour": 16,
     "endHour": 17,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -893,7 +826,7 @@
     "startHour": 16,
     "endHour": 17,
     "daysOfWeek": "Wednesday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -910,7 +843,7 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Wednesday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -927,7 +860,7 @@
     "startHour": 13,
     "endHour": 14,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -944,7 +877,7 @@
     "startHour": 19,
     "endHour": 20,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -960,14 +893,14 @@
     "recurrence": "Weekly",
     "startHour": 14,
     "endHour": 15,
-    "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "daysOfWeek": "Tuesday,Friday",
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-058",
     "title": "DSNY: Set Out Trash - 178 Spring Street",
-    "description": "DSNY coordination - set out trash for collection",
+    "description": "DSNY coordination - set out trash for collection (garbage put out after 8 PM)",
     "building": "178 Spring Street",
     "buildingId": "17",
     "assignedWorker": "Kevin Dutan",
@@ -976,127 +909,154 @@
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 20,
-    "endHour": 21,
+    "endHour": 22,
     "daysOfWeek": "Sunday,Tuesday,Thursday",
-    "estimatedDuration": 60,
-    "requiresPhoto": true
-  },
-  {
-    "id": "task-059",
-    "title": "Garbage & Recycling Collection - 148 Chambers Street",
-    "description": "Collect garbage and recycling materials",
-    "building": "148 Chambers Street",
-    "buildingId": "21",
-    "assignedWorker": "Kevin Dutan",
-    "workerId": "4",
-    "category": "Sanitation",
-    "skillLevel": "Basic",
-    "recurrence": "Weekly",
-    "startHour": 18,
-    "endHour": 19,
-    "daysOfWeek": "Sunday,Tuesday,Thursday",
-    "estimatedDuration": 60,
-    "requiresPhoto": true
-  },
-  {
-    "id": "task-060",
-    "title": "Bring Bins Back Inside - 148 Chambers Street",
-    "description": "Return trash and recycling bins inside after collection",
-    "building": "148 Chambers Street",
-    "buildingId": "21",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Sanitation",
-    "skillLevel": "Basic",
-    "recurrence": "Weekly",
-    "startHour": 7,
-    "endHour": 8,
-    "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
-  },
-  {
-    "id": "task-061",
-    "title": "Hose Sidewalk - 148 Chambers Street",
-    "description": "Hose down sidewalk areas around building",
-    "building": "148 Chambers Street",
-    "buildingId": "21",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Cleaning",
-    "skillLevel": "Basic",
-    "recurrence": "Weekly",
-    "startHour": 7,
-    "endHour": 8,
-    "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
-    "requiresPhoto": true
-  },
-  {
-    "id": "task-062",
-    "title": "Clean Glass & Windows - 148 Chambers Street",
-    "description": "Clean all glass surfaces and windows",
-    "building": "148 Chambers Street",
-    "buildingId": "21",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Cleaning",
-    "skillLevel": "Intermediate",
-    "recurrence": "Weekly",
-    "startHour": 8,
-    "endHour": 9,
-    "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
-    "requiresPhoto": true
-  },
-  {
-    "id": "task-063",
-    "title": "Clean Elevator - 148 Chambers Street",
-    "description": "Clean and maintain elevator interior",
-    "building": "148 Chambers Street",
-    "buildingId": "21",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Cleaning",
-    "skillLevel": "Basic",
-    "recurrence": "Weekly",
-    "startHour": 8,
-    "endHour": 9,
-    "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
-  },
-  {
-    "id": "task-064",
-    "title": "Monthly Stairwell Cleaning - 148 Chambers Street",
-    "description": "Monthly deep cleaning of all stairwells",
-    "building": "148 Chambers Street",
-    "buildingId": "21",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Cleaning",
-    "skillLevel": "Intermediate",
-    "recurrence": "Monthly",
-    "startHour": 9,
-    "endHour": 11,
     "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
-    "id": "task-065",
-    "title": "Monthly Utility Room Check - 148 Chambers Street",
-    "description": "Monthly inspection and maintenance of utility room",
+    "id": "task-060",
+    "title": "148 Chambers Street Complete Routine",
+    "description": "Complete building routine: bring bins inside, hose sidewalk, clean glass/windows, clean elevator, bin hosing, mop lobby, move packages to package closet",
     "building": "148 Chambers Street",
     "buildingId": "21",
     "assignedWorker": "Edwin Lema",
     "workerId": "2",
-    "category": "Maintenance",
+    "category": "Cleaning",
+    "skillLevel": "Intermediate",
+    "recurrence": "Weekly",
+    "startHour": 8,
+    "endHour": 9,
+    "daysOfWeek": "Monday,Wednesday,Friday",
+    "estimatedDuration": 90,
+    "requiresPhoto": true,
+    "notes": "Combined routine: sanitation, sidewalk cleaning, glass cleaning, elevator maintenance, bin maintenance, lobby mopping, package management"
+  },
+  {
+    "id": "task-128",
+    "title": "Monthly Stairwell Mopping - 148 Chambers Street",
+    "description": "Monthly deep mopping of all stairwells",
+    "building": "148 Chambers Street",
+    "buildingId": "21",
+    "assignedWorker": "Edwin Lema",
+    "workerId": "2",
+    "category": "Cleaning",
     "skillLevel": "Intermediate",
     "recurrence": "Monthly",
+    "startHour": 8,
+    "endHour": 9,
+    "daysOfWeek": "First Monday",
+    "estimatedDuration": 90,
+    "requiresPhoto": true,
+    "notes": "Monthly deep mopping of all stairwells - replaces regular routine on first Monday of each month"
+  },
+  {
+    "id": "task-129",
+    "title": "178 Spring Street Cleaning - Kevin",
+    "description": "Complete cleaning routine at 178 Spring Street",
+    "building": "178 Spring Street",
+    "buildingId": "17",
+    "assignedWorker": "Kevin Dutan",
+    "workerId": "4",
+    "category": "Cleaning",
+    "skillLevel": "Basic",
+    "recurrence": "Weekly",
+    "startHour": 14,
+    "endHour": 15,
+    "daysOfWeek": "Tuesday,Friday",
+    "estimatedDuration": 120,
+    "requiresPhoto": true,
+    "notes": "Complete cleaning routine at 178 Spring Street on Tue/Fri"
+  },
+  {
+    "id": "task-130",
+    "title": "123 1st Avenue Cleaning - Kevin",
+    "description": "Complete cleaning routine at 123 1st Avenue",
+    "building": "123 1st Avenue",
+    "buildingId": "11",
+    "assignedWorker": "Kevin Dutan",
+    "workerId": "4",
+    "category": "Cleaning",
+    "skillLevel": "Basic",
+    "recurrence": "Weekly",
+    "startHour": 15,
+    "endHour": 16,
+    "daysOfWeek": "Tuesday,Friday",
+    "estimatedDuration": 120,
+    "requiresPhoto": true,
+    "notes": "Complete cleaning routine at 123 1st Avenue on Tue/Fri"
+  },
+  {
+    "id": "task-edwin-006",
+    "title": "Stairwell & 6th Floor Mopping - 135-139 West 17th",
+    "description": "Deep mopping of stairwells and 6th floor at 135-139 West 17th Street",
+    "building": "135-139 West 17th Street",
+    "buildingId": "3",
+    "assignedWorker": "Edwin Lema",
+    "workerId": "2",
+    "category": "Cleaning",
+    "skillLevel": "Intermediate",
+    "recurrence": "Weekly",
+    "startHour": 14,
+    "endHour": 15,
+    "daysOfWeek": "Thursday",
+    "estimatedDuration": 60,
+    "requiresPhoto": true,
+    "notes": "Transferred from Kevin - Edwin's 3pm hard stop respected"
+  },
+  {
+    "id": "task-132",
+    "title": "Hallway Vacuum - 117 West 17th",
+    "description": "Vacuum hallways at 117 West 17th Street",
+    "building": "117 West 17th Street",
+    "buildingId": "9",
+    "assignedWorker": "Kevin Dutan",
+    "workerId": "4",
+    "category": "Cleaning",
+    "skillLevel": "Basic",
+    "recurrence": "Weekly",
     "startHour": 11,
     "endHour": 12,
-    "estimatedDuration": 60,
-    "requiresPhoto": true
+    "daysOfWeek": "Monday,Wednesday,Friday",
+    "estimatedDuration": 120,
+    "requiresPhoto": false,
+    "notes": "Part of morning circuit routine - vacuum hallways at 117 West 17th Street"
+  },
+  {
+    "id": "task-133",
+    "title": "Hallway Vacuum - 112 West 18th",
+    "description": "Vacuum hallways at 112 West 18th Street",
+    "building": "112 West 18th Street",
+    "buildingId": "7",
+    "assignedWorker": "Kevin Dutan",
+    "workerId": "4",
+    "category": "Cleaning",
+    "skillLevel": "Basic",
+    "recurrence": "Weekly",
+    "startHour": 11,
+    "endHour": 12,
+    "daysOfWeek": "Monday,Wednesday,Friday",
+    "estimatedDuration": 120,
+    "requiresPhoto": false,
+    "notes": "Part of morning circuit routine - vacuum hallways at 112 West 18th Street"
+  },
+  {
+    "id": "task-134",
+    "title": "Laundry Area Maintenance - Portfolio Wide",
+    "description": "Clean lint traps, water basins, and maintain laundry areas across portfolio",
+    "building": "Portfolio Wide",
+    "buildingId": "multiple",
+    "assignedWorker": "Kevin Dutan",
+    "workerId": "4",
+    "category": "Maintenance",
+    "skillLevel": "Intermediate",
+    "recurrence": "Weekly",
+    "startHour": 13,
+    "endHour": 14,
+    "daysOfWeek": "Monday,Wednesday,Friday",
+    "estimatedDuration": 120,
+    "requiresPhoto": true,
+    "notes": "After lunch maintenance - clean lint traps, water basins, and maintain laundry areas across portfolio"
   },
   {
     "id": "task-066",
@@ -1129,7 +1089,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1144,9 +1104,9 @@
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 20,
-    "endHour": 21,
+    "endHour": 22,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1155,15 +1115,15 @@
     "description": "Sweep sidewalk and entrance area",
     "building": "36 Walker Street",
     "buildingId": "18",
-    "assignedWorker": "Luis Lopez",
-    "workerId": "6",
+    "assignedWorker": "Shawn Magloire",
+    "workerId": "8",
     "category": "Cleaning",
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1180,13 +1140,13 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-071",
-    "title": "Lobby & Sidewalk Clean - 41 Elizabeth Street",
-    "description": "Clean lobby and sidewalk areas",
+    "title": "Sidewalk Hose Down - 41 Elizabeth Street",
+    "description": "Hose down sidewalks in the morning",
     "building": "41 Elizabeth Street",
     "buildingId": "8",
     "assignedWorker": "Luis Lopez",
@@ -1194,16 +1154,16 @@
     "category": "Cleaning",
     "skillLevel": "Basic",
     "recurrence": "Daily",
-    "startHour": 9,
-    "endHour": 10,
+    "startHour": 7,
+    "endHour": 8,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-072",
-    "title": "Elevator Clean - 41 Elizabeth Street",
-    "description": "Clean and maintain elevator interior",
+    "title": "Lobby & Elevator Clean - 41 Elizabeth Street",
+    "description": "Clean lobby and stainless steel elevator interior",
     "building": "41 Elizabeth Street",
     "buildingId": "8",
     "assignedWorker": "Luis Lopez",
@@ -1211,16 +1171,16 @@
     "category": "Cleaning",
     "skillLevel": "Basic",
     "recurrence": "Daily",
-    "startHour": 10,
-    "endHour": 11,
+    "startHour": 8,
+    "endHour": 9,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
+    "estimatedDuration": 120,
+    "requiresPhoto": true
   },
   {
     "id": "task-073",
-    "title": "Afternoon Garbage Removal - 41 Elizabeth Street",
-    "description": "Collect and remove garbage in afternoon",
+    "title": "Garbage Bins Set Out - 41 Elizabeth Street",
+    "description": "Set out garbage bins for pickup on requisite days (commercial frequency)",
     "building": "41 Elizabeth Street",
     "buildingId": "8",
     "assignedWorker": "Luis Lopez",
@@ -1228,10 +1188,10 @@
     "category": "Sanitation",
     "skillLevel": "Basic",
     "recurrence": "Daily",
-    "startHour": 13,
-    "endHour": 14,
+    "startHour": 14,
+    "endHour": 15,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 30,
     "requiresPhoto": true
   },
   {
@@ -1248,7 +1208,7 @@
     "startHour": 14,
     "endHour": 15,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -1265,7 +1225,7 @@
     "startHour": 18,
     "endHour": 19,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1282,7 +1242,7 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1299,7 +1259,7 @@
     "startHour": 10,
     "endHour": 11,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1316,13 +1276,13 @@
     "startHour": 11,
     "endHour": 12,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
     "id": "task-079",
     "title": "Trash Area Clean - 12 West 18th Street",
-    "description": "Clean trash area and surrounding space",
+    "description": "Clean trash area and surrounding space, bag garbage for evening collection",
     "building": "12 West 18th Street",
     "buildingId": "1",
     "assignedWorker": "Greg Hutson",
@@ -1333,7 +1293,7 @@
     "startHour": 13,
     "endHour": 14,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1350,7 +1310,7 @@
     "startHour": 14,
     "endHour": 15,
     "daysOfWeek": "Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -1364,8 +1324,44 @@
     "category": "Operations",
     "skillLevel": "Basic",
     "recurrence": "On-Demand",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
+  },
+  {
+    "id": "task-119",
+    "title": "Mail/Package Delivery - 12 West 18th Street",
+    "description": "Deliver mail and packages to units/doors by Greg",
+    "building": "12 West 18th Street",
+    "buildingId": "1",
+    "assignedWorker": "Greg Hutson",
+    "workerId": "1",
+    "category": "Operations",
+    "skillLevel": "Basic",
+    "recurrence": "Daily",
+    "startHour": 8,
+    "endHour": 9,
+    "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
+    "estimatedDuration": 30,
+    "requiresPhoto": false
+  },
+  {
+    "id": "task-120",
+    "title": "Roof Drain Check - 12 West 18th Street",
+    "description": "Check roof drains before rain/periodically to ensure proper drainage",
+    "building": "12 West 18th Street",
+    "buildingId": "1",
+    "assignedWorker": "Greg Hutson",
+    "workerId": "1",
+    "category": "Maintenance",
+    "skillLevel": "Basic",
+    "recurrence": "Weekly",
+    "startHour": 15,
+    "endHour": 16,
+    "daysOfWeek": "Tuesday,Thursday",
+    "estimatedDuration": 30,
+    "requiresPhoto": true,
+    "weatherDependent": true,
+    "notes": "Check before rain events and periodically for debris/blockages"
   },
   {
     "id": "task-082",
@@ -1381,7 +1377,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1414,25 +1410,44 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-085",
-    "title": "Boiler Blow-Down - 133 East 15th Street (Edwin)",
-    "description": "Boiler maintenance and blow-down procedure",
-    "building": "133 East 15th Street",
-    "buildingId": "15",
+    "title": "Weekly Boiler Blow-Down - Portfolio Wide",
+    "description": "Weekly boiler maintenance and blow-down procedure (rotating buildings)",
+    "building": "Portfolio Wide",
+    "buildingId": "multiple",
     "assignedWorker": "Edwin Lema",
     "workerId": "2",
     "category": "Maintenance",
     "skillLevel": "Advanced",
     "recurrence": "Weekly",
-    "startHour": 9,
-    "endHour": 10,
-    "daysOfWeek": "Monday",
-    "estimatedDuration": 60,
-    "requiresPhoto": false
+    "startHour": 11,
+    "endHour": 11,
+    "daysOfWeek": "Tuesday",
+    "estimatedDuration": 15,
+    "requiresPhoto": false,
+    "notes": "Rotate through buildings: 133 East 15th Street, 131 Perry Street, 135-139 West 17th Street, 138 West 17th Street, 117 West 17th Street"
+  },
+  {
+    "id": "task-127",
+    "title": "Building Walkthrough - Portfolio Wide",
+    "description": "Building walkthrough inspection and systems check (rotating buildings)",
+    "building": "Portfolio Wide",
+    "buildingId": "multiple",
+    "assignedWorker": "Edwin Lema",
+    "workerId": "2",
+    "category": "Inspection",
+    "skillLevel": "Intermediate",
+    "recurrence": "Weekly",
+    "startHour": 11,
+    "endHour": 11,
+    "daysOfWeek": "Tuesday",
+    "estimatedDuration": 15,
+    "requiresPhoto": true,
+    "notes": "Follows boiler blow-down schedule. Rotate through buildings: 133 East 15th Street, 131 Perry Street, 135-139 West 17th Street, 138 West 17th Street, 117 West 17th Street"
   },
   {
     "id": "task-086",
@@ -1470,8 +1485,8 @@
   },
   {
     "id": "task-089",
-    "title": "Hallway Vacuum - 12 West 18th Street",
-    "description": "Vacuum all hallways and common areas",
+    "title": "Hallway Sweep/Mop - 12 West 18th Street",
+    "description": "Sweep and mop all hallways and common areas (no carpets in building)",
     "building": "12 West 18th Street",
     "buildingId": "1",
     "assignedWorker": "Greg Hutson",
@@ -1482,7 +1497,7 @@
     "startHour": 14,
     "endHour": 15,
     "daysOfWeek": "Monday,Wednesday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -1499,13 +1514,13 @@
     "startHour": 15,
     "endHour": 16,
     "daysOfWeek": "Tuesday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
     "id": "task-091",
-    "title": "Mail Room Clean - 12 West 18th Street",
-    "description": "Clean mail room and package storage area",
+    "title": "Basement Bathroom/Storage Area Clean - 12 West 18th Street",
+    "description": "Clean basement bathroom and storage area",
     "building": "12 West 18th Street",
     "buildingId": "1",
     "assignedWorker": "Greg Hutson",
@@ -1516,7 +1531,7 @@
     "startHour": 15,
     "endHour": 16,
     "daysOfWeek": "Monday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -1533,7 +1548,7 @@
     "startHour": 14,
     "endHour": 15,
     "daysOfWeek": "Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -1550,7 +1565,7 @@
     "startHour": 15,
     "endHour": 16,
     "daysOfWeek": "Wednesday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1565,9 +1580,9 @@
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 20,
-    "endHour": 21,
+    "endHour": 22,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -1584,7 +1599,7 @@
     "startHour": 19,
     "endHour": 20,
     "daysOfWeek": "Monday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1599,9 +1614,9 @@
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 20,
-    "endHour": 21,
+    "endHour": 22,
     "daysOfWeek": "Monday,Wednesday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1618,7 +1633,7 @@
     "startHour": 21,
     "endHour": 22,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": false
   },
   {
@@ -1635,7 +1650,7 @@
     "startHour": 18,
     "endHour": 19,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1652,7 +1667,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1669,7 +1684,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1686,7 +1701,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1720,7 +1735,7 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1737,7 +1752,7 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -1775,21 +1790,22 @@
     "requiresPhoto": true
   },
   {
-    "id": "task-107",
+    "id": "task-edwin-007",
     "title": "Weekly Bin Hosing - 135-139 West 17th Street",
-    "description": "Hose down trash bins on recycling day",
+    "description": "Hose down trash bins on recycling day (integrated with 136 West 17th walkthrough)",
     "building": "135-139 West 17th Street",
     "buildingId": "3",
-    "assignedWorker": "Kevin Dutan",
-    "workerId": "4",
+    "assignedWorker": "Edwin Lema",
+    "workerId": "2",
     "category": "Cleaning",
     "skillLevel": "Basic",
     "recurrence": "Weekly",
     "startHour": 13,
     "endHour": 14,
     "daysOfWeek": "Wednesday",
-    "estimatedDuration": 30,
-    "requiresPhoto": true
+    "estimatedDuration": 15,
+    "requiresPhoto": true,
+    "notes": "Transferred from Kevin - integrated with 136 West 17th walkthrough"
   },
   {
     "id": "task-108",
@@ -1894,30 +1910,13 @@
     "requiresPhoto": true
   },
   {
-    "id": "task-114",
-    "title": "Weekly Bin Hosing - 148 Chambers Street",
-    "description": "Hose down trash bins on recycling day",
-    "building": "148 Chambers Street",
-    "buildingId": "21",
-    "assignedWorker": "Edwin Lema",
-    "workerId": "2",
-    "category": "Cleaning",
-    "skillLevel": "Basic",
-    "recurrence": "Weekly",
-    "startHour": 10,
-    "endHour": 11,
-    "daysOfWeek": "Wednesday",
-    "estimatedDuration": 30,
-    "requiresPhoto": true
-  },
-  {
     "id": "task-115",
     "title": "Weekly Bin Hosing - 104 Franklin Street",
     "description": "Hose down trash bins on recycling day",
     "building": "104 Franklin Street",
     "buildingId": "4",
-    "assignedWorker": "Luis Lopez",
-    "workerId": "6",
+    "assignedWorker": "Shawn Magloire",
+    "workerId": "8",
     "category": "Cleaning",
     "skillLevel": "Basic",
     "recurrence": "Weekly",
@@ -1933,8 +1932,8 @@
     "description": "Hose down trash bins on recycling day",
     "building": "36 Walker Street",
     "buildingId": "18",
-    "assignedWorker": "Luis Lopez",
-    "workerId": "6",
+    "assignedWorker": "Shawn Magloire",
+    "workerId": "8",
     "category": "Cleaning",
     "skillLevel": "Basic",
     "recurrence": "Weekly",
@@ -1958,6 +1957,108 @@
     "startHour": 11,
     "endHour": 12,
     "daysOfWeek": "Wednesday",
+    "estimatedDuration": 30,
+    "requiresPhoto": true
+  },
+  {
+    "id": "task-121",
+    "title": "Bathroom Check Before Lunch - 41 Elizabeth Street",
+    "description": "Check and clean bathrooms before lunch break",
+    "building": "41 Elizabeth Street",
+    "buildingId": "8",
+    "assignedWorker": "Luis Lopez",
+    "workerId": "6",
+    "category": "Cleaning",
+    "skillLevel": "Basic",
+    "recurrence": "Daily",
+    "startHour": 12,
+    "endHour": 12,
+    "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
+    "estimatedDuration": 15,
+    "requiresPhoto": false
+  },
+  {
+    "id": "task-122",
+    "title": "Bathroom Check End of Day - 41 Elizabeth Street",
+    "description": "Final bathroom check and clean before end of day",
+    "building": "41 Elizabeth Street",
+    "buildingId": "8",
+    "assignedWorker": "Luis Lopez",
+    "workerId": "6",
+    "category": "Cleaning",
+    "skillLevel": "Basic",
+    "recurrence": "Daily",
+    "startHour": 14,
+    "endHour": 15,
+    "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
+    "estimatedDuration": 15,
+    "requiresPhoto": false
+  },
+  {
+    "id": "task-123",
+    "title": "Monthly Stairwell Mopping - 41 Elizabeth Street",
+    "description": "Monthly deep mopping of all stairwells",
+    "building": "41 Elizabeth Street",
+    "buildingId": "8",
+    "assignedWorker": "Luis Lopez",
+    "workerId": "6",
+    "category": "Cleaning",
+    "skillLevel": "Intermediate",
+    "recurrence": "Monthly",
+    "startHour": 8,
+    "endHour": 10,
+    "daysOfWeek": "First Monday",
+    "estimatedDuration": 120,
+    "requiresPhoto": true
+  },
+  {
+    "id": "task-124",
+    "title": "Monthly Cooling Tower Visual Inspection - 41 Elizabeth Street",
+    "description": "Monthly visual inspection of cooling tower system",
+    "building": "41 Elizabeth Street",
+    "buildingId": "8",
+    "assignedWorker": "Luis Lopez",
+    "workerId": "6",
+    "category": "Maintenance",
+    "skillLevel": "Intermediate",
+    "recurrence": "Monthly",
+    "startHour": 10,
+    "endHour": 11,
+    "daysOfWeek": "First Tuesday",
+    "estimatedDuration": 120,
+    "requiresPhoto": true
+  },
+  {
+    "id": "task-125",
+    "title": "Monthly Water Tank Refill - 41 Elizabeth Street",
+    "description": "Monthly water tank refill and inspection",
+    "building": "41 Elizabeth Street",
+    "buildingId": "8",
+    "assignedWorker": "Luis Lopez",
+    "workerId": "6",
+    "category": "Maintenance",
+    "skillLevel": "Basic",
+    "recurrence": "Monthly",
+    "startHour": 11,
+    "endHour": 12,
+    "daysOfWeek": "First Wednesday",
+    "estimatedDuration": 120,
+    "requiresPhoto": true
+  },
+  {
+    "id": "task-126",
+    "title": "Weekly Water Filter Cleaning - 41 Elizabeth Street",
+    "description": "Weekly cleaning of water filters in boiler room",
+    "building": "41 Elizabeth Street",
+    "buildingId": "8",
+    "assignedWorker": "Luis Lopez",
+    "workerId": "6",
+    "category": "Maintenance",
+    "skillLevel": "Basic",
+    "recurrence": "Weekly",
+    "startHour": 13,
+    "endHour": 14,
+    "daysOfWeek": "Friday",
     "estimatedDuration": 30,
     "requiresPhoto": true
   },
@@ -2009,7 +2110,7 @@
     "startHour": 7,
     "endHour": 8,
     "daysOfWeek": "Monday,Tuesday,Wednesday,Thursday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -2026,7 +2127,7 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Saturday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -2145,7 +2246,7 @@
     "startHour": 8,
     "endHour": 9,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -2162,7 +2263,7 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Tuesday,Thursday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   },
   {
@@ -2179,7 +2280,7 @@
     "startHour": 9,
     "endHour": 10,
     "daysOfWeek": "Monday,Wednesday,Friday",
-    "estimatedDuration": 60,
+    "estimatedDuration": 120,
     "requiresPhoto": true
   }
 ]

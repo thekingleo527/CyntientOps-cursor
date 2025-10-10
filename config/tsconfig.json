@@ -18,49 +18,49 @@
   "files": [],
   "references": [
     {
-      "path": "../packages/domain-schema"
+      "path": "./packages/domain-schema"
     },
     {
-      "path": "../packages/design-tokens"
+      "path": "./packages/design-tokens"
     },
     {
-      "path": "../packages/data-seed"
+      "path": "./packages/data-seed"
     },
     {
-      "path": "../packages/database"
+      "path": "./packages/database"
     },
     {
-      "path": "../packages/ui-components"
+      "path": "./packages/ui-components"
     },
     {
-      "path": "../packages/business-core"
+      "path": "./packages/business-core"
     },
     {
-      "path": "../packages/api-clients"
+      "path": "./packages/api-clients"
     },
     {
-      "path": "../packages/managers"
+      "path": "./packages/managers"
     },
     {
-      "path": "../packages/intelligence-services"
+      "path": "./packages/intelligence-services"
     },
     {
-      "path": "../packages/context-engines"
+      "path": "./packages/context-engines"
     },
     {
-      "path": "../packages/command-chains"
+      "path": "./packages/command-chains"
     },
     {
-      "path": "../packages/offline-support"
+      "path": "./packages/offline-support"
     },
     {
-      "path": "../packages/realtime-sync"
+      "path": "./packages/realtime-sync"
     },
     {
-      "path": "../packages/testing"
+      "path": "./packages/testing"
     },
     {
-      "path": "../apps/mobile-rn"
+      "path": "./apps/mobile-rn"
     }
   ],
   "exclude": [

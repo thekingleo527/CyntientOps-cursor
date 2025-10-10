@@ -14,6 +14,19 @@ export { useBuildingDetailViewModel } from './useBuildingDetailViewModel';
 export { useWorkerDashboardViewModel, WorkerDashboardViewModel } from './WorkerDashboardViewModel';
 export { AdminDashboardViewModel } from './AdminDashboardViewModel';
 
+// Compliance Dashboard Integration
+export { 
+  useBuildingDetailComplianceIntegration,
+  useClientDashboardComplianceIntegration,
+  useAdminDashboardComplianceIntegration,
+  getComplianceNavigationConfig,
+  getCompliancePermissions
+} from './ComplianceDashboardIntegration';
+
+export { default as ClientDashboardComplianceIntegration } from './ClientDashboardComplianceIntegration';
+export { default as AdminDashboardComplianceIntegration } from './AdminDashboardComplianceIntegration';
+export { default as BuildingDetailComplianceIntegration } from './BuildingDetailComplianceIntegration';
+
 // Context Engines
 export { WorkerContextEngine } from './WorkerContextEngine';
 export { AdminContextEngine } from './AdminContextEngine';

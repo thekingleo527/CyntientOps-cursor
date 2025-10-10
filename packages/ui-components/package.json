@@ -28,7 +28,9 @@
     "react-native-reanimated": "~4.1.1",
     "@cyntientops/design-tokens": "1.0.0",
     "@cyntientops/business-core": "1.0.0",
-    "@cyntientops/context-engines": "1.0.0"
+    "@cyntientops/context-engines": "1.0.0",
+    "@cyntientops/compliance-engine": "1.0.0",
+    "@cyntientops/api-clients": "1.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",

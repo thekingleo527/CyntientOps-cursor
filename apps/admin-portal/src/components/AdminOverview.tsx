@@ -44,9 +44,9 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ user }) => {
     const loadStats = async () => {
       try {
         // Import real data from the data-seed package
-        const buildingsData = await import('@cyntientops/data-seed/buildings.json');
-        const workersData = await import('@cyntientops/data-seed/workers.json');
-        const routinesData = await import('@cyntientops/data-seed/routines.json');
+        const buildingsData = await import('../../../../packages/data-seed/src/buildings.json');
+        const workersData = await import('../../../../packages/data-seed/src/workers.json');
+        const routinesData = await import('../../../../packages/data-seed/src/routines.json');
         
         const buildings = buildingsData.default || buildingsData;
         const workers = workersData.default || workersData;

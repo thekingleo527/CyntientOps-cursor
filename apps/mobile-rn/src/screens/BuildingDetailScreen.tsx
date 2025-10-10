@@ -347,7 +347,10 @@ export const BuildingDetailScreen: React.FC = () => {
               <TouchableOpacity
                 key={tab}
                 style={[styles.tabButton, { backgroundColor: Colors.glass.regular }]}
-                onPress={() => console.log(`Navigate to ${tab} tab`)}
+                onPress={() => {
+                  // TODO: Implement tab navigation
+                  console.log(`Navigate to ${tab} tab`);
+                }}
               >
                 <Text style={styles.tabText}>{tab}</Text>
               </TouchableOpacity>
@@ -392,7 +395,10 @@ export const BuildingDetailScreen: React.FC = () => {
               bringInWorker={dsnyScheduleData.bringInWorker}
               bringInTime={dsnyScheduleData.bringInTime}
               nextCollection={dsnyScheduleData.nextCollection}
-              onViewFull={() => console.log('View full DSNY schedule')}
+              onViewFull={() => {
+                // TODO: Implement full DSNY schedule view
+                console.log('View full DSNY schedule');
+              }}
             />
           </View>
         )}
@@ -647,7 +653,10 @@ const renderRoutineCard = (routine: RoutineSummary) => {
         requiresPhoto={routine.requiresPhoto}
         frequency="Daily" // Could be derived from routine data if available
         daysOfWeek={routine.daysOfWeek}
-        onPress={() => console.log('Routine pressed:', routine.id)}
+        onPress={() => {
+          // TODO: Implement routine detail view
+          console.log('Routine pressed:', routine.id);
+        }}
       />
     </View>
   );

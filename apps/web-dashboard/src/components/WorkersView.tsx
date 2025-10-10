@@ -34,8 +34,8 @@ export const WorkersView: React.FC<WorkersViewProps> = ({ user }) => {
     const loadWorkers = async () => {
       try {
         // Import real data from the data-seed package
-        const workersData = await import('@cyntientops/data-seed/workers.json');
-        const routinesData = await import('@cyntientops/data-seed/routines.json');
+        const workersData = await import('../../../../packages/data-seed/src/workers.json');
+        const routinesData = await import('../../../../packages/data-seed/src/routines.json');
         
         const workers = workersData.default || workersData;
         const routines = routinesData.default || routinesData;
@@ -166,7 +166,10 @@ export const WorkersView: React.FC<WorkersViewProps> = ({ user }) => {
       >
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-white">Workers Management</h1>
-          <button className="btn btn-primary">
+          <button 
+            className="btn btn-primary"
+            onClick={() => console.log('Add Worker clicked')}
+          >
             <span>+</span>
             Add Worker
           </button>
@@ -250,7 +253,10 @@ export const WorkersView: React.FC<WorkersViewProps> = ({ user }) => {
                     <div className={`w-3 h-3 rounded-full ${getStatusColor(worker.status)}`}></div>
                     <span className="text-white text-sm">{getStatusText(worker.status)}</span>
                   </div>
-                  <button className="btn btn-secondary text-sm">
+                  <button 
+                    className="btn btn-secondary text-sm"
+                    onClick={() => console.log('View Details clicked for worker:', worker.id)}
+                  >
                     View Details
                   </button>
                 </div>

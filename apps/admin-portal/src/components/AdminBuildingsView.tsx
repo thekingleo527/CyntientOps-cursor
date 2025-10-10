@@ -33,70 +33,139 @@ export const AdminBuildingsView: React.FC<AdminBuildingsViewProps> = ({ user }) 
   const [buildings, setBuildings] = useState<Building[]>([]);
 
   useEffect(() => {
+    // Load real buildings data from data files
     const loadBuildings = async () => {
-      const mockBuildings: Building[] = [
-        {
-          id: '1',
-          name: '131 Perry Street',
-          address: '131 Perry St, New York, NY 10014',
-          type: 'Residential',
-          units: 6,
-          compliance: 85,
-          status: 'active',
-          lastInspection: '2 days ago',
-          assignedWorkers: 2,
-          managementCompany: 'J&M Realty',
-        },
-        {
-          id: '2',
-          name: 'Rubin Museum',
-          address: '104 Franklin St, New York, NY 10013',
-          type: 'Museum',
-          units: 0,
-          compliance: 95,
-          status: 'active',
-          lastInspection: '1 day ago',
-          assignedWorkers: 1,
-          managementCompany: 'Rubin Foundation',
-        },
-        {
-          id: '3',
-          name: '136 West 17th Street',
-          address: '136 W 17th St, New York, NY 10011',
-          type: 'Mixed Use',
-          units: 12,
-          compliance: 92,
-          status: 'active',
-          lastInspection: '3 days ago',
-          assignedWorkers: 2,
-          managementCompany: 'J&M Realty',
-        },
-        {
-          id: '4',
-          name: '41 Elizabeth Street',
-          address: '41 Elizabeth St, New York, NY 10013',
-          type: 'Residential',
-          units: 7,
-          compliance: 78,
-          status: 'maintenance',
-          lastInspection: '5 days ago',
-          assignedWorkers: 1,
-          managementCompany: 'J&M Realty',
-        },
-        {
-          id: '5',
-          name: '115 7th Avenue',
-          address: '115 7th Ave, New York, NY 10011',
-          type: 'Commercial',
-          units: 0,
-          compliance: 65,
-          status: 'inactive',
-          lastInspection: '1 week ago',
-          assignedWorkers: 0,
-          managementCompany: 'Unmanaged',
-        },
-      ];
-      setBuildings(mockBuildings);
+      try {
+        // Import real data from the data-seed package
+        const buildingsData = await import('../../../../packages/data-seed/src/buildings.json');
+        const routinesData = await import('../../../../packages/data-seed/src/routines.json');
+        
+        const buildings = buildingsData.default || buildingsData;
+        const routines = routinesData.default || routinesData;
+        
+        // Transform real building data to match component interface
+        const transformedBuildings: Building[] = buildings.map((building: any) => {
+          // Count assigned workers for this building
+          const assignedWorkers = new Set(
+            routines.filter((r: any) => r.buildingId === building.id).map((r: any) => r.workerId)
+          ).size;
+          
+          // Determine status based on compliance score
+          let status: 'active' | 'inactive' | 'maintenance' = 'active';
+          if (building.compliance_score < 0.7) {
+            status = 'inactive';
+          } else if (building.compliance_score < 0.85) {
+            status = 'maintenance';
+          }
+          
+          // Calculate last inspection (simplified - in real app this would come from inspection logs)
+          const lastInspection = building.compliance_score > 0.9 ? '1 day ago' : 
+                                building.compliance_score > 0.8 ? '3 days ago' : '1 week ago';
+          
+          // Determine building type
+          let type = 'Residential';
+          if (building.name.includes('Museum') || building.name.includes('Rubin')) {
+            type = 'Museum';
+          } else if (building.numberOfUnits === 0 && building.commercialUnits > 0) {
+            type = 'Commercial';
+          } else if (building.commercialUnits > 0) {
+            type = 'Mixed Use';
+          }
+          
+          return {
+            id: building.id,
+            name: building.name,
+            address: building.address,
+            type,
+            units: building.numberOfUnits,
+            compliance: Math.round(building.compliance_score * 100),
+            status,
+            lastInspection,
+            assignedWorkers,
+            managementCompany: building.managementCompany || 'J&M Realty',
+          };
+        });
+        
+        setBuildings(transformedBuildings);
+      } catch (error) {
+        console.error('Failed to load real buildings data, using fallback:', error);
+        // Fallback to known building data
+        const fallbackBuildings: Building[] = [
+          {
+            id: '10',
+            name: '131 Perry Street',
+            address: '131 Perry St, New York, NY 10014',
+            type: 'Residential',
+            units: 6,
+            compliance: 85,
+            status: 'active',
+            lastInspection: '2 days ago',
+            assignedWorkers: 2,
+            managementCompany: 'J&M Realty',
+          },
+          {
+            id: '4',
+            name: 'Rubin Museum',
+            address: '104 Franklin St, New York, NY 10013',
+            type: 'Museum',
+            units: 0,
+            compliance: 95,
+            status: 'active',
+            lastInspection: '1 day ago',
+            assignedWorkers: 1,
+            managementCompany: 'Rubin Foundation',
+          },
+          {
+            id: '3',
+            name: '136 West 17th Street',
+            address: '136 W 17th St, New York, NY 10011',
+            type: 'Mixed Use',
+            units: 12,
+            compliance: 92,
+            status: 'active',
+            lastInspection: '3 days ago',
+            assignedWorkers: 2,
+            managementCompany: 'J&M Realty',
+          },
+          {
+            id: '1',
+            name: '41 Elizabeth Street',
+            address: '41 Elizabeth St, New York, NY 10013',
+            type: 'Residential',
+            units: 7,
+            compliance: 78,
+            status: 'maintenance',
+            lastInspection: '5 days ago',
+            assignedWorkers: 1,
+            managementCompany: 'J&M Realty',
+          },
+          {
+            id: '5',
+            name: '115 7th Avenue',
+            address: '115 7th Ave, New York, NY 10011',
+            type: 'Commercial',
+            units: 0,
+            compliance: 65,
+            status: 'inactive',
+            lastInspection: '1 week ago',
+            assignedWorkers: 0,
+            managementCompany: 'Unmanaged',
+          },
+          {
+            id: '20',
+            name: '224 East 14th Street',
+            address: '224 East 14th Street, New York, NY 10003',
+            type: 'Residential',
+            units: 4,
+            compliance: 87,
+            status: 'active',
+            lastInspection: '2 days ago',
+            assignedWorkers: 1,
+            managementCompany: 'J&M Realty',
+          },
+        ];
+        setBuildings(fallbackBuildings);
+      }
     };
 
     loadBuildings();

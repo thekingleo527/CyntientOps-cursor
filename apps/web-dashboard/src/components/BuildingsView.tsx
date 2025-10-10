@@ -35,8 +35,8 @@ export const BuildingsView: React.FC<BuildingsViewProps> = ({ user }) => {
     const loadBuildings = async () => {
       try {
         // Import real data from the data-seed package
-        const buildingsData = await import('@cyntientops/data-seed/buildings.json');
-        const routinesData = await import('@cyntientops/data-seed/routines.json');
+        const buildingsData = await import('../../../../packages/data-seed/src/buildings.json');
+        const routinesData = await import('../../../../packages/data-seed/src/routines.json');
         
         const buildings = buildingsData.default || buildingsData;
         const routines = routinesData.default || routinesData;
@@ -204,7 +204,10 @@ export const BuildingsView: React.FC<BuildingsViewProps> = ({ user }) => {
       >
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-white">Buildings Management</h1>
-          <button className="btn btn-primary">
+          <button 
+            className="btn btn-primary"
+            onClick={() => console.log('Add Building clicked')}
+          >
             <span>+</span>
             Add Building
           </button>
@@ -306,7 +309,10 @@ export const BuildingsView: React.FC<BuildingsViewProps> = ({ user }) => {
                     <div className={`w-3 h-3 rounded-full ${getStatusColor(building.status)}`}></div>
                     <span className="text-white text-sm">{getStatusText(building.status)}</span>
                   </div>
-                  <button className="btn btn-secondary text-sm">
+                  <button 
+                    className="btn btn-secondary text-sm"
+                    onClick={() => console.log('View Details clicked for building:', building.id)}
+                  >
                     View Details
                   </button>
                 </div>

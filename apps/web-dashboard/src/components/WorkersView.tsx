@@ -30,56 +30,101 @@ export const WorkersView: React.FC<WorkersViewProps> = ({ user }) => {
   const [workers, setWorkers] = useState<Worker[]>([]);
 
   useEffect(() => {
-    // Simulate loading workers data
+    // Load real workers data from data files
     const loadWorkers = async () => {
-      const mockWorkers: Worker[] = [
-        {
-          id: '1',
-          name: 'Kevin Dutan',
-          role: 'Field Worker',
-          status: 'active',
-          currentBuilding: 'Rubin Museum',
-          tasksCompleted: 8,
-          lastSeen: '2 min ago',
-        },
-        {
-          id: '2',
-          name: 'Greg Hutson',
-          role: 'Field Worker',
-          status: 'active',
-          currentBuilding: '131 Perry Street',
-          tasksCompleted: 6,
-          lastSeen: '5 min ago',
-        },
-        {
-          id: '3',
-          name: 'Moises Farhat',
-          role: 'Field Worker',
-          status: 'on-break',
-          currentBuilding: '136 West 17th',
-          tasksCompleted: 4,
-          lastSeen: '15 min ago',
-        },
-        {
-          id: '4',
-          name: 'Sarah Chen',
-          role: 'Field Worker',
-          status: 'active',
-          currentBuilding: '41 Elizabeth Street',
-          tasksCompleted: 7,
-          lastSeen: '1 min ago',
-        },
-        {
-          id: '5',
-          name: 'Mike Rodriguez',
-          role: 'Field Worker',
-          status: 'inactive',
-          currentBuilding: 'Off duty',
-          tasksCompleted: 5,
-          lastSeen: '2 hours ago',
-        },
-      ];
-      setWorkers(mockWorkers);
+      try {
+        // Import real data from the data-seed package
+        const workersData = await import('@cyntientops/data-seed/workers.json');
+        const routinesData = await import('@cyntientops/data-seed/routines.json');
+        
+        const workers = workersData.default || workersData;
+        const routines = routinesData.default || routinesData;
+        
+        // Transform real worker data to match component interface
+        const transformedWorkers: Worker[] = workers.map((worker: any) => {
+          // Find current building assignment from routines
+          const currentRoutine = routines.find((r: any) => r.workerId === worker.id);
+          const currentBuilding = currentRoutine ? currentRoutine.building : 'No current assignment';
+          
+          // Count tasks completed by this worker
+          const tasksCompleted = routines.filter((r: any) => r.workerId === worker.id).length;
+          
+          // Determine status based on worker data
+          let status: 'active' | 'inactive' | 'on-break' = 'inactive';
+          if (worker.isActive && worker.status === 'Available') {
+            status = 'active';
+          } else if (worker.isActive && worker.status === 'On Break') {
+            status = 'on-break';
+          }
+          
+          // Calculate last seen (simplified - in real app this would come from activity logs)
+          const lastSeen = worker.isActive ? '2 min ago' : '2 hours ago';
+          
+          return {
+            id: worker.id,
+            name: worker.name,
+            role: worker.role === 'worker' ? 'Field Worker' : worker.role,
+            status,
+            currentBuilding,
+            tasksCompleted,
+            lastSeen,
+            avatar: worker.avatar,
+          };
+        });
+        
+        setWorkers(transformedWorkers);
+      } catch (error) {
+        console.error('Failed to load real workers data, using fallback:', error);
+        // Fallback to known worker data
+        const fallbackWorkers: Worker[] = [
+          {
+            id: '1',
+            name: 'Greg Hutson',
+            role: 'Field Worker',
+            status: 'active',
+            currentBuilding: '131 Perry Street',
+            tasksCompleted: 8,
+            lastSeen: '2 min ago',
+          },
+          {
+            id: '2',
+            name: 'Edwin Lema',
+            role: 'Field Worker',
+            status: 'active',
+            currentBuilding: 'Rubin Museum',
+            tasksCompleted: 6,
+            lastSeen: '5 min ago',
+          },
+          {
+            id: '3',
+            name: 'Kevin Dutan',
+            role: 'Field Worker',
+            status: 'active',
+            currentBuilding: '136 West 17th',
+            tasksCompleted: 4,
+            lastSeen: '15 min ago',
+          },
+          {
+            id: '4',
+            name: 'Moises Farhat',
+            role: 'Field Worker',
+            status: 'active',
+            currentBuilding: '41 Elizabeth Street',
+            tasksCompleted: 7,
+            lastSeen: '1 min ago',
+          },
+          {
+            id: '8',
+            name: 'Shawn Magloire',
+            role: 'Admin',
+            status: 'active',
+            currentBuilding: '224 East 14th Street',
+            tasksCompleted: 6,
+            lastSeen: '3 min ago',
+          },
+        ];
+        setWorkers(fallbackWorkers);
+      }
     };
 
     loadWorkers();

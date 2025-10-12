@@ -28,6 +28,7 @@ import { DSNYAPIClient } from '@cyntientops/api-clients/src/nyc/DSNYAPIClient';
 import { PropertyDataService, TaskService, BuildingService } from '@cyntientops/business-core';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { getBuildingImage } from '@cyntientops/ui-components/src/utils/BuildingImageUtils';
+import { BuildingDetailTabContainer } from './building-detail';
 
 interface CollectionScheduleSummary {
   bin: string;
@@ -332,89 +333,33 @@ export const BuildingDetailScreen: React.FC = () => {
 
               return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <View style={styles.heroContainer}>
         {renderHero(building, complianceScore)}
+      </View>
 
-        {/* Tab Navigation */}
-        <View style={styles.tabContainer}>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            style={styles.tabScroll}
-            contentContainerStyle={styles.tabContent}
-          >
-            {['Overview', 'Operations', 'Compliance', 'Resources', 'Emergency', 'Reports'].map((tab) => (
-              <TouchableOpacity
-                key={tab}
-                style={[styles.tabButton, { backgroundColor: Colors.glass.regular }]}
-                onPress={() => {
-                  // TODO: Implement tab navigation
-                  console.log(`Navigate to ${tab} tab`);
-                }}
-              >
-                <Text style={styles.tabText}>{tab}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Overview Content */}
-        {canViewPropertyDetails && propertyDetails && (
-          <View style={styles.sectionGroup}>
-            {renderSectionHeader('Property Information')}
-            {renderPropertyDetailsCard(propertyDetails)}
-          </View>
-        )}
-
-        <View style={styles.sectionGroup}>
-          {renderSectionHeader('Compliance Overview')}
-          {renderComplianceCard(violationSummary, complianceScore)}
-        </View>
-        
-        {inventory.length > 0 && (
-          <View style={styles.sectionGroup}>
-            {renderSectionHeader('Inventory Overview')}
-            {renderInventoryCard(inventory)}
-          </View>
-        )}
-        
-        {schedule && (
-          <View style={styles.sectionGroup}>
-            {renderSectionHeader('Sanitation Schedule')}
-            {renderScheduleCard(schedule)}
-              </View>
-        )}
-
-        {dsnyScheduleData && dsnyScheduleData.collectionDays.length > 0 && (
-          <View style={styles.sectionGroup}>
-            {renderSectionHeader('DSNY Collection Details')}
-            <DSNYScheduleCard
-              collectionDays={dsnyScheduleData.collectionDays}
-              setOutWorker={dsnyScheduleData.setOutWorker}
-              setOutTime={dsnyScheduleData.setOutTime}
-              bringInWorker={dsnyScheduleData.bringInWorker}
-              bringInTime={dsnyScheduleData.bringInTime}
-              nextCollection={dsnyScheduleData.nextCollection}
-              onViewFull={() => {
-                // TODO: Implement full DSNY schedule view
-                console.log('View full DSNY schedule');
-              }}
-            />
-          </View>
-        )}
-
-        <View style={styles.sectionGroup}>
-          {renderSectionHeader('Assigned Team')}
-          {workers.length > 0 ? workers.map(renderWorkerCard) : renderEmptyMessage('No active worker assignments')}
-        </View>
-        
-        <View style={styles.sectionGroup}>
-          {renderSectionHeader('Routine Tasks')}
-          {routineSummaries.length > 0
-            ? routineSummaries.map(renderRoutineCard)
-            : renderEmptyMessage('No routines defined for this building')}
-              </View>
-      </ScrollView>
+      <BuildingDetailTabContainer
+        buildingId={buildingId}
+        buildingName={building.name}
+        userRole={userRole}
+        complianceScore={complianceScore}
+        outstandingViolations={violationSummary.outstanding}
+        building={building}
+        violationSummary={violationSummary}
+        propertyDetails={propertyDetails}
+        schedule={schedule}
+        dsnyScheduleData={dsnyScheduleData}
+        workers={workers}
+        routineSummaries={routineSummaries}
+        canViewPropertyDetails={canViewPropertyDetails}
+        renderPropertyDetailsCard={renderPropertyDetailsCard}
+        renderComplianceCard={renderComplianceCard}
+        renderScheduleCard={renderScheduleCard}
+        renderWorkerCard={renderWorkerCard}
+        renderRoutineCard={renderRoutineCard}
+        renderEmptyMessage={renderEmptyMessage}
+        renderSectionHeader={renderSectionHeader}
+        DSNYScheduleCard={DSNYScheduleCard}
+      />
     </SafeAreaView>
   );
 };
@@ -720,6 +665,10 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#0a0a0a',
+  },
+  heroContainer: {
+    padding: Spacing.lg,
+    paddingBottom: 0,
   },
   scrollContent: {
     padding: Spacing.lg,

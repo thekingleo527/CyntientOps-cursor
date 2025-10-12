@@ -1,6 +1,6 @@
 # 📋 CyntientOps Continuity Report - Consolidated
 
-**Last Updated:** 2025-10-12 01:15 PST
+**Last Updated:** 2025-10-12 02:20 PST
 **Status:** ✅ **React Native Building Detail Parity Achieved**
 
 ## 🎯 Executive Summary
@@ -56,6 +56,41 @@ This comprehensive continuity report documents the complete assessment of all 19
   - OperationalDataService normalization test to ensure “148 Chambers St/Street” variants resolve to the same building ID.
   - TaskService schedule bucket test (now/next/today/urgent/completed) with time mocks and urgency threshold checks.
 - Documentation index added under `docs/README.md` to keep root README links valid.
+
+### 🔗 Deep Linking & Navigation
+
+- Added deep link scheme and linking config:
+  - `apps/mobile-rn/app.json` → `scheme: "cyntientops"`
+  - `apps/mobile-rn/src/navigation/AppNavigator.tsx` → `NavigationContainer` with `linking` (screens: login, dashboard, building/:id, task/:id, profile).
+
+### 🗄️ Supabase Provisioning Status
+
+- Project is created and partially updated (verified tables: buildings, clients, offline_queue, cache_entries, supply_requests, clock_in, issues, compliance, photo_evidence, audit_logs, security_events).
+- Scripts available to complete provisioning:
+  - `scripts/supabase-schema.sql`, `scripts/cleanup-and-deploy.sql`.
+- Programmatic migrator available:
+  - `packages/database/src/SupabaseMigration.ts` (creates tables, indexes, RLS).
+- Core schema parity test added:
+  - `packages/database/src/__tests__/schemaParity.test.ts`.
+
+### 🧠 Nova Q&A – Next Phase Plan
+
+Goal: Nova answers operational questions using live data + weather + historical DB, with retrieval‑augmented grounding.
+
+1) Extend schema
+   - Add `knowledge_documents` / `knowledge_chunks` (pgvector embeddings),
+   - Decide on `nova_insights/prompts/responses` parity vs. consolidated knowledge tables.
+
+2) Edge functions
+   - `/nova/ask` (router + tools + retrieval), `/nova/ingest`, `/nova/embed`.
+
+3) Ingestion & RAG
+   - Ingest compliance issues, building/worker notes, routine descriptions, curated photo evidence metadata.
+
+4) RN wiring
+   - `useNovaAsk(question)` hook with streaming text + citations panel.
+
+Status: Deep link config + schema parity test in place. Proceed to schema extension + functions.
 
 
 ### **✅ React Native: Unified 6-Tab Building Detail System - NOW 100% COMPLETE**

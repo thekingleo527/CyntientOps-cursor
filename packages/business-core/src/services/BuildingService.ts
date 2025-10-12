@@ -122,7 +122,15 @@ export class BuildingService {
    * Get building by ID
    */
   public getBuildingById(buildingId: string): any | undefined {
-    return this.operationalDataService.getBuildingById(buildingId);
+    // Primary: canonical ID lookup
+    const byId = this.operationalDataService.getBuildingById(buildingId);
+    if (byId) return byId;
+
+    // Fallback: treat input as a name/alias/address and normalize
+    const byName = this.getBuildingByName(buildingId);
+    if (byName) return byName;
+
+    return undefined;
   }
 
   /**
@@ -158,8 +166,9 @@ export class BuildingService {
     const buildings = this.getBuildings();
 
     // Exact ID shortcut (in case an ID string gets passed here)
-    const byId = this.getBuildingById(name);
-    if (byId) return byId;
+    if ((CanonicalIDs as any)?.Buildings?.isValidBuildingId?.(name)) {
+      return this.getBuildingById(name);
+    }
 
     for (const b of buildings) {
       const nameKey = this.normalizeName(b.name);
@@ -173,6 +182,13 @@ export class BuildingService {
     }
 
     return undefined;
+  }
+
+  /**
+   * Resolve a building from either ID, name, or address. Returns building or undefined.
+   */
+  public resolveBuilding(input: string): any | undefined {
+    return this.getBuildingById(input) || this.getBuildingByName(input);
   }
 
   /**

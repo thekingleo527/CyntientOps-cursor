@@ -130,9 +130,39 @@ export class OperationalDataService {
    */
   public getBuildingById(id: string): any | undefined {
     if (!CanonicalIDs.Buildings.isValidBuildingId(id)) {
-      throw new Error(`Invalid building ID: ${id}`);
+      // Fallback: attempt normalized name/address match for resilience
+      const resolved = this.getBuildingByName(id);
+      if (resolved) return resolved;
+      throw new Error(`Invalid building identifier: ${id}`);
     }
     return this.state.buildings.find(b => b.id === id);
+  }
+
+  /**
+   * Get building by (fuzzy) name with alias normalization
+   */
+  public getBuildingByName(name: string): any | undefined {
+    const normalize = (val?: string) => (val || '')
+      .toLowerCase()
+      .replace(/street\b/g, 'st')
+      .replace(/avenue\b/g, 'ave')
+      .replace(/\bwest\b/g, 'w')
+      .replace(/\beast\b/g, 'e')
+      .replace(/[.,#]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .split(' ')
+      .filter(Boolean)
+      .sort()
+      .join(' ');
+
+    const key = normalize(name);
+    for (const b of this.state.buildings) {
+      if (normalize(b.name) === key) return b;
+      if (normalize((b as any).normalized_name) === key) return b;
+      if (normalize(b.address) === key) return b;
+    }
+    return undefined;
   }
 
   /**

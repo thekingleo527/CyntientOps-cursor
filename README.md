@@ -1,5 +1,7 @@
 # 🏗️ CyntientOps-MP - Enterprise Field Operations Management
 
+> Last updated: 2025-10-12
+
 > **Multiplatform field operations management system for building maintenance teams**
 > Enterprise-grade React Native (Expo) application with AI-powered intelligence, offline-first architecture, and real-time synchronization.
 

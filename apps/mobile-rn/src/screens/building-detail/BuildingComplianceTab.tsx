@@ -21,6 +21,7 @@ import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { NYCComplianceService } from '@cyntientops/api-clients/src/nyc';
 import { Database } from '@cyntientops/database';
+import { getSupabaseClient, isSupabaseConfigured } from '@cyntientops/business-core';
 
 interface ComplianceSnapshot {
   ll97Status: string;
@@ -54,6 +55,15 @@ interface BuildingComplianceTabProps {
   buildingName: string;
 }
 
+interface KnowledgeHighlight {
+  id: string;
+  title: string;
+  content: string;
+  sourceType: string;
+  tags: string[];
+  updatedAt?: Date;
+}
+
 export const BuildingComplianceTab: React.FC<BuildingComplianceTabProps> = ({
   buildingId,
   buildingName,
@@ -62,6 +72,8 @@ export const BuildingComplianceTab: React.FC<BuildingComplianceTabProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [knowledgeHighlights, setKnowledgeHighlights] = useState<KnowledgeHighlight[]>([]);
+  const [knowledgeStatus, setKnowledgeStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
 
   const loadComplianceData = useCallback(async () => {
     try {
@@ -120,6 +132,62 @@ export const BuildingComplianceTab: React.FC<BuildingComplianceTabProps> = ({
   useEffect(() => {
     loadComplianceData();
   }, [loadComplianceData]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchKnowledge() {
+      if (!isSupabaseConfigured()) {
+        if (mounted) setKnowledgeStatus('ready');
+        return;
+      }
+
+      try {
+        setKnowledgeStatus('loading');
+        const client = getSupabaseClient();
+        const { data, error } = await client
+          .from('knowledge_chunks')
+          .select(
+            `id, content, chunk_index, knowledge_documents(id, title, source_type, tags, updated_at)`
+          )
+          .ilike('content', `%${buildingName ?? ''}%`)
+          .in('knowledge_documents.source_type', ['compliance', 'compliance_alert', 'dsny_violation'])
+          .order('updated_at', { ascending: false })
+          .limit(3);
+
+        if (error) throw error;
+
+        const mapped: KnowledgeHighlight[] = (data ?? [])
+          .map((item: any) => {
+            const doc = item.knowledge_documents ?? {};
+            return {
+              id: item.id,
+              title: doc.title ?? 'Compliance Entry',
+              content: item.content ?? '',
+              sourceType: doc.source_type ?? 'knowledge',
+              tags: Array.isArray(doc.tags) ? doc.tags : [],
+              updatedAt: doc.updated_at ? new Date(doc.updated_at) : undefined,
+            };
+          })
+          .filter((entry: KnowledgeHighlight) => entry.content.length > 0);
+
+        if (!mounted) return;
+        setKnowledgeHighlights(mapped);
+        setKnowledgeStatus('ready');
+      } catch (err: any) {
+        if (!mounted) return;
+        setKnowledgeStatus('error');
+      }
+    }
+
+    if (knowledgeStatus === 'idle') {
+      fetchKnowledge();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [buildingName, knowledgeStatus]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -182,6 +250,33 @@ export const BuildingComplianceTab: React.FC<BuildingComplianceTabProps> = ({
       }
     >
       <View style={styles.content}>
+        {/* Knowledge Highlights */}
+        {knowledgeStatus !== 'idle' && knowledgeHighlights.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Compliance Insights</Text>
+            {knowledgeHighlights.map((item) => (
+              <GlassCard
+                key={item.id}
+                intensity={GlassIntensity.medium}
+                cornerRadius={CornerRadius.lg}
+                style={styles.knowledgeCard}
+              >
+                <Text style={styles.knowledgeTitle}>{item.title}</Text>
+                <Text style={styles.knowledgeContent}>{item.content}</Text>
+                {item.tags.length > 0 && (
+                  <View style={styles.tagContainer}>
+                    {item.tags.slice(0, 3).map((tag) => (
+                      <Text key={`${item.id}-${tag}`} style={styles.tag}>
+                        {tag.toUpperCase()}
+                      </Text>
+                    ))}
+                  </View>
+                )}
+              </GlassCard>
+            ))}
+          </>
+        )}
+
         {/* Compliance Overview */}
         <Text style={styles.sectionTitle}>Compliance Overview</Text>
         <View style={styles.overviewGrid}>
@@ -535,6 +630,34 @@ const styles = StyleSheet.create({
   priorityText: {
     ...Typography.caption,
     fontWeight: '600',
+  },
+  knowledgeCard: {
+    marginBottom: Spacing.md,
+    padding: Spacing.md,
+  },
+  knowledgeTitle: {
+    ...Typography.bodyBold,
+    marginBottom: Spacing.xs,
+    color: Colors.text.primary,
+  },
+  knowledgeContent: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.xs,
+  },
+  tagContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.xs,
+    marginTop: Spacing.xs,
+  },
+  tag: {
+    ...Typography.captionSmall,
+    paddingHorizontal: Spacing.xs,
+    paddingVertical: 2,
+    borderRadius: CornerRadius.xs,
+    backgroundColor: Colors.surface.brandTertiary,
+    color: Colors.text.primary,
   },
 });
 

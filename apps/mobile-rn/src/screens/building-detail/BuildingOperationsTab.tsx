@@ -20,7 +20,7 @@ import {
 import { Swipeable } from 'react-native-gesture-handler';
 import { Colors, Spacing, Typography } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
-import { TaskService } from '@cyntientops/business-core';
+import { TaskService, getSupabaseClient, isSupabaseConfigured } from '@cyntientops/business-core';
 import { Database } from '@cyntientops/database';
 
 type TaskFilter = 'active' | 'completed' | 'overdue' | 'all';
@@ -46,6 +46,15 @@ interface BuildingOperationsTabProps {
   buildingName: string;
 }
 
+interface KnowledgeHighlight {
+  id: string;
+  title: string;
+  content: string;
+  sourceType: string;
+  tags: string[];
+  updatedAt?: Date;
+}
+
 export const BuildingOperationsTab: React.FC<BuildingOperationsTabProps> = ({
   buildingId,
   buildingName,
@@ -54,6 +63,8 @@ export const BuildingOperationsTab: React.FC<BuildingOperationsTabProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<TaskFilter>('active');
   const [refreshing, setRefreshing] = useState(false);
+  const [knowledgeHighlights, setKnowledgeHighlights] = useState<KnowledgeHighlight[]>([]);
+  const [knowledgeStatus, setKnowledgeStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
 
   const loadTasks = useCallback(async () => {
     try {
@@ -113,6 +124,62 @@ export const BuildingOperationsTab: React.FC<BuildingOperationsTabProps> = ({
   useEffect(() => {
     loadTasks();
   }, [loadTasks]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchKnowledge() {
+      if (!isSupabaseConfigured()) {
+        if (mounted) setKnowledgeStatus('ready');
+        return;
+      }
+
+      try {
+        setKnowledgeStatus('loading');
+        const client = getSupabaseClient();
+        const { data, error } = await client
+          .from('knowledge_chunks')
+          .select(
+            `id, content, chunk_index, knowledge_documents(id, title, source_type, tags, updated_at)`
+          )
+          .ilike('content', `%${buildingName ?? ''}%`)
+          .in('knowledge_documents.source_type', ['task', 'dsny_schedule', 'worker'])
+          .order('updated_at', { ascending: false })
+          .limit(3);
+
+        if (error) throw error;
+
+        const mapped: KnowledgeHighlight[] = (data ?? [])
+          .map((item: any) => {
+            const doc = item.knowledge_documents ?? {};
+            return {
+              id: item.id,
+              title: doc.title ?? 'Operations Entry',
+              content: item.content ?? '',
+              sourceType: doc.source_type ?? 'knowledge',
+              tags: Array.isArray(doc.tags) ? doc.tags : [],
+              updatedAt: doc.updated_at ? new Date(doc.updated_at) : undefined,
+            };
+          })
+          .filter((entry: KnowledgeHighlight) => entry.content.length > 0);
+
+        if (!mounted) return;
+        setKnowledgeHighlights(mapped);
+        setKnowledgeStatus('ready');
+      } catch (err: any) {
+        if (!mounted) return;
+        setKnowledgeStatus('error');
+      }
+    }
+
+    if (knowledgeStatus === 'idle') {
+      fetchKnowledge();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [buildingName, knowledgeStatus]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -250,6 +317,33 @@ export const BuildingOperationsTab: React.FC<BuildingOperationsTabProps> = ({
         renderItem={renderTask}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={renderEmptyState}
+        ListHeaderComponent={
+          knowledgeStatus !== 'idle' && knowledgeHighlights.length > 0 ? (
+            <View style={styles.knowledgeSection}>
+              <Text style={styles.knowledgeSectionTitle}>Operations Insights</Text>
+              {knowledgeHighlights.map((item) => (
+                <GlassCard
+                  key={item.id}
+                  intensity={GlassIntensity.medium}
+                  cornerRadius={CornerRadius.lg}
+                  style={styles.knowledgeCard}
+                >
+                  <Text style={styles.knowledgeTitle}>{item.title}</Text>
+                  <Text style={styles.knowledgeContent}>{item.content}</Text>
+                  {item.tags.length > 0 && (
+                    <View style={styles.tagContainer}>
+                      {item.tags.slice(0, 3).map((tag) => (
+                        <Text key={`${item.id}-${tag}`} style={styles.tag}>
+                          {tag.toUpperCase()}
+                        </Text>
+                      ))}
+                    </View>
+                  )}
+                </GlassCard>
+              ))}
+            </View>
+          ) : null
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -442,6 +536,42 @@ const styles = StyleSheet.create({
     color: Colors.text.secondary,
     textAlign: 'center',
     maxWidth: 250,
+  },
+  knowledgeSection: {
+    paddingBottom: Spacing.md,
+  },
+  knowledgeSectionTitle: {
+    ...Typography.bodyBold,
+    color: Colors.text.primary,
+    marginBottom: Spacing.sm,
+  },
+  knowledgeCard: {
+    marginBottom: Spacing.md,
+    padding: Spacing.md,
+  },
+  knowledgeTitle: {
+    ...Typography.bodyBold,
+    marginBottom: Spacing.xs,
+    color: Colors.text.primary,
+  },
+  knowledgeContent: {
+    ...Typography.caption,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.xs,
+  },
+  tagContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.xs,
+    marginTop: Spacing.xs,
+  },
+  tag: {
+    ...Typography.captionSmall,
+    paddingHorizontal: Spacing.xs,
+    paddingVertical: 2,
+    borderRadius: CornerRadius.xs,
+    backgroundColor: Colors.surface.brandTertiary,
+    color: Colors.text.primary,
   },
 });
 

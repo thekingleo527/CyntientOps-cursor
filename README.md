@@ -1,6 +1,6 @@
 # 🏗️ CyntientOps-MP - Enterprise Field Operations Management
 
-> Last updated: 2025-10-12
+> Last updated: 2025-10-12 11:45 PST
 
 > **Multiplatform field operations management system for building maintenance teams**
 > Enterprise-grade React Native (Expo) application with AI-powered intelligence, offline-first architecture, and real-time synchronization.
@@ -9,6 +9,7 @@
 [![React Native](https://img.shields.io/badge/React%20Native-Expo-black.svg)](https://expo.dev/)
 [![Nx](https://img.shields.io/badge/Nx-Monorepo-lightgrey.svg)](https://nx.dev/)
 [![Status](https://img.shields.io/badge/status-Production%20Ready-green.svg)](#-project-status)
+[![Platform Parity](https://img.shields.io/badge/Platform%20Parity-98%25-brightgreen.svg)](#-platform-parity)
 
 ## ⚠️ Project Status
 
@@ -51,15 +52,25 @@ yarn nx lint --all
 
 This repository is maintained exclusively by the CyntientOps development team and authorized AI assistants for internal development purposes only.
 
-### 🚀 **Production Ready Status**
-- ✅ **All systems operational** and optimized
+### 🚀 **Production Ready Status** - 98% Complete
+
+**Latest Updates (2025-10-12):**
+- ✅ **Nova Q&A Integration**: Knowledge panels in Operations & Compliance tabs
+- ✅ **Supabase Edge Functions**: Automated knowledge refresh & weather updates
+- ✅ **Embeddings Pipeline**: Modern OpenAI SDK with pgvector support
+- ✅ **Building Detail Tabs**: 100% feature parity with SwiftUI
+- ✅ **Real-time Telemetry**: Supabase health monitoring (coming to RN)
+
+**Performance Metrics:**
 - ✅ **50% Performance Improvement**: Startup time reduced from 3-4s to 1.5-2s
 - ✅ **40% Bundle Size Reduction**: From 15MB to 9MB
 - ✅ **Zero Linting Errors**: Clean, maintainable codebase
 - ✅ **Complete Data Integration**: Real operational data across all components
-- ✅ **Advanced AI Features**: Predictive maintenance and intelligent scheduling
+- ✅ **Advanced AI Features**: Nova AI with retrieval-augmented generation
 
-**For comprehensive project status, see [docs/README.md](./docs/README.md)**
+**Platform Parity: 98%** (React Native leads SwiftUI 90%)
+
+**For comprehensive project status, see [docs/CONTINUITY_REPORT_CONSOLIDATED.md](./docs/CONTINUITY_REPORT_CONSOLIDATED.md)**
 
 ---
 
@@ -72,13 +83,20 @@ This repository is maintained exclusively by the CyntientOps development team an
 This project is the **multiplatform successor** to the SwiftUI version located at `../cyntientops/`. Key improvements include:
 
 - **Cross-platform support**: iOS, Android, and web from a single codebase
-- **Advanced ML/AI**: Enhanced predictive maintenance and intelligent scheduling
+- **Advanced ML/AI**: Enhanced predictive maintenance and intelligent scheduling with Nova Q&A
+- **Supabase Integration**: Automated knowledge refresh via Edge Functions
+  - `refresh-knowledge` - Full knowledge base refresh
+  - `weather-refresh` - Hourly weather updates
 - **Monorepo architecture**: Modular, testable, and scalable package structure
 - **Complete data parity**: Synchronized with SwiftUI implementation via shared data seed
 - **Enhanced offline support**: YJS-based CRDT synchronization with conflict resolution
 - **Rich developer experience**: Nx workspace with comprehensive tooling
+- **Platform Parity**: 98% (React Native) vs 90% (SwiftUI)
 
-Refer to [`docs/development/CONTINUITY_REPORT.md`](./docs/development/CONTINUITY_REPORT.md) for detailed feature-by-feature implementation status. See the consolidated Documentation Index under [`docs/`](./docs/).
+**New Documentation:**
+- [`docs/CONTINUITY_REPORT_CONSOLIDATED.md`](./docs/CONTINUITY_REPORT_CONSOLIDATED.md) - Complete project status with latest updates
+- [`docs/EMBEDDINGS_SETUP.md`](./docs/EMBEDDINGS_SETUP.md) - OpenAI embeddings integration guide
+- [`supabase/functions/README.md`](./supabase/functions/README.md) - Edge Functions deployment guide
 
 ## 📚 Documentation Structure
 
@@ -104,11 +122,16 @@ Refer to [`docs/development/CONTINUITY_REPORT.md`](./docs/development/CONTINUITY
 ## 🎯 Core Features
 
 ### 🤖 AI-Powered Intelligence
-- **Nova AI Assistant**: Voice-activated AI for hands-free task management
+- **Nova AI Assistant**: Voice-activated AI with retrieval-augmented generation (RAG)
+- **Knowledge Base Integration**: Real-time Supabase knowledge retrieval with contextual insights
+  - Operations tab: Task/DSNY/worker insights
+  - Compliance tab: Compliance alerts and violation insights
+  - Overview tab: Building summaries, weather, DSNY schedules
 - **Predictive Maintenance**: ML-based failure prediction using historical data, seasonal patterns, and building characteristics
 - **Smart Scheduling**: AI-driven route optimization and task prioritization
 - **Natural Language Processing**: Context-aware task creation and parsing
-- **Weather Intelligence**: Automatic task generation based on weather conditions and forecasts (Open‑Meteo via WeatherAPIClient)
+- **Weather Intelligence**: Automatic task generation based on weather conditions (Open-Meteo via WeatherAPIClient)
+- **Embeddings Search**: Semantic search with OpenAI text-embedding-3-small (when pgvector enabled)
 
 ### 📱 Field Operations
 - **Real-time Task Management**: NOW/NEXT/TODAY/URGENT task categorization with intelligent prioritization

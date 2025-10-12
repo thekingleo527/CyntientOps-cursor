@@ -14,9 +14,15 @@ export class DatabaseSchema {
       this.createTasksTable(),
       this.createRoutinesTable(),
       this.createUserSessionsTable(),
+      this.createWorkerBuildingAssignmentsTable(),
+      this.createLoginHistoryTable(),
+      this.createClockSessionsTable(),
+      this.createTaskCompletionsTable(),
       this.createComplianceTable(),
       this.createPhotoEvidenceTable(),
       this.createSmartPhotoEvidenceTable(),
+      this.createPhotosTable(),
+      this.createSiteDepartureLogsTable(),
       this.createBuildingSpacesTable(),
       this.createBuildingInspectionsTable(),
       this.createWorkCompletionRecordsTable(),
@@ -24,17 +30,32 @@ export class DatabaseSchema {
       this.createInventoryTable(),
       this.createClientsTable(),
       this.createSyncQueueTable(),
+      this.createSyncQueueArchiveTable(),
       this.createTimeTheftAlertsTable(),
       this.createMLModelsTable(),
       this.createVersionHistoryTable(),
       this.createConflictResolutionTable(),
       this.createOfflineQueueTable(),
+      this.createWorkerCapabilitiesTable(),
+      this.createWorkerTimeLogsTable(),
+      this.createBuildingMetricsCacheTable(),
       this.createIssuesTable(),
+      this.createCachedInsightsTable(),
+      this.createWorkerAssignmentsLegacyTable(),
+      this.createInventoryItemsTable(),
+      this.createInventoryTransactionsTable(),
       this.createSupplyRequestsTable(),
+      this.createSupplyRequestItemsTable(),
+      this.createInventoryAlertsTable(),
       this.createBuildingActivityTable(),
       this.createDashboardUpdatesTable(),
       this.createCacheEntriesTable(),
-      this.createRoutineTaskCompletionsTable()
+      this.createRoutineTaskCompletionsTable(),
+      this.createDsnyScheduleCacheTable(),
+      this.createDsnyViolationsTable(),
+      this.createDsnyComplianceLogsTable(),
+      this.createBuildingHistoricalDataTable(),
+      this.createComplianceAlertsTable()
     ];
   }
 
@@ -54,6 +75,81 @@ export class DatabaseSchema {
         profile TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+  }
+
+  private createWorkerBuildingAssignmentsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS worker_building_assignments (
+        id TEXT PRIMARY KEY,
+        worker_id TEXT NOT NULL,
+        building_id TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'maintenance',
+        assigned_date TEXT NOT NULL,
+        is_active INTEGER NOT NULL DEFAULT 1,
+        FOREIGN KEY (worker_id) REFERENCES workers(id),
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        UNIQUE(worker_id, building_id)
+      );
+    `;
+  }
+
+  private createLoginHistoryTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS login_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        worker_id TEXT,
+        email TEXT NOT NULL,
+        login_time TEXT NOT NULL,
+        success INTEGER NOT NULL,
+        failure_reason TEXT,
+        ip_address TEXT,
+        device_info TEXT,
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      );
+    `;
+  }
+
+  private createClockSessionsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS clock_sessions (
+        id TEXT PRIMARY KEY,
+        worker_id TEXT NOT NULL,
+        building_id TEXT NOT NULL,
+        clock_in_time TEXT NOT NULL,
+        clock_out_time TEXT,
+        duration_minutes INTEGER,
+        location_lat REAL,
+        location_lon REAL,
+        notes TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (worker_id) REFERENCES workers(id),
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createTaskCompletionsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS task_completions (
+        id TEXT PRIMARY KEY,
+        task_id TEXT NOT NULL,
+        worker_id TEXT NOT NULL,
+        building_id TEXT NOT NULL,
+        completion_time TEXT NOT NULL,
+        photo_paths TEXT,
+        notes TEXT,
+        quality_score INTEGER,
+        verified_by TEXT,
+        location_lat REAL,
+        location_lon REAL,
+        sync_status TEXT DEFAULT 'pending',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (task_id) REFERENCES routine_tasks(id),
+        FOREIGN KEY (worker_id) REFERENCES workers(id),
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (verified_by) REFERENCES workers(id)
       );
     `;
   }
@@ -220,6 +316,50 @@ export class DatabaseSchema {
     `;
   }
 
+  private createPhotosTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS photos (
+        id TEXT PRIMARY KEY,
+        building_id TEXT,
+        category TEXT,
+        worker_id TEXT,
+        timestamp TEXT,
+        file_path TEXT NOT NULL,
+        thumbnail_path TEXT,
+        file_size INTEGER,
+        notes TEXT,
+        retention_days INTEGER DEFAULT 30,
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      );
+    `;
+  }
+
+  private createSiteDepartureLogsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS site_departure_logs (
+        id TEXT PRIMARY KEY,
+        worker_id TEXT NOT NULL,
+        building_id TEXT NOT NULL,
+        departed_at TEXT NOT NULL,
+        tasks_completed_count INTEGER NOT NULL,
+        tasks_remaining_count INTEGER NOT NULL,
+        photos_provided_count INTEGER NOT NULL,
+        is_fully_compliant INTEGER NOT NULL,
+        notes TEXT,
+        next_destination_building_id TEXT,
+        departure_method TEXT,
+        location_lat REAL,
+        location_lon REAL,
+        time_spent_minutes INTEGER,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (worker_id) REFERENCES workers(id),
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (next_destination_building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
   private createBuildingSpacesTable(): string {
     return `
       CREATE TABLE IF NOT EXISTS building_spaces (
@@ -334,6 +474,63 @@ export class DatabaseSchema {
     `;
   }
 
+  private createInventoryItemsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS inventory_items (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        category TEXT NOT NULL,
+        current_stock INTEGER NOT NULL DEFAULT 0,
+        minimum_stock INTEGER NOT NULL DEFAULT 0,
+        maximum_stock INTEGER NOT NULL DEFAULT 100,
+        unit TEXT NOT NULL DEFAULT 'unit',
+        cost REAL DEFAULT 0.0,
+        supplier TEXT,
+        supplier_sku TEXT,
+        location TEXT,
+        last_restocked TEXT,
+        reorder_point INTEGER,
+        reorder_quantity INTEGER,
+        status TEXT DEFAULT 'in_stock',
+        is_active INTEGER DEFAULT 1,
+        notes TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createInventoryTransactionsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS inventory_transactions (
+        id TEXT PRIMARY KEY,
+        item_id TEXT NOT NULL,
+        worker_id TEXT,
+        task_id TEXT,
+        transaction_type TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        quantity_before INTEGER NOT NULL,
+        quantity_after INTEGER NOT NULL,
+        unit_cost REAL,
+        total_cost REAL,
+        reason TEXT,
+        notes TEXT,
+        reference_number TEXT,
+        performed_by TEXT NOT NULL,
+        verified_by TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (item_id) REFERENCES inventory_items(id) ON DELETE CASCADE,
+        FOREIGN KEY (worker_id) REFERENCES workers(id),
+        FOREIGN KEY (task_id) REFERENCES routine_tasks(id),
+        FOREIGN KEY (performed_by) REFERENCES workers(id),
+        FOREIGN KEY (verified_by) REFERENCES workers(id)
+      );
+    `;
+  }
+
   private createClientsTable(): string {
     return `
       CREATE TABLE IF NOT EXISTS clients (
@@ -366,6 +563,27 @@ export class DatabaseSchema {
         error_message TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+  }
+
+  private createSyncQueueArchiveTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS sync_queue_archive (
+        id TEXT PRIMARY KEY,
+        entity_type TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        action TEXT NOT NULL,
+        data TEXT NOT NULL,
+        retry_count INTEGER NOT NULL DEFAULT 0,
+        priority INTEGER NOT NULL DEFAULT 1,
+        is_compressed INTEGER NOT NULL DEFAULT 0,
+        retry_delay REAL NOT NULL DEFAULT 2.0,
+        created_at TEXT NOT NULL,
+        last_retry_at TEXT,
+        archived_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        archive_reason TEXT,
+        success INTEGER DEFAULT 0
       );
     `;
   }
@@ -495,6 +713,67 @@ export class DatabaseSchema {
     `;
   }
 
+  private createWorkerCapabilitiesTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS worker_capabilities (
+        worker_id TEXT PRIMARY KEY,
+        can_upload_photos INTEGER DEFAULT 1,
+        can_add_notes INTEGER DEFAULT 1,
+        can_view_map INTEGER DEFAULT 1,
+        can_add_emergency_tasks INTEGER DEFAULT 0,
+        requires_photo_for_sanitation INTEGER DEFAULT 0,
+        simplified_interface INTEGER DEFAULT 0,
+        max_daily_tasks INTEGER DEFAULT 50,
+        preferred_language TEXT DEFAULT 'en',
+        language TEXT DEFAULT 'en',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (worker_id) REFERENCES workers(id)
+      );
+    `;
+  }
+
+  private createWorkerTimeLogsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS worker_time_logs (
+        id TEXT PRIMARY KEY,
+        workerId TEXT NOT NULL,
+        clockInTime TEXT NOT NULL,
+        clockOutTime TEXT,
+        breakMinutes INTEGER DEFAULT 0,
+        totalMinutes INTEGER,
+        buildingId TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (workerId) REFERENCES workers(id),
+        FOREIGN KEY (buildingId) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createBuildingMetricsCacheTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS building_metrics_cache (
+        building_id TEXT PRIMARY KEY,
+        completion_rate REAL,
+        average_task_time INTEGER,
+        overdue_tasks INTEGER,
+        total_tasks INTEGER,
+        active_workers INTEGER,
+        is_compliant INTEGER,
+        overall_score REAL,
+        last_updated TEXT,
+        pending_tasks INTEGER,
+        urgent_tasks_count INTEGER,
+        has_worker_on_site INTEGER,
+        maintenance_efficiency REAL,
+        weekly_completion_trend REAL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
   private createIssuesTable(): string {
     return `
       CREATE TABLE IF NOT EXISTS issues (
@@ -517,26 +796,112 @@ export class DatabaseSchema {
     `;
   }
 
+  private createCachedInsightsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS cached_insights (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        type TEXT NOT NULL,
+        priority TEXT NOT NULL,
+        building_id TEXT,
+        category TEXT,
+        context_data TEXT,
+        confidence_score REAL DEFAULT 1.0,
+        generated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        expires_at TEXT,
+        is_active INTEGER DEFAULT 1,
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createWorkerAssignmentsLegacyTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS worker_assignments (
+        worker_id TEXT NOT NULL,
+        building_id TEXT NOT NULL,
+        worker_name TEXT,
+        building_name TEXT,
+        is_active INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (worker_id, building_id)
+      );
+    `;
+  }
+
   private createSupplyRequestsTable(): string {
     return `
       CREATE TABLE IF NOT EXISTS supply_requests (
         id TEXT PRIMARY KEY,
+        request_number TEXT UNIQUE NOT NULL,
         building_id TEXT NOT NULL,
-        worker_id TEXT NOT NULL,
-        item_name TEXT NOT NULL,
-        quantity INTEGER NOT NULL,
-        urgency TEXT DEFAULT 'normal',
+        requested_by TEXT NOT NULL,
+        priority TEXT DEFAULT 'normal',
         status TEXT DEFAULT 'pending',
-        category TEXT,
-        requested_for TEXT,
-        fulfilled_at TEXT,
-        fulfilled_by TEXT,
+        total_items INTEGER DEFAULT 0,
+        total_cost REAL DEFAULT 0.0,
+        approved_by TEXT,
+        approved_at TEXT,
+        rejected_by TEXT,
+        rejected_at TEXT,
+        rejection_reason TEXT,
+        ordered_at TEXT,
+        order_number TEXT,
+        vendor TEXT,
+        expected_delivery TEXT,
+        delivered_at TEXT,
+        received_by TEXT,
         notes TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (building_id) REFERENCES buildings(id),
-        FOREIGN KEY (worker_id) REFERENCES workers(id)
+        FOREIGN KEY (requested_by) REFERENCES workers(id),
+        FOREIGN KEY (approved_by) REFERENCES workers(id),
+        FOREIGN KEY (rejected_by) REFERENCES workers(id),
+        FOREIGN KEY (received_by) REFERENCES workers(id)
       )
+    `;
+  }
+
+  private createSupplyRequestItemsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS supply_request_items (
+        id TEXT PRIMARY KEY,
+        request_id TEXT NOT NULL,
+        item_id TEXT NOT NULL,
+        quantity_requested INTEGER NOT NULL,
+        quantity_approved INTEGER,
+        quantity_received INTEGER,
+        unit_cost REAL,
+        total_cost REAL,
+        notes TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (request_id) REFERENCES supply_requests(id) ON DELETE CASCADE,
+        FOREIGN KEY (item_id) REFERENCES inventory_items(id) ON DELETE CASCADE
+      );
+    `;
+  }
+
+  private createInventoryAlertsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS inventory_alerts (
+        id TEXT PRIMARY KEY,
+        item_id TEXT NOT NULL,
+        building_id TEXT NOT NULL,
+        alert_type TEXT NOT NULL,
+        threshold_value INTEGER,
+        current_value INTEGER,
+        message TEXT NOT NULL,
+        is_resolved INTEGER DEFAULT 0,
+        resolved_at TEXT,
+        resolved_by TEXT,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (item_id) REFERENCES inventory_items(id) ON DELETE CASCADE,
+        FOREIGN KEY (building_id) REFERENCES buildings(id),
+        FOREIGN KEY (resolved_by) REFERENCES workers(id)
+      );
     `;
   }
 

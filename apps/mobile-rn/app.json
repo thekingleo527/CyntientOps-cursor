@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "cyntientops",
     "name": "CyntientOps",
     "slug": "cyntientops-mobile",
     "version": "1.0.0",

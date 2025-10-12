@@ -1,6 +1,6 @@
 # 📋 CyntientOps Continuity Report - Consolidated
 
-**Last Updated:** 2025-10-11 23:20 PST
+**Last Updated:** 2025-10-12 01:15 PST
 **Status:** ✅ **React Native Building Detail Parity Achieved**
 
 ## 🎯 Executive Summary
@@ -49,6 +49,14 @@ This comprehensive continuity report documents the complete assessment of all 19
 ---
 
 ## 🏗️ **Code Implementation Updates (2025-10-11)**
+
+### 🔧 Post‑update Items (2025-10-12)
+
+- Added unit tests in `@cyntientops/business-core`:
+  - OperationalDataService normalization test to ensure “148 Chambers St/Street” variants resolve to the same building ID.
+  - TaskService schedule bucket test (now/next/today/urgent/completed) with time mocks and urgency threshold checks.
+- Documentation index added under `docs/README.md` to keep root README links valid.
+
 
 ### **✅ React Native: Unified 6-Tab Building Detail System - NOW 100% COMPLETE**
 

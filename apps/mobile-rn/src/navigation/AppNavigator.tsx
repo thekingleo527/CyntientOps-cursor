@@ -16,7 +16,7 @@
  */
 
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, LinkingOptions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -237,8 +237,21 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({ initialUser }) => {
     );
   }
 
+  const linking: LinkingOptions<any> = {
+    prefixes: ['cyntientops://'],
+    config: {
+      screens: {
+        Login: 'login',
+        Main: 'dashboard',
+        BuildingDetail: 'building/:id',
+        TaskTimeline: 'task/:id',
+        Profile: 'profile',
+      },
+    },
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         id="root-stack"
         screenOptions={{

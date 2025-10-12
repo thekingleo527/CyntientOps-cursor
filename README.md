@@ -12,6 +12,36 @@
 
 ## ⚠️ Project Status
 
+## ⚙️ Quick Start
+
+Requirements
+- Node.js 20.x (LTS) and Yarn 1.x (Classic)
+- Xcode 15.4+ for iOS; Android Studio for Android
+- Watchman (recommended), CocoaPods if native modules are used
+
+Install
+```bash
+yarn install
+```
+
+Run Mobile (Expo)
+```bash
+yarn nx start mobile-rn     # Start Expo dev server
+yarn nx ios mobile-rn       # Build + run iOS simulator
+```
+
+Run Web Dashboard / Admin Portal
+```bash
+yarn nx serve web-dashboard
+yarn nx serve admin-portal
+```
+
+Format & Lint
+```bash
+yarn nx format:write
+yarn nx lint --all
+```
+
 **This is a private development repository.** 
 
 - **No external contributions** are being accepted at this time
@@ -151,6 +181,29 @@ cyntientops-mp/
 ├── tsconfig.base.json          # TypeScript base configuration
 └── package.json                # Root package with workspace scripts
 ```
+
+### Public Data & Tokens
+
+- Runs on public datasets; environment tokens increase rate limits (optional):
+  - HPD/DOB/DSNY OpenData keys
+  - Google Maps API key (geocoding/maps)
+  - Sentry DSN
+
+Example `.env` (per app/package):
+```env
+HPD_API_KEY=...
+HPD_API_SECRET=...
+DOB_SUBSCRIBER_KEY=...
+DOB_ACCESS_TOKEN=...
+GOOGLE_MAPS_API_KEY=...
+SENTRY_DSN=...
+```
+
+### Design Tokens & Standards
+
+- Centralized in `packages/design-tokens`
+- Use theme tokens instead of hard‑coded values in UI
+- Functional components + hooks, strict TypeScript, state via `packages/managers`
 
 ### Package Descriptions
 

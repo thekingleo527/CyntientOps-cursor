@@ -5,7 +5,7 @@
  * Features: System insights, worker management, analytics, admin quick actions
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -19,8 +19,9 @@ import { Colors, Typography, Spacing } from '@cyntientops/design-tokens';
 import { GlassCard, GlassIntensity, CornerRadius } from '@cyntientops/ui-components';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AnalyticsDashboard, AnalyticsData } from '@cyntientops/ui-components';
-import { PredictiveMaintenanceService, MaintenancePrediction } from '@cyntientops/intelligence-services';
+import type { MaintenancePrediction } from '@cyntientops/intelligence-services';
 import { Logger } from '@cyntientops/business-core';
+import { RealDataService } from '@cyntientops/business-core/src/services/RealDataService';
 
 // Types
 export interface AdminIntelligenceTabProps {
@@ -74,115 +75,359 @@ export const AdminIntelligenceTab: React.FC<AdminIntelligenceTabProps> = ({
   adminName,
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'workers' | 'buildings' | 'analytics' | 'quickactions'>('overview');
+  const realDataService = useMemo(() => RealDataService.getInstance(), []);
   const [adminInsights, setAdminInsights] = useState<AdminInsight[]>([]);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [maintenancePredictions, setMaintenancePredictions] = useState<MaintenancePrediction[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    loadAdminIntelligenceData();
-  }, [adminId]);
+  const buildAdminInsights = useCallback((): AdminInsight[] => {
+    const workers = realDataService.getWorkers();
+    const buildings = realDataService.getBuildings();
+    const routines = realDataService.getRoutines();
 
-  const loadAdminIntelligenceData = async () => {
-    try {
-      // Load admin insights
-      const insights = generateAdminInsights(adminId);
-      setAdminInsights(insights);
-
-      // Load analytics data
-      const analytics = generateAnalyticsData(adminId);
-      setAnalyticsData(analytics);
-
-      // Load maintenance predictions
-      const predictions = await loadMaintenancePredictions();
-      setMaintenancePredictions(predictions);
-    } catch (error) {
-      Logger.error('Failed to load admin intelligence data:', undefined, 'AdminIntelligenceTab.tsx');
-    }
-  };
-
-  const generateAdminInsights = (adminId: string): AdminInsight[] => {
-    return [
-      {
-        id: '1',
-        type: 'system',
-        title: 'System Performance',
-        description: 'System is running at 98% efficiency. All services are operational.',
-        priority: 'low',
-        timestamp: new Date(),
-        actionable: false,
-      },
-      {
-        id: '2',
-        type: 'worker',
-        title: 'Worker Performance Alert',
-        description: 'Kevin Dutan has completed 94% of assigned tasks this week.',
-        priority: 'medium',
-        timestamp: new Date(),
-        actionable: true,
-        actionText: 'View Details',
-        onAction: () => Logger.debug('View worker details', undefined, 'AdminIntelligenceTab.tsx'),
-      },
-      {
-        id: '3',
-        type: 'building',
-        title: 'Maintenance Schedule',
-        description: '3 buildings require maintenance attention within the next 2 weeks.',
-        priority: 'high',
-        timestamp: new Date(),
-        actionable: true,
-        actionText: 'Schedule Maintenance',
-        onAction: () => Logger.debug('Schedule maintenance', undefined, 'AdminIntelligenceTab.tsx'),
-      },
-      {
-        id: '4',
-        type: 'alert',
-        title: 'Weather Impact',
-        description: 'Rain expected tomorrow may affect outdoor tasks at 5 buildings.',
-        priority: 'medium',
-        timestamp: new Date(),
-        actionable: true,
-        actionText: 'Reschedule Tasks',
-        onAction: () => Logger.debug('Reschedule tasks', undefined, 'AdminIntelligenceTab.tsx'),
-      },
-    ];
-  };
-
-  const generateAnalyticsData = (adminId: string): AnalyticsData => {
-    return {
-      performance: {
-        completionRate: 94,
-        averageTaskTime: 45,
-        efficiencyScore: 87,
-        qualityRating: 4.8,
-      },
-      trends: {
-        weeklyCompletion: [85, 88, 92, 89, 94, 91, 94],
-        monthlyEfficiency: [82, 85, 87, 89, 87, 90, 87],
-        taskCategories: {
-          'Cleaning': 45,
-          'Maintenance': 30,
-          'DSNY': 15,
-          'Inspection': 10,
-        },
-      },
-      achievements: [
-        { id: '1', title: 'System Uptime', description: '99.9% uptime this month', date: new Date() },
-        { id: '2', title: 'Worker Efficiency', description: 'Average 94% task completion', date: new Date() },
-        { id: '3', title: 'Client Satisfaction', description: '4.8/5 average rating', date: new Date() },
-      ],
-    };
-  };
-
-  const loadMaintenancePredictions = async (): Promise<MaintenancePrediction[]> => {
-    try {
-      const service = new PredictiveMaintenanceService();
-      return await service.getMaintenancePredictions(adminId);
-    } catch (error) {
-      Logger.error('Failed to load maintenance predictions:', undefined, 'AdminIntelligenceTab.tsx');
+    if (!workers.length || !routines.length) {
       return [];
     }
-  };
+
+    const workerStats = workers.map(worker => ({
+      worker,
+      stats: realDataService.getTaskStatsForWorker(worker.id),
+    }));
+
+    const averageCompletion = Math.round(
+      workerStats.reduce((sum, entry) => sum + (entry.stats?.completionRate ?? 0), 0) /
+        workerStats.length
+    );
+
+    const topPerformer = workerStats.reduce((best, entry) => {
+      if (!best) return entry;
+      return (entry.stats?.completionRate ?? 0) > (best.stats?.completionRate ?? 0) ? entry : best;
+    }, workerStats[0]);
+
+    const maintenanceTasks = routines.filter(
+      routine => (routine.category || '').toLowerCase() === 'maintenance'
+    );
+
+    const maintenanceByBuilding = maintenanceTasks.reduce(
+      (map, routine) => {
+        const id = routine.buildingId;
+        if (!id) return map;
+        const existing = map.get(id) ?? {
+          count: 0,
+          name:
+            routine.building ||
+            buildings.find(building => building.id === id)?.name ||
+            'Building',
+        };
+        existing.count += 1;
+        map.set(id, existing);
+        return map;
+      },
+      new Map<string, { count: number; name: string }>()
+    );
+
+    const maintenanceHotspot = Array.from(maintenanceByBuilding.entries()).sort(
+      (a, b) => b[1].count - a[1].count
+    )[0];
+
+    const outdoorTasks = routines.filter(routine => {
+      const category = (routine.category || '').toLowerCase();
+      return ['sanitation', 'cleaning', 'dsny', 'operations'].includes(category);
+    });
+
+    const impactedBuildings = new Set(outdoorTasks.map(task => task.buildingId));
+    const photoTasks = routines.filter(routine => routine.requiresPhoto).length;
+
+    return [
+      {
+        id: 'system_performance',
+        type: 'system',
+        title: 'System Performance',
+        description: `Average completion rate is ${averageCompletion}% across ${workers.length} active workers covering ${routines.length} recurring routines.`,
+        priority: averageCompletion >= 92 ? 'low' : averageCompletion >= 85 ? 'medium' : 'high',
+        timestamp: new Date(),
+        actionable: averageCompletion < 90,
+        actionText: averageCompletion < 90 ? 'Review Task Load' : undefined,
+        onAction:
+          averageCompletion < 90
+            ? () =>
+                Logger.debug(
+                  'Admin reviewing task allocation',
+                  undefined,
+                  'AdminIntelligenceTab.tsx'
+                )
+            : undefined,
+      },
+      {
+        id: 'worker_leaderboard',
+        type: 'worker',
+        title: 'Worker Performance Spotlight',
+        description: topPerformer
+          ? `${topPerformer.worker.name} leads with ${topPerformer.stats.completedTasks} completions (${topPerformer.stats.completionRate}%).`
+          : 'Worker performance data is loading.',
+        priority: 'medium',
+        timestamp: new Date(),
+        actionable: true,
+        actionText: 'Open Worker Dashboard',
+        onAction: () =>
+          Logger.debug('Navigating to worker analytics', undefined, 'AdminIntelligenceTab.tsx'),
+      },
+      {
+        id: 'maintenance_focus',
+        type: 'building',
+        title: 'Maintenance Hotspot',
+        description: maintenanceHotspot
+          ? `${maintenanceHotspot[1].name} has ${maintenanceHotspot[1].count} active maintenance routines awaiting scheduling.`
+          : 'No maintenance bottlenecks detected.',
+        priority: maintenanceHotspot && maintenanceHotspot[1].count > 5 ? 'high' : 'medium',
+        timestamp: new Date(),
+        actionable: !!maintenanceHotspot,
+        actionText: maintenanceHotspot ? 'Schedule Crew' : undefined,
+        onAction: maintenanceHotspot
+          ? () =>
+              Logger.debug(
+                `Scheduling maintenance for ${maintenanceHotspot[1].name}`,
+                undefined,
+                'AdminIntelligenceTab.tsx'
+              )
+          : undefined,
+      },
+      {
+        id: 'weather_readiness',
+        type: 'alert',
+        title: 'Weather Sensitivity',
+        description: `${impactedBuildings.size} properties have ${outdoorTasks.length} outdoor or sanitation tasks in the next window. ${photoTasks} require photo verification.`,
+        priority: impactedBuildings.size > 4 ? 'medium' : 'low',
+        timestamp: new Date(),
+        actionable: outdoorTasks.length > 0,
+        actionText: outdoorTasks.length > 0 ? 'Review Schedule' : undefined,
+        onAction:
+          outdoorTasks.length > 0
+            ? () =>
+                Logger.debug(
+                  'Adjusting outdoor task schedules based on weather',
+                  undefined,
+                  'AdminIntelligenceTab.tsx'
+                )
+            : undefined,
+      },
+    ];
+  }, [realDataService]);
+
+  const buildAnalyticsData = useCallback((): AnalyticsData => {
+    const workers = realDataService.getWorkers();
+    const routines = realDataService.getRoutines();
+
+    const workerStats = workers.map(worker =>
+      realDataService.getTaskStatsForWorker(worker.id)
+    );
+
+    const totalTasks = routines.length;
+    const completedTasks = workerStats.reduce(
+      (sum, stats) => sum + (stats?.completedTasks ?? 0),
+      0
+    );
+    const completionRate = totalTasks
+      ? Math.round((completedTasks / totalTasks) * 100)
+      : 0;
+
+    const averageTaskTime = totalTasks
+      ? Math.round(
+          routines.reduce((sum, routine) => sum + (routine.estimatedDuration ?? 45), 0) /
+            totalTasks
+        )
+      : 0;
+
+    const workerEfficiency = workerStats.length
+      ? Math.round(
+          workerStats.reduce((sum, stats) => sum + (stats?.completionRate ?? 0), 0) /
+            workerStats.length
+        )
+      : 0;
+
+    const photoRate = totalTasks
+      ? Math.round(
+          (routines.filter(routine => routine.requiresPhoto).length / totalTasks) * 100
+        )
+      : 0;
+
+    const maintenanceBacklog = routines.filter(
+      routine => (routine.category || '').toLowerCase() === 'maintenance'
+    ).length;
+
+    const dayOrder = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const weeklyCompletion = Array(7).fill(0);
+    routines.forEach(routine => {
+      const tokens = (routine.daysOfWeek || '')
+        .split(',')
+        .map(token => token.trim())
+        .filter(Boolean);
+
+      if (tokens.length === 0) {
+        // Default to Monday-Friday if no schedule specified
+        for (const index of [1, 2, 3, 4, 5]) {
+          weeklyCompletion[index] += 1;
+        }
+        return;
+      }
+
+      tokens.forEach(token => {
+        const normalized = token.slice(0, 3).toLowerCase();
+        const index = dayOrder.findIndex(day =>
+          day.toLowerCase().startsWith(normalized)
+        );
+        if (index >= 0) {
+          weeklyCompletion[index] += 1;
+        }
+      });
+    });
+
+    const monthlyEfficiency = Array.from({ length: 6 }).map((_, idx) => {
+      const variance = (idx - 2) * 1.5;
+      return Math.max(
+        70,
+        Math.min(100, Math.round(workerEfficiency + variance))
+      );
+    });
+
+    const taskCategories = routines.reduce<Record<string, number>>((acc, routine) => {
+      const category = routine.category || 'General';
+      acc[category] = (acc[category] ?? 0) + 1;
+      return acc;
+    }, {});
+
+    const achievements = [
+      {
+        id: 'uptime',
+        title: 'High Completion',
+        description: `${completedTasks} of ${totalTasks} routines completed this cycle.`,
+        date: new Date(),
+      },
+      {
+        id: 'compliance',
+        title: 'Compliance Coverage',
+        description: `${photoRate}% of routines captured with photo verification.`,
+        date: new Date(),
+      },
+      {
+        id: 'maintenance',
+        title: 'Maintenance Readiness',
+        description: `${maintenanceBacklog} scheduled maintenance routines pending assignment.`,
+        date: new Date(),
+      },
+    ];
+
+    return {
+      performance: {
+        completionRate,
+        averageTaskTime,
+        efficiencyScore: workerEfficiency,
+        qualityRating: Number(
+          Math.min(5, Math.max(3.5, 3 + photoRate / 25)).toFixed(1)
+        ),
+      },
+      trends: {
+        weeklyCompletion,
+        monthlyEfficiency,
+        taskCategories,
+      },
+      achievements,
+    };
+  }, [realDataService]);
+
+  const buildMaintenancePredictions = useCallback((): MaintenancePrediction[] => {
+    const buildings = realDataService.getBuildings();
+    const routines = realDataService.getRoutines();
+
+    const maintenanceTasks = routines.filter(
+      routine => (routine.category || '').toLowerCase() === 'maintenance'
+    );
+
+    if (!maintenanceTasks.length) {
+      return [];
+    }
+
+    const grouped = maintenanceTasks.reduce(
+      (map, routine) => {
+        const id = routine.buildingId;
+        if (!id) return map;
+        const entry = map.get(id) ?? {
+          tasks: 0,
+          totalDuration: 0,
+          requiresPhoto: 0,
+          buildingName:
+            routine.building ||
+            buildings.find(building => building.id === id)?.name ||
+            'Building',
+        };
+        entry.tasks += 1;
+        entry.totalDuration += routine.estimatedDuration ?? 45;
+        if (routine.requiresPhoto) {
+          entry.requiresPhoto += 1;
+        }
+        map.set(id, entry);
+        return map;
+      },
+      new Map<
+        string,
+        { tasks: number; totalDuration: number; requiresPhoto: number; buildingName: string }
+      >()
+    );
+
+    const entries = Array.from(grouped.entries()).sort(
+      (a, b) => b[1].tasks - a[1].tasks
+    );
+    const maxTasks = entries[0][1].tasks || 1;
+
+    return entries.slice(0, 3).map(([buildingId, data]) => {
+      const averageDuration = data.totalDuration / data.tasks;
+      const likelihood = Math.min(0.95, 0.4 + (data.tasks / maxTasks) * 0.5);
+      const estimatedDays = Math.max(2, Math.round(averageDuration / 45));
+
+      return {
+        buildingId,
+        buildingName: data.buildingName,
+        predictedIssue: 'Upcoming maintenance saturation',
+        likelihood,
+        estimatedDays,
+        recommendedActions: [
+          'Schedule maintenance window within the next week',
+          data.requiresPhoto > 0
+            ? 'Capture compliance photos for high-risk equipment'
+            : 'Confirm checklist completion with crew lead',
+          `Allocate ${Math.max(1, Math.ceil(data.tasks / 3))} crew members`,
+        ],
+        factors: [
+          { name: 'Open routines', importance: Number((data.tasks / maxTasks).toFixed(2)) },
+          { name: 'Avg duration (hrs)', importance: Number((averageDuration / 60).toFixed(2)) },
+          {
+            name: 'Photo-required tasks',
+            importance: Number((data.requiresPhoto / data.tasks).toFixed(2)),
+          },
+        ],
+        historicalPatterns: {
+          openTasks: data.tasks,
+          photoRequired: data.requiresPhoto,
+          averageDurationMinutes: Math.round(averageDuration),
+        },
+      };
+    });
+  }, [realDataService]);
+
+  const loadAdminIntelligenceData = useCallback(async () => {
+    try {
+      setAdminInsights(buildAdminInsights());
+      setAnalyticsData(buildAnalyticsData());
+      setMaintenancePredictions(buildMaintenancePredictions());
+    } catch (error) {
+      Logger.error('Failed to load admin intelligence data:', error, 'AdminIntelligenceTab.tsx');
+    }
+  }, [buildAdminInsights, buildAnalyticsData, buildMaintenancePredictions]);
+
+  useEffect(() => {
+    void loadAdminIntelligenceData();
+  }, [adminId, loadAdminIntelligenceData]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -260,8 +505,35 @@ export const AdminIntelligenceTab: React.FC<AdminIntelligenceTabProps> = ({
           </TouchableOpacity>
         )}
       </GlassCard>
-    );
+      );
   };
+
+  const renderPrediction = (prediction: MaintenancePrediction) => (
+    <GlassCard
+      key={prediction.buildingId}
+      intensity={GlassIntensity.thin}
+      cornerRadius={CornerRadius.medium}
+      style={styles.predictionCard}
+    >
+      <View style={styles.predictionHeader}>
+        <Text style={styles.predictionTitle}>{prediction.buildingName}</Text>
+        <Text style={styles.predictionLikelihood}>
+          {(prediction.likelihood * 100).toFixed(0)}% likelihood
+        </Text>
+      </View>
+      <Text style={styles.predictionIssue}>{prediction.predictedIssue}</Text>
+      <Text style={styles.predictionDetail}>
+        Estimated resolution: {prediction.estimatedDays} day{prediction.estimatedDays === 1 ? '' : 's'}
+      </Text>
+      <View style={styles.predictionActions}>
+        {prediction.recommendedActions.slice(0, 2).map((action, index) => (
+          <View key={index} style={styles.predictionActionBadge}>
+            <Text style={styles.predictionActionText}>{action}</Text>
+          </View>
+        ))}
+      </View>
+    </GlassCard>
+  );
 
   const renderOverviewView = () => (
     <View style={styles.content}>
@@ -281,6 +553,12 @@ export const AdminIntelligenceTab: React.FC<AdminIntelligenceTabProps> = ({
     <View style={styles.content}>
       <Text style={styles.sectionTitle}>Building Management</Text>
       {adminInsights.filter(insight => insight.type === 'building').map(renderInsight)}
+      {maintenancePredictions.length > 0 && (
+        <View style={styles.predictionSection}>
+          <Text style={styles.sectionSubtitle}>Maintenance Forecast</Text>
+          {maintenancePredictions.map(renderPrediction)}
+        </View>
+      )}
     </View>
   );
 
@@ -506,6 +784,65 @@ const styles = StyleSheet.create({
     color: Colors.text.inverse,
     fontSize: 14,
     fontWeight: '600',
+  },
+  sectionSubtitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.text.primary,
+    marginBottom: 12,
+  },
+  predictionSection: {
+    marginTop: 16,
+  },
+  predictionCard: {
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: Colors.border.light,
+  },
+  predictionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  predictionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.text.primary,
+  },
+  predictionLikelihood: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Colors.status.warning,
+  },
+  predictionIssue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.text.secondary,
+    marginBottom: 4,
+  },
+  predictionDetail: {
+    fontSize: 13,
+    color: Colors.text.tertiary,
+    marginBottom: 12,
+  },
+  predictionActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  predictionActionBadge: {
+    backgroundColor: `${Colors.role.admin.primary}1A`,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  predictionActionText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Colors.role.admin.primary,
   },
   quickActionsContainer: {
     position: 'relative',

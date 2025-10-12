@@ -32,6 +32,8 @@ import { NotesService } from './services/NotesService';
 import { InventoryService } from './services/InventoryService';
 import { VendorAccessService } from './services/VendorAccessService';
 import { SystemService } from './services/SystemService';
+import { SupabaseService } from './services/SupabaseService';
+import { isSupabaseConfigured } from './config/supabase.client';
 
 // Services
 import { TaskService } from './services/TaskService';
@@ -85,6 +87,7 @@ export class ServiceContainer {
   public readonly operationalData: OperationalDataService;
   public readonly databaseIntegration: DatabaseIntegrationService;
   public readonly cacheManager: CacheManager;
+  public readonly supabaseService?: SupabaseService;
   
   // MARK: - Layer 1: Core Services (LAZY INITIALIZATION)
   public readonly auth: AuthService;
@@ -166,7 +169,9 @@ export class ServiceContainer {
     // Initialize essential services synchronously
     this.database = DatabaseManager.getInstance({ path: config.databasePath });
     this.cacheManager = CacheManager.getInstance(this.database);
+    this.supabaseService = isSupabaseConfigured() ? SupabaseService.getInstance() : undefined;
     this.operationalData = OperationalDataService.getInstance();
+    this.operationalData.configure(this.database, this.supabaseService);
     this.databaseIntegration = DatabaseIntegrationService.getInstance(this.database);
     this.auth = AuthService.getInstance(this.database);
     this.sessionManager = SessionManager.getInstance(this.database, this.auth);
@@ -308,6 +313,7 @@ export class ServiceContainer {
       this._realTimeSync = RealTimeSyncService.getInstance(
         operationalDataManager,
         this.webSocket,
+        this.database,
         {
           enableRealTimeSync: this.config.enableRealTimeSync,
           syncInterval: 30000,

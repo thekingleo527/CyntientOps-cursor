@@ -148,6 +148,27 @@ export class DatabaseManager {
     return result;
   }
 
+  async getRoutines(): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+
+    const result = await this.db.getAllAsync(`
+      SELECT r.*,
+             b.name AS building_name,
+             b.address AS building_address,
+             b.latitude AS building_latitude,
+             b.longitude AS building_longitude,
+             w.name AS worker_name,
+             w.email AS worker_email
+      FROM routines r
+      LEFT JOIN buildings b ON r.building_id = b.id
+      LEFT JOIN workers w ON r.assigned_worker_id = w.id
+      WHERE r.is_active = 1
+      ORDER BY r.next_due ASC
+    `);
+
+    return result;
+  }
+
   async getTasks(): Promise<any[]> {
     if (!this.db) throw new Error('Database not initialized');
     
@@ -198,6 +219,29 @@ export class DatabaseManager {
         AND (t.due_date IS NULL OR DATE(t.due_date) <= ?)
       ORDER BY t.priority, t.due_date ASC
     `, [workerId, today]);
+    return result;
+  }
+
+  async getCompletedTasksSince(dateIso: string): Promise<any[]> {
+    if (!this.db) throw new Error('Database not initialized');
+
+    const result = await this.db.getAllAsync(
+      `
+        SELECT t.*,
+               b.name AS building_name,
+               b.address AS building_address,
+               w.name AS worker_name,
+               w.email AS worker_email
+        FROM tasks t
+        LEFT JOIN buildings b ON t.assigned_building_id = b.id
+        LEFT JOIN workers w ON t.assigned_worker_id = w.id
+        WHERE t.completed_at IS NOT NULL
+          AND datetime(t.completed_at) >= datetime(?)
+        ORDER BY datetime(t.completed_at) DESC
+      `,
+      [dateIso]
+    );
+
     return result;
   }
 
@@ -269,8 +313,8 @@ export class DatabaseManager {
     if (!this.db) throw new Error('Database not initialized');
     
     await this.db.runAsync(`
-      INSERT INTO workers (id, name, role, status, phone, email, is_active, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO workers (id, name, role, status, phone, email, password, is_active, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       worker.id,
       worker.name,
@@ -278,6 +322,7 @@ export class DatabaseManager {
       worker.status,
       worker.phone,
       worker.email,
+      worker.password,
       worker.isActive || 1,
       new Date().toISOString()
     ]);
@@ -525,4 +570,3 @@ export class DatabaseManager {
     return rows.length > 0 ? rows[0] : null;
   }
 }
-

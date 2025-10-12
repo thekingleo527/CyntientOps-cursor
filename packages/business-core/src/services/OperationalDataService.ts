@@ -8,6 +8,8 @@ import { workers, buildings, clients, routines, validateDataIntegrity } from '@c
 import { CanonicalIDs, validateTaskAssignment } from '@cyntientops/domain-schema';
 import { WorkerProfile, BuildingMetrics, ContextualTask, TaskStatus } from '@cyntientops/domain-schema';
 import { Logger } from './LoggingService';
+import { DatabaseManager } from '@cyntientops/database';
+import { SupabaseService } from './SupabaseService';
 
 export interface OperationalDataState {
   workers: WorkerProfile[];
@@ -22,6 +24,8 @@ export class OperationalDataService {
   private static instance: OperationalDataService;
   private state: OperationalDataState;
   private listeners: Set<(state: OperationalDataState) => void> = new Set();
+  private database?: DatabaseManager;
+  private supabaseService?: SupabaseService;
 
   private constructor() {
     this.state = {
@@ -42,6 +46,15 @@ export class OperationalDataService {
   }
 
   /**
+   * Configure data sources for operational data.
+   * Must be called before initialize() when database/supabase access is required.
+   */
+  public configure(database: DatabaseManager, supabaseService?: SupabaseService): void {
+    this.database = database;
+    this.supabaseService = supabaseService;
+  }
+
+  /**
    * Ensure operational data is loaded before use
    */
   public async initialize(): Promise<void> {
@@ -57,24 +70,94 @@ export class OperationalDataService {
    */
   public async loadOperationalData(): Promise<void> {
     try {
-      // Validate data integrity first
-      const validation = validateDataIntegrity();
-      if (!validation.isValid) {
-        throw new Error(`Data validation failed: ${validation.errors.join(', ')}`);
+      let workerRows: any[] = [];
+      let buildingRows: any[] = [];
+      let clientRows: any[] = [];
+      let routineRows: any[] = [];
+      let dataSource: 'database' | 'supabase' | 'seed' = 'seed';
+
+      if (this.database) {
+        try {
+          workerRows = await this.database.getWorkers();
+          buildingRows = await this.database.getBuildings();
+          clientRows = await this.database.getClients();
+          routineRows = await this.database.getRoutines();
+
+          if (workerRows.length || buildingRows.length || clientRows.length || routineRows.length) {
+            dataSource = 'database';
+          }
+        } catch (error) {
+          Logger.warn('🔄 Operational data load from SQLite failed', error, 'OperationalDataService');
+        }
       }
 
-      // Load and transform data
-      this.state.workers = this.transformWorkersData(workers);
-      this.state.buildings = buildings;
-      this.state.clients = clients;
-      this.state.routines = routines;
+      if ((workerRows.length === 0 || buildingRows.length === 0 || routineRows.length === 0) && this.supabaseService) {
+        try {
+          const workersResult = await this.supabaseService.select<any>('workers', '*', { is_active: 1 });
+          if (workersResult.data) workerRows = workersResult.data;
+
+          const buildingsResult = await this.supabaseService.select<any>('buildings', '*', { is_active: 1 });
+          if (buildingsResult.data) buildingRows = buildingsResult.data;
+
+          const clientsResult = await this.supabaseService.select<any>('clients');
+          if (clientsResult.data) clientRows = clientsResult.data;
+
+          const routinesResult = await this.supabaseService.select<any>('routines', '*', { is_active: 1 });
+          if (routinesResult.data) routineRows = routinesResult.data;
+
+          if (workerRows.length && buildingRows.length && routineRows.length) {
+            dataSource = 'supabase';
+          }
+        } catch (error) {
+          Logger.warn('🔄 Operational data load from Supabase failed', error, 'OperationalDataService');
+        }
+      }
+
+      if (workerRows.length === 0 || buildingRows.length === 0 || clientRows.length === 0 || routineRows.length === 0) {
+        const validation = validateDataIntegrity();
+        if (!validation.isValid) {
+          throw new Error(`Data validation failed: ${validation.errors.join(', ')}`);
+        }
+        workerRows = workers;
+        buildingRows = buildings;
+        clientRows = clients;
+        routineRows = routines;
+        dataSource = 'seed';
+      }
+
+      const transformedWorkers =
+        dataSource === 'seed'
+          ? this.transformWorkersData(workerRows)
+          : this.transformDatabaseWorkers(workerRows);
+
+      const transformedBuildings =
+        dataSource === 'seed'
+          ? buildingRows
+          : this.transformDatabaseBuildings(buildingRows);
+
+      const transformedClients =
+        dataSource === 'seed'
+          ? clientRows
+          : this.transformDatabaseClients(clientRows);
+
+      const transformedRoutines =
+        dataSource === 'seed'
+          ? routineRows
+          : this.transformDatabaseRoutines(transformedBuildings, transformedWorkers, routineRows);
+
+      this.state.workers = transformedWorkers;
+      this.state.buildings = transformedBuildings;
+      this.state.clients = transformedClients;
+      this.state.routines = transformedRoutines;
       this.state.isLoaded = true;
       this.state.lastUpdated = new Date();
 
+      this.assignWorkerBuildingRelationships();
+
       this.notifyListeners();
-      Logger.debug('✅ Operational data loaded successfully', undefined, 'OperationalDataService');
+      Logger.debug(`✅ Operational data loaded successfully (${dataSource})`, undefined, 'OperationalDataService');
     } catch (error) {
-      Logger.error('❌ Failed to load operational data:', undefined, 'OperationalDataService');
+      Logger.error('❌ Failed to load operational data:', error, 'OperationalDataService');
       throw error;
     }
   }
@@ -100,6 +183,218 @@ export class OperationalDataService {
       updatedAt: worker.updated_at ? new Date(worker.updated_at) : new Date()
     }));
   }
+
+  private transformDatabaseWorkers(rows: any[]): WorkerProfile[] {
+    return rows.map((row) => {
+      const skills = this.parseSkills(row.skills);
+      return {
+        id: String(row.id),
+        name: row.name,
+        email: row.email ?? '',
+        phone: row.phone ?? undefined,
+        role: (row.role ?? 'worker') as any,
+        skills,
+        certifications: this.parseCertifications(row.certifications),
+        hireDate: row.created_at ? new Date(row.created_at) : undefined,
+        isActive: row.is_active === 1 || row.is_active === true,
+        assignedBuildingIds: [],
+        status: (row.status ?? 'Available') as any,
+        isClockedIn: false,
+        createdAt: row.created_at ? new Date(row.created_at) : new Date(),
+        updatedAt: row.updated_at ? new Date(row.updated_at) : new Date(),
+      } as WorkerProfile;
+    });
+  }
+
+  private transformDatabaseBuildings(rows: any[]): any[] {
+    return rows.map((row) => ({
+      id: String(row.id),
+      name: row.name,
+      address: row.address ?? '',
+      latitude: Number.isFinite(row.latitude) ? Number(row.latitude) : 40.7589,
+      longitude: Number.isFinite(row.longitude) ? Number(row.longitude) : -73.9851,
+      imageAssetName: row.image_asset_name ?? null,
+      number_of_units: row.number_of_units ?? row.units ?? null,
+      year_built: row.year_built ?? null,
+      square_footage: row.square_footage ?? null,
+      management_company: row.management_company ?? null,
+      primary_contact: row.primary_contact ?? null,
+      contact_phone: row.contact_phone ?? null,
+      contact_email: row.contact_email ?? null,
+      is_active: row.is_active ?? 1,
+      normalized_name: row.normalized_name ?? null,
+      aliases: row.aliases ?? null,
+      borough: row.borough ?? null,
+      compliance_score: row.compliance_score ?? 0,
+      client_id: row.client_id ? String(row.client_id) : null,
+      special_notes: row.special_notes ?? null,
+      created_at: row.created_at ?? new Date().toISOString(),
+      updated_at: row.updated_at ?? new Date().toISOString(),
+    }));
+  }
+
+  private transformDatabaseClients(rows: any[]): any[] {
+    return rows.map((row) => ({
+      id: String(row.id),
+      name: row.name,
+      contact_person: row.contact_person ?? row.name,
+      email: row.email ?? row.contact_email ?? null,
+      phone: row.phone ?? null,
+      address: row.address ?? null,
+      is_active: row.is_active ?? 1,
+      created_at: row.created_at ?? new Date().toISOString(),
+      updated_at: row.updated_at ?? new Date().toISOString(),
+    }));
+  }
+
+  private transformDatabaseRoutines(
+    buildings: any[],
+    workers: WorkerProfile[],
+    rows: any[]
+  ): any[] {
+    const buildingMap = new Map<string, any>(
+      buildings.map((building) => [String(building.id), building])
+    );
+    const workerMap = new Map<string, WorkerProfile>(
+      workers.map((worker) => [String(worker.id), worker])
+    );
+
+    return rows.map((row) => {
+      const buildingId = String(row.building_id);
+      const workerId = row.assigned_worker_id ? String(row.assigned_worker_id) : '';
+      const scheduleDays = this.parseScheduleDays(row.schedule_days);
+      const startHour = this.parseTimeToHour(row.start_time);
+      const estimatedDuration = row.estimated_duration ?? 60;
+      const endHour =
+        startHour !== null ? Math.min(23, startHour + Math.ceil(estimatedDuration / 60)) : undefined;
+
+      return {
+        id: String(row.id),
+        title: row.name ?? `Routine ${row.id}`,
+        description: row.description ?? '',
+        building: buildingMap.get(buildingId)?.name ?? row.building_name ?? buildingId,
+        buildingId,
+        assignedWorker: workerMap.get(workerId)?.name ?? row.worker_name ?? workerId,
+        workerId,
+        category: row.schedule_type ?? 'Operations',
+        skillLevel: 'Intermediate',
+        recurrence: row.schedule_type ?? 'weekly',
+        startHour: startHour ?? undefined,
+        endHour,
+        daysOfWeek: scheduleDays.join(','),
+        estimatedDuration,
+        requiresPhoto: Boolean(row.requires_photo),
+        status: row.last_completed ? 'Completed' : ('Pending' as TaskStatus),
+        dueDate: row.next_due ?? null,
+        lastCompletionDate: row.last_completed ?? null,
+      };
+    });
+  }
+
+  private parseSkills(value: any): string[] {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+      return value.map((entry) => String(entry).trim()).filter(Boolean);
+    }
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) return [];
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map((entry) => String(entry).trim()).filter(Boolean);
+        }
+      } catch {
+        // fall through to comma parsing
+      }
+      return trimmed.split(',').map((entry) => entry.trim()).filter(Boolean);
+    }
+    return [];
+  }
+
+  private parseCertifications(value: any): string[] {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+      return value.map((entry) => String(entry).trim()).filter(Boolean);
+    }
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) return [];
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map((entry) => String(entry).trim()).filter(Boolean);
+        }
+      } catch {
+        return trimmed.split(',').map((entry) => entry.trim()).filter(Boolean);
+      }
+    }
+    return [];
+  }
+
+  private parseScheduleDays(value: any): string[] {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+      return value.map((day) => String(day).trim()).filter(Boolean);
+    }
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) return [];
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map((day) => String(day).trim()).filter(Boolean);
+        }
+      } catch {
+        return trimmed.split(',').map((day) => day.trim()).filter(Boolean);
+      }
+    }
+    return [];
+  }
+
+  private parseTimeToHour(value: any): number | null {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') {
+      return Number.isFinite(value) ? value : null;
+    }
+    if (typeof value === 'string') {
+      const match = value.match(/(\d{1,2})(?::(\d{2}))?/);
+      if (match) {
+        const hour = parseInt(match[1], 10);
+        if (!Number.isNaN(hour)) {
+          return hour;
+        }
+      }
+    }
+    return null;
+  }
+
+  private assignWorkerBuildingRelationships(): void {
+    const assignments = new Map<string, Set<string>>();
+
+    for (const routine of this.state.routines) {
+      const workerId = routine.workerId ? String(routine.workerId) : null;
+      const buildingId = routine.buildingId ? String(routine.buildingId) : null;
+      if (!workerId || !buildingId) continue;
+
+      const set = assignments.get(workerId) ?? new Set<string>();
+      set.add(buildingId);
+      assignments.set(workerId, set);
+    }
+
+    this.state.workers = this.state.workers.map((worker) => {
+      const buildingIds = assignments.get(worker.id);
+      if (!buildingIds || buildingIds.size === 0) {
+        return worker;
+      }
+
+      const combined = new Set<string>(worker.assignedBuildingIds ?? []);
+      buildingIds.forEach((id) => combined.add(id));
+      worker.assignedBuildingIds = Array.from(combined);
+      return worker;
+    });
+  }
+
 
   /**
    * Get all workers

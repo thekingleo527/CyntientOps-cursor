@@ -29,6 +29,7 @@ export interface Migration {
   description: string;
   up: string;
   down?: string;
+  shouldRun?: (db: any) => Promise<boolean>;
 }
 
 export interface TableSchema {

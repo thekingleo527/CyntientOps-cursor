@@ -40,6 +40,21 @@ export class MigrationManager {
           ALTER TABLE buildings ADD COLUMN compliance_score REAL DEFAULT 0.0;
           ALTER TABLE buildings ADD COLUMN last_compliance_check TEXT;
         `
+      },
+      {
+        version: 4,
+        description: 'Ensure workers table stores password hashes',
+        up: `
+          ALTER TABLE workers ADD COLUMN password TEXT;
+          UPDATE workers SET password = '$2b$12$CdiqCb2Z81pNZnXMk4oGuePX7VDCzDCS3qbmvzZbe9FIReSLJbiAa'
+          WHERE password IS NULL OR password = '';
+        `,
+        shouldRun: async (db) => {
+          const columns = await db.getAllAsync('PRAGMA table_info(workers)');
+          return !Array.isArray(columns)
+            ? true
+            : !columns.some((column: any) => (column?.name || '').toLowerCase() === 'password');
+        }
       }
     ];
   }
@@ -61,6 +76,15 @@ export class MigrationManager {
       // Run pending migrations
       for (const migration of this.migrations) {
         if (migration.version > currentVersion) {
+          if (migration.shouldRun) {
+            const shouldRun = await migration.shouldRun(db);
+            if (!shouldRun) {
+              console.log(`Skipping migration ${migration.version}: ${migration.description} (already applied)`);
+              await this.recordMigration(db, migration, true);
+              continue;
+            }
+          }
+
           console.log(`Running migration ${migration.version}: ${migration.description}`);
           await this.runMigration(db, migration);
         }
@@ -95,9 +119,7 @@ export class MigrationManager {
       }
       
       // Record the migration
-      await db.runAsync(`
-        INSERT INTO migrations (version, description) VALUES (?, ?)
-      `, [migration.version, migration.description]);
+      await this.recordMigration(db, migration);
       
       await db.execAsync('COMMIT;');
       
@@ -138,5 +160,23 @@ export class MigrationManager {
 
   getPendingMigrations(currentVersion: number): Migration[] {
     return this.migrations.filter(m => m.version > currentVersion);
+  }
+
+  private async recordMigration(
+    db: SQLite.SQLiteDatabase,
+    migration: Migration,
+    skipped = false
+  ): Promise<void> {
+    const description = skipped
+      ? `${migration.description} (skipped)`
+      : migration.description;
+
+    await db.runAsync(
+      `
+        INSERT OR REPLACE INTO migrations (version, description, applied_at)
+        VALUES (?, ?, CURRENT_TIMESTAMP)
+      `,
+      [migration.version, description]
+    );
   }
 }

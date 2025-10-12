@@ -55,7 +55,13 @@ export class DatabaseSchema {
       this.createDsnyViolationsTable(),
       this.createDsnyComplianceLogsTable(),
       this.createBuildingHistoricalDataTable(),
-      this.createComplianceAlertsTable()
+      this.createComplianceAlertsTable(),
+      this.createKnowledgeDocumentsTable(),
+      this.createKnowledgeChunksTable(),
+      this.createKnowledgeIngestJobsTable(),
+      this.createNovaConversationsTable(),
+      this.createNovaMessagesTable(),
+      this.createNovaToolLogsTable()
     ];
   }
 
@@ -192,6 +198,7 @@ export class DatabaseSchema {
         status TEXT DEFAULT 'Available' CHECK (status IN ('Available', 'Busy', 'Off', 'On Break')),
         phone TEXT CHECK (length(phone) >= 10),
         email TEXT CHECK (email LIKE '%@%.%'),
+        password TEXT NOT NULL,
         skills TEXT, -- JSON array of skills
         certifications TEXT, -- JSON array of certifications
         hourly_rate REAL CHECK (hourly_rate >= 0.0),
@@ -627,7 +634,14 @@ export class DatabaseSchema {
       'CREATE INDEX IF NOT EXISTS idx_routine_completions_worker ON routine_task_completions(worker_id);',
       'CREATE INDEX IF NOT EXISTS idx_routine_completions_building ON routine_task_completions(building_id);',
       'CREATE INDEX IF NOT EXISTS idx_routine_completions_completed_at ON routine_task_completions(completed_at);',
-      'CREATE INDEX IF NOT EXISTS idx_routine_completions_status ON routine_task_completions(status);'
+      'CREATE INDEX IF NOT EXISTS idx_routine_completions_status ON routine_task_completions(status);',
+      'CREATE INDEX IF NOT EXISTS idx_dsny_schedule_building ON dsny_schedule_cache(building_id);',
+      'CREATE INDEX IF NOT EXISTS idx_dsny_violations_building ON dsny_violations(building_id);',
+      'CREATE INDEX IF NOT EXISTS idx_dsny_violations_status ON dsny_violations(status);',
+      'CREATE INDEX IF NOT EXISTS idx_compliance_alerts_building ON compliance_alerts(building_id);',
+      'CREATE INDEX IF NOT EXISTS idx_compliance_alerts_status ON compliance_alerts(status);',
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_knowledge_documents_source_unique ON knowledge_documents(source_type, source_id);',
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_knowledge_chunks_document_index_unique ON knowledge_chunks(document_id, chunk_index);'
     ];
   }
 
@@ -981,6 +995,199 @@ export class DatabaseSchema {
         FOREIGN KEY (worker_id) REFERENCES workers(id) ON DELETE CASCADE,
         FOREIGN KEY (building_id) REFERENCES buildings(id) ON DELETE CASCADE
       )
+    `;
+  }
+
+  private createDsnyScheduleCacheTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS dsny_schedule_cache (
+        id TEXT PRIMARY KEY,
+        building_id TEXT,
+        borough TEXT,
+        community_board TEXT,
+        sanitation_district TEXT,
+        normalized_address TEXT NOT NULL,
+        regular_collection TEXT,
+        recycling_collection TEXT,
+        organic_collection TEXT,
+        snow_priority TEXT,
+        metadata TEXT DEFAULT '{}',
+        last_updated TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createDsnyViolationsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS dsny_violations (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        violation_number TEXT,
+        category TEXT,
+        description TEXT,
+        status TEXT,
+        issued_date TEXT,
+        resolved_date TEXT,
+        fine_amount REAL,
+        metadata TEXT DEFAULT '{}',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createDsnyComplianceLogsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS dsny_compliance_logs (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        event_type TEXT NOT NULL,
+        message TEXT NOT NULL,
+        occurred_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        metadata TEXT DEFAULT '{}',
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createBuildingHistoricalDataTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS building_historical_data (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        metric TEXT NOT NULL,
+        metric_date TEXT NOT NULL,
+        value REAL,
+        metadata TEXT DEFAULT '{}',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createComplianceAlertsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS compliance_alerts (
+        id TEXT PRIMARY KEY,
+        building_id TEXT NOT NULL,
+        alert_type TEXT NOT NULL,
+        severity TEXT NOT NULL,
+        description TEXT,
+        source TEXT,
+        status TEXT DEFAULT 'open',
+        detected_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        resolved_at TEXT,
+        resolution_notes TEXT,
+        metadata TEXT DEFAULT '{}',
+        FOREIGN KEY (building_id) REFERENCES buildings(id)
+      );
+    `;
+  }
+
+  private createKnowledgeDocumentsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS knowledge_documents (
+        id TEXT PRIMARY KEY,
+        source_type TEXT NOT NULL,
+        source_id TEXT,
+        title TEXT NOT NULL,
+        summary TEXT,
+        building_id TEXT,
+        client_id TEXT,
+        tags TEXT,
+        metadata TEXT DEFAULT '{}',
+        total_chunks INTEGER DEFAULT 0,
+        embedding_model TEXT DEFAULT 'text-embedding-3-small',
+        created_by TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+  }
+
+  private createKnowledgeChunksTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS knowledge_chunks (
+        id TEXT PRIMARY KEY,
+        document_id TEXT NOT NULL,
+        chunk_index INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        token_count INTEGER DEFAULT 0,
+        embedding TEXT,
+        similarity_threshold REAL DEFAULT 0.35,
+        metadata TEXT DEFAULT '{}',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (document_id) REFERENCES knowledge_documents(id) ON DELETE CASCADE
+      );
+    `;
+  }
+
+  private createKnowledgeIngestJobsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS knowledge_ingest_jobs (
+        id TEXT PRIMARY KEY,
+        document_id TEXT,
+        source_type TEXT NOT NULL,
+        source_id TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        error TEXT,
+        started_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        completed_at TEXT,
+        created_by TEXT,
+        metadata TEXT DEFAULT '{}',
+        FOREIGN KEY (document_id) REFERENCES knowledge_documents(id) ON DELETE SET NULL
+      );
+    `;
+  }
+
+  private createNovaConversationsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS nova_conversations (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        title TEXT,
+        context TEXT DEFAULT '{}',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        last_message_at TEXT
+      );
+    `;
+  }
+
+  private createNovaMessagesTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS nova_messages (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        role TEXT NOT NULL,
+        content TEXT NOT NULL,
+        citations TEXT DEFAULT '[]',
+        tool_name TEXT,
+        tool_payload TEXT,
+        latency_ms INTEGER,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (conversation_id) REFERENCES nova_conversations(id) ON DELETE CASCADE
+      );
+    `;
+  }
+
+  private createNovaToolLogsTable(): string {
+    return `
+      CREATE TABLE IF NOT EXISTS nova_tool_logs (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT,
+        message_id TEXT,
+        tool_name TEXT NOT NULL,
+        request TEXT NOT NULL,
+        response TEXT,
+        status TEXT DEFAULT 'success',
+        duration_ms INTEGER,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (conversation_id) REFERENCES nova_conversations(id) ON DELETE SET NULL,
+        FOREIGN KEY (message_id) REFERENCES nova_messages(id) ON DELETE SET NULL
+      );
     `;
   }
 }

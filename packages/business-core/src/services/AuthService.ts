@@ -10,6 +10,9 @@ import { Logger } from './LoggingService';
 import { PasswordSecurityService } from '../security/PasswordSecurityService';
 import { AdvancedSecurityManager } from '../security/AdvancedSecurityManager';
 import { SecureStorageService } from '../security/SecureStorageService';
+import bcrypt from 'bcryptjs';
+
+const CLIENT_PORTAL_PASSWORD_HASH = '$2b$12$vJmtbsKDqqC8IpGsTNJ.8e9O8F.XGgy75zroQb/5siVi1tDrfwVwm';
 
 export interface AuthUser {
   id: string;
@@ -181,11 +184,11 @@ export class AuthService {
       (row: any) => (row.email || '').toLowerCase() === normalizedEmail
     );
 
-    if (worker && await this.passwordMatches(credentials.password, worker.password)) {
+    if (worker && await this.passwordMatches(credentials.password, worker.password, worker.id)) {
       const profile = operationalData.getWorkerById(worker.id);
 
       return {
-  // id: worker.id,
+        id: worker.id,
         email: worker.email,
         role: (worker.role as UserRole) || 'worker',
         name: worker.name,
@@ -201,11 +204,11 @@ export class AuthService {
       return email === normalizedEmail;
     });
 
-    if (client && await this.passwordMatches(credentials.password, 'client123')) {
+    if (client && await this.passwordMatches(credentials.password, CLIENT_PORTAL_PASSWORD_HASH)) {
       const profile = operationalData.getClientById(client.id);
 
       return {
-  // id: client.id,
+        id: client.id,
         email: normalizedEmail,
         role: 'client',
         name: client.name,
@@ -289,7 +292,7 @@ export class AuthService {
    */
   private isSessionValid(session: AuthUser): boolean {
     if (!session.lastLogin) return false;
-  // const now = new Date();
+    const now = new Date();
     const sessionAge = now.getTime() - session.lastLogin.getTime();
     
     return sessionAge < this.SESSION_DURATION;
@@ -322,10 +325,7 @@ export class AuthService {
    */
   async hashPassword(password: string): Promise<string> {
     try {
-      // TODO: Implement proper password hashing with expo-crypto
-      // const bcrypt = require('bcryptjs');
-      // return await bcrypt.hash(password, 12);
-      return password; // Placeholder - should use proper hashing
+      return await bcrypt.hash(password, 12);
     } catch (error) {
       Logger.error('Password hashing failed:', error, 'AuthService');
       throw new Error('Password hashing failed');
@@ -359,10 +359,7 @@ export class AuthService {
       // Fallback to legacy password verification for backward compatibility
       // Check if stored password is already hashed (starts with $2a$ or $2b$)
       if (stored.startsWith('$2a$') || stored.startsWith('$2b$')) {
-        // TODO: Implement proper password verification with expo-crypto
-        // const bcrypt = require('bcryptjs');
-        // return await bcrypt.compare(input, stored);
-        return stored === input; // Placeholder - should use proper verification
+        return await bcrypt.compare(input, stored);
       }
       
       // For backward compatibility with plain text passwords (migration phase)

@@ -206,7 +206,7 @@ export class SecurityManager {
           'Pay registration fees',
           'Maintain compliance records',
         ],
-        deadline: new Date('2024-12-31'),
+        deadline: new Date('2025-12-31'),
         status: 'pending',
       },
       {
@@ -220,7 +220,7 @@ export class SecurityManager {
           'Address any violations found',
           'Submit compliance documentation',
         ],
-        deadline: new Date('2024-11-30'),
+        deadline: new Date('2025-11-30'),
         status: 'in_progress',
       },
       {
@@ -234,7 +234,7 @@ export class SecurityManager {
           'Recycling program implementation',
           'Violation response procedures',
         ],
-        deadline: new Date('2024-10-31'),
+        deadline: new Date('2025-10-31'),
         status: 'completed',
       },
       {
@@ -248,7 +248,7 @@ export class SecurityManager {
           'Fire extinguisher inspection',
           'Evacuation plan updates',
         ],
-        deadline: new Date('2024-09-30'),
+        deadline: new Date('2025-09-30'),
         status: 'overdue',
       },
       {
@@ -262,7 +262,7 @@ export class SecurityManager {
           'Air quality monitoring',
           'Water system maintenance',
         ],
-        deadline: new Date('2024-08-31'),
+        deadline: new Date('2025-08-31'),
         status: 'completed',
       },
     ];

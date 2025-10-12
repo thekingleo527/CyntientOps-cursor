@@ -24,7 +24,7 @@ const LAZY_ASSETS = {
   buildings: [
     '104_Franklin_Street.jpg',
     '112_West_18th_Street.jpg',
-    '115_7th_ave.JPG',
+    '115_7th_ave.jpg',
     '117_West_17th_Street.jpg',
     '12_West_18th_Street.jpg',
     '123_1st_Avenue.jpg',

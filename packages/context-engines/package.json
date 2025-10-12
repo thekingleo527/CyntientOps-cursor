@@ -17,8 +17,6 @@
     "@cyntientops/intelligence-services": "1.0.0",
     "@cyntientops/compliance-engine": "1.0.0",
     "@cyntientops/api-clients": "1.0.0",
-    "react": "^18.0.0",
-    "react-native": "^0.72.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -30,5 +28,9 @@
   "files": [
     "dist",
     "src"
-  ]
+  ],
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.70.0"
+  }
 }

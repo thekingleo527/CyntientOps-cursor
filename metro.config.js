@@ -5,13 +5,18 @@ const path = require('path');
 const projectRoot = path.resolve(__dirname, 'apps/mobile-rn');
 const workspaceRoot = __dirname;
 
-const config = getDefaultConfig(projectRoot);
+// Start from Expo's default config
+const defaultConfig = getDefaultConfig(projectRoot);
+const config = { ...defaultConfig };
 
 // Ensure the project root is set correctly
 config.projectRoot = projectRoot;
 
-// Set the entry point explicitly
-config.resolver.mainFields = ['react-native', 'browser', 'main'];
+// Set the entry point explicitly while preserving Expo defaults
+config.resolver = {
+  ...defaultConfig.resolver,
+  mainFields: ['react-native', 'browser', 'main'],
+};
 
 // Package aliases for workspace packages
 config.resolver.alias = {
@@ -35,16 +40,22 @@ config.resolver.alias = {
   '@': path.resolve(projectRoot, 'src'),
 };
 
-// Watch folders for monorepo
-config.watchFolders = [
+// Watch folders for monorepo (merge with Expo defaults)
+const extraWatchFolders = [
   path.resolve(workspaceRoot, 'packages'),
   path.resolve(workspaceRoot, 'config'),
 ];
+config.watchFolders = Array.from(
+  new Set([...(defaultConfig.watchFolders || []), ...extraWatchFolders])
+);
 
-// Resolve node_modules from root and app
-config.resolver.nodeModulesPaths = [
-  path.resolve(workspaceRoot, 'node_modules'),
-  path.resolve(projectRoot, 'node_modules'),
-];
+// Resolve node_modules from root and app (preserve defaults)
+config.resolver.nodeModulesPaths = Array.from(
+  new Set([
+    ...(defaultConfig.resolver?.nodeModulesPaths || []),
+    path.resolve(workspaceRoot, 'node_modules'),
+    path.resolve(projectRoot, 'node_modules'),
+  ])
+);
 
 module.exports = config;

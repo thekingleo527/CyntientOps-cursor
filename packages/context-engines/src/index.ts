@@ -1,13 +1,15 @@
 /**
  * @cyntientops/context-engines
- * 
+ *
  * Context engines for CyntientOps
  * ViewModels and state management
  */
 
-export { WorkerViewModel } from './WorkerViewModel';
-export { ClientViewModel } from './ClientViewModel';
-export { AdminViewModel } from './AdminViewModel';
+import { WorkerViewModel } from './WorkerViewModel';
+import { ClientViewModel } from './ClientViewModel';
+import { AdminViewModel } from './AdminViewModel';
+
+export { WorkerViewModel, ClientViewModel, AdminViewModel };
 
 // ViewModel Hooks
 export { useBuildingDetailViewModel } from './useBuildingDetailViewModel';

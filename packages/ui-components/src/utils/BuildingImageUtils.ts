@@ -16,7 +16,7 @@ export const getBuildingImage = (building: any) => {
     '123_1st_Avenue': require('../../../../apps/mobile-rn/assets/images/buildings/123_1st_Avenue.jpg'),
     
     // 7th Avenue
-    '115_7th_Avenue': require('../../../../apps/mobile-rn/assets/images/buildings/115_7th_ave.JPG'),
+    '115_7th_Avenue': require('../../../../apps/mobile-rn/assets/images/buildings/115_7th_ave.jpg'),
     
     // Perry Street
     '68_Perry_Street': require('../../../../apps/mobile-rn/assets/images/buildings/68_Perry_Street.jpg'),

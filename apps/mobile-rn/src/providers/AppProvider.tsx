@@ -110,10 +110,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#007AFF" />
         <Text style={styles.loadingText}>Initializing CyntientOps...</Text>
+        <Text style={styles.errorHint}>Debug: isReady={isReady.toString()}, services={services ? 'yes' : 'no'}</Text>
       </View>
     );
   }
 
+  console.log('AppProvider: Rendering children');
   return (
     <AppContext.Provider value={{ services, isReady, error }}>
       {children}

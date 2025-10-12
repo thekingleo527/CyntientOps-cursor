@@ -65,7 +65,7 @@ export const AdminWorkersView: React.FC<AdminWorkersViewProps> = ({ user }) => {
             status,
             permissions,
             lastLogin,
-            createdAt: '2024-01-15', // Default creation date
+            createdAt: '2025-01-15', // Default creation date
           };
         });
         
@@ -82,7 +82,7 @@ export const AdminWorkersView: React.FC<AdminWorkersViewProps> = ({ user }) => {
             status: 'active',
             permissions: ['read', 'write'],
             lastLogin: '2 min ago',
-            createdAt: '2024-01-15',
+            createdAt: '2025-01-15',
           },
           {
             id: '2',
@@ -92,7 +92,7 @@ export const AdminWorkersView: React.FC<AdminWorkersViewProps> = ({ user }) => {
             status: 'active',
             permissions: ['read', 'write'],
             lastLogin: '5 min ago',
-            createdAt: '2024-01-10',
+            createdAt: '2025-01-10',
           },
           {
             id: '3',
@@ -102,7 +102,7 @@ export const AdminWorkersView: React.FC<AdminWorkersViewProps> = ({ user }) => {
             status: 'active',
             permissions: ['read', 'write'],
             lastLogin: '15 min ago',
-            createdAt: '2024-01-08',
+            createdAt: '2025-01-08',
           },
           {
             id: '4',
@@ -112,7 +112,7 @@ export const AdminWorkersView: React.FC<AdminWorkersViewProps> = ({ user }) => {
             status: 'active',
             permissions: ['read', 'write'],
             lastLogin: '1 min ago',
-            createdAt: '2024-01-12',
+            createdAt: '2025-01-12',
           },
           {
             id: '8',
@@ -122,7 +122,7 @@ export const AdminWorkersView: React.FC<AdminWorkersViewProps> = ({ user }) => {
             status: 'active',
             permissions: ['read', 'write', 'admin'],
             lastLogin: '3 min ago',
-            createdAt: '2024-01-05',
+            createdAt: '2025-01-05',
           },
         ];
         setWorkers(fallbackWorkers);

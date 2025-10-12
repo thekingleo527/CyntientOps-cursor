@@ -48,7 +48,7 @@ config.resolver = {
 // Fix for React 19 compatibility
 config.transformer = {
   ...config.transformer,
-  babelTransformerPath: require.resolve('metro-react-native-babel-transformer'),
+  babelTransformerPath: require.resolve('@react-native/metro-babel-transformer'),
   minifierConfig: {
     keep_fnames: true,
     mangle: {

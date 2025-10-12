@@ -113,7 +113,7 @@ async function testComplianceDashboard() {
         const mockSummary = {
           complianceScore: 0.85,
           criticalIssues: 0,
-          nextInspection: '2024-12-01',
+          nextInspection: '2025-12-01',
           violations: [],
           permits: [],
           lastUpdated: new Date().toISOString()

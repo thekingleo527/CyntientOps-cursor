@@ -34,7 +34,7 @@ The building detail screens use role-based intelligence to show the most relevan
 │  │  │ 🔥 HVAC SYSTEM                                     │ │   │
 │  │  │ • Boiler: 1 unit (basement)                       │ │   │
 │  │  │ • Hot Water Tank: Active                          │ │   │
-│  │  │ • Filters: Last changed 10/08/2025                │ │   │
+│  │  │ • Filters: Last changed 10/10/2025                │ │   │
 │  │  │ • Next Change Due: 11/08/2025                     │ │   │
 │  │  │ • Assigned Worker: Edwin Lema                     │ │   │
 │  │  └─────────────────────────────────────────────────────┘ │   │

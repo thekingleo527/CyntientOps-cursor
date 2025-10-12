@@ -4,9 +4,9 @@
  * Purpose: Master operational playbook for Franco Management
  * STATUS: PERMANENT REFERENCE - NEVER DELETE
  * Version: 1.0.0
- * Total Routines: 88
+ * Total Routines: 134 (from data-seed)
  * Total Workers: 7
- * Total Buildings: 17
+ * Total Buildings: 19 (from data-seed)
  */
 
 // MARK: - Canonical IDs (Single Source of Truth)
@@ -204,7 +204,7 @@ export class OperationalDataManager {
     // ───────────────────────────────
     //  KEVIN DUTAN (EXPANDED DUTIES)
     //  Mon-Fri 06:00-17:00
-    //  38 tasks including Rubin Museum
+    //  Fallback: legacy comment previously referenced "38 tasks"; seeds now provide full 49 assignments for Kevin
     // ───────────────────────────────
     
     // Perry cluster (finish by 09:30)

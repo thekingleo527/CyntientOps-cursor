@@ -7,7 +7,7 @@
 
 ## 📋 OVERVIEW
 
-This document describes the complete integration of operational data (128 routines, 7 workers, 18 buildings) into the CyntientOps React Native mobile app UI components.
+This document describes the complete integration of operational data (134 routines, 7 workers, 19 buildings) into the CyntientOps React Native mobile app UI components.
 
 ### **What Was Implemented:**
 
@@ -24,7 +24,7 @@ This document describes the complete integration of operational data (128 routin
 ### Data Flow
 
 ```
-routines.json (128 tasks) → OperationalDataManager
+routines.json (134 tasks) → OperationalDataManager
     ↓
 TaskService.generateWorkerTasks(workerId)
     ↓
@@ -646,7 +646,7 @@ import {
 - ✅ TaskCard component for operational tasks
 - ✅ RoutineCard component for building routines
 - ✅ DSNYScheduleCard component for DSNY schedules
-- ✅ Complete operational playbook (128 tasks documented)
+- ✅ Complete operational playbook (134 tasks documented)
 
 **What Needs Integration:**
 - 🔨 Update WorkerDashboardScreen to use new hero card data

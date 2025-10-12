@@ -22,8 +22,8 @@
 │  │  │ SYSTEM          │  │ WORKER          │              │   │
 │  │  │ OVERVIEW        │  │ MANAGEMENT      │              │   │
 │  │  │                 │  │                 │              │   │
-│  │  │ 👥 12 Workers   │  │ 🏢 18 Buildings │          │   │
-│  │  │ 🏢 18 Buildings │  │ 📊 89% Active   │              │   │
+│  │  │ 👥 12 Workers   │  │ 🏢 19 Buildings │          │   │
+│  │  │ 🏢 19 Buildings │  │ 📊 89% Active   │              │   │
 │  │  │ 📊 7 Clients    │  │ ⚡ 2.3min Avg   │              │   │
 │  │  │ 🚨 3 Alerts     │  │ 🎯 94% On-Time │              │   │
 │  │  │                 │  │                 │              │   │
@@ -133,7 +133,7 @@
 │  │                SYSTEM METRICS                          │   │
 │  │  👥 Total Workers: 12 Active                          │   │
 │  │  🏢 Total Buildings: 4 Managed                       │   │
-│  │  📊 Total Clients: 3 Active                          │   │
+│  │  📊 Total Clients: 7 Active                          │   │
 │  │  🚨 System Alerts: 1 Active                          │   │
 │  │  💰 Monthly Revenue: $45K                             │   │
 │  │  ⚡ System Status: All Online                         │   │

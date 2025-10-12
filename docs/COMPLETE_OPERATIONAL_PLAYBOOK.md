@@ -303,7 +303,7 @@
 - Photo Required: ✅
 - Task: Monthly HVAC filter changes and system maintenance across all buildings
 - Task ID: task-edwin-001
-- **Buildings Covered**: All 18 buildings
+- **Buildings Covered**: All 19 buildings
 - **Special Notes**: 224 E 14th requires 2x MERV-8 filters every 30 days
 
 **10:00-11:00 AM (Tue/Thu Weekly)** | **Building Systems Inspection**
@@ -1310,7 +1310,7 @@
 - Photo Required: ✅
 - Task: Standardized cleaning inspections and quality control across all buildings
 - Task ID: task-shawn-001
-- **Buildings Covered**: All 18 buildings
+- **Buildings Covered**: All 19 buildings
 
 ---
 
@@ -1551,7 +1551,7 @@
 - **Boiler Inspections**: Shawn Magloire (quick checks at 4 buildings)
 
 ### HVAC Systems
-- **Total HVAC Systems**: 18 buildings
+- **Total HVAC Systems**: 19 buildings
 - **Monthly Deep Maintenance**: Shawn Magloire (117 W 17th, 112 W 18th)
 - **Monthly Filter Changes**: Edwin Lema (portfolio-wide)
 - **Special Climate Control**: Kevin Dutan (Rubin Museum - weekly)
@@ -1563,7 +1563,7 @@
 ### 1. **Kevin Dutan is the Workhorse**
 - 38 total routines (most of any worker)
 - Longest shift: 11 hours/day
-- Covers 15 of 18 buildings
+- Covers 15 of 19 buildings
 - Only worker with "Advanced" cleaning skills (museum)
 - Primary responsibility for Rubin Museum HQ
 
@@ -1616,7 +1616,7 @@
 ## 📋 SUMMARY
 
 **Total Operational Coverage:**
-- **18 Buildings** managed
+- **19 Buildings** managed
 - **128 Scheduled Routines** executed weekly
 - **7 Active Workers** coordinated
 - **$165M+ Portfolio Value**

@@ -328,12 +328,12 @@ export class ComplianceCalculatorFixed {
 │ ┌─────────────────────────────────────────────────────────┐ │
 │ │ 🏢 148 Chambers Street              Score: 65%  Grade: C│ │
 │ │ 3 HPD violations • $2,340 fines • CRITICAL            │ │
-│ │ Last inspection: 11/15/2024 • Next: 01/15/2025         │ │
+│ │ Last inspection: 10/10/2025 • Next: 01/10/2026         │ │
 │ └─────────────────────────────────────────────────────────┘ │
 │ ┌─────────────────────────────────────────────────────────┐ │
 │ │ 🏢 36 Walker Street                 Score: 72%  Grade: C+│ │
 │ │ 2 DSNY violations • $1,890 fines • HIGH               │ │
-│ │ Last inspection: 10/28/2024 • Next: 02/28/2025       │ │
+│ │ Last inspection: 10/10/2025 • Next: 01/10/2026       │ │
 │ └─────────────────────────────────────────────────────────┘ │
 │                                                             │
 │ 📋 VIOLATIONS SUMMARY                                        │
@@ -396,4 +396,4 @@ After implementing these fixes:
 - ✅ Proper violation status tracking
 - ✅ Correct building compliance status
 
-The compliance dashboard will show real public data from NYC APIs instead of generic sample data, providing accurate compliance information for all 18 buildings in the portfolio.
+The compliance dashboard will show real public data from NYC APIs instead of generic sample data, providing accurate compliance information for all 19 buildings in the portfolio.

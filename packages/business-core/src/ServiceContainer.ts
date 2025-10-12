@@ -587,8 +587,8 @@ export class ServiceContainer {
     if (!this._buildingTasksCatalog) {
       this._buildingTasksCatalog = {
         getBuildingTasks: (buildingId: string) => {
-          const buildingName = operationalDataManager.getBuildingName(buildingId);
-          const tasks = operationalDataManager.getTasksForBuilding(buildingName);
+          // Use canonical ID-based lookup for parity with seeds
+          const tasks = operationalDataManager.getBuildingTasks(buildingId);
           
           return tasks.map((task, index) => ({
             id: `${buildingId}-${index}`,
@@ -618,8 +618,8 @@ export class ServiceContainer {
     if (!this._buildingContactsCatalog) {
       this._buildingContactsCatalog = {
         getBuildingContacts: (buildingId: string) => {
-          const buildingName = operationalDataManager.getBuildingName(buildingId);
-          const tasks = operationalDataManager.getTasksForBuilding(buildingName || '');
+          // Derive contacts from tasks assigned to this building ID
+          const tasks = operationalDataManager.getBuildingTasks(buildingId);
           const assignedWorkers = [...new Set(tasks.map(task => task.assignedWorker))];
           
           const contacts = assignedWorkers.map((workerName, index) => ({
@@ -1142,4 +1142,3 @@ export class ServiceContainer {
 }
 
 // MARK: - Service Health Type
-

@@ -108,8 +108,11 @@ export class TaskService {
     const completedTasks: OperationalDataTaskAssignment[] = [];
 
     workerRoutines.forEach(routine => {
-      const daysOfWeek = routine.daysOfWeek.split(',');
-      const isScheduledToday = daysOfWeek.includes(currentDayName);
+      const tokens = (routine.daysOfWeek || '')
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+      const isScheduledToday = tokens.length === 0 || tokens.includes(currentDayName);
 
       if (isScheduledToday) {
         const task = this.createTaskFromRoutine(routine, now);
@@ -187,10 +190,12 @@ export class TaskService {
     const currentHour = currentTime.getHours();
     const timeUntilStart = routine.startHour - currentHour;
 
-    if (timeUntilStart <= 2 && timeUntilStart >= 0) return 'high';
-    if (timeUntilStart < 0) return 'urgent';
+    // Parity with Swift TaskService:
+    // if hoursUntilStart <= 0 → urgent; <=2 → high; <=8 → medium; else low
+    if (timeUntilStart <= 0) return 'urgent';
+    if (timeUntilStart <= 2) return 'high';
     if (timeUntilStart <= 8) return 'medium';
-        return 'low';
+    return 'low';
   }
 
   private isTaskUrgent(task: OperationalDataTaskAssignment, currentTime: Date): boolean {

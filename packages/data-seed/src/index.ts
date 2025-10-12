@@ -2,7 +2,7 @@
  * @cyntientops/data-seed
  *
  * Complete operational data seed for CyntientOps
- * Contains: 7 workers, 19 buildings, 7 clients, 120 routine tasks
+ * Contains: 7 workers, 19 buildings, 7 clients, 134 routine tasks
  * Preserves all canonical IDs from Swift implementation
  */
 
@@ -23,9 +23,9 @@ export { workersData, buildingsData, clientsData, routinesData };
 // Data validation counts (must match Swift OperationalDataManager)
 export const DATA_VALIDATION = {
   EXPECTED_WORKERS: 7,
-  EXPECTED_BUILDINGS: 18, // Actual count from buildings.json
+  EXPECTED_BUILDINGS: 19, // Actual count from buildings.json
   EXPECTED_CLIENTS: 7, // Actual count from clients.json
-  EXPECTED_ROUTINES: 120, // All 120 operational tasks now extracted
+  EXPECTED_ROUTINES: 134, // All 134 operational tasks now extracted
 
   // Canonical ID validation - ONLY REAL IDs from JSON files
   VALID_WORKER_IDS: ['1', '2', '4', '5', '6', '7', '8'],
@@ -39,8 +39,8 @@ export const DATA_VALIDATION = {
     '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40'
   ],
 
-  // Key assignments validation
-  KEVIN_DUTAN_TASKS: 47, // Kevin has 47 tasks as expected
+  // Key assignments validation (from routines.json)
+  KEVIN_DUTAN_TASKS: 49, // Kevin has 49 tasks in routines.json
   RUBIN_MUSEUM_ID: '14',
   KEVIN_DUTAN_ID: '4'
 } as const;
@@ -161,10 +161,9 @@ export function validateDataIntegrity(): {
 } {
   const errors: string[] = [];
   const warnings: string[] = [];
-  const extendedBuildings = generateExtendedBuildingData();
   const counts = {
     workers: workers.length,
-    buildings: buildings.length + extendedBuildings.length,
+    buildings: buildings.length,
     clients: clients.length,
     routines: routines.length
   };
@@ -253,7 +252,7 @@ export function getDataSummary() {
 export const SEED_METADATA = {
   version: '1.0.0',
   extractedFrom: 'CyntientOps SwiftUI OperationalDataManager.swift',
-  extractionDate: '2024-09-28',
+  extractionDate: '2025-10-10',
   totalRecords: workers.length + buildings.length + clients.length + routines.length,
   preservedCanonicalIds: true,
   swiftCompatibilityVersion: '6.0'

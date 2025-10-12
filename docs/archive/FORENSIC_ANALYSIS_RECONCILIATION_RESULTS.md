@@ -15,9 +15,9 @@
    - `packages/ui-components/` - 154+ TSX files with complete component library
 
 2. **Real Production Data** - Not mock data:
-   - 18 actual buildings with real addresses
+   - 19 actual buildings with real addresses
    - 7 real workers with contact information
-   - 120 operational tasks with real assignments
+   - 134 operational tasks with real assignments
    - Live NYC API integration (HPD, DSNY, DOB, FDNY)
 
 3. **Complete Architecture** - Well-designed monorepo:

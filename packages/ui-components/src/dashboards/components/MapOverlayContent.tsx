@@ -43,7 +43,7 @@ export const MapOverlayContent: React.FC<MapOverlayContentProps> = ({
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
   const [showBuildingDetails, setShowBuildingDetails] = useState(false);
 
-  // Import real data from data-seed - ACTUAL COUNTS: 18 buildings, 7 workers, 120 routines
+  // Import real data from data-seed - ACTUAL COUNTS: 19 buildings, 7 workers, 134 routines
   // Using actual data structure from data-seed files
   const buildingsData = [
     { id: "1", name: "12 West 18th Street", address: "12 West 18th Street, New York, NY 10011", latitude: 40.738948, longitude: -73.993415, imageAssetName: "12_West_18th_Street", building_type: "residential", management_company: "J&M Realty", numberOfUnits: 16, yearBuilt: 1925, squareFootage: 12000, compliance_score: 0.95, client_id: "JMR" },

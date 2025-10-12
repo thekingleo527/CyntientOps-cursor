@@ -126,6 +126,56 @@ export class BuildingService {
   }
 
   /**
+   * Normalize a building/location string for robust matching.
+   * - lowercases, trims, removes punctuation
+   * - normalizes common street types (street→st, avenue→ave)
+   * - collapses whitespace
+   * - sorts tokens to account for minor ordering differences (e.g., "148 Chambers St" vs "Chambers St 148")
+   */
+  private normalizeName(value?: string): string {
+    if (!value) return '';
+    const simplified = value
+      .toLowerCase()
+      .replace(/street\b/g, 'st')
+      .replace(/avenue\b/g, 'ave')
+      .replace(/\bwest\b/g, 'w')
+      .replace(/\beast\b/g, 'e')
+      .replace(/[.,#]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // Token sort normalization to handle minor ordering differences
+    const tokens = simplified.split(' ').filter(Boolean).sort();
+    return tokens.join(' ');
+  }
+
+  /**
+   * Get building by (fuzzy) name with alias normalization.
+   * Matches by normalized building name, normalized_name, or address.
+   */
+  public getBuildingByName(name: string): any | undefined {
+    const key = this.normalizeName(name);
+    const buildings = this.getBuildings();
+
+    // Exact ID shortcut (in case an ID string gets passed here)
+    const byId = this.getBuildingById(name);
+    if (byId) return byId;
+
+    for (const b of buildings) {
+      const nameKey = this.normalizeName(b.name);
+      if (nameKey === key) return b;
+
+      const normalizedKey = this.normalizeName((b as any).normalized_name);
+      if (normalizedKey && normalizedKey === key) return b;
+
+      const addressKey = this.normalizeName(b.address);
+      if (addressKey && addressKey === key) return b;
+    }
+
+    return undefined;
+  }
+
+  /**
    * Get buildings by client
    */
   public getBuildingsByClient(clientId: string): any[] {

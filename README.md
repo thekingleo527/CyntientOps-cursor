@@ -86,7 +86,7 @@ Refer to [`docs/development/CONTINUITY_REPORT.md`](./docs/development/CONTINUITY
 - **Background Sync**: Automatic data synchronization with conflict resolution
 
 ### 🗺️ Map & Location Intelligence
-- **Building Markers**: Interactive map with 18 NYC building locations
+- **Building Markers**: Interactive map with 19 NYC building locations
 - **Asset Coverage Visualization**: Heatmaps and cluster views
 - **Route Optimization**: AI-powered multi-stop routing
 - **Geofencing + On‑Site Intelligence**: Location-based task triggers, and on‑site status pill (clock‑in + geofence proximity)
@@ -167,11 +167,33 @@ cyntientops-mp/
 | **managers** | State management with stores and contexts | Zustand, React Context |
 | **command-chains** | Command pattern for undo/redo and complex workflows | TypeScript, Memento Pattern |
 | **context-engines** | Context awareness and intelligent decision-making | Geospatial, Time-based logic |
-| **data-seed** | Database seeding with 18 buildings, 7 workers, 120 routines | JSON, Validation |
+| **data-seed** | Database seeding with 19 buildings, 7 workers, 134 routines | JSON, Validation |
 | **testing** | E2E testing with Detox, fixtures, and test utilities | Detox, Jest, Testing Library |
 
 ---
 
+## 🔑 Startup & Login Flow
+
+- App entry: `NavigationContainer` → `AppNavigator` (stack)
+- Session restore: attempts to restore and validate session (AsyncStorage + `SessionManager`)
+- If session invalid/missing: shows `Login` screen
+- Login options:
+  - Credentials via `AuthenticationService.authenticate(email, password)`
+  - Quick login via `AuthenticationService.quickLogin(username)` (dev/testing)
+- On success: navigates to `Main` with role-based tabs via `EnhancedTabNavigator`
+- Role-based tabs:
+  - Worker: Dashboard, Map, Schedule, Intelligence, Departure
+  - Client: Dashboard, Portfolio, Intelligence
+  - Admin: Dashboard, Workers, Portfolio, Intelligence
+- Optional role selection: `UserSelectionScreen` provides Worker/Client/Admin cards for switching roles; typically accessed from profile or test flows
+
+Primary files
+- `apps/mobile-rn/src/navigation/AppNavigator.tsx`
+- `apps/mobile-rn/src/navigation/EnhancedTabNavigator.tsx`
+- `apps/mobile-rn/src/screens/LoginScreen.tsx`
+- `apps/mobile-rn/src/screens/UserSelectionScreen.tsx`
+
+---
 ## 🚀 Getting Started
 
 **⚠️ Internal Development Only - Repository access required**
@@ -332,20 +354,20 @@ The application supports three user roles with demo credentials:
 ## 📊 Data Infrastructure
 
 ### Buildings Portfolio
-- **18 Total Buildings**: Distributed across NYC boroughs including Rubin Museum (CyntientOps HQ)
-- **18 Client Buildings**: All active with complete management data
+- **19 Total Buildings**: Distributed across NYC boroughs including Rubin Museum (CyntientOps HQ)
+- **19 Client Buildings**: All active with complete management data
 - **Complete Metadata**: Addresses, BINs, contact information, compliance scores
 
 ### Worker Assignments
 - **7 Active Workers**: Kevin Dutan, Greg Hutson, Edwin Lema, Mercedes Inamagua, Luis Lopez, Angel Guirachocha, Shawn Magloire (Admin)
-- **120 Routine Tasks**: Scheduled across all buildings with time-based triggers
+- **134 Routine Tasks**: Scheduled across all buildings with time-based triggers
 - **Dynamic Task Generation**: Real-time task creation based on schedules and conditions
 
 ### Data Seed Source
 All data is centralized in `packages/data-seed/` with validation:
-- `buildings.json` - 18 buildings with full metadata
+- `buildings.json` - 19 buildings with full metadata
 - `workers.json` - 7 workers with assignments
-- `routines.json` - 120 scheduled maintenance routines
+- `routines.json` - 134 scheduled maintenance routines
 - `clients.json` - 7 client accounts with building portfolios
 
 **Single Source of Truth**: All dashboards and services pull from data-seed, ensuring consistency.

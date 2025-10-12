@@ -18,8 +18,8 @@ This document provides complete wire diagrams for all user types and their dashb
 │  ┌─────────────────────┐  ┌─────────────────────┐          │
 │  │  System Overview    │  │  Compliance Status  │          │
 │  │  • 18 Workers       │  │  • All Clear        │          │
-│  │  • 18 Buildings     │  │  • 85% Compliance   │          │
-│  │  • 3 Clients        │  │  • 0 HPD Issues     │          │
+│  │  • 19 Buildings     │  │  • 85% Compliance   │          │
+│  │  • 7 Clients        │  │  • 0 HPD Issues     │          │
 │  │  • 47 Active Tasks  │  │  • 0 DSNY Issues    │          │
 │  └─────────────────────┘  └─────────────────────┘          │
 ├─────────────────────────────────────────────────────────────┤
@@ -53,7 +53,7 @@ This document provides complete wire diagrams for all user types and their dashb
 │  │        6            │  │        0            │          │
 │  └─────────────────────┘  └─────────────────────┘          │
 │                                                             │
-│  Building Compliance Status (All 18 Buildings):            │
+│  Building Compliance Status (All 19 Buildings):            │
 │  ┌─────────────────────────────────────────────────────────┐ │
 │  │  📍 12 West 18th Street                                │ │
 │  │  Chelsea, Manhattan | 82% Compliant (6 HPD violations) │ │
@@ -95,7 +95,7 @@ This document provides complete wire diagrams for all user types and their dashb
 │  │        6            │  │        0            │          │
 │  └─────────────────────┘  └─────────────────────┘          │
 │                                                             │
-│  Building Compliance Status (All 18 Buildings):            │
+│  Building Compliance Status (All 19 Buildings):            │
 │  ┌─────────────────────────────────────────────────────────┐ │
 │  │  📍 12 West 18th Street                                │ │
 │  │  Chelsea, Manhattan | 82% Compliant                    │ │
@@ -440,7 +440,7 @@ This document provides complete wire diagrams for all user types and their dashb
 │  • NYC DSNY API: Sanitation violations (via ECB)           │
 ├─────────────────────────────────────────────────────────────┤
 │  Data Processing:                                           │
-│  All 18 Buildings → API Clients → Compliance Service → UI  │
+│  All 19 Buildings → API Clients → Compliance Service → UI  │
 ├─────────────────────────────────────────────────────────────┤
 │  Real Building Portfolio:                                   │
 │  • 12 West 18th Street (ID: 1) - 6 HPD violations         │
@@ -487,7 +487,7 @@ This document provides complete wire diagrams for all user types and their dashb
 - ✅ Property value integration
 
 ### Real Data Integration Points
-- ✅ All 18 buildings from data-seed
+- ✅ All 19 buildings from data-seed
 - ✅ Real NYC API calls for violations
 - ✅ Live compliance scores
 - ✅ Property values from DOF API

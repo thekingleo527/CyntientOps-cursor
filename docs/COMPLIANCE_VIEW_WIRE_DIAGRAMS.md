@@ -438,7 +438,7 @@ Mobile-optimized wire diagrams showing all compliance views that need to be hydr
 ## 🎯 Action Items & Next Steps
 
 ### **Immediate Hydration Required:**
-1. **Property Values Integration** - DOF assessment data for all 18 buildings
+1. **Property Values Integration** - DOF assessment data for all 19 buildings
 2. **Real Violation Data** - Live HPD, DSNY, FDNY, 311 APIs
 3. **Financial Tracking** - Outstanding fines and payment status
 4. **Compliance Scoring** - Real-time calculation based on actual violations
